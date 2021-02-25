@@ -6,10 +6,10 @@ import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 
+import bubolo.integration.sprint1.Sprint1LoadingScreen;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.ui.AltMenuScreen;
-import bubolo.ui.LoadingScreen;
+import bubolo.ui.MenuScreen;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -32,7 +32,7 @@ public class UITestApplication
 	public static void main(String[] args)
 	{
 
-		LoadingScreen s = new LoadingScreen();
+		Sprint1LoadingScreen s = new Sprint1LoadingScreen();
 		s.setVisible(true);
 		Thread t = Thread.currentThread();
 		try
@@ -64,7 +64,7 @@ public class UITestApplication
 				}
 			};
 
-			AltMenuScreen fp = new AltMenuScreen(sp, hmp, jmp);
+			MenuScreen fp = new MenuScreen(sp, hmp, jmp);
 
 			fp.setVisible(true);
 		}

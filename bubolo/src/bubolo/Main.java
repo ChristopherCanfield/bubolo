@@ -1,7 +1,7 @@
 package bubolo;
 
 import bubolo.GameApplication.State;
-import bubolo.ui.AltMenuScreen;
+import bubolo.ui.MenuScreen;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -62,7 +62,7 @@ public class Main
 			}
 		};
 
-		AltMenuScreen menuScreen = new AltMenuScreen(singlePlayerApplication, serverApplication,
+		MenuScreen menuScreen = new MenuScreen(singlePlayerApplication, serverApplication,
 				clientApplication);
 		menuScreen.setVisible(true);
 	}

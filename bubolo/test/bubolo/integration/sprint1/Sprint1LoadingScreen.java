@@ -1,4 +1,4 @@
-package bubolo.ui;
+package bubolo.integration.sprint1;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * 
  * @author BU CS673 - Clone Productions
  */
-public class LoadingScreen extends JFrame
+public class Sprint1LoadingScreen extends JFrame
 {
 	private static final long serialVersionUID = 4414221517373441452L;
 	
@@ -24,7 +24,7 @@ public class LoadingScreen extends JFrame
 	 * Creates the LoadingScreen object and shoots off a thread to integrate the progress
 	 * bar.
 	 */
-	public LoadingScreen()
+	public Sprint1LoadingScreen()
 	{
 		super("Splash");
 		setSize(500, 500);
@@ -63,7 +63,7 @@ public class LoadingScreen extends JFrame
 					}
 					catch (InterruptedException ex)
 					{
-						Logger.getLogger(LoadingScreen.class.getName()).log(Level.SEVERE, null, ex);
+						Logger.getLogger(Sprint1LoadingScreen.class.getName()).log(Level.SEVERE, null, ex);
 					}
 					i++;
 				}

@@ -1,9 +1,6 @@
 package bubolo.integration.sprint1;
 
 
-import bubolo.ui.LoadingScreen;
-import bubolo.ui.MenuScreen;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -14,7 +11,7 @@ public class Sprint1
 	public static void main(String[] args)
 	{
 
-		LoadingScreen s = new LoadingScreen();
+		Sprint1LoadingScreen s = new Sprint1LoadingScreen();
 		s.setVisible(true);
 		Thread t = Thread.currentThread();
 		try
@@ -22,7 +19,7 @@ public class Sprint1
 			Thread.sleep(2750);
 
 			s.dispose();
-			MenuScreen fp = new MenuScreen(new Runnable() {
+			Sprite1MenuScreen fp = new Sprite1MenuScreen(new Runnable() {
 				@Override
 				public void run()
 				{

@@ -14,10 +14,10 @@ import bubolo.audio.Audio;
 import bubolo.integration.CollisionTestApplication;
 import bubolo.integration.NetClientTestApplication;
 import bubolo.integration.NetServerTestApplication;
+import bubolo.integration.sprint1.Sprint1LoadingScreen;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.ui.AltMenuScreen;
-import bubolo.ui.LoadingScreen;
+import bubolo.ui.MenuScreen;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,8 +36,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
  */
 public class Sprint2
 {
-	static LoadingScreen s = new LoadingScreen();
-	static AltMenuScreen fp;
+	static Sprint1LoadingScreen s = new Sprint1LoadingScreen();
+	static MenuScreen fp;
 	static JFrame IP_popup;
 
 	/**
@@ -78,7 +78,7 @@ public class Sprint2
 				}
 			};
 
-			fp = new AltMenuScreen(spRun, hmpRun, jmpRun);
+			fp = new MenuScreen(spRun, hmpRun, jmpRun);
 
 			fp.setVisible(true);
 		}
