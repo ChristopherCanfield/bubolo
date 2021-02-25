@@ -4,19 +4,15 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-import org.json.simple.parser.ParseException;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import bubolo.AbstractGameApplication;
-import bubolo.GameApplication;
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
-import bubolo.map.Parser;
+import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.world.World;
 import bubolo.world.entity.concrete.Tank;
 
 public class ParserTestApplication extends AbstractGameApplication
@@ -31,7 +27,7 @@ public class ParserTestApplication extends AbstractGameApplication
 	}
 
 	private int windowWidth;
-	private int windowHeight;	
+	private int windowHeight;
 
 	private Graphics graphics;
 
@@ -48,7 +44,7 @@ public class ParserTestApplication extends AbstractGameApplication
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever
 	 * exist.
-	 * 
+	 *
 	 * @param windowWidth
 	 *            the width of the window.
 	 * @param windowHeight
@@ -62,7 +58,7 @@ public class ParserTestApplication extends AbstractGameApplication
 
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
@@ -71,17 +67,17 @@ public class ParserTestApplication extends AbstractGameApplication
 	{
 		Audio.initialize();
 		graphics = new Graphics(windowWidth, windowHeight);
-		
+
 		Network net = NetworkSystem.getInstance();
 		net.startDebug();
-		
-		Parser fileParser = Parser.getInstance();
+
 		Path path = FileSystems.getDefault().getPath("res", "maps/ParserTestMap.json");
 		try
 		{
-			world = fileParser.parseMap(path);
+			var importer = new MapImporter();
+			world = importer.importJsonMap(path);
 		}
-		catch (ParseException | IOException e)
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			// The test is cancelled if the map failed to load.
@@ -97,7 +93,7 @@ public class ParserTestApplication extends AbstractGameApplication
 
 	/**
 	 * Called automatically by the rendering library.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
@@ -109,7 +105,7 @@ public class ParserTestApplication extends AbstractGameApplication
 
 		// (cdc - 4/3/2014): Commented out, b/c update was being called twice. Additionally,
 		// the game is extremely jittery when this is used instead of calling update continuously.
-		
+
 		// Ensure that the world is only updated as frequently as MILLIS_PER_TICK.
 //		long currentMillis = System.currentTimeMillis();
 //		if (currentMillis > (lastUpdate + MILLIS_PER_TICK))
@@ -121,7 +117,7 @@ public class ParserTestApplication extends AbstractGameApplication
 
 	/**
 	 * Called when the application is destroyed.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */

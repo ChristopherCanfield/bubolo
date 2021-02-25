@@ -13,7 +13,7 @@ import bubolo.AbstractGameApplication;
 import bubolo.GameApplication;
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
-import bubolo.map.Parser;
+import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.world.World;
@@ -75,13 +75,13 @@ public class CollisionTestApplication extends AbstractGameApplication
 		network.startDebug();
 
 		graphics = new Graphics(windowWidth, windowHeight);
-		Parser fileParser = Parser.getInstance();
 		Path path = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
 		try
 		{
-			world = fileParser.parseMap(path);
+			var importer = new MapImporter();
+			world = importer.importJsonMap(path);
 		}
-		catch (ParseException | IOException e)
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			// The test is cancelled if the map failed to load.

@@ -3,9 +3,6 @@ package bubolo.integration;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.List;
-
-import org.json.simple.parser.ParseException;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -14,19 +11,17 @@ import bubolo.GameApplication;
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.SpawnSpriteViewer;
-import bubolo.graphics.Sprites;
-import bubolo.map.Parser;
+import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
 
 
 /**
  * For testing only.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class TankRespawnTestApplication implements GameApplication
@@ -39,29 +34,29 @@ public class TankRespawnTestApplication implements GameApplication
 		cfg.height = 640;
 	new LwjglApplication(new TankRespawnTestApplication(640, 640), cfg);
 	}
-	
+
 	private int windowWidth;
 	private int windowHeight;
-	
+
 	private Graphics graphics;
 	private World world;
-	
+
 	private long lastUpdate;
-	
+
 	private boolean ready;
-	
+
 	/**
 	 * The number of game ticks (calls to <code>update</code>) per second.
 	 */
 	public static final int TICKS_PER_SECOND = 30;
-	
+
 	/**
 	 * The number of milliseconds per game tick.
 	 */
 	public static final float MILLIS_PER_TICK = 500 / TICKS_PER_SECOND;
-	
+
 	/**
-	 * Constructs an instance of the game application. Only one instance should 
+	 * Constructs an instance of the game application. Only one instance should
 	 * ever exist.
 	 * @param windowWidth the width of the window.
 	 * @param windowHeight the height of the window.
@@ -71,7 +66,7 @@ public class TankRespawnTestApplication implements GameApplication
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
 	}
-	
+
 	@Override
 	public boolean isReady()
 	{
@@ -80,40 +75,40 @@ public class TankRespawnTestApplication implements GameApplication
 
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
-	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a> 
+	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
 	@Override
 	public void create()
 	{
 		Audio.initialize();
-		
+
 		Network net = NetworkSystem.getInstance();
 		net.startDebug();
-		
+
 		graphics = new Graphics(windowWidth, windowHeight);
-		
-		Parser fileParser = Parser.getInstance();
+
 		Path path = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
 		try
 		{
-			world = fileParser.parseMap(path);
+			var importer = new MapImporter();
+			world = importer.importJsonMap(path);
 		}
-		catch (ParseException | IOException e )
+		catch (IOException e )
 		{
 			e.printStackTrace();
 		}
 		world.addEntity(Spawn.class).setParams(100, 100, 0);
-		
+
 		SpawnSpriteViewer spawnViewer = new SpawnSpriteViewer();
 		spawnViewer.setSpawnsVisible();
-		
-		Tank tank = world.addEntity(Tank.class);			
+
+		Tank tank = world.addEntity(Tank.class);
 		tank.setParams(10, 10, 0);
 		tank.setLocalPlayer(true);
 
 		ready = true;
 	}
-	
+
 	/**
 	 * Called automatically by the rendering library.
 	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
@@ -123,9 +118,9 @@ public class TankRespawnTestApplication implements GameApplication
 	{
 		graphics.draw(world);
 		world.update();
-		
+
 	}
-	
+
 	/**
 	 * Called when the application is destroyed.
 	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
@@ -161,7 +156,7 @@ public class TankRespawnTestApplication implements GameApplication
 	public void setState(State state)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

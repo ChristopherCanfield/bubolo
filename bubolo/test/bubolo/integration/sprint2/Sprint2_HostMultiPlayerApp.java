@@ -16,7 +16,7 @@ import bubolo.AbstractGameApplication;
 import bubolo.GameApplication;
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
-import bubolo.map.Parser;
+import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateTank;
@@ -87,13 +87,13 @@ public class Sprint2_HostMultiPlayerApp implements GameApplication
 	{
 		graphics = new Graphics(windowWidth, windowHeight);
 		
-		Parser fileParser = Parser.getInstance();
-		Path path = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
 		try
 		{
-			world = fileParser.parseMap(path);
+			Path path = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
+			MapImporter importer = new MapImporter();
+			world = importer.importJsonMap(path);
 		}
-		catch (ParseException | IOException e)
+		catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

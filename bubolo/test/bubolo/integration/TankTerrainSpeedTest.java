@@ -4,22 +4,20 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-import org.json.simple.parser.ParseException;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import bubolo.GameApplication;
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
-import bubolo.map.Parser;
+import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Tank;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-
 /**
- * Test to verify and tweak tank speed changes as is traverses terrain  
+ * Test to verify and tweak tank speed changes as is traverses terrain
  * @author BU CS673 - Clone Productions
  */
 public class TankTerrainSpeedTest implements GameApplication
@@ -60,7 +58,7 @@ public class TankTerrainSpeedTest implements GameApplication
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever
 	 * exist.
-	 * 
+	 *
 	 * @param windowWidth
 	 *            the width of the window.
 	 * @param windowHeight
@@ -72,6 +70,7 @@ public class TankTerrainSpeedTest implements GameApplication
 		this.windowHeight = windowHeight;
 	}
 
+	@Override
 	public boolean isReady()
 	{
 		return ready;
@@ -79,25 +78,26 @@ public class TankTerrainSpeedTest implements GameApplication
 
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
+	@Override
 	public void create()
 	{
 		Audio.initialize();
 		graphics = new Graphics(windowWidth, windowHeight);
-		
+
 		Network net = NetworkSystem.getInstance();
 		net.startDebug();
-		
-		Parser fileParser = Parser.getInstance();
+
 		Path path = FileSystems.getDefault().getPath("res", "maps/TankSpeedTest.json");
 		try
 		{
-			world = fileParser.parseMap(path);
+			var importer = new MapImporter();
+			world = importer.importJsonMap(path);
 		}
-		catch (ParseException | IOException e)
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			// The test is cancelled if the map failed to load.
@@ -113,10 +113,11 @@ public class TankTerrainSpeedTest implements GameApplication
 
 	/**
 	 * Called automatically by the rendering library.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
+	@Override
 	public void render()
 	{
 		graphics.draw(world);
@@ -124,7 +125,7 @@ public class TankTerrainSpeedTest implements GameApplication
 
 		// (cdc - 4/3/2014): Commented out, b/c update was being called twice. Additionally,
 		// the game is extremely jittery when this is used instead of calling update continuously.
-		
+
 		// Ensure that the world is only updated as frequently as MILLIS_PER_TICK.
 //		long currentMillis = System.currentTimeMillis();
 //		if (currentMillis > (lastUpdate + MILLIS_PER_TICK))
@@ -136,10 +137,11 @@ public class TankTerrainSpeedTest implements GameApplication
 
 	/**
 	 * Called when the application is destroyed.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
+	@Override
 	public void dispose()
 	{
 		Audio.dispose();
@@ -170,7 +172,7 @@ public class TankTerrainSpeedTest implements GameApplication
 	public void setState(State state)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
