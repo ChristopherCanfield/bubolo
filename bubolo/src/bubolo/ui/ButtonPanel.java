@@ -5,36 +5,14 @@ import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import bubolo.ui.Preferences.PreferencesController;
-import bubolo.ui.Preferences.PreferencesModel;
-import bubolo.ui.Preferences.PreferencesView;
-
 /**
  * A panel with Main Menu Buttons
- * 
+ *
  * @author BU673 - Clone Industries
  */
 public class ButtonPanel extends JPanel
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1624357058854582729L;
-
-	/**
-	 * Preferences Model used by the game
-	 */
-	public final PreferencesModel pm = new PreferencesModel();
-
-	/**
-	 * Preference View used by the game
-	 */
-	private PreferencesView pv = new PreferencesView(pm);
-
-	/**
-	 * Preferences Controller used by the game
-	 */
-	public final PreferencesController pc = new PreferencesController(pm, pv);
 
 	/**
 	 * The Runnable that should be activated when the Start menu button is pressed.
@@ -45,7 +23,7 @@ public class ButtonPanel extends JPanel
 
 	/**
 	 * Constructor for the Main Menu Button Panel
-	 * 
+	 *
 	 * @param singlePlayer
 	 *            a runnable that launches the single player game.
 	 * @param hostMultiPlayer
@@ -59,20 +37,18 @@ public class ButtonPanel extends JPanel
 		hostMultiPlayerTarget = hostMultiPlayer;
 		joinMultiPlayerTarget = joinMultiPlayer;
 
-		setLayout(new GridLayout(5, 1));
+		setLayout(new GridLayout(4, 1));
 
 		// Create set of JButtons to be displayed on the Main Menu
 		JButton singleBtn = new JButton("NEW SINGLE PLAYER GAME");
 		JButton hostMPBtn = new JButton("HOST MULTI-PLAYER GAME");
 		JButton joinMPBtn = new JButton("JOIN MULTI-PLAYER GAME");
-		JButton prefBtn = new JButton("PREFERENCES");
 		JButton exitBtn = new JButton("EXIT");
 
 		// Add the buttons to this panel
 		add(singleBtn);
 		add(hostMPBtn);
 		add(joinMPBtn);
-		add(prefBtn);
 		add(exitBtn);
 
 		// Handle newMPBtn push
@@ -110,16 +86,6 @@ public class ButtonPanel extends JPanel
 				System.exit(0);
 			}
 		});
-
-		// Handle prefBtn push
-		prefBtn.addActionListener(new java.awt.event.ActionListener() {
-			@Override
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
-				pc.showView();
-			}
-		});
-
 	}
 
 	// public void actionPerformed
