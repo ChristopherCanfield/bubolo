@@ -117,7 +117,7 @@ public class MapImporter {
 		}
 	}
 
-	private String DefaultExceptionMessage = "Error parsing the json map file";
+	private static final String DefaultExceptionMessage = "Error parsing the json map file";
 
 	private Map<String, Tileset> tilesets = new HashMap<>();
 
@@ -166,7 +166,7 @@ public class MapImporter {
 	}
 
 	/**
-	 * The top-level Tiled map keys that are relevant to us.
+	 * The Tiled map keys that are relevant to us.
 	 */
 	enum Key implements JsonKey {
 		MapHeight("height"),
@@ -200,7 +200,8 @@ public class MapImporter {
 	 * Imports the json Tiled map, and constructs a world from the data.
 	 *
 	 * @param mapPath path to the json Tiled map file.
-	 * @return a results object that contains the world and diagnostic information.
+	 * @param disableGraphics whether sprite loading should be disabled. Intended to ease testing.
+	 * @return a Pair that contains the world and diagnostic information.
 	 * @throws IOException if the provided path can't be opened.
 	 * @throws InvalidMapException if the json Tiled map is malformed.
 	 */
@@ -210,6 +211,14 @@ public class MapImporter {
 		}
 	}
 
+	/**
+	 * Imports the json Tiled map, and constructs a world from the data.
+	 *
+	 * @param mapPath path to the json Tiled map file.
+	 * @return the fully constructed world.
+	 * @throws IOException if the provided path can't be opened.
+	 * @throws InvalidMapException if the json Tiled map is malformed.
+	 */
 	public World importJsonMap(Path mapPath) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(mapPath)) {
 			return importJsonMap(reader);
@@ -224,15 +233,6 @@ public class MapImporter {
 		return importMap(mapReader, false).getLeft();
 	}
 
-
-
-	/**
-	 * Imports the json Tiled map, and constructs a world from the data.
-	 *
-	 * @param mapReader a reader that reads from a json Tiled map.
-	 * @return a results object that contains the world and diagnostic information.
-	 * @throws InvalidMapException if the json Tiled map is malformed.
-	 */
 	private Pair<World, Diagnostics> importMap(Reader mapReader, boolean disableGraphics) {
 		try {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
