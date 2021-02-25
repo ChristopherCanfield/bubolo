@@ -17,6 +17,8 @@ public class Main
 	private static Application application;
 
 	private static final String APP_DISPLAY_NAME = "Bubolo";
+	private static final int INITIAL_SCREEN_WIDTH = 1067;
+	private static final int INITIAL_SCREEN_HEIGHT = 600;
 
 	/**
 	 * The application's entry point.
@@ -26,43 +28,31 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		Runnable serverApplication = new Runnable() {
-			@Override
-			public void run()
-			{
-				LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-				cfg.title = APP_DISPLAY_NAME;
-				cfg.width = 1067;
-				cfg.height = 600;
-				setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
-						State.PLAYER_INFO), cfg));
-			}
+		Runnable serverApplication = () -> {
+			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+			cfg.title = APP_DISPLAY_NAME;
+			cfg.width = INITIAL_SCREEN_WIDTH;
+			cfg.height = INITIAL_SCREEN_HEIGHT;
+			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
+					State.PLAYER_INFO), cfg));
 		};
 
-		Runnable clientApplication = new Runnable() {
-			@Override
-			public void run()
-			{
-				LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-				cfg.title = APP_DISPLAY_NAME;
-				cfg.width = 1067;
-				cfg.height = 600;
-				setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, true,
-						State.PLAYER_INFO), cfg));
-			}
+		Runnable clientApplication = () -> {
+			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+			cfg.title = APP_DISPLAY_NAME;
+			cfg.width = INITIAL_SCREEN_WIDTH;
+			cfg.height = INITIAL_SCREEN_HEIGHT;
+			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, true,
+					State.PLAYER_INFO), cfg));
 		};
 
-		Runnable singlePlayerApplication = new Runnable() {
-			@Override
-			public void run()
-			{
-				LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-				cfg.title = APP_DISPLAY_NAME;
-				cfg.width = 1067;
-				cfg.height = 600;
-				setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
-						State.GAME), cfg));
-			}
+		Runnable singlePlayerApplication = () -> {
+			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+			cfg.title = APP_DISPLAY_NAME;
+			cfg.width = INITIAL_SCREEN_WIDTH;
+			cfg.height = INITIAL_SCREEN_HEIGHT;
+			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
+					State.GAME), cfg));
 		};
 
 		MenuScreen menuScreen = new MenuScreen(singlePlayerApplication, serverApplication,
