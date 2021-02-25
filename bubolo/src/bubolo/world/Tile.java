@@ -8,7 +8,7 @@ import bubolo.world.entity.Terrain;
 /**
  * Tiles represent one 'unit square' on a game map. They must contain one Terrain, and can have
  * either 1 or 0 StationaryElements which sit on top of that Terrain.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Tile
@@ -23,10 +23,10 @@ public class Tile
 
 	/**
 	 * Create a new Tile with the specified Terrain at the given map unit coordinates.
-	 * 
+	 *
 	 * NOTE: When creating Terrain or StationaryElement objects to be stored in Tiles, they must be
 	 * constructed using World.addEntity(), or they won't be fully added to the game world.
-	 * 
+	 *
 	 * @param gridX
 	 *            is the x coordinate of this Tile in grid units.
 	 * @param gridY
@@ -37,15 +37,17 @@ public class Tile
 	public Tile(int gridX, int gridY, Terrain t)
 	{
 		myTerrain = t;
-		t.setTile(this);
+		if (t != null) {
+			t.setTile(this);
+		}
 		this.gridX = gridX;
 		this.gridY = gridY;
 	}
-	
+
 	/**
 	 * Constructs a tile without an associated Terrain. A terrain can be added later, or alternatively the world will
 	 * automatically add a terrain when the tile is added to the world using the world.setTiles method.
-	 * 
+	 *
 	 * @param gridX
 	 *            is the x coordinate of this Tile in grid units.
 	 * @param gridY
@@ -57,7 +59,7 @@ public class Tile
 
 	/**
 	 * Returns this Tile's center x position in World coordinates.
-	 * 
+	 *
 	 * @return a float representing this Tile's world x position.
 	 */
 	public float getX()
@@ -67,7 +69,7 @@ public class Tile
 
 	/**
 	 * Returns this Tile's center y position in World coordinates.
-	 * 
+	 *
 	 * @return a float representing this Tile's world y position.
 	 */
 	public float getY()
@@ -77,7 +79,7 @@ public class Tile
 
 	/**
 	 * Get this Tile's horizontal position in the map grid.
-	 * 
+	 *
 	 * @return an integer representing this Tile's x position in map/grid units.
 	 */
 	public int getGridX()
@@ -87,7 +89,7 @@ public class Tile
 
 	/**
 	 * Get this Tile's vertical position in the map grid.
-	 * 
+	 *
 	 * @return an integer representing this Tile's y position in map/grid units.
 	 */
 	public int getGridY()
@@ -97,7 +99,7 @@ public class Tile
 
 	/**
 	 * Get the Terrain object held in this Tile.
-	 * 
+	 *
 	 * @return this Tile's Terrain object.
 	 */
 	public Terrain getTerrain()
@@ -111,7 +113,7 @@ public class Tile
 			return myTerrain;
 		}
 	}
-	
+
 	/**
 	 * Whether the Tile has a Terrain. It may not have a Terrain before being added to the world,
 	 * but it is guaranteed to have one after being added.
@@ -122,7 +124,7 @@ public class Tile
 
 	/**
 	 * Get the StationaryElement held in this Tile, if one exists.
-	 * 
+	 *
 	 * @return this Tile's StationaryElement.
 	 */
 	public StationaryElement getElement()
@@ -137,7 +139,7 @@ public class Tile
 
 	/**
 	 * Check to see whether this Tile has a StationaryElement.
-	 * 
+	 *
 	 * @return true if a StationaryElement exists in this tile, false otherwise.
 	 */
 	public boolean hasElement()
@@ -153,7 +155,7 @@ public class Tile
 	/**
 	 * Removes this Tile's StationaryElement. Does nothing if a StationaryElement does not exist in
 	 * this Tile.
-	 * 
+	 *
 	 * @return a reference to this Tile.
 	 */
 	public Tile clearElement()
@@ -169,11 +171,11 @@ public class Tile
 
 	/**
 	 * Set the StationaryElement of this Tile.
-	 * 
+	 *
 	 * NOTE: When creating Terrain or StationaryElement objects to be stored in Tiles, it is
 	 * strongly advised that they be constructed using World.AddEntity(), which ensures proper
 	 * Sprite handling and Entity indexing.
-	 * 
+	 *
 	 * @param e
 	 *            is the StationaryElement that should be added to this Tile.
 	 * @return a reference to this Tile.
@@ -193,11 +195,11 @@ public class Tile
 
 	/**
 	 * Set the Terrain of this Tile.
-	 * 
+	 *
 	 * NOTE: When creating Terrain or StationaryElement objects to be stored in Tiles, it is
 	 * strongly advised that they be constructed using World.AddEntity(), which ensures proper
 	 * Sprite handling and Entity indexing.
-	 * 
+	 *
 	 * @param t
 	 *            is the Terrain that should be assigned to this Tile.
 	 * @return a reference to this Tile.
