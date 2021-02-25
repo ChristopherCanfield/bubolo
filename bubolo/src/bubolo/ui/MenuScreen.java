@@ -1,15 +1,16 @@
 package bubolo.ui;
 
-import javax.swing.*;
-
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
 
 /**
  * This is the Main Menu JFrame which will have Buttons for: START SINGLE PLAYER JOIN MULTI-PLAYER
  * (not functional) START MULTI-PLAYER (not functional) PREFERENCES EXIT
- * 
+ *
  * @author BU673 - Clone Industries
  */
 public class MenuScreen extends JFrame
@@ -18,7 +19,7 @@ public class MenuScreen extends JFrame
 
 	/**
 	 * Constructor for the Main Menu JFrame
-	 * 
+	 *
 	 * @param singlePlayer
 	 *            a runnable that launches the single player game.
 	 * @param hostMultiPlayer
@@ -38,7 +39,7 @@ public class MenuScreen extends JFrame
 		});
 
 		// Set the details of the Frame
-		setTitle("B.U.B.O.L.O.");
+		setTitle("Bubolo");
 		setSize(500, 500);
 		setLayout(new GridLayout(2, 1));
 		setLocationRelativeTo(null);
