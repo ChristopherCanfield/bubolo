@@ -5,7 +5,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.audio.Audio;
@@ -109,6 +111,8 @@ public class BuboloApplication extends AbstractGameApplication
 	@Override
 	public void render()
 	{
+		Logger.getGlobal().info("FPS: " + Gdx.app.getGraphics().getFramesPerSecond() + " | Frame time: " + Gdx.app.getGraphics().getDeltaTime());
+
 		final State state = getState();
 		if (state == State.NET_GAME)
 		{

@@ -16,10 +16,6 @@ public class Main
 {
 	private static Application application;
 
-	private static final String APP_DISPLAY_NAME = "Bubolo";
-	private static final int INITIAL_SCREEN_WIDTH = 1067;
-	private static final int INITIAL_SCREEN_HEIGHT = 600;
-
 	/**
 	 * The application's entry point.
 	 *
@@ -30,27 +26,30 @@ public class Main
 	{
 		Runnable serverApplication = () -> {
 			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-			cfg.title = APP_DISPLAY_NAME;
-			cfg.width = INITIAL_SCREEN_WIDTH;
-			cfg.height = INITIAL_SCREEN_HEIGHT;
+			cfg.title = Config.AppTitle;
+			cfg.width = Config.InitialWindowWidth;
+			cfg.height = Config.InitialWindowHeight;
+			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
 					State.PLAYER_INFO), cfg));
 		};
 
 		Runnable clientApplication = () -> {
 			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-			cfg.title = APP_DISPLAY_NAME;
-			cfg.width = INITIAL_SCREEN_WIDTH;
-			cfg.height = INITIAL_SCREEN_HEIGHT;
+			cfg.title = Config.AppTitle;
+			cfg.width = Config.InitialWindowWidth;
+			cfg.height = Config.InitialWindowHeight;
+			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, true,
 					State.PLAYER_INFO), cfg));
 		};
 
 		Runnable singlePlayerApplication = () -> {
 			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-			cfg.title = APP_DISPLAY_NAME;
-			cfg.width = INITIAL_SCREEN_WIDTH;
-			cfg.height = INITIAL_SCREEN_HEIGHT;
+			cfg.title = Config.AppTitle;
+			cfg.width = Config.InitialWindowWidth;
+			cfg.height = Config.InitialWindowHeight;
+			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
 					State.GAME), cfg));
 		};

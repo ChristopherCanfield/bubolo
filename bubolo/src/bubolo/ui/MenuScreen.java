@@ -7,6 +7,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+import bubolo.Config;
+
 /**
  * This is the Main Menu JFrame which will have Buttons for: START SINGLE PLAYER JOIN MULTI-PLAYER
  * (not functional) START MULTI-PLAYER (not functional) PREFERENCES EXIT
@@ -39,7 +41,7 @@ public class MenuScreen extends JFrame
 		});
 
 		// Set the details of the Frame
-		setTitle("Bubolo");
+		setTitle(Config.AppTitle);
 		setSize(500, 500);
 		setLayout(new GridLayout(2, 1));
 		setLocationRelativeTo(null);
