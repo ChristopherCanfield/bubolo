@@ -1,7 +1,6 @@
 package bubolo.world.entity.concrete;
 
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import bubolo.Config;
 import bubolo.audio.Audio;
@@ -127,6 +126,12 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	public void setOwned(boolean owned)
 	{
 		this.isOwned = owned;
+
+		// If the Pillbox gained a new owner, set its health to a small positive value, so another player
+		// can't instantly grab it without needing to reduce its health.
+		if (owned) {
+			hitPoints = 10;
+		}
 	}
 
 	/**
@@ -228,13 +233,18 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	@Override
 	public void takeHit(int damagePoints)
 	{
+		assert damagePoints >= 0;
+
 		Audio.play(Sfx.PILLBOX_HIT);
-		hitPoints -= Math.abs(damagePoints);
-		Logger.getGlobal().info("Pillbox " + getId() + " health at " + getHitPoints());
-		if (hitPoints <= 0)
-		{
-			if (this.isLocalPlayer())
-			{
+		hitPoints -= damagePoints;
+		if (hitPoints < 0) {
+			// Give the player a few seconds to claim the damaged pillbox.
+			hitPoints = -10;
+		}
+
+		//Logger.getGlobal().info("Pillbox " + getId() + " health at " + getHitPoints());
+		if (hitPoints <= 0) {
+			if (isLocalPlayer() && ownerUID != null) {
 				this.setLocalPlayer(false);
 				this.setOwned(false);
 				this.ownerUID = null;
