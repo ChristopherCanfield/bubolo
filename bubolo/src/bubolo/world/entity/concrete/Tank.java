@@ -25,7 +25,7 @@ import bubolo.world.entity.Terrain;
 
 /**
  * The tank, which may be controlled by a local player, a networked player, or an AI bot.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Tank extends Actor implements Damageable
@@ -74,10 +74,10 @@ public class Tank extends Actor implements Damageable
 
 	// Boolean for whether this tank is currently alive
 	private boolean isAlive = true;
-	
+
 	// The time that the tank will respawn.
 	private long respawnTime;
-	
+
 	private static final long TANK_RESPAWN_TIME = 1000L;
 
 	// Minimum amount of time between laying mines.
@@ -114,7 +114,7 @@ public class Tank extends Actor implements Damageable
 	/**
 	 * The health of the tank
 	 */
-	private int hitPoints;
+	private float hitPoints;
 
 	/**
 	 * The amount of ammo of the tank
@@ -163,7 +163,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Construct a new Tank with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Tank.
 	 */
@@ -183,7 +183,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Returns the tank's speed.
-	 * 
+	 *
 	 * @return the tank's speed.
 	 */
 	public float getSpeed()
@@ -193,7 +193,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Sets the tank's speed. Intended for use with the network system.
-	 * 
+	 *
 	 * @param newSpeed
 	 *            a NetTankSpeed object that contains the tank's new speed.
 	 */
@@ -267,16 +267,16 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Returns true if the cannon is ready to fire.
-	 * 
+	 *
 	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady()
 	{
 		return (System.currentTimeMillis() - cannonFireTime > cannonReloadSpeed);
 	}
-	
+
 	/**
-	 * Returns true if the tank is alive. This is needed since the tank is reused on death, rather 
+	 * Returns true if the tank is alive. This is needed since the tank is reused on death, rather
 	 * than disposed.
 	 * @return true if the tank is alive, or false otherwise.
 	 */
@@ -288,14 +288,14 @@ public class Tank extends Actor implements Damageable
 	/**
 	 * Fires the tank's cannon, which adds a bullet to the world and initiates a cannon
 	 * reload.
-	 * 
+	 *
 	 * @param world
 	 *            reference to the world.
 	 * @param startX
 	 *            the bullet's start x position.
 	 * @param startY
 	 *            the bullet's start y position.
-	 * 
+	 *
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
 	public Bullet fireCannon(World world, float startX, float startY)
@@ -333,7 +333,7 @@ public class Tank extends Actor implements Damageable
 	/**
 	 * Checks to see whether this Tank is currently hidden (ex. by being in a clump of
 	 * trees)
-	 * 
+	 *
 	 * @return true if the Tank is hidden, false otherwise.
 	 */
 	public boolean isHidden()
@@ -521,7 +521,7 @@ public class Tank extends Actor implements Damageable
 	/**
 	 * Updates the Tank's world position according to its speed, acceleration/deceleration
 	 * state, and collision information.
-	 * 
+	 *
 	 * @param world
 	 *            is a reference to the world that this Tank belongs to.
 	 */
@@ -696,18 +696,18 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Returns the current health of the tank
-	 * 
+	 *
 	 * @return current hit point count
 	 */
 	@Override
-	public int getHitPoints()
+	public float getHitPoints()
 	{
 		return hitPoints;
 	}
 
 	/**
 	 * Method that returns the maximum number of hit points the entity can have.
-	 * 
+	 *
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
@@ -718,7 +718,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Returns the current ammo count of the tank
-	 * 
+	 *
 	 * @return current ammo count
 	 */
 	public int getAmmoCount()
@@ -728,7 +728,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Returns the current number of trees that the tank has gathered
-	 * 
+	 *
 	 * @return the current tree resource count
 	 */
 	public int getTreeCount()
@@ -738,7 +738,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Returns the number of mines the tank currently contains
-	 * 
+	 *
 	 * @return the current mine count
 	 */
 	public int getMineCount()
@@ -748,7 +748,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Returns the number of pillboxes the tank has on board
-	 * 
+	 *
 	 * @return the pillbox count for the tank
 	 */
 	public int getPillboxCount()
@@ -758,7 +758,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Changes the hit point count after taking damage
-	 * 
+	 *
 	 * @param damagePoints
 	 *            how much damage the tank has taken
 	 */
@@ -772,7 +772,7 @@ public class Tank extends Actor implements Damageable
 			onDeath();
 		}
 	}
-	
+
 	/**
 	 * Called when the tank dies.
 	 */
@@ -788,12 +788,12 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Increments the tanks health by a given amount
-	 * 
+	 *
 	 * @param healPoints
 	 *            - how many points the tank is given
 	 */
 	@Override
-	public void heal(int healPoints)
+	public void heal(float healPoints)
 	{
 		if (hitPoints + Math.abs(healPoints) < TANK_MAX_HIT_POINTS)
 		{
@@ -807,7 +807,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * Supplies the tank ammo with given a set amount
-	 * 
+	 *
 	 * @param newAmmo
 	 *            - amount of ammo being transfered to the tank
 	 */
@@ -836,7 +836,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * This method is used to consume trees
-	 * 
+	 *
 	 * @param treesUsed
 	 *            - the number of trees consumed in the action
 	 */
@@ -850,7 +850,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * This method supplies the tank with mines
-	 * 
+	 *
 	 * @param minesGathered
 	 *            - the number of mines to supply the tank with
 	 */
@@ -868,7 +868,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * This method creates the mine in world and passes it back to the caller
-	 * 
+	 *
 	 * @param world
 	 *            - the world to create the mine in
 	 * @param startX
@@ -885,7 +885,7 @@ public class Tank extends Actor implements Damageable
 		{
 			return null;
 		}
-		
+
 		int xTileCoord = (int) startX / 32;
 		int yTileCoord = (int) startY / 32;
 
@@ -917,7 +917,7 @@ public class Tank extends Actor implements Damageable
 
 	/**
 	 * This method creates a pillbox in the world from the tank's inventory
-	 * 
+	 *
 	 * @param world
 	 *            - the world in which the pillbox is to be created
 	 * @param startX
@@ -954,7 +954,7 @@ public class Tank extends Actor implements Damageable
 		{
 			return;
 		}
-		
+
 		List<Entity> spawns = world.getSpawns();
 		if (spawns.size() > 0)
 		{
@@ -964,7 +964,7 @@ public class Tank extends Actor implements Damageable
 			Network net = NetworkSystem.getInstance();
 			net.send(new MoveTank(this));
 		}
-		
+
 		this.hitPoints = TANK_MAX_HIT_POINTS;
 		this.ammoCount = TANK_MAX_AMMO;
 		this.mineCount = TANK_MAX_MINE_COUNT;
@@ -973,31 +973,31 @@ public class Tank extends Actor implements Damageable
 	}
 
 	@Override
-	public UUID getOwnerUID() 
-	{	
+	public UUID getOwnerUID()
+	{
 		return this.ownerUID;
 	}
 
 	@Override
-	public void setOwnerUID(UUID ownerUID) 
+	public void setOwnerUID(UUID ownerUID)
 	{
 		this.ownerUID = ownerUID;
 	}
-	
+
 	/**
 	 * Maximum amount of ammo for tank
 	 * @return maximum ammo count of tank
 	 */
-	public static int getTankMaxAmmo() 
+	public static int getTankMaxAmmo()
 	{
 		return TANK_MAX_AMMO;
 	}
-	
+
 	/**
 	 * Maximum amount of mines for tank
 	 * @return maximum amount of mines a tank can carry
 	 */
-	public static int getTankMaxMineCount() 
+	public static int getTankMaxMineCount()
 	{
 		return TANK_MAX_MINE_COUNT;
 	}

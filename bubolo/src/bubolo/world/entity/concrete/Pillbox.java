@@ -3,6 +3,7 @@ package bubolo.world.entity.concrete;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import bubolo.Config;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.net.Network;
@@ -70,6 +71,9 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	 */
 	public static final int MAX_HIT_POINTS = 100;
 
+	// 0.5f / FPS = heals ~0.5 health per second.
+	private static final float hpPerTick = 0.5f / Config.FPS;
+
 	/**
 	 * Construct a new Pillbox with a random UUID.
 	 */
@@ -98,7 +102,7 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	public void update(World world) {
 		super.update(world);
 
-
+		heal(hpPerTick);
 	}
 
 	@Override
@@ -200,9 +204,9 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	 * @return current hit point count
 	 */
 	@Override
-	public int getHitPoints()
+	public float getHitPoints()
 	{
-		return (int) hitPoints;
+		return hitPoints;
 	}
 
 	/**
@@ -246,7 +250,7 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	 * @param healPoints - how many points the pillbox is given
 	 */
 	@Override
-	public void heal(int healPoints)
+	public void heal(float healPoints)
 	{
 		assert healPoints >= 0;
 

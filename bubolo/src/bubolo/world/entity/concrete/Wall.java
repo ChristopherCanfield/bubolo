@@ -12,7 +12,7 @@ import bubolo.world.entity.StationaryElement;
 
 /**
  * Walls are intended to impede Tank movement, and create Rubble Terrain when destroyed.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Wall extends StationaryElement implements Adaptable, Damageable
@@ -23,11 +23,11 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 	private static final long serialVersionUID = -4591161497141031916L;
 
 	private int tilingState = 0;
-	
+
 	/**
 	 * The health of the tree
 	 */
-	private int hitPoints;
+	private float hitPoints;
 
 	/**
 	 * The maximum amount of hit points of the tree
@@ -50,7 +50,7 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 
 	/**
 	 * Construct a new Wall with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Tree.
 	 */
@@ -98,51 +98,51 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 
 	/**
 	 * Returns the current health of the wall
-	 * 
+	 *
 	 * @return current hit point count
 	 */
 	@Override
-	public int getHitPoints() 
+	public float getHitPoints()
 	{
 		return hitPoints;
 	}
 
 	/**
-	 * Method that returns the maximum number of hit points the entity can have. 
+	 * Method that returns the maximum number of hit points the entity can have.
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints() 
+	public int getMaxHitPoints()
 	{
 		return MAX_HIT_POINTS;
 	}
 
 	/**
 	 * Changes the hit point count after taking damage
-	 * 
+	 *
 	 * @param damagePoints
 	 *            how much damage the wall has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints) 
+	public void takeHit(int damagePoints)
 	{
 		Audio.play(Sfx.WALL_HIT);
 		hitPoints -= Math.abs(damagePoints);
-		
+
 		if(hitPoints <= 0)
 		{
 			this.getTile().clearElement();
 			dispose();
-		}	
+		}
 	}
 
 	/**
 	 * Increments the pillbox's health by a given amount
-	 * 
+	 *
 	 * @param healPoints - how many points the wall is given
 	 */
 	@Override
-	public void heal(int healPoints) 
+	public void heal(float healPoints)
 	{
 		if (hitPoints + Math.abs(healPoints) < MAX_HIT_POINTS)
 		{
@@ -152,6 +152,6 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 		else
 		{
 			hitPoints = MAX_HIT_POINTS;
-		}		
+		}
 	}
 }

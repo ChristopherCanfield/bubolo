@@ -9,7 +9,7 @@ import bubolo.world.entity.StationaryElement;
 
 /**
  * Trees are StationaryElements that can spread over time, and hide Tanks that drive over them.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Tree extends StationaryElement implements Damageable
@@ -18,11 +18,11 @@ public class Tree extends StationaryElement implements Damageable
 	 * Used in serialization/de-serialization.
 	 */
 	private static final long serialVersionUID = 4072369464678115753L;
-	
+
 	/**
 	 * The health of the tree
 	 */
-	private int hitPoints;
+	private float hitPoints;
 
 	/**
 	 * The maximum amount of hit points of the tree
@@ -39,7 +39,7 @@ public class Tree extends StationaryElement implements Damageable
 
 	/**
 	 * Construct a new Tree with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Tree.
 	 */
@@ -54,33 +54,33 @@ public class Tree extends StationaryElement implements Damageable
 
 	/**
 	 * Returns the current health of the tree
-	 * 
+	 *
 	 * @return current hit point count
 	 */
 	@Override
-	public int getHitPoints() 
+	public float getHitPoints()
 	{
 		return hitPoints;
 	}
 
 	/**
-	 * Method that returns the maximum number of hit points the entity can have. 
+	 * Method that returns the maximum number of hit points the entity can have.
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints() 
+	public int getMaxHitPoints()
 	{
 		return MAX_HIT_POINTS;
 	}
 
 	/**
 	 * Changes the hit point count after taking damage
-	 * 
+	 *
 	 * @param damagePoints
 	 *            how much damage the tree has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints) 
+	public void takeHit(int damagePoints)
 	{
 		hitPoints -= Math.abs(damagePoints);
 		if(hitPoints <= 0)
@@ -92,11 +92,11 @@ public class Tree extends StationaryElement implements Damageable
 
 	/**
 	 * Increments the pillbox's health by a given amount
-	 * 
+	 *
 	 * @param healPoints - how many points the tree is given
 	 */
 	@Override
-	public void heal(int healPoints) 
+	public void heal(float healPoints)
 	{
 		if (hitPoints + Math.abs(healPoints) < MAX_HIT_POINTS)
 		{
@@ -105,9 +105,9 @@ public class Tree extends StationaryElement implements Damageable
 		else
 		{
 			hitPoints = MAX_HIT_POINTS;
-		}		
+		}
 	}
-	
+
 	@Override
 	protected void onDispose()
 	{
