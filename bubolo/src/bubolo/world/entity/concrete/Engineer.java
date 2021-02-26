@@ -10,7 +10,7 @@ import bubolo.world.entity.Actor;
  * The Engineer represents the driver of a Tank. The Engineer can take actions outside of
  * the Tank, and if killed, the player must wait for a new Man to spawn before taking any
  * further Engineering actions.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Engineer extends Actor implements Damageable
@@ -19,7 +19,7 @@ public class Engineer extends Actor implements Damageable
 	 * the UID of the tank that owns this Engineer
 	 */
 	private UUID ownerUID;
-	
+
 	/**
 	 * Used when serializing and de-serializing.
 	 */
@@ -34,7 +34,7 @@ public class Engineer extends Actor implements Damageable
 	 * Boolean representing whether or not this Tank is buiilding something.
 	 */
 	private boolean isBuilding = false;
-	
+
 	/**
 	 * The health of the engineer
 	 */
@@ -55,7 +55,7 @@ public class Engineer extends Actor implements Damageable
 
 	/**
 	 * Construct a new Engineer with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Man.
 	 */
@@ -70,7 +70,7 @@ public class Engineer extends Actor implements Damageable
 
 	/**
 	 * Determines whether this Engineer is running forward or not.
-	 * 
+	 *
 	 * @return true if the Engineer is running forward, false otherwise.
 	 */
 	public boolean isRunning()
@@ -80,7 +80,7 @@ public class Engineer extends Actor implements Damageable
 
 	/**
 	 * Sets whether this Engineer is running forward or not.
-	 * 
+	 *
 	 * @param run
 	 *            should be true if this Engineer should be building something, false
 	 *            otherwise.
@@ -92,7 +92,7 @@ public class Engineer extends Actor implements Damageable
 
 	/**
 	 * Determines whether this Engineer is building or not.
-	 * 
+	 *
 	 * @return true if the this Engineer is building something, false otherwise.
 	 */
 	public boolean isBuilding()
@@ -102,7 +102,7 @@ public class Engineer extends Actor implements Damageable
 
 	/**
 	 * Sets whether this Engineer is building something or not.
-	 * 
+	 *
 	 * @param building
 	 *            should be true if this Engineer should be building something, false
 	 *            otherwise.
@@ -120,45 +120,45 @@ public class Engineer extends Actor implements Damageable
 
 	/**
 	 * Returns the current health of the engineer
-	 * 
+	 *
 	 * @return current hit point count
 	 */
 	@Override
-	public int getHitPoints() 
+	public float getHitPoints()
 	{
 		return hitPoints;
 	}
 
 	/**
-	 * Method that returns the maximum number of hit points the entity can have. 
+	 * Method that returns the maximum number of hit points the entity can have.
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints() 
+	public int getMaxHitPoints()
 	{
 		return MAX_HIT_POINTS;
 	}
 
 	/**
 	 * Changes the hit point count after taking damage
-	 * 
+	 *
 	 * @param damagePoints
 	 *            how much damage the engineer has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints) 
+	public void takeHit(int damagePoints)
 	{
 		hitPoints -= Math.abs(damagePoints);
-		// TODO: This method is the first opportunity to set off "death" chain of events		
+		// TODO: This method is the first opportunity to set off "death" chain of events
 	}
 
 	/**
 	 * Increments the pillbox's health by a given amount
-	 * 
+	 *
 	 * @param healPoints - how many points the engineer is given
 	 */
 	@Override
-	public void heal(int healPoints) 
+	public void heal(float healPoints)
 	{
 		if (hitPoints + Math.abs(healPoints) < MAX_HIT_POINTS)
 		{
@@ -168,17 +168,17 @@ public class Engineer extends Actor implements Damageable
 		else
 		{
 			hitPoints = MAX_HIT_POINTS;
-		}		
+		}
 	}
 
 	@Override
-	public UUID getOwnerUID() 
+	public UUID getOwnerUID()
 	{
 		return this.ownerUID;
 	}
 
 	@Override
-	public void setOwnerUID(UUID ownerUID) 
+	public void setOwnerUID(UUID ownerUID)
 	{
 		this.ownerUID = ownerUID;
 	}
