@@ -399,7 +399,6 @@ public abstract class Entity implements Serializable, Drawable
 	 */
 	public final void dispose()
 	{
-		//System.out.println(getId() + " (" + getClass().getSimpleName() + ") at " + getX() + "," + getY() + " disposed.");
 		onDispose();
 		disposed = true;
 	}

@@ -19,7 +19,7 @@ public class Tile
 	private int gridY;
 
 	private Terrain myTerrain;
-	private StationaryElement myElement = null;
+	private StationaryElement myElement;
 
 	/**
 	 * Create a new Tile with the specified Terrain at the given map unit coordinates.
@@ -144,12 +144,7 @@ public class Tile
 	 */
 	public boolean hasElement()
 	{
-		if (myElement != null)
-		{
-			return true;
-		}
-		else
-			return false;
+		return myElement != null;
 	}
 
 	/**
@@ -162,6 +157,7 @@ public class Tile
 	{
 		if (myElement != null)
 		{
+			// TODO (cdc - 2021-02-27): This isn't correct: world.removeEntity should be used instead.
 			myElement.dispose();
 		}
 
@@ -184,6 +180,7 @@ public class Tile
 	{
 		if (myElement != null)
 		{
+			// TODO (cdc - 2021-02-27): This isn't correct: world.removeEntity should be used instead.
 			myElement.dispose();
 		}
 
@@ -210,6 +207,7 @@ public class Tile
 		{
 			if (myTerrain != null)
 			{
+				// TODO (cdc - 2021-02-27): This isn't correct: world.removeEntity should be used instead.
 				myTerrain.dispose();
 			}
 
