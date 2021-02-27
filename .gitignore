@@ -3,6 +3,8 @@
 # Bubolo-specific
 Prefs.bolo
 
+dist/
+
 # Package Files #
 *.war
 *.ear
