@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bubolo.ui.Screen;
-import bubolo.world.World;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
@@ -18,11 +15,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+
+import bubolo.ui.Screen;
+import bubolo.util.Coordinates;
+import bubolo.world.World;
 
 /**
  * The top-level class for the Graphics system.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Graphics
@@ -62,14 +64,14 @@ public class Graphics
 
 	private List<Sprite> spritesInView = new ArrayList<Sprite>();
 
-	private List<Sprite> background;
+	private BackgroundSprite[][] background;
 
 	/**
 	 * Gets a reference to the Graphics system. The Graphics system must be explicitly constructed
 	 * using the <code>Graphics(width, height)</code> constructor before this is called, or an
 	 * <code>IllegalStateException</code> will be thrown. This method is package-private, because
 	 * only objects within the Graphics system should have access to it.
-	 * 
+	 *
 	 * @return a reference to the Graphics system.
 	 * @throws IllegalStateException
 	 *             when the Graphics system has not been explicitly constructed using the
@@ -88,7 +90,7 @@ public class Graphics
 	/**
 	 * Returns a texture from a path. Ensures that the same texture isn't stored multiple times.
 	 * Will load the file if it has not yet been loaded.
-	 * 
+	 *
 	 * @param path
 	 *            the path to the texture file.
 	 * @return the requested texture.
@@ -119,7 +121,7 @@ public class Graphics
 
 	/**
 	 * Creates the graphics system.
-	 * 
+	 *
 	 * @param windowWidth
 	 *            the width of the window, in pixels.
 	 * @param windowHeight
@@ -130,32 +132,32 @@ public class Graphics
 		camera = new OrthographicCamera(windowWidth, windowHeight);
 		batch = new SpriteBatch();
 		spriteSystem = Sprites.getInstance();
+		spriteComparator = new SpriteComparator();
 
 		loadAllTextures();
 
 		synchronized (Graphics.class)
 		{
 			Graphics.instance = this;
-			spriteComparator = new SpriteComparator();
 		}
 	}
 
 	/**
 	 * Draws the specified screen.
-	 * 
+	 *
 	 * @param screen the ui screen to update.
 	 */
 	public void draw(Screen screen)
 	{
 		Gdx.gl20.glClearColor(0.6f, 0.6f, 0.6f, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		
+
 		screen.update();
 	}
 
 	/**
 	 * Draws the entities that are within the camera's clipping boundary.
-	 * 
+	 *
 	 * @param world
 	 *            reference to the World Model object.
 	 */
@@ -166,7 +168,7 @@ public class Graphics
 
 	/**
 	 * Draws the entities that are within the camera's clipping boundary.
-	 * 
+	 *
 	 * @param world
 	 *            the World Model object.
 	 * @param ui
@@ -227,7 +229,7 @@ public class Graphics
 
 	/**
 	 * Adds the specified camera controller.
-	 * 
+	 *
 	 * @param controller
 	 *            a camera controller. The update method will be called once per draw call.
 	 */
@@ -238,7 +240,7 @@ public class Graphics
 
 	/**
 	 * Draw all entities in the specified layer.
-	 * 
+	 *
 	 * @param entities
 	 *            the list of entities.
 	 * @param currentLayer
@@ -259,52 +261,45 @@ public class Graphics
 		batch.end();
 	}
 
+	/**
+	 * Draws the background layer. This is needed to fill in visual gaps related to the adaptable tiling system.
+	 */
 	private void drawBackground(World world)
 	{
-		if (background == null)
-		{
-			background = setBackground(world.getMapWidth(), world.getMapHeight());
+		if (background == null) {
+			initializeBackground();
 		}
 
 		batch.begin();
-		for (Sprite sprite : background)
-		{
-			sprite.draw(batch, camera, DrawLayer.BACKGROUND);
+		for (int row = 0; row < background.length; row++) {
+			for (int col = 0; col < background[0].length; col++) {
+				var sprite = background[row][col];
+				var position = Coordinates.cameraToWorld(camera,
+						new Vector2(col * Coordinates.TILE_TO_WORLD_SCALE, row * Coordinates.TILE_TO_WORLD_SCALE));
+				// Change the positions of the background sprites so they are always on screen.
+				sprite.x = (int) position.x;
+				sprite.y = (int) position.y;
+				sprite.draw(batch, camera, DrawLayer.BACKGROUND);
+			}
 		}
 		batch.end();
 	}
 
-	/**
-	 * Sets the background images.
-	 * 
-	 * @param mapWidth
-	 *            the width of the game map.
-	 * @param mapHeight
-	 *            the height of the game map.
-	 * @return reference to the background images list.
-	 */
-	private static List<Sprite> setBackground(int mapWidth, int mapHeight)
-	{
-		int rows = mapHeight / BackgroundSprite.HEIGHT + 1;
-		int columns = mapWidth / BackgroundSprite.WIDTH + 1;
+	private void initializeBackground() {
+		int rows = Math.round(camera.viewportHeight / Coordinates.TILE_TO_WORLD_SCALE) + 1;
+		int columns = Math.round(camera.viewportWidth / Coordinates.TILE_TO_WORLD_SCALE) + 1;
+		background = new BackgroundSprite[rows][columns];
 
-		List<Sprite> background = new ArrayList<Sprite>(rows + columns);
-
-		for (int row = 0; row < rows; ++row)
-		{
-			for (int column = 0; column < columns; ++column)
-			{
-				background.add(new BackgroundSprite(
-						column * BackgroundSprite.WIDTH, row * BackgroundSprite.HEIGHT));
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < columns; col++) {
+				background[row][col] = new BackgroundSprite(col * BackgroundSprite.WIDTH, row * BackgroundSprite.HEIGHT);
 			}
 		}
-
-		return background;
 	}
 
 	/**
 	 * Returns true if the x, y, height and width of the sprite are within the camera's view.
-	 * 
+	 *
 	 * @param camera
 	 *            the game camera.
 	 * @param sprite
@@ -320,13 +315,18 @@ public class Graphics
 			return true;
 		}
 
-		final float cameraX = camera.position.x;
-		final float cameraY = camera.position.y;
+		float cameraX = camera.position.x;
+		float cameraY = camera.position.y;
 
-		return (sprite.getX() + sprite.getWidth() / 2 + cameraX > 0
-				&& sprite.getX() - sprite.getWidth() / 2 - cameraX < camera.viewportWidth
-				&& sprite.getY() + sprite.getHeight() / 2 + cameraY > 0
-				&& sprite.getY() - sprite.getHeight() / 2 - cameraY < camera.viewportHeight);
+		float spriteHalfWidth = sprite.getWidth() / 2;
+		float spriteHalfHeight = sprite.getHeight() / 2;
+		float spriteX = sprite.getX();
+		float spriteY = sprite.getY();
+
+		return (spriteX + spriteHalfWidth + cameraX > 0
+				&& spriteX - spriteHalfWidth - cameraX < camera.viewportWidth
+				&& spriteY + spriteHalfHeight + cameraY > 0
+				&& spriteY - spriteHalfHeight - cameraY < camera.viewportHeight);
 	}
 
 	/**
@@ -349,7 +349,7 @@ public class Graphics
 
 	/**
 	 * Comparator that is used when sorting sprites.
-	 * 
+	 *
 	 * @author BU CS673 - Clone Productions
 	 */
 	private static class SpriteComparator implements Comparator<Sprite>
