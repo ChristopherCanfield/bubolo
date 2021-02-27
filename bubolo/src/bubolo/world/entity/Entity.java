@@ -237,7 +237,9 @@ public abstract class Entity implements Serializable, Drawable
 				w / 2f, -h / 2f,
 				-w / 2f, h / 2f,
 				-w / 2f, -h / 2f };
-		bounds = new Polygon();
+		if (bounds == null) {
+			bounds = new Polygon();
+		}
 		bounds.setPosition(x, y);
 		bounds.rotate((float)Math.toDegrees(getRotation() - Math.PI / 2));
 		bounds.setVertices(corners);
