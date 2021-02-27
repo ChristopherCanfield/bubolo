@@ -11,7 +11,7 @@ import bubolo.world.entity.Entity;
 /**
  * MineExplosions are created when mines blow up! They're large, and create Craters on top of
  * whatever Terrain is underneath them.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class MineExplosion extends Effect
@@ -20,22 +20,22 @@ public class MineExplosion extends Effect
 	 * Used when serializing and de-serializing.
 	 */
 	private static final long serialVersionUID = -8107393112729824023L;
-	
+
 	/**
 	 * Damage done on explosion
 	 */
 	private static final int DAMAGE_PER_TICK = 2;
-	
+
 	/**
 	 * length of explosion in milliseconds
 	 */
 	private static final long EXPLOSION_LENGTH = 500;
-	
+
 	/**
 	 * time the explosion started
 	 */
 	private long explosionStart;
-	
+
 	/**
 	 * Construct a new MineExplosion with a random UUID.
 	 */
@@ -46,7 +46,7 @@ public class MineExplosion extends Effect
 
 	/**
 	 * Construct a new MineExplosion with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Tank.
 	 */
@@ -60,17 +60,17 @@ public class MineExplosion extends Effect
 	}
 	/**
 	 * returns the length of the explosion in millisends
-	 * 
+	 *
 	 * @return
 	 * 		returns true if the animation has completed
 	 */
-	
+
 	public long getExplosionLength()
 	{
 		return EXPLOSION_LENGTH;
 	}
-	
-	
+
+
 	@Override
 	public void update(World world)
 	{
@@ -87,7 +87,7 @@ public class MineExplosion extends Effect
 		}
 		else
 		{
-			this.dispose();
+			world.removeEntity(this);
 		}
 	}
 }

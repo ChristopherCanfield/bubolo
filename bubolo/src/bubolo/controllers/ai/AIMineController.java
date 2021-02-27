@@ -11,9 +11,9 @@ import bubolo.world.entity.concrete.MineExplosion;
 
 
 /**
- * A controller for Mines. This controller automatically checks for collisions with tanks or bullets 
+ * A controller for Mines. This controller automatically checks for collisions with tanks or bullets
  * and explodes the mine on detection
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class AIMineController implements Controller
@@ -22,7 +22,7 @@ public class AIMineController implements Controller
 
 	/**
 	 * constructs an AI Mine controller
-	 * 
+	 *
 	 * @param mine
 	 *            the mine this controller will correspond to.
 	 */
@@ -44,10 +44,10 @@ public class AIMineController implements Controller
 					{
 						MineExplosion mineExplosion = world.addEntity(MineExplosion.class);
 						mineExplosion.setParams(mine.getX(), mine.getY(), 0);
-						
+
 						TileUtil.getEntityTile(mine, world).clearElement();
-						mine.dispose();
-						return;	
+						world.removeEntity(mine);
+						return;
 					}
 				}
 			}

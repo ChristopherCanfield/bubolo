@@ -20,6 +20,8 @@ import bubolo.util.GameLogicException;
 import bubolo.world.entity.Actor;
 import bubolo.world.entity.Effect;
 import bubolo.world.entity.Entity;
+import bubolo.world.entity.StationaryElement;
+import bubolo.world.entity.Terrain;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
@@ -59,6 +61,13 @@ public class GameWorld implements World
 
 	// the list of all Spawn Locations currently in the world
 	private List<Entity> spawns = new ArrayList<Entity>();
+
+	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
+	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
+	// and reduced total memory usage (primarily by reducing a large number of boolean[] allocations).
+	private List<Adaptable> adaptables = new ArrayList<Adaptable>();
+	private boolean adaptableRemovedThisTick = false;
+	private boolean adaptableAddedThisTick = false;
 
 	private int worldMapWidth;
 	private int worldMapHeight;
@@ -198,6 +207,11 @@ public class GameWorld implements World
 			spawns.add(entity);
 		}
 
+		if (entity instanceof Adaptable adaptable) {
+			adaptables.add(adaptable);
+			adaptableAddedThisTick = true;
+		}
+
 		entitiesToAdd.add(entity);
 		entityMap.put(entity.getId(), entity);
 
@@ -228,6 +242,11 @@ public class GameWorld implements World
 		if (e instanceof Spawn)
 		{
 			spawns.remove(e);
+		}
+
+		if (e instanceof Adaptable adaptable) {
+			adaptables.remove(adaptable);
+			adaptableRemovedThisTick = true;
 		}
 	}
 
@@ -272,6 +291,26 @@ public class GameWorld implements World
 				}
 			}
 		}
+
+		for (int i = 0; i < 2; i++) {
+			for (Tile[] tiles : mapTiles) {
+				for (Tile tile : tiles) {
+					Terrain terrain = tile.getTerrain();
+					updateTilingStateIfAdaptable(this, terrain);
+
+					if (tile.hasElement()) {
+						StationaryElement element = tile.getElement();
+						updateTilingStateIfAdaptable(this, element);
+					}
+				}
+			}
+		}
+	}
+
+	private static void updateTilingStateIfAdaptable(World world, Entity e) {
+		if (e instanceof Adaptable adaptable) {
+			adaptable.updateTilingState(world);
+		}
 	}
 
 	@Override
@@ -314,8 +353,18 @@ public class GameWorld implements World
 		entities.removeAll(entitiesToRemove);
 		entitiesToRemove.clear();
 
+		// Update the tiling state of each entity to add, if applicable.
+		if (adaptableRemovedThisTick) {
+			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
+		}
+		adaptableRemovedThisTick = false;
+
 		entities.addAll(entitiesToAdd);
 		entitiesToAdd.clear();
+		if (adaptableAddedThisTick) {
+			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
+		}
+		adaptableAddedThisTick = false;
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import bubolo.world.entity.Terrain;
 
 /**
  * Road is a Terrain type that offers tanks improved movement speed.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Road extends Terrain implements Adaptable
@@ -26,7 +26,7 @@ public class Road extends Terrain implements Adaptable
 	 * result in a valid match when checking surrounding tiles to determine adaptive tiling state.
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Road.class };
-	
+
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
 	 */
@@ -42,7 +42,7 @@ public class Road extends Terrain implements Adaptable
 
 	/**
 	 * Construct a new Road with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Road.
 	 */
@@ -58,7 +58,6 @@ public class Road extends Terrain implements Adaptable
 	public void update(World w)
 	{
 		super.update(w);
-		updateTilingState(w);
 	}
 
 	@Override

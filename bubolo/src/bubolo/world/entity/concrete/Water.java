@@ -9,7 +9,7 @@ import bubolo.world.entity.Terrain;
 
 /**
  * Water terrain can be crossed by a Tank, but can deal damage over time.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Water extends Terrain implements Adaptable
@@ -44,7 +44,7 @@ public class Water extends Terrain implements Adaptable
 
 	/**
 	 * Construct a new Water with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Grass.
 	 */
@@ -60,7 +60,6 @@ public class Water extends Terrain implements Adaptable
 	public void update(World w)
 	{
 		super.update(w);
-		updateTilingState(w);
 	}
 
 	@Override
@@ -80,7 +79,7 @@ public class Water extends Terrain implements Adaptable
 	/**
 	 * Return an array of booleans representing whether the tiles along the corners of this Water's
 	 * tile contain a matching object for the adaptive tiling procedure.
-	 * 
+	 *
 	 * @return an array of booleans, where the elements represent whether a matching object was
 	 *         found to the top left, top right, bottom left, and bottom right of this object, in
 	 *         order.

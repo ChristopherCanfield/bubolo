@@ -78,10 +78,15 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 	}
 
 	@Override
-	public void update(World w)
+	public void update(World world)
 	{
-		super.update(w);
-		updateTilingState(w);
+		super.update(world);
+
+		if(hitPoints <= 0)
+		{
+			this.getTile().clearElement();
+			world.removeEntity(this);
+		}
 	}
 
 	@Override
@@ -128,12 +133,6 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 	{
 		Audio.play(Sfx.WALL_HIT);
 		hitPoints -= Math.abs(damagePoints);
-
-		if(hitPoints <= 0)
-		{
-			this.getTile().clearElement();
-			dispose();
-		}
 	}
 
 	/**

@@ -216,6 +216,7 @@ public class Tile
 			myTerrain = t;
 			t.setTile(this);
 			t.updateBounds();
+
 			return this;
 		}
 		else

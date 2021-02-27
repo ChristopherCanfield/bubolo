@@ -5,6 +5,7 @@ import java.util.UUID;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.world.Damageable;
+import bubolo.world.World;
 import bubolo.world.entity.StationaryElement;
 
 /**
@@ -52,6 +53,14 @@ public class Tree extends StationaryElement implements Damageable
 		hitPoints = MAX_HIT_POINTS;
 	}
 
+	@Override
+	public void update(World world) {
+		if(hitPoints <= 0) {
+			getTile().clearElement();
+			world.removeEntity(this);
+		}
+	}
+
 	/**
 	 * Returns the current health of the tree
 	 *
@@ -83,11 +92,6 @@ public class Tree extends StationaryElement implements Damageable
 	public void takeHit(int damagePoints)
 	{
 		hitPoints -= Math.abs(damagePoints);
-		if(hitPoints <= 0)
-		{
-			this.getTile().clearElement();
-			this.dispose();
-		}
 	}
 
 	/**

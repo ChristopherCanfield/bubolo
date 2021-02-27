@@ -7,18 +7,18 @@ import java.util.UUID;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
+import bubolo.audio.Audio;
+import bubolo.audio.Sfx;
 import bubolo.util.TileUtil;
 import bubolo.world.Damageable;
 import bubolo.world.World;
 import bubolo.world.entity.Effect;
 import bubolo.world.entity.Entity;
-import bubolo.audio.Audio;
-import bubolo.audio.Sfx;
 
 /**
  * Bullets are shot by Tanks and Pillboxes, and can cause damage to StationaryElements and other
  * Actors.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Bullet extends Effect
@@ -42,13 +42,13 @@ public class Bullet extends Effect
 
 	// The bullet's movement speed.
 	private static final float SPEED = 6.f;
-	
+
 	// The bullet's movement speed.
 	private static final int DAMAGEDONE = 10;
 
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
-	
+
 	private Entity parent = null;
 
 	/**
@@ -61,7 +61,7 @@ public class Bullet extends Effect
 
 	/**
 	 * Package-private constructor for testing. Allows the sound to be suppressed.
-	 * 
+	 *
 	 * @param noSound
 	 *            true if there should be no bullet creation sound, or false otherwise.
 	 */
@@ -72,7 +72,7 @@ public class Bullet extends Effect
 
 	/**
 	 * Construct a new Bullet with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Bullet.
 	 * @param noSound
@@ -95,7 +95,7 @@ public class Bullet extends Effect
 
 	/**
 	 * Construct a new Bullet with the specified UUID, and play the bullet created sound by default.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Bullet.
 	 */
@@ -143,7 +143,7 @@ public class Bullet extends Effect
 	{
 		if (distanceTraveled > MAX_DISTANCE)
 		{
-			dispose();
+			world.removeEntity(this);
 			return;
 		}
 
@@ -160,7 +160,7 @@ public class Bullet extends Effect
 				{
 					Damageable damageableCollider = (Damageable)collider;
 					damageableCollider.takeHit(DAMAGEDONE);
-					dispose();
+					world.removeEntity(this);
 					return;
 				}
 			}
@@ -193,13 +193,13 @@ public class Bullet extends Effect
 				if (overlapsEntity(localEntity)
 						||Intersector.overlapConvexPolygons(lookAheadBounds(), localEntity.getBounds()))
 				{
-					intersects.add(localEntity);	
+					intersects.add(localEntity);
 				}
 			}
 		}
 		return intersects;
 	}
-	
+
 	private Polygon lookAheadBounds()
 	{
 		Polygon lookAheadBounds = getBounds();
