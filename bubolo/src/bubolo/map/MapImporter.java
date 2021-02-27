@@ -317,23 +317,31 @@ public class MapImporter {
 					entity.setParams(posX, posY, rotation);
 
 					if (entity instanceof Terrain terrain) {
-						if (mapTiles[gridX][gridY] != null) {
-							mapTiles[gridX][gridY].setTerrain(terrain);
-						} else {
-							mapTiles[gridX][gridY] = new Tile(gridX, gridY, terrain);
-						}
+						addTerrain(terrain, world, mapTiles, gridX, gridY);
 					} else if (entity instanceof StationaryElement stationaryElement) {
-						// If the tile under the stationary element is empty, create a grass terrain there.
-						if (mapTiles[gridX][gridY] == null) {
-							Grass grass = world.addEntity(Grass.class);
-							mapTiles[gridX][gridY] = new Tile(gridX, gridY, grass);
-						}
-						mapTiles[gridX][gridY].setElement(stationaryElement);
+						addStationaryElement(stationaryElement, world, mapTiles, gridX, gridY);
 					}
 
 					diagnostics.typesImported.add(entity.getClass().getSimpleName());
 				}
 			}
 		}
+	}
+
+	private static void addTerrain(Terrain terrain, World world, Tile[][] mapTiles, int gridX, int gridY) {
+		if (mapTiles[gridX][gridY] != null) {
+			mapTiles[gridX][gridY].setTerrain(terrain);
+		} else {
+			mapTiles[gridX][gridY] = new Tile(gridX, gridY, terrain);
+		}
+	}
+
+	private static void addStationaryElement(StationaryElement e, World world, Tile[][] mapTiles, int gridX, int gridY) {
+		// If the tile under the stationary element is empty, create a grass terrain there.
+		if (mapTiles[gridX][gridY] == null) {
+			Grass grass = world.addEntity(Grass.class);
+			mapTiles[gridX][gridY] = new Tile(gridX, gridY, grass);
+		}
+		mapTiles[gridX][gridY].setElement(e);
 	}
 }
