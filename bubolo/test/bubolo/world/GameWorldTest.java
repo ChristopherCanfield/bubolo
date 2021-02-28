@@ -15,7 +15,7 @@ import org.junit.Test;
 import com.badlogic.gdx.Gdx;
 
 import bubolo.controllers.ControllerFactory;
-import bubolo.controllers.ai.AITreeController;
+import bubolo.controllers.ai.AiTreeController;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.LibGdxAppTester;
 import bubolo.world.entity.Entity;
@@ -381,10 +381,10 @@ public class GameWorldTest
 	public void addRemoveController()
 	{
 		World w = new GameWorld(0, 0);
-		w.addController(AITreeController.class);
+		w.addController(AiTreeController.class);
 		assertEquals(1, w.getControllerCount());
 
-		w.removeController(AITreeController.class);
+		w.removeController(AiTreeController.class);
 		assertEquals(0, w.getControllerCount());
 	}
 }

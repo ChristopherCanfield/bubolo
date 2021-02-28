@@ -16,7 +16,7 @@ public class AIBaseControllerTest
 	public void test()
 	{
 		LibGdxAppTester.createApp();
-		Controller c = new AIBaseController(mock(Base.class));
+		Controller c = new AiBaseController(mock(Base.class));
 		c.update(mock(World.class));
 	}
 }

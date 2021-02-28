@@ -16,7 +16,7 @@ import bubolo.world.entity.concrete.MineExplosion;
  *
  * @author BU CS673 - Clone Productions
  */
-public class AIMineController implements Controller
+public class AiMineController implements Controller
 {
 	private Mine mine;
 
@@ -26,7 +26,7 @@ public class AIMineController implements Controller
 	 * @param mine
 	 *            the mine this controller will correspond to.
 	 */
-	public AIMineController(Mine mine)
+	public AiMineController(Mine mine)
 	{
 		this.mine = mine;
 	}

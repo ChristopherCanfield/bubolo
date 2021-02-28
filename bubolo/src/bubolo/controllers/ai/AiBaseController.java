@@ -16,7 +16,7 @@ import bubolo.world.entity.concrete.Tank;
  * 
  * @author BU CS673 - Clone Productions
  */
-public class AIBaseController implements Controller
+public class AiBaseController implements Controller
 {
 	/**
 	 * the base this controller is controlling
@@ -55,7 +55,7 @@ public class AIBaseController implements Controller
 	 * @param base
 	 *            the base this controller will correspond to.
 	 */
-	public AIBaseController(Base base)
+	public AiBaseController(Base base)
 	{
 		this.base = base;
 	}

@@ -16,7 +16,7 @@ import bubolo.world.entity.concrete.Tank;
  *
  * @author BU CS673 - Clone Productions
  */
-public class AIPillboxController implements Controller
+public class AiPillboxController implements Controller
 {
 	private Pillbox pillbox;
 
@@ -26,7 +26,7 @@ public class AIPillboxController implements Controller
 	 * @param pillbox
 	 *            the pillbox this controller will correspond to.
 	 */
-	public AIPillboxController(Pillbox pillbox)
+	public AiPillboxController(Pillbox pillbox)
 	{
 		this.pillbox = pillbox;
 	}

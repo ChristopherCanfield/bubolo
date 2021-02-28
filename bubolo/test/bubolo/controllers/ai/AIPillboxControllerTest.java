@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import bubolo.controllers.Controller;
-import bubolo.controllers.ai.AIPillboxController;
+import bubolo.controllers.ai.AiPillboxController;
 import bubolo.graphics.LibGdxAppTester;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Pillbox;
@@ -18,7 +18,7 @@ public class AIPillboxControllerTest
 	public void test()
 	{
 		LibGdxAppTester.createApp();
-		Controller c = new AIPillboxController(mock(Pillbox.class));
+		Controller c = new AiPillboxController(mock(Pillbox.class));
 		c.update(mock(World.class));
 	}
 }

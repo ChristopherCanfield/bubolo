@@ -13,7 +13,7 @@ import java.util.UUID;
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
-import bubolo.controllers.ai.AITreeController;
+import bubolo.controllers.ai.AiTreeController;
 import bubolo.graphics.Sprites;
 import bubolo.util.Coordinates;
 import bubolo.util.GameLogicException;
@@ -92,7 +92,7 @@ public class GameWorld implements World
 		this.worldMapWidth = worldMapWidth;
 		this.worldMapHeight = worldMapHeight;
 
-		addController(AITreeController.class);
+		addController(AiTreeController.class);
 	}
 
 	/**

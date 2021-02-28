@@ -3,9 +3,9 @@ package bubolo.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
-import bubolo.controllers.ai.AIBaseController;
-import bubolo.controllers.ai.AIMineController;
-import bubolo.controllers.ai.AIPillboxController;
+import bubolo.controllers.ai.AiBaseController;
+import bubolo.controllers.ai.AiMineController;
+import bubolo.controllers.ai.AiPillboxController;
 import bubolo.controllers.input.KeyboardTankController;
 import bubolo.util.Nullable;
 import bubolo.world.entity.Entity;
@@ -98,7 +98,7 @@ public class Controllers
 			@Override
 			public void create(Entity entity)
 			{
-				entity.addController(new AIPillboxController((Pillbox)entity));
+				entity.addController(new AiPillboxController((Pillbox)entity));
 			}
 		});
 
@@ -108,7 +108,7 @@ public class Controllers
 			@Override
 			public void create(Entity entity)
 			{
-				entity.addController(new AIMineController((Mine)entity));
+				entity.addController(new AiMineController((Mine)entity));
 			}
 		});		
 		
@@ -118,7 +118,7 @@ public class Controllers
 			@Override
 			public void create(Entity entity)
 			{
-				entity.addController(new AIBaseController((Base)entity));
+				entity.addController(new AiBaseController((Base)entity));
 			}
 		});
 		

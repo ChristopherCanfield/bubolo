@@ -19,7 +19,7 @@ import bubolo.world.entity.concrete.Tree;
  * 
  * @author BU CS673 - Clone Productions
  */
-public class AITreeController implements Controller
+public class AiTreeController implements Controller
 {
 	/**
 	 * base score for tiles based on terrain.  surrounding tiles use these divided by 8
@@ -56,7 +56,7 @@ public class AITreeController implements Controller
 	/**
 	 * Constructs a new AITreeController.
 	 */
-	public AITreeController()
+	public AiTreeController()
 	{
 	}
 
