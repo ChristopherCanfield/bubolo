@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.concrete.Mine;
 
 /**
  * The graphical representation of a Mine.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class MineSprite extends AbstractEntitySprite<Mine>
@@ -45,7 +44,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 	// The last animation state that the Engineer was in, used to determine when to reset
 	// the starting frame.
 	private int lastAnimationState = 0;
-	
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "mine.png";
 
@@ -53,7 +52,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 	 * Constructor for the MineSprite. This is Package-private because sprites should not
 	 * be directly created outside of the graphics system (instead, call the
 	 * Sprite.create(entity) static method).
-	 * 
+	 *
 	 * @param mine
 	 *            Reference to the Mine that this MineSprite represents.
 	 */
@@ -61,10 +60,8 @@ class MineSprite extends AbstractEntitySprite<Mine>
 	{
 		super(DrawLayer.THIRD, mine);
 
-		allFrames = TextureUtil.splitFrames(
-				Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE), 21, 21);
-		explodingFrames = new TextureRegion[][] { allFrames[2], allFrames[3], allFrames[4],
-				allFrames[5] };
+		allFrames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 21, 21);
+		explodingFrames = new TextureRegion[][] { allFrames[2], allFrames[3], allFrames[4], allFrames[5] };
 		idleFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2], allFrames[1] };
 	}
 

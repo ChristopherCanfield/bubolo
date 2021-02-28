@@ -1,12 +1,15 @@
-package bubolo.util;
+package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import bubolo.util.Coordinates;
+import bubolo.util.TextureFormatException;
+
 /**
  * Used for processing standard format textures of different kinds for use in adaptive
  * tiling, animations, and coloration.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public abstract class TextureUtil
@@ -16,7 +19,7 @@ public abstract class TextureUtil
 	 * width of each frame to determine start and end points of each frame. Used for
 	 * separating ColorSets and animation frames. Note that all frames must be the same
 	 * size, and the texture must have no empty space.
-	 * 
+	 *
 	 * @param tex
 	 *            is the texture to be split into frames.
 	 * @param frameWidth
@@ -45,19 +48,26 @@ public abstract class TextureUtil
 			}
 		}
 		return frameSets;
+	}
 
+	public static TextureRegion[] adaptiveSplit(Texture texture, Class<? extends Sprite> spriteType) {
+		if (spriteType.equals(DeepWaterSprite.class) || spriteType.equals(WaterSprite.class)) {
+			return adaptiveSplit_water(texture);
+		} else {
+			return adaptiveSplit_16(texture);
+		}
 	}
 
 	/**
 	 * Convert a single .png representing multiple tiling states into an Array of 16
 	 * different texture regions, according to the established 4x4 standard layout.
-	 * 
+	 *
 	 * @param tex
 	 *            is a 4x4 input texture to be split. Must be at 128 x 128 resolution.
 	 * @return an array of TextureRegions representing textures for each of the 16
 	 *         adaptive tiling states.
 	 */
-	public static TextureRegion[] adaptiveSplit_16(Texture tex)
+	private static TextureRegion[] adaptiveSplit_16(Texture tex)
 	{
 
 		if (tex.getHeight() != Coordinates.TILE_TO_WORLD_SCALE * 4
@@ -98,14 +108,14 @@ public abstract class TextureUtil
 	 * Convert a single .png representing multiple tiling states into an Array of 34
 	 * different texture regions, according to the established 4x4 + 3x3 + 3x3 standard
 	 * layout. Primarily used for the Water Terrain.
-	 * 
+	 *
 	 * @param tex
 	 *            is a 4x4 + 3x3 + 3x3 input texture to be split. Must be at 224 x 192
 	 *            resolution.
 	 * @return an array of TextureRegions representing textures for each of the 9 adaptive
 	 *         tiling states.
 	 */
-	public static TextureRegion[] adaptiveSplit_water(Texture tex)
+	private static TextureRegion[] adaptiveSplit_water(Texture tex)
 	{
 		if (tex.getHeight() != Coordinates.TILE_TO_WORLD_SCALE * 4
 				&& tex.getWidth() != Coordinates.TILE_TO_WORLD_SCALE * 6)

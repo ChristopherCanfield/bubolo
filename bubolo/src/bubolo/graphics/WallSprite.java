@@ -1,16 +1,14 @@
 package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.concrete.Wall;
 
 /**
  * The graphical representation of a Wall
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class WallSprite extends AbstractEntitySprite<Wall>
@@ -38,7 +36,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	/**
 	 * Constructor for the WallSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param wall
 	 *            the wall entity.
 	 */
@@ -46,8 +44,8 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	{
 		super(DrawLayer.THIRD, wall);
 
-		Texture tex = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
-		frames = TextureUtil.adaptiveSplit_16(tex);
+		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
+		frames = Graphics.getTextureRegion1d(path, getClass());
 	}
 
 	/**

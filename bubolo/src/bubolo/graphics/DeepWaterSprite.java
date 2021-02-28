@@ -4,34 +4,34 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.concrete.DeepWater;
 
 /**
  * The graphical representation of a DeepWater.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 {
 	// list of texture regions, used for different tiling states
 	private TextureRegion[] frames;
-	
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "deepwater.png";
 
 	/**
 	 * Constructor for the DeepWaterSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param deepWater
 	 *            Reference to the DeepWater that this DeepWaterSprite represents.
 	 */
 	DeepWaterSprite(DeepWater deepWater)
 	{
 		super(DrawLayer.SECOND, deepWater);
-		frames = TextureUtil.adaptiveSplit_water((Graphics.getTexture(Graphics.TEXTURE_PATH
-				+ TEXTURE_FILE)));
+
+		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
+		frames = Graphics.getTextureRegion1d(path, getClass());
 	}
 
 	@Override

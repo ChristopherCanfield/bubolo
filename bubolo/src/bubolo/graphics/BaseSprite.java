@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.concrete.Base;
 
 /**
  * The graphical representation of a Base Entity.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class BaseSprite extends AbstractEntitySprite<Base>
@@ -53,7 +52,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 	 * Constructor for the BaseSprite. This is Package-private because sprites should not
 	 * be directly created outside of the graphics system (instead, call the
 	 * Sprite.create(entity) static method).
-	 * 
+	 *
 	 * @param base
 	 *            Reference to the Base that this BaseSprite represents.
 	 */
@@ -61,8 +60,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 	{
 		super(DrawLayer.THIRD, base);
 
-		allFrames = TextureUtil.splitFrames(
-				Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE), 32, 32);
+		allFrames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 32, 32);
 		chargingFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2],
 				allFrames[3], allFrames[4], allFrames[5], allFrames[6], allFrames[7] };
 		idleFrames = allFrames[0];

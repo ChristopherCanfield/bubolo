@@ -4,28 +4,27 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.concrete.Pillbox;
 
 /**
  * The graphical representation of a Pillbox
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class PillboxSprite extends AbstractEntitySprite<Pillbox>
 {
-	private TextureRegion[][] allFrames;
+	private TextureRegion[][] frames;
 
 	/**
 	 * Represents the total number of different damaged states that exist in this sprite's
 	 * texture.
 	 */
-	// TODO (cdc - 3/27/2014): Uncomment the next line once the damaged state 
+	// TODO (cdc - 3/27/2014): Uncomment the next line once the damaged state
 	// functionality is implemented.
 	//private final int DAMAGED_STATES = 5;
 
 	private int colorId = ColorSets.NEUTRAL;
-	
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "pillbox.png";
 
@@ -33,14 +32,14 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 	 * Represents the discrete damaged state that the sprite should be in, calculated from
 	 * the Entity's relative health.
 	 */
-	// TODO (cdc - 3/27/2014): Uncomment the next line once the damaged state 
+	// TODO (cdc - 3/27/2014): Uncomment the next line once the damaged state
 	// functionality is implemented.
 	//private int damagedState;
 
 	/**
 	 * Constructor for the PillboxSprite. This is Package-private because sprites should
 	 * not be directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param pillbox
 	 *            Reference to the pillbox that this PillboxSprite represents.
 	 */
@@ -48,8 +47,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 	{
 		super(DrawLayer.THIRD, pillbox);
 
-		allFrames = TextureUtil.splitFrames(
-				Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE), 32, 32);
+		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 32, 32);
 	}
 
 	/**
@@ -60,10 +58,10 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 	{
 		// Compute the amount of health remaining for this Sprite's Entity as a fraction
 		// of its max HP.
-		
-		// TODO (cdc - 3/27/2014): Uncomment the next lines once the damaged state 
+
+		// TODO (cdc - 3/27/2014): Uncomment the next lines once the damaged state
 		// functionality is implemented.
-		
+
 		//float healthFraction = (float) this.getEntity().getHP() / this.getEntity().getMaxHP();
 		// Convert that fraction to an integer between 0 and DAMAGED_STATES -1.
 		//damagedState = Math.round(healthFraction * DAMAGED_STATES);
@@ -100,7 +98,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 		{
 			// TODO: Point to different texture regions based on the damagedState field,
 			// which changes with Entity HP percentage.
-			drawTexture(batch, camera, layer, allFrames[0][colorId]);
+			drawTexture(batch, camera, layer, frames[0][colorId]);
 		}
 	}
 }

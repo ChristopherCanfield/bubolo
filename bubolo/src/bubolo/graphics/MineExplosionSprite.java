@@ -4,13 +4,12 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.Entity;
 import bubolo.world.entity.concrete.MineExplosion;
 
 /**
  * The graphical representation of a MineExplosion Entity.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class MineExplosionSprite extends AbstractEntitySprite<Entity>
@@ -33,14 +32,14 @@ class MineExplosionSprite extends AbstractEntitySprite<Entity>
 
 	// The time of the last frame, in milliseconds.
 	private long lastFrameTime;
-	
+
 	/** The file name of the texture. */
 	static final String TEXTURE_FILE = "mineExplosion.png";
 
 	/**
 	 * Constructor for the MineExplosionSprite. This is Package-private because sprites
 	 * should not be directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param exp
 	 *            Reference to the MineExplosion that this MineExplosionSprite represents.
 	 */
@@ -48,9 +47,8 @@ class MineExplosionSprite extends AbstractEntitySprite<Entity>
 	{
 		super(DrawLayer.TOP, exp);
 
-		frames = TextureUtil.splitFrames(
-				Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE), 60, 60);
-		
+		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 60, 60);
+
 		millisPerFrame = (((MineExplosion)this.getEntity()).getExplosionLength())/frames.length;
 	}
 

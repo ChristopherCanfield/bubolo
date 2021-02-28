@@ -4,11 +4,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.TextureUtil;
-
 /**
  * A tank explosion.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class TankExplosionSprite extends Sprite
@@ -40,7 +38,7 @@ class TankExplosionSprite extends Sprite
 	/**
 	 * Constructs a TankExplosionSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param x
 	 *            the x position of the explosion.
 	 * @param y
@@ -50,8 +48,7 @@ class TankExplosionSprite extends Sprite
 	{
 		super(DrawLayer.TOP);
 
-		frames = TextureUtil.splitFrames(
-				Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE), WIDTH, HEIGHT);
+		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, WIDTH, HEIGHT);
 
 		frameTimeRemaining = millisPerFrame;
 		lastFrameTime = System.currentTimeMillis();

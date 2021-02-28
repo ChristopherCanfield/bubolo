@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.concrete.Tank;
 
 /**

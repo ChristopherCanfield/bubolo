@@ -8,13 +8,13 @@ import bubolo.world.entity.Entity;
 
 /**
  * The graphical representation of a bullet entity.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class BulletSprite extends AbstractEntitySprite<Entity>
 {
 	private Texture image;
-	
+
 	private int x;
 	private int y;
 
@@ -24,7 +24,7 @@ class BulletSprite extends AbstractEntitySprite<Entity>
 	/**
 	 * Constructor for the BulletSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param bullet
 	 *            Reference to the Bullet that this BulletSprite represents.
 	 */
@@ -47,7 +47,7 @@ class BulletSprite extends AbstractEntitySprite<Entity>
 		else
 		{
 			drawTexture(batch, camera, layer, image);
-			
+
 			this.x = Math.round(getEntity().getX());
 			this.y = Math.round(getEntity().getY());
 		}

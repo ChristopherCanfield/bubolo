@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -46,7 +47,9 @@ public class Graphics
 
 	// Stores the textures, ensuring that only one is needed for all instances
 	// of a given sprite.
-	private static Map<String, Texture> textures = new HashMap<String, Texture>();
+	private static Map<String, Texture> textures = new HashMap<>();
+	private static Map<String, TextureRegion[]> textureRegions1d = new HashMap<>();
+	private static Map<String, TextureRegion[][]> textureRegions2d = new HashMap<>();
 
 	private SpriteBatch batch;
 	private Camera camera;
@@ -105,6 +108,44 @@ public class Graphics
 		}
 
 		return texture;
+	}
+
+	/**
+	 * Returns a texture region from a path to a texture. Ensures that the same texture region isn't stored
+	 * multiple times. Will create the region if it has not yet been created.
+	 *
+	 * @param path the path to the texture file.
+	 * @param spriteType the class type of the sprite requesting the texture.
+	 * @return the requested texture region.
+	 */
+	static TextureRegion[] getTextureRegion1d(String path, Class<? extends Sprite> spriteType) {
+		TextureRegion[] textureRegion = textureRegions1d.get(path);
+		if (textureRegion == null) {
+			Texture texture = getTexture(path);
+			textureRegion = TextureUtil.adaptiveSplit(texture, spriteType);
+			textureRegions1d.put(path, textureRegion);
+		}
+		return textureRegion;
+	}
+
+	/**
+	 * Returns a texture region from a path to a texture. Ensures that the same texture region isn't stored
+	 * multiple times. Will create the region if it has not yet been created.
+	 *
+	 * @param path the path to the texture file.
+	 * @param frameWidth each frame's width.
+	 * @param frameHeight each frame's height.
+	 * @return the requested texture region.
+	 */
+	static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight) {
+		TextureRegion[][] textureRegion = textureRegions2d.get(path);
+		if (textureRegion == null) {
+			Texture texture = getTexture(path);
+			textureRegion = TextureUtil.splitFrames(texture, frameWidth, frameHeight);
+			textureRegions2d.put(path, textureRegion);
+		}
+
+		return textureRegion;
 	}
 
 	/**

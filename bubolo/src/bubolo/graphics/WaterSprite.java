@@ -4,33 +4,33 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.TextureUtil;
 import bubolo.world.entity.concrete.Water;
 
 /**
  * The graphical representation of a Water.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class WaterSprite extends AbstractEntitySprite<Water>
 {
 	private TextureRegion[] frames;
-	
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "water.png";
 
 	/**
 	 * Constructor for the WaterSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param water
 	 *            Reference to the Water that this WaterSprite represents.
 	 */
 	WaterSprite(Water water)
 	{
 		super(DrawLayer.SECOND, water);
-		frames = TextureUtil.adaptiveSplit_water(Graphics.getTexture(Graphics.TEXTURE_PATH
-				+ TEXTURE_FILE));
+
+		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
+		frames = Graphics.getTextureRegion1d(path, getClass());
 	}
 
 	@Override
@@ -72,7 +72,7 @@ class WaterSprite extends AbstractEntitySprite<Water>
 			}
 
 		}
-		
+
 		if (currentState == 15 || currentState == 14 || currentState == 6 || currentState == 7)
 		{
 			if (!corners[2])
