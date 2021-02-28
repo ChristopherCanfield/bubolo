@@ -34,8 +34,8 @@ public class AiPillboxController implements Controller
 	@Override
 	public void update(World world)
 	{
-		if (pillbox.isCannonReady())
-		{
+		// Only fire if cannon is ready and the pillbox has more than 0 health.
+		if (pillbox.isCannonReady() && pillbox.getHitPoints() > 0) {
 			Tank target = getTarget(world);
 			if (target != null) {
 				fire(getTargetDirection(target), world);
@@ -67,12 +67,11 @@ public class AiPillboxController implements Controller
 	}
 
 	/**
-	 * find a target for the pillbox to shoot at
+	 * Finds a target for the pillbox.
 	 *
-	 * @param world
-	 *            reference to the game world
+	 * @param world reference to the game world
 	 *
-	 * @return target always will return the closest tank regardless if it is range or not
+	 * @return target always the closest tank that is within range, or null if no tank is within range.
 	 */
 	private Tank getTarget(World world)
 	{
