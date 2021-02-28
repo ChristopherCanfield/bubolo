@@ -8,18 +8,19 @@ import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
 import bubolo.world.entity.Entity;
+import bubolo.world.entity.concrete.Tank;
 
 /**
  * Provides access to game entities. This is the primary interface between the Model and other
  * systems.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public interface World
 {
 	/**
 	 * Returns an entity from a user id. Throws a GameLogicException if the entity is not found.
-	 * 
+	 *
 	 * @param id
 	 *            the entity's unique id.
 	 * @return the requested entity.
@@ -31,7 +32,7 @@ public interface World
 	/**
 	 * Returns the list of all entities in the world. Ordering should not be assumed, and may change
 	 * between calls.
-	 * 
+	 *
 	 * @return the list of entities.
 	 */
 	public List<Entity> getEntities();
@@ -39,15 +40,15 @@ public interface World
 	/**
 	 * Returns the list of all tanks in the world. Ordering should not be assumed, and may change
 	 * between calls.
-	 * 
+	 *
 	 * @return the list of tanks.
 	 */
-	public List<Entity> getTanks();
+	public List<Tank> getTanks();
 
 	/**
 	 * Returns the list of all Spawn Locations in the world. Ordering should not be assumed, and may
 	 * change between calls.
-	 * 
+	 *
 	 * @return the list of Spawns.
 	 */
 	public List<Entity> getSpawns();
@@ -55,7 +56,7 @@ public interface World
 	/**
 	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
 	 * between calls.
-	 * 
+	 *
 	 * @return the list of actors.
 	 */
 	public List<Entity> getActors();
@@ -63,7 +64,7 @@ public interface World
 	/**
 	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
 	 * between calls.
-	 * 
+	 *
 	 * @return the list of effects.
 	 */
 	public List<Entity> getEffects();
@@ -76,7 +77,7 @@ public interface World
 	 * <li>A new Sprite is created and added to the Sprites list.</li>
 	 * <li>One or more Controllers are created and added to the Controllers list.</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param c
 	 *            the entity's class object. For example, to create a new Tank, call this method
 	 *            using the following form: <code>World.addEntity(Tank.class).</code>
@@ -135,14 +136,14 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, @Nullable UUID id, 
+	public <T extends Entity> T addEntity(Class<T> c, @Nullable UUID id,
 			@Nullable ControllerFactory controllerFactory)
 			throws GameLogicException;
 
 	/**
 	 * Removes an entity from the world. After this method is called, the specified entity will no
 	 * longer be drawn or updated.
-	 * 
+	 *
 	 * @param e
 	 *            the entity to remove.
 	 */
@@ -151,7 +152,7 @@ public interface World
 	/**
 	 * Removes an entity from the world. After this method is called, the specified entity will no
 	 * longer be drawn or updated. Throws a GameLogicException if the entity is not found.
-	 * 
+	 *
 	 * @param id
 	 *            the unique id of the entity to remove.
 	 * @throws GameLogicException
@@ -161,21 +162,21 @@ public interface World
 
 	/**
 	 * Returns the width of the game map.
-	 * 
+	 *
 	 * @return the width of the game map.
 	 */
 	public int getMapWidth();
 
 	/**
 	 * Returns the height of the game map.
-	 * 
+	 *
 	 * @return the width of the game map.
 	 */
 	public int getMapHeight();
 
 	/**
 	 * Sets the world's height.
-	 * 
+	 *
 	 * @param height
 	 *            the world's height.
 	 */
@@ -183,7 +184,7 @@ public interface World
 
 	/**
 	 * Sets the world's width.
-	 * 
+	 *
 	 * @param width
 	 *            the world's width.
 	 */
@@ -196,14 +197,14 @@ public interface World
 
 	/**
 	 * Returns a 2d Tile Array representation of stationary objects in the world
-	 * 
+	 *
 	 * @return the 2d Tile Array representing the stationary objects in the world
 	 */
 	public Tile[][] getMapTiles();
 
 	/**
 	 * Allows the setting of a 2d Tile Array representation of stationary objects in the world
-	 * 
+	 *
 	 * @param mapTiles
 	 *            is the representation to set the MapTiles field to
 	 */
@@ -211,7 +212,7 @@ public interface World
 
 	/**
 	 * Adds a controller of the specified type to the world.
-	 * 
+	 *
 	 * @param controllerType
 	 *            the type of the controller to add.
 	 */
@@ -219,12 +220,12 @@ public interface World
 
 	/**
 	 * Removes a controller of the specified type to the world.
-	 * 
+	 *
 	 * @param controllerType
 	 *            the type of the controller to remove.
 	 */
 	public void removeController(Class<? extends Controller> controllerType);
-	
+
 	/**
 	 * Returns the world controller count.
 	 * @return the world controller count.

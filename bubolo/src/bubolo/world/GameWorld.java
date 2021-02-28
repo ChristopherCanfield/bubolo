@@ -48,7 +48,7 @@ public class GameWorld implements World
 	private List<Entity> entitiesToAdd = new ArrayList<Entity>();
 
 	// the list of Tanks that exist in the world
-	private List<Entity> tanks = new ArrayList<Entity>();
+	private List<Tank> tanks = new ArrayList<Tank>();
 
 	// list of world controllers
 	private List<Controller> worldControllers = new ArrayList<Controller>();
@@ -187,9 +187,9 @@ public class GameWorld implements World
 		}
 		Controllers.getInstance().createController(entity, controllerFactory);
 
-		if (entity instanceof Tank)
+		if (entity instanceof Tank tank)
 		{
-			tanks.add(entity);
+			tanks.add(tank);
 		}
 
 		if (entity instanceof Effect)
@@ -368,9 +368,9 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public List<Entity> getTanks()
+	public List<Tank> getTanks()
 	{
-		List<Entity> copyOfTanks = Collections.unmodifiableList(tanks);
+		List<Tank> copyOfTanks = Collections.unmodifiableList(tanks);
 		return copyOfTanks;
 	}
 

@@ -13,7 +13,7 @@ import bubolo.world.entity.concrete.Tank;
 /**
  * A controller for pillboxes. This controller automatically finds a target within range
  * of the pillbox and fires based on the set reload speed.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class AIPillboxController implements Controller
@@ -22,7 +22,7 @@ public class AIPillboxController implements Controller
 
 	/**
 	 * constructs an AI Pillbox controller
-	 * 
+	 *
 	 * @param pillbox
 	 *            the pillbox this controller will correspond to.
 	 */
@@ -36,19 +36,15 @@ public class AIPillboxController implements Controller
 	{
 		if (pillbox.isCannonReady())
 		{
-			Tank target = (Tank)getTarget(world);
-			if (target != null)
-			{	
-				if (targetInRange(target))
-				{
-					fire(getTargetDirection(target), world);
-				}						
+			Tank target = getTarget(world);
+			if (target != null) {
+				fire(getTargetDirection(target), world);
 			}
 		}
-		
+
 		if(!this.pillbox.isOwned() && this.pillbox.getHitPoints() <= 0)
 		{
-			for(Entity entity:TileUtil.getLocalCollisions(this.pillbox, world))
+			for(Entity entity : TileUtil.getLocalCollisions(this.pillbox, world))
 			{
 				if (entity instanceof Tank)
 				{
@@ -72,77 +68,55 @@ public class AIPillboxController implements Controller
 
 	/**
 	 * find a target for the pillbox to shoot at
-	 * 
+	 *
 	 * @param world
 	 *            reference to the game world
-	 * 
+	 *
 	 * @return target always will return the closest tank regardless if it is range or not
 	 */
-	private Entity getTarget(World world)
+	private Tank getTarget(World world)
 	{
-		Entity target = null;
-		double xdistance = 0;
-		double ydistance = 0;
-		double targetdistance = -1;
-		double distance = 0;
+		Tank target = null;
+		double targetDistance = Integer.MAX_VALUE;
 
-		for (Entity entity : world.getTanks())
-		{
-			if(entity.getId() != this.pillbox.getOwnerUID())
-			{
-				xdistance = Math.abs(pillbox.getX() - entity.getX());
-				ydistance = Math.abs(pillbox.getY() - entity.getY());
-				distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
-	
-				if (targetdistance > -1)
-				{
-					if (distance < targetdistance)
-					{
-						targetdistance = distance;
-						target = entity;
+		for (Tank tank : world.getTanks()) {
+			// Don't attack the owner's tank, or hidden tanks.
+			if(!tank.getId().equals(pillbox.getOwnerUID()) && !tank.isHidden()) {
+				if (targetInRange(tank)) {
+					double xdistance = Math.abs(pillbox.getX() - tank.getX());
+					double ydistance = Math.abs(pillbox.getY() - tank.getY());
+					double newTargetDistance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
+
+					// Select the closest tank as the target.
+					if (newTargetDistance < targetDistance) {
+						target = tank;
+						targetDistance = newTargetDistance;
 					}
-				}
-				else
-				{
-					targetdistance = distance;
-					target = entity;
 				}
 			}
 		}
-
-		if (target == null || ((Tank) target).isHidden())
-		{
-			return null;
-		}
-		else
-		{
-			return target;
-		}
+		return target;
 	}
 
 	/**
 	 * determine if the target tank is within range of the pillbox
-	 * 
+	 *
 	 * @param target
 	 *            the tank the pillbox is targeting
 	 * @return targetInRange returns true if the target is within range of this pillbox
 	 */
 	private boolean targetInRange(Entity target)
 	{
-		double xdistance = 0;
-		double ydistance = 0;
-		double distance = 0;
-
-		xdistance = Math.abs(pillbox.getX() - target.getX());
-		ydistance = Math.abs(pillbox.getY() - target.getY());
-		distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
+		double xdistance = Math.abs(pillbox.getX() - target.getX());
+		double ydistance = Math.abs(pillbox.getY() - target.getY());
+		double distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
 
 		return (distance < pillbox.getRange());
 	}
 
 	/**
 	 * returns the angle to the closest target for the pillbox
-	 * 
+	 *
 	 * @param Target
 	 *            the Tank for the pillbox to target
 	 * @return the angle toward the closest tank. returns -1 if no tanks in range
@@ -162,7 +136,7 @@ public class AIPillboxController implements Controller
 
 	/**
 	 * tell the pillbox to aim and fire
-	 * 
+	 *
 	 * @param rotation
 	 * @param world
 	 */
