@@ -67,7 +67,7 @@ public class Tank extends Actor implements Damageable
 	private boolean hidden;
 
 	// The tank's rate of rotation per tick.
-	private static final float rotationRate = 0.05f;
+	private static final float rotationRate = 0.0325f;
 
 	// The reload speed of the tank's cannon, in milliseconds.
 	private static final long cannonReloadSpeed = 500;
