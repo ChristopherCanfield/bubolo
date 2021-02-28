@@ -42,23 +42,23 @@ public class AiPillboxController implements Controller
 			}
 		}
 
-		if(!this.pillbox.isOwned() && this.pillbox.getHitPoints() <= 0)
+		if(!pillbox.isOwned() && pillbox.getHitPoints() <= 0)
 		{
-			for(Entity entity : TileUtil.getLocalCollisions(this.pillbox, world))
+			for(Entity entity : TileUtil.getLocalCollisions(pillbox, world))
 			{
 				if (entity instanceof Tank)
 				{
 					Tank tank = (Tank)entity;
-					this.pillbox.setOwned(true);
-					this.pillbox.setOwnerUID(tank.getId());
+					pillbox.setOwned(true);
+					pillbox.setOwnerUID(tank.getId());
 					if(tank.isLocalPlayer())
 					{
-						this.pillbox.setLocalPlayer(true);
-						sendNetUpdate(this.pillbox);
+						pillbox.setLocalPlayer(true);
+						sendNetUpdate(pillbox);
 					}
 					else
 					{
-						this.pillbox.setLocalPlayer(false);
+						pillbox.setLocalPlayer(false);
 					}
 				}
 			}
