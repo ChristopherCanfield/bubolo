@@ -3,9 +3,6 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
-import bubolo.util.TextureUtil;
 
 /**
  * Grass image used to fix gaps between certain tiles.
@@ -14,7 +11,7 @@ import bubolo.util.TextureUtil;
  */
 class BackgroundSprite extends Sprite
 {
-	private TextureRegion[][] frames;
+	private final Texture texture;
 
 	// Package private to allow the Graphics class to update this.
 	int x;
@@ -32,8 +29,7 @@ class BackgroundSprite extends Sprite
 	{
 		super(DrawLayer.BACKGROUND);
 
-		Texture image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
-		frames = TextureUtil.splitFrames(image, HEIGHT, WIDTH);
+		texture = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 
 		this.x = x;
 		this.y = y;
@@ -42,7 +38,7 @@ class BackgroundSprite extends Sprite
 	@Override
 	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
 	{
-		drawTexture(batch, camera, layer, frames[0][0]);
+		drawTexture(batch, camera, layer, texture);
 	}
 
 	@Override

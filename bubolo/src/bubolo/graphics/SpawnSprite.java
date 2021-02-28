@@ -10,12 +10,12 @@ import bubolo.world.entity.Entity;
 
 /**
  * The graphical representation of Spawn entity.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class SpawnSprite extends AbstractEntitySprite<Entity>
 {
-	private Texture image;
+	private final Texture image;
 
 	private TextureRegion[][] frames;
 
@@ -28,7 +28,7 @@ class SpawnSprite extends AbstractEntitySprite<Entity>
 	/**
 	 * Constructor for the SpawnSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param spawn
 	 *            Reference to the spawn that this SpawnSprite represents.
 	 */
@@ -55,7 +55,7 @@ class SpawnSprite extends AbstractEntitySprite<Entity>
 
 	/**
 	 * Specifies whether the spawn sprite should be visible. The default is false.
-	 * 
+	 *
 	 * @param visible
 	 *            true if the spawn sprite should be visible, or false otherwise.
 	 */
@@ -63,7 +63,7 @@ class SpawnSprite extends AbstractEntitySprite<Entity>
 	{
 		this.visible = visible;
 	}
-	
+
 	/**
 	 * Specifies whether the spawn sprite is visible.
 	 * @return true if the spawn sprite is visible, or false otherwise.
