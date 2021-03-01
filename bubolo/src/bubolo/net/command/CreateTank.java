@@ -23,6 +23,8 @@ public class CreateTank extends CreateEntity
 {
 	private static final long serialVersionUID = 1L;
 
+	private final String playerName;
+
 	/**
 	 * @param tank
 	 *            reference to the tank that should be created on network players' computers.
@@ -39,6 +41,9 @@ public class CreateTank extends CreateEntity
 						entity.addController(new NetworkTankController());
 					}
 				});
+
+		assert tank.getPlayerName() != null;
+		this.playerName = tank.getPlayerName();
 	}
 
 	@Override
@@ -48,7 +53,8 @@ public class CreateTank extends CreateEntity
 
 		try
 		{
-			Tank tank = (Tank)world.getEntity(getId());
+			Tank tank = (Tank) world.getEntity(getId());
+			tank.setPlayerName(playerName);
 			tank.setLocalPlayer(false);
 		}
 		catch (Exception e)

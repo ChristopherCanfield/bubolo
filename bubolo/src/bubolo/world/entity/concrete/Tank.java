@@ -31,13 +31,17 @@ import bubolo.world.entity.Terrain;
 public class Tank extends Actor implements Damageable
 {
 	/**
-	 * UID of the owner of this Tank
-	 */
-	private UUID ownerUID;
-	/**
 	 * Used when serializing and de-serializing.
 	 */
 	private static final long serialVersionUID = 457933513574468829L;
+
+	/**
+	 * UID of the owner of this Tank.
+	 * TODO (cdc - 2021-03-01): Is this needed?
+	 */
+	private UUID ownerUID;
+
+	private String playerName;
 
 	// Max speed in pixels per tick.
 	private static final float maxSpeed = 4.f;
@@ -179,6 +183,14 @@ public class Tank extends Actor implements Damageable
 		treeCount = 0;
 		pillboxCount = 0;
 		mineCount = TANK_MAX_MINE_COUNT;
+	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void setPlayerName(String name) {
+		this.playerName = name;
 	}
 
 	/**
