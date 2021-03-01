@@ -16,7 +16,7 @@ import bubolo.world.entity.concrete.Tank;
 
 /**
  * Creates a network-controlled tank on connected computers.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class CreateTank extends CreateEntity
@@ -53,7 +53,7 @@ public class CreateTank extends CreateEntity
 		}
 		catch (Exception e)
 		{
-			Logger.getGlobal().severe("CreateTank: The tank was not created. ID: " + getId());
+			Logger.getGlobal().severe("CreateTank net command: The tank was not created. ID: " + getId());
 		}
 	}
 }

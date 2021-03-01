@@ -17,7 +17,7 @@ import bubolo.world.entity.Entity;
 
 /**
  * Moves an entity in the world.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class MoveEntity implements NetworkCommand
@@ -33,7 +33,7 @@ public class MoveEntity implements NetworkCommand
 
 	/**
 	 * Constructs a MoveEntity object.
-	 * 
+	 *
 	 * @param entity
 	 *            the entity to move.
 	 */
@@ -55,7 +55,7 @@ public class MoveEntity implements NetworkCommand
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().log(Level.WARNING, "MoveEntity: Unable to find entity " + id);
+			Logger.getGlobal().log(Level.WARNING, "MoveEntity net command: Unable to find entity " + id);
 		}
 	}
 }

@@ -18,7 +18,7 @@ import bubolo.world.entity.Entity;
 
 /**
  * Moves an entity in the world.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class UpdateOwnable implements NetworkCommand
@@ -32,10 +32,10 @@ public class UpdateOwnable implements NetworkCommand
 
 	/**
 	 * Update the status of an ownable entity
-	 * @param ownable 
+	 * @param ownable
 	 * 		the ownable entity to update
 	 */
-	
+
 	public UpdateOwnable(Ownable ownable)
 	{
 		this.id = ownable.getId();
@@ -55,7 +55,7 @@ public class UpdateOwnable implements NetworkCommand
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().log(Level.WARNING, "UpdateOwnable: Unable to find Ownable " + id);
+			Logger.getGlobal().log(Level.WARNING, "UpdateOwnable net command: Unable to find ownable entity. ID: " + id);
 		}
 	}
 }

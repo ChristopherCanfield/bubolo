@@ -16,18 +16,18 @@ import bubolo.world.entity.Entity;
 
 /**
  * Creates an ownable entity on remote computers.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class CreateOwnable extends CreateEntity
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final UUID ownerUID;
 
 	/**
 	 * Constructs a CreateOwnable object.
-	 * 
+	 *
 	 * @param type
 	 *            the ownable's class.
 	 * @param id
@@ -68,7 +68,7 @@ public class CreateOwnable extends CreateEntity
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().severe("CreateBullet: The bullet was not created. ID: " + getId());
+			Logger.getGlobal().severe("CreateOwnable net command: The entity was not created. ID: " + getId());
 		}
 	}
 }

@@ -18,7 +18,7 @@ import bubolo.world.entity.Entity;
 
 /**
  * Generic entity creator for the network.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class CreateEntity implements NetworkCommand
@@ -37,7 +37,7 @@ public class CreateEntity implements NetworkCommand
 
 	/**
 	 * Constructs a CreateEntity object.
-	 * 
+	 *
 	 * @param type
 	 *            the entity's class.
 	 * @param id
@@ -61,7 +61,7 @@ public class CreateEntity implements NetworkCommand
 
 	/**
 	 * Constructs a CreateEntity object.
-	 * 
+	 *
 	 * @param type
 	 *            the entity's class.
 	 * @param id
@@ -100,9 +100,9 @@ public class CreateEntity implements NetworkCommand
 			{
 				entity = world.addEntity(type, id, factory);
 			}
-			
+
 			entity.setX(x).setY(y).setRotation(rotation);
-			
+
 			if (entity instanceof Ownable)
 			{
 				((Ownable)entity).setLocalPlayer(false);
@@ -110,10 +110,10 @@ public class CreateEntity implements NetworkCommand
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().severe("CreateEntity: Entity was not created. ID: " + id);
+			Logger.getGlobal().severe("CreateEntity net command: Entity was not created. ID: " + id);
 		}
 	}
-	
+
 	/**
 	 * Returns the entity's unique id.
 	 * @return the entity's unique id.

@@ -16,18 +16,18 @@ import bubolo.world.entity.concrete.Bullet;
 
 /**
  * Creates a bullet on remote computers.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class CreateBullet extends CreateEntity
 {
 	private static final long serialVersionUID = 1L;
-	
+
 	private final UUID parentId;
 
 	/**
 	 * Constructs a CreateBullet object.
-	 * 
+	 *
 	 * @param type
 	 *            the bullet's class.
 	 * @param id
@@ -61,7 +61,7 @@ public class CreateBullet extends CreateEntity
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().severe("CreateBullet: The bullet was not created. ID: " + getId());
+			Logger.getGlobal().severe("CreateBullet net command: The bullet was not created. ID: " + getId());
 		}
 	}
 }
