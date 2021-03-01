@@ -12,6 +12,7 @@ import bubolo.util.GameLogicException;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.Entity;
+import bubolo.world.entity.concrete.Tank;
 
 /**
  * Mock class used for testing components that need a world implementation
@@ -22,8 +23,7 @@ public class MockWorld implements World
 {
 	private List<Entity> entities = new ArrayList<Entity>();
 	private Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
-	private Tile[][] mapTiles;
-	
+
 	/**
 	 * Adds the entity to the MockWorld.
 	 * @param e the entity to add.
@@ -113,7 +113,7 @@ public class MockWorld implements World
 
 	@Override
 
-	public List<Entity> getTanks() 
+	public List<Tank> getTanks()
 	{
 		return null;
 	}
@@ -121,9 +121,9 @@ public class MockWorld implements World
 	@Override
 	public void setMapTiles(Tile[][] givenTiles)
 	{
-		// do nothing		
+		// do nothing
 	}
-	
+
 	@Override
 	public Tile[][] getMapTiles()
 	{
@@ -154,7 +154,7 @@ public class MockWorld implements World
 	}
 
 	@Override
-	public List<Entity> getSpawns() 
+	public List<Entity> getSpawns()
 	{
 		// do nothing
 		return null;
@@ -162,7 +162,7 @@ public class MockWorld implements World
 
 	@Override
 	public void addController(Class<? extends Controller> controllerType)
-	{	
+	{
 	}
 
 	@Override

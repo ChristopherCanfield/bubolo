@@ -4,8 +4,7 @@
 
 package bubolo.net;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -29,7 +28,7 @@ public class NetworkSenderTest
 		{
 			NetworkSender sender = new NetworkSender(oos,
 					mock(NetworkCommand.class));
-			
+
 			sender.run();
 		}
 		catch (IOException e)

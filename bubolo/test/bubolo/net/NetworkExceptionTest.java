@@ -4,11 +4,10 @@
 
 package bubolo.net;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import bubolo.util.GameException;
 
 /**
  * @author BU CS673 - Clone Productions
