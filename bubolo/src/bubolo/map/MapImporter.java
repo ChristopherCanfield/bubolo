@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -294,7 +295,7 @@ public class MapImporter {
 
 			// Log a warning for unknown tileset, and then skip it.
 			} else {
-				System.out.println("[WARNING] Unknown tileset found in map file: " + tilesetName);
+				Logger.getGlobal().warning("Unknown tileset found in map file: " + tilesetName);
 			}
 		}
 	}
