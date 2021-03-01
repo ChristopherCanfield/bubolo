@@ -55,7 +55,7 @@ public class Tank extends Actor implements Damageable
 	private static final float accelerationRate = 0.01f;
 
 	// The rate of deceleration, in pixels per tick.
-	private static final float decelerationRate = 0.03f;
+	private static final float decelerationRate = 0.035f;
 
 	// Specifies whether the tank accelerated this tick.
 	private boolean accelerated;
@@ -67,7 +67,7 @@ public class Tank extends Actor implements Damageable
 	private boolean hidden;
 
 	// The tank's rate of rotation per tick.
-	private static final float rotationRate = 0.0325f;
+	private static final float rotationRate = 0.03f;
 
 	// The reload speed of the tank's cannon, in milliseconds.
 	private static final long cannonReloadSpeed = 500;
@@ -214,10 +214,8 @@ public class Tank extends Actor implements Damageable
 	{
 		if (speed > modifiedMaxSpeed)
 		{
-			// this.decelerate();
 			speed = modifiedMaxSpeed;
 		}
-
 		else if (speed < modifiedMaxSpeed && !accelerated)
 		{
 			speed += accelerationRate;
@@ -625,7 +623,6 @@ public class Tank extends Actor implements Damageable
 				{
 					newX = xPos;
 					xOffset -= positionOffsetAmount;
-
 				}
 			}
 		}

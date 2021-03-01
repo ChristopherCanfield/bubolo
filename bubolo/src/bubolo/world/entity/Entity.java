@@ -241,7 +241,6 @@ public abstract class Entity implements Serializable, Drawable
 		bounds.setPosition(x, y);
 		bounds.rotate((float)Math.toDegrees(getRotation() - Math.PI / 2));
 		bounds.setVertices(corners);
-
 	}
 
 	/**
