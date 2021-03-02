@@ -9,14 +9,12 @@ import bubolo.net.command.CreateEntity;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.Terrain;
-import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Rubble;
 import bubolo.world.entity.concrete.Tree;
 
 /**
  * Controls the growth rate of trees
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class AiTreeController implements Controller
@@ -24,35 +22,34 @@ public class AiTreeController implements Controller
 	/**
 	 * base score for tiles based on terrain.  surrounding tiles use these divided by 8
 	 */
-	private int grassScore = 20;
-	private int rubbleCraterScore = 10;
-	private int treeScore = 40;
+	private static final int grassScore = 20;
+	private static final int treeScore = 40;
 
 	/**
 	 * tile locations
 	 */
 	private int createAtX = 0;
-	private int createAtY = 0 ; 
+	private int createAtY = 0 ;
 	private int tempX = 0;
 	private int tempY = 0;
-	
+
 	/**
 	 * calculated tile scores
 	 */
 	private int tileScore = 0;
 	private int tempScore = 0;
-	
+
 	/**
 	 * timing variables
 	 */
 	private int ticksSinceReset = 0;
 	private int ticksPerGrowth = 300;
-	
+
 	/**
 	 * random number generator used to decide a random tile to grow on
 	 */
 	Random randomGenerator = new Random();
-	
+
 	/**
 	 * Constructs a new AITreeController.
 	 */
@@ -61,7 +58,7 @@ public class AiTreeController implements Controller
 	}
 
 	@Override
-	public void update(World world) 
+	public void update(World world)
 	{
 		if(pickATile(world))
 		{
@@ -78,14 +75,14 @@ public class AiTreeController implements Controller
 				if ((ticksSinceReset >= ticksPerGrowth) && tileScore >0)
 				{
 					Tree tree = world.addEntity(Tree.class);
-					
+
 					Tile tile = world.getMapTiles()[createAtX-1][createAtY-1];
-					tile.setElement(tree);					
-					
+					tile.setElement(tree);
+
 					Network net = NetworkSystem.getInstance();
-					net.send(new CreateEntity(tree.getClass(), tree.getId(), 
+					net.send(new CreateEntity(tree.getClass(), tree.getId(),
 							tree.getX(), tree.getY(), tree.getRotation()));
-					
+
 					if (!(tile.getTerrain() instanceof Grass))
 					{
 						Grass grass = world.addEntity(Grass.class);
@@ -93,9 +90,9 @@ public class AiTreeController implements Controller
 						net.send(new CreateEntity(grass.getClass(), grass.getId(),
 								grass.getX(), grass.getY(), grass.getRotation()));
 					}
-							
+
 					ticksSinceReset = 0;
-					tileScore = 0;				
+					tileScore = 0;
 				}
 				else
 				{
@@ -104,15 +101,15 @@ public class AiTreeController implements Controller
 			}
 		}
 	}
-	
+
 	private boolean pickATile(World world)
 	{
 		//get map size in tiles
 		int mapHeight = world.getMapHeight()/32;
 		int mapWidth = world.getMapWidth()/32;
-		
+
 		boolean tileFound = false;
-		
+
 		//get a random tile that is not on the border
 		//if map is too small trees dont grow
 		if(mapHeight > 2 && mapWidth > 2)
@@ -127,7 +124,7 @@ public class AiTreeController implements Controller
 		}
 		return tileFound;
 	}
-	
+
 	/**
 	 * Sums the score of a tile based on its neighbors.
 	 * @param world reference to the game world.
@@ -138,12 +135,12 @@ public class AiTreeController implements Controller
 		tempScore = 0;
 		Tile[][] tiles = world.getMapTiles();
 		Tile tile = null;
-		
+
 		if (tiles != null)
 		{
 			tile = tiles[tempX-1][tempY-1];
 		}
-		
+
 		if (tile == null)
 		{
 			unbuildable = true;
@@ -151,31 +148,17 @@ public class AiTreeController implements Controller
 		else
 		{
 			Terrain terrain = tile.getTerrain();
-			
-			//trees will grow on grass, craters or rubble.
-			if (!tile.hasElement())
+
+			// Trees will grow on grass.
+			if (!tile.hasElement() && terrain.getClass() == Grass.class)
 			{
-				if (terrain.getClass() == Grass.class)
-				{
-					tempScore = grassScore;
-				}
-				else
-				{
-					if (terrain.getClass() == Rubble.class ||
-							terrain.getClass() == Crater.class )
-					{
-						tempScore = rubbleCraterScore;
-					}
-					else
-					{
-						unbuildable = true;
-					}		
-				}
+				tempScore = grassScore;
 			}
 			else
 			{
 				unbuildable = true;
 			}
+
 			if (!unbuildable)
 			{
 				//get score of each surrounding tile
@@ -194,35 +177,33 @@ public class AiTreeController implements Controller
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the score of a specific tile.
-	 * 
+	 *
 	 * @param tile
 	 * 		the tile to be inspected
 	 * @return
 	 * 		the score of the tile
 	 */
-	private int getNeighborTileScore(Tile tile)
+	private static int getNeighborTileScore(Tile tile)
 	{
 		int score = 0;
-		Terrain terrain;
+
 		if (!tile.hasElement())
 		{
-			terrain = tile.getTerrain();
+			Terrain terrain = tile.getTerrain();
 			if (terrain.getClass() == Grass.class)
 			{
 				score = grassScore/8;
 			}
 		}
-		else
+		//tree is most valuable however any other stationary element is a 0
+		else if (tile.getElement().getClass() == Tree.class)
 		{
-			//tree is most valuable however any other stationary element is a 0
-			if (tile.getElement().getClass() == Tree.class)
-			{
-				score = treeScore;
-			}
+			score = treeScore;
 		}
+
 		return score;
 	}
 }

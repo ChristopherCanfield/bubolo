@@ -1,6 +1,6 @@
 package bubolo.world.entity.concrete;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,14 +25,5 @@ public class RubbleTest
 	public void Rubble()
 	{
 		assertTrue(true);
-	}
-	
-	@Test
-	public void maxSpeedModifierTest()
-	{
-		rubble = new Rubble();
-		float maxSpeedModifier = 0;
-		maxSpeedModifier = rubble.getMaxSpeedModifier();
-		assertEquals(rubble.getMaxSpeedModifier(), maxSpeedModifier, 0);
 	}
 }

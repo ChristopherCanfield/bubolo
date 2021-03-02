@@ -7,6 +7,7 @@ import bubolo.audio.Sfx;
 import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
 import bubolo.world.Damageable;
+import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.StationaryElement;
 
@@ -84,7 +85,13 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 
 		if(hitPoints <= 0)
 		{
-			this.getTile().clearElement();
+			Tile tile = getTile();
+			tile.clearElement();
+
+			Rubble rubble = world.addEntity(Rubble.class);
+			rubble.setX(getX()).setY(getY());
+			tile.setElement(rubble);
+
 			world.removeEntity(this);
 		}
 	}
