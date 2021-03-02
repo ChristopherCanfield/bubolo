@@ -86,15 +86,15 @@ public class PillboxControllerTestApplication extends AbstractGameApplication
 		}
 
 		Tank tank = world.addEntity(Tank.class);
-		tank.setParams(100, 100, 0);
+		tank.setTransform(100, 100, 0);
 		tank.setLocalPlayer(true);
-		StationaryElement pillbox = (StationaryElement)world.addEntity(Pillbox.class).setParams(32*9, 32*6, 0);
+		StationaryElement pillbox = (StationaryElement)world.addEntity(Pillbox.class).setTransform(32*9, 32*6, 0);
 		world.getMapTiles()[9][6].setElement(pillbox);
-		pillbox = (StationaryElement) world.addEntity(Pillbox.class).setParams(32*18, 32*6, 0);
+		pillbox = (StationaryElement) world.addEntity(Pillbox.class).setTransform(32*18, 32*6, 0);
 		world.getMapTiles()[18][6].setElement(pillbox);
-		pillbox = (StationaryElement) world.addEntity(Pillbox.class).setParams(32*18, 32*12, 0);
+		pillbox = (StationaryElement) world.addEntity(Pillbox.class).setTransform(32*18, 32*12, 0);
 		world.getMapTiles()[18][12].setElement(pillbox);
-		pillbox = (StationaryElement) world.addEntity(Pillbox.class).setParams(32*9, 32*12, 0);
+		pillbox = (StationaryElement) world.addEntity(Pillbox.class).setTransform(32*9, 32*12, 0);
 		world.getMapTiles()[9][12].setElement(pillbox);
 		setReady(true);
 	}

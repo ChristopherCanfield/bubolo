@@ -89,7 +89,7 @@ public class CollisionTestApplication extends AbstractGameApplication
 		}
 
 		Tank tank = world.addEntity(Tank.class);
-		tank.setParams(100, 100, 0);
+		tank.setTransform(100, 100, 0);
 		tank.setLocalPlayer(true);
 
 		setReady(true);

@@ -10,7 +10,7 @@ import javax.swing.JPanel;
  *
  * @author BU673 - Clone Industries
  */
-public class ButtonPanel extends JPanel
+class ButtonPanel extends JPanel
 {
 	private static final long serialVersionUID = -1624357058854582729L;
 

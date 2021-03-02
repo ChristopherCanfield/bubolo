@@ -43,7 +43,7 @@ public class AiMineController implements Controller
 					if(mine.isActive())
 					{
 						MineExplosion mineExplosion = world.addEntity(MineExplosion.class);
-						mineExplosion.setParams(mine.getX(), mine.getY(), 0);
+						mineExplosion.setTransform(mine.getX(), mine.getY(), 0);
 
 						TileUtil.getEntityTile(mine, world).clearElement();
 						world.removeEntity(mine);

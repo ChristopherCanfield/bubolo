@@ -133,7 +133,7 @@ public class NetClientTestApplication extends AbstractGameApplication implements
 			gameLobby.dispose();
 
 			Tank tank = world.addEntity(Tank.class);
-			tank.setParams(getRandomX(), 200, 0);
+			tank.setTransform(getRandomX(), 200, 0);
 			tank.setLocalPlayer(true);
 			network.send(new CreateTank(tank));
 

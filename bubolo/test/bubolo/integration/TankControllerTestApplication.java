@@ -81,7 +81,7 @@ public class TankControllerTestApplication extends AbstractGameApplication
 		{
 			for (int column = 0; column < 94; column++)
 			{
-				Grass grass = (Grass) world.addEntity(Grass.class).setParams(column, row, 0);
+				Grass grass = (Grass) world.addEntity(Grass.class).setTransform(column, row, 0);
 				mapTiles[column][row] = new Tile(column, row, grass);
 				
 			}
@@ -89,7 +89,7 @@ public class TankControllerTestApplication extends AbstractGameApplication
 		
 		world.setMapTiles(mapTiles);
 		Tank tank = world.addEntity(Tank.class);
-		tank.setParams(1200, 100, 0);
+		tank.setTransform(1200, 100, 0);
 		tank.setLocalPlayer(true);
 
 		setReady(true);

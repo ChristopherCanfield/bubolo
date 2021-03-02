@@ -116,7 +116,7 @@ public class Sprint2_HostMultiPlayerApp implements GameApplication
 		network.send(new HelloNetworkCommand("Hello from the server."));
 
 		Tank tank = world.addEntity(Tank.class);
-		tank.setParams(1050, 100, 0);
+		tank.setTransform(1050, 100, 0);
 		tank.setLocalPlayer(true);
 
 		network.send(new CreateTank(tank));

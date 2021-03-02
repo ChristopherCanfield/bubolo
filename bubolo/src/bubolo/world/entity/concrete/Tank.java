@@ -968,7 +968,7 @@ public class Tank extends Actor implements Damageable
 		if (spawns.size() > 0)
 		{
 			Entity spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-			this.setParams(spawn.getX(), spawn.getY(), 0);
+			this.setTransform(spawn.getX(), spawn.getY(), 0);
 
 			Network net = NetworkSystem.getInstance();
 			net.send(new MoveTank(this));

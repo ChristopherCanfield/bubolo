@@ -27,7 +27,7 @@ public class EntityTestCase
 
 	public static Entity setTestParams(Entity e)
 	{
-		return e.setParams(TARGET_X, TARGET_Y, TARGET_ROT);
+		return e.setTransform(TARGET_X, TARGET_Y, TARGET_ROT);
 	}
 
 	/**

@@ -44,7 +44,7 @@ public class TankTest
 	public void setup()
 	{
 		world = new GameWorld(32, 32);
-		tank = (Tank) world.addEntity(Tank.class).setParams(16, 16, 0);
+		tank = (Tank) world.addEntity(Tank.class).setTransform(16, 16, 0);
 		grass = new Grass();
 		Tile[][] grassTile = new Tile[1][1];
 		grassTile[0][0] = new Tile(0,0,grass);

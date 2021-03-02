@@ -97,13 +97,13 @@ public class TankRespawnTestApplication implements GameApplication
 		{
 			e.printStackTrace();
 		}
-		world.addEntity(Spawn.class).setParams(100, 100, 0);
+		world.addEntity(Spawn.class).setTransform(100, 100, 0);
 
 		SpawnSpriteViewer spawnViewer = new SpawnSpriteViewer();
 		spawnViewer.setSpawnsVisible();
 
 		Tank tank = world.addEntity(Tank.class);
-		tank.setParams(10, 10, 0);
+		tank.setTransform(10, 10, 0);
 		tank.setLocalPlayer(true);
 
 		ready = true;

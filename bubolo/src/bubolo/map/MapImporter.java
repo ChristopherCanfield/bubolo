@@ -315,7 +315,7 @@ public class MapImporter {
 					int posX = gridX * Coordinates.TILE_TO_WORLD_SCALE;
 					double rotation = Math.PI / 2.0;
 
-					entity.setParams(posX, posY, rotation);
+					entity.setTransform(posX, posY, rotation);
 
 					if (entity instanceof Terrain terrain) {
 						addTerrain(terrain, world, mapTiles, gridX, gridY);

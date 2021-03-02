@@ -73,7 +73,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the initial rotation in radians.
 	 * @return a reference to this Entity.
 	 */
-	public Entity setParams(float x, float y, float rot)
+	public Entity setTransform(float x, float y, float rot)
 	{
 		setX(x);
 		setY(y);
@@ -93,8 +93,8 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the initial rotation in radians.
 	 * @return a reference to this Entity.
 	 */
-	public Entity setParams(float x, float y, double rot) {
-		return setParams(x, y, (float) rot);
+	public Entity setTransform(float x, float y, double rot) {
+		return setTransform(x, y, (float) rot);
 	}
 
 	/**

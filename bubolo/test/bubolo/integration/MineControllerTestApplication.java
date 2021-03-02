@@ -86,15 +86,15 @@ public class MineControllerTestApplication extends AbstractGameApplication
 		}
 
 		Tank tank = world.addEntity(Tank.class);
-		tank.setParams(100, 100, 0);
+		tank.setTransform(100, 100, 0);
 		tank.setLocalPlayer(true);
 		//StationaryElement pillbox = (StationaryElement)world.addEntity(Pillbox.class).setParams(32*9, 32*6, 0);
 		//world.getMapTiles()[9-1][9-1].setElement(pillbox);
-		world.addEntity(Mine.class).setParams(32*18, 32*6, 0);
-		world.addEntity(Mine.class).setParams(32*18, 32*12, 0);
-		world.addEntity(Mine.class).setParams(32*9, 32*12, 0);
+		world.addEntity(Mine.class).setTransform(32*18, 32*6, 0);
+		world.addEntity(Mine.class).setTransform(32*18, 32*12, 0);
+		world.addEntity(Mine.class).setTransform(32*9, 32*12, 0);
 
-		world.addEntity(Spawn.class).setParams(100, 100, 0);
+		world.addEntity(Spawn.class).setTransform(100, 100, 0);
 
 		setReady(true);
 	}

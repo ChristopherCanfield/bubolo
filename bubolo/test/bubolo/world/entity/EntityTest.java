@@ -52,9 +52,9 @@ public class EntityTest
 		Entity ent1 = new MockEntity();
 		Entity ent2 = new MockEntity();
 		Entity ent3 = new MockEntity();
-		ent1.setParams(16, 16, 0);
-		ent2.setParams(16, 32, 0);
-		ent3.setParams(60, 60, 0);
+		ent1.setTransform(16, 16, 0);
+		ent2.setTransform(16, 32, 0);
+		ent3.setTransform(60, 60, 0);
 		
 		ent1.setWidth(32);
 		ent1.setHeight(32);

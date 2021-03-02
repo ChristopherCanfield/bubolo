@@ -141,7 +141,7 @@ public class NetServerTestApplication extends AbstractGameApplication implements
 			gameLobby.dispose();
 
 			Tank tank = world.addEntity(Tank.class);
-			tank.setParams(1100, 200, 0);
+			tank.setTransform(1100, 200, 0);
 			tank.setLocalPlayer(true);
 			network.send(new CreateTank(tank));
 

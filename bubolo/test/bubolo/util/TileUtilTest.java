@@ -37,7 +37,7 @@ public class TileUtilTest
 		tiles[1][1] = new Tile(0, 1, new Water());
 		world.setMapTiles(tiles);
 		tank = world.addEntity(Tank.class);
-		tank.setParams(16, 16, 0);
+		tank.setTransform(16, 16, 0);
 		tiles[0][0].setElement(new Wall());
 	}
 	
@@ -103,7 +103,7 @@ public class TileUtilTest
 	@Test
 	public void getEntityTile()
 	{
-		Entity entity = new Tank().setParams(31, 42, 0);
+		Entity entity = new Tank().setTransform(31, 42, 0);
 		Tile tile = TileUtil.getEntityTile(entity, world);
 		assertEquals("returned incorrect tile", 0, tile.getGridX());
 		assertEquals("returned incorrect tile", 1, tile.getGridY());
