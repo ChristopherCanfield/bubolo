@@ -75,6 +75,18 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		super(DrawLayer.FOURTH, tank);
 	}
 
+	/**
+	 * Draws the player name. This is a separate method to ensure that tank names are drawn
+	 * above all other objects.
+	 */
+	void drawPlayerName(SpriteBatch batch, Camera camera) {
+		var tank = getEntity();
+		if (!tank.isLocalPlayer()) {
+			var tankCameraCoords = Coordinates.worldToCamera(camera, new Vector2(getEntity().getX(), getEntity().getY()));
+			font.draw(batch, tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
+		}
+	}
+
 	@Override
 	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
 	{
@@ -101,12 +113,6 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		explosionCreated = false;
 
 		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN && getDrawLayer() == layer) {
-			var tank = getEntity();
-			if (!tank.isLocalPlayer()) {
-				var tankCameraCoords = Coordinates.worldToCamera(camera, new Vector2(getEntity().getX(), getEntity().getY()));
-				font.draw(batch, tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
-			}
-
 			animateAndDraw(batch, camera, layer);
 		}
 	}

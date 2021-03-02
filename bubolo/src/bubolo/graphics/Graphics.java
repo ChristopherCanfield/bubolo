@@ -233,6 +233,7 @@ public class Graphics
 		drawEntities(spritesInView, DrawLayer.THIRD);
 		drawEntities(spritesInView, DrawLayer.FOURTH);
 		drawEntities(spritesInView, DrawLayer.TOP);
+		drawTankNames(spritesInView);
 
 		// Render the user interface.
 		if (ui != null)
@@ -289,6 +290,18 @@ public class Graphics
 		{
 			sprite.draw(batch, camera, currentLayer);
 		}
+		batch.end();
+	}
+
+	/**
+	 * This is a separate method to ensure that the tank names are always drawn above all tanks and other objects.
+	 */
+	private void drawTankNames(List<Sprite> spritesInView) {
+		batch.begin();
+		spritesInView.stream().filter(s -> s instanceof TankSprite).forEach(s -> {
+			TankSprite tankSprite = (TankSprite) s;
+			tankSprite.drawPlayerName(batch, camera);
+		});
 		batch.end();
 	}
 
