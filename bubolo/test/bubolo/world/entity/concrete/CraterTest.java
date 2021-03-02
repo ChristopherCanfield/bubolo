@@ -1,6 +1,6 @@
 package bubolo.world.entity.concrete;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
@@ -22,31 +22,22 @@ public class CraterTest
 		crater = new Crater();
 		EntityTestCase.setTestParams(crater);
 	}
-	
-	@Test 
+
+	@Test
 	public void setState(){
 		crater.setTilingState(7);
 		assertEquals("Crater's state does not match what it was set to!", 7, crater.getTilingState());
 	}
-	
+
 	@Test
 	public void update()
 	{
 		crater.update(mock(World.class));
-	}	
+	}
 
 	@Test
 	public void updateState()
 	{
 		crater.updateTilingState(null);
-	}
-	
-	@Test
-	public void maxSpeedModifierTest()
-	{
-		crater = new Crater();
-		float maxSpeedModifier = 0;
-		maxSpeedModifier = crater.getMaxSpeedModifier();
-		assertEquals(crater.getMaxSpeedModifier(), maxSpeedModifier, 0);
 	}
 }

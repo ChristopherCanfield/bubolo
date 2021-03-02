@@ -4,8 +4,10 @@ import com.badlogic.gdx.math.Intersector;
 
 import bubolo.controllers.Controller;
 import bubolo.util.TileUtil;
+import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.Entity;
+import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.MineExplosion;
 
@@ -36,20 +38,22 @@ public class AiMineController implements Controller
 	{
 		for(Entity collider:TileUtil.getLocalEntities(mine.getX(),mine.getY(), world))
 		{
-			if (collider.isSolid() && collider != mine)
-			{
-				if (Intersector.overlapConvexPolygons(collider.getBounds(), mine.getBounds()))
-				{
-					if(mine.isActive())
-					{
-						MineExplosion mineExplosion = world.addEntity(MineExplosion.class);
-						mineExplosion.setTransform(mine.getX(), mine.getY(), 0);
+			if (mine.isActive() &&
+					collider.isSolid() && collider != mine
+					&& Intersector.overlapConvexPolygons(collider.getBounds(), mine.getBounds())) {
 
-						TileUtil.getEntityTile(mine, world).clearElement();
-						world.removeEntity(mine);
-						return;
-					}
-				}
+				MineExplosion mineExplosion = world.addEntity(MineExplosion.class);
+				mineExplosion.setTransform(mine.getX(), mine.getY(), 0);
+
+				Tile tile = mine.getTile();
+				tile.clearElement();
+
+				Crater crater = world.addEntity(Crater.class);
+				crater.setX(mine.getX()).setY(mine.getY());
+				tile.setElement(crater);
+
+				world.removeEntity(mine);
+				return;
 			}
 		}
 	}
