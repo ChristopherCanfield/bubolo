@@ -118,7 +118,7 @@ public class BuboloApplication extends AbstractGameApplication
 			world.update();
 			network.update(world);
 		}
-		else if (state == State.GAME)
+		else if (state == State.LOCAL_GAME)
 		{
 			graphics.draw(world);
 			world.update();
@@ -143,22 +143,20 @@ public class BuboloApplication extends AbstractGameApplication
 			screen.dispose();
 
 			Tank tank = world.addEntity(Tank.class);
-			if (!isClient)
-			{
-				Vector2 spawnLocation = getRandomSpawn(world);
-				tank.setParams(spawnLocation.x, spawnLocation.y, 0);
-			}
-			else
-			{
-				tank.setParams(getRandomX(), 200, 0);
-			}
+			tank.setPlayerName(network.getPlayerName());
 			tank.setLocalPlayer(true);
+			if (!isClient) {
+				Vector2 spawnLocation = getRandomSpawn(world);
+				tank.setX(spawnLocation.x).setY(spawnLocation.y).setRotation(0);
+			} else {
+				tank.setX(getRandomX()).setY(200).setRotation(0);
+			}
 
 			network.send(new CreateTank(tank));
 
 			setReady(true);
 		}
-		else if (getState() == State.GAME)
+		else if (getState() == State.LOCAL_GAME)
 		{
 			if (screen != null)
 			{
@@ -167,7 +165,7 @@ public class BuboloApplication extends AbstractGameApplication
 
 			Tank tank = world.addEntity(Tank.class);
 			Vector2 spawnLocation = getRandomSpawn(world);
-			tank.setParams(spawnLocation.x, spawnLocation.y, 0);
+			tank.setX(spawnLocation.x).setY(spawnLocation.y).setRotation(0);
 			tank.setLocalPlayer(true);
 
 			network.startDebug();

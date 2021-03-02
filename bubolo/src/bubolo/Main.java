@@ -51,7 +51,7 @@ public class Main
 			cfg.height = Config.InitialWindowHeight;
 			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
-					State.GAME), cfg));
+					State.LOCAL_GAME), cfg));
 		};
 
 		MenuScreen menuScreen = new MenuScreen(singlePlayerApplication, serverApplication,
