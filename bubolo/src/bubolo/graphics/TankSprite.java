@@ -95,11 +95,11 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		explosionCreated = false;
 
 		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN && getDrawLayer() == layer) {
-			animate(batch, camera, layer);
+			animateAndDraw(batch, camera, layer);
 		}
 	}
 
-	private void animate(SpriteBatch batch, Camera camera, DrawLayer layer)
+	private void animateAndDraw(SpriteBatch batch, Camera camera, DrawLayer layer)
 	{
 		animationState = (getEntity().getSpeed() > 0.f) ? 1 : 0;
 		switch (animationState)
