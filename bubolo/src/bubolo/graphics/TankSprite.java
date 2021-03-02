@@ -11,7 +11,7 @@ import bubolo.world.entity.concrete.Tank;
 
 /**
  * The graphical representation of a Tank.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 class TankSprite extends AbstractEntitySprite<Tank>
@@ -50,7 +50,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	// The last animation state that the tank was in, used to determine when to reset
 	// the starting frame.
 	private int lastAnimationState = 0;
-	
+
 	// Ensures that only one tank explosion is created per death.
 	private boolean explosionCreated;
 
@@ -60,7 +60,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	/**
 	 * Constructor for the TankSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param tank
 	 *            Reference to the tank that this TankSprite represents.
 	 */
@@ -93,16 +93,12 @@ class TankSprite extends AbstractEntitySprite<Tank>
 			return;
 		}
 		explosionCreated = false;
-		
-		if (processVisibility() == Visibility.NETWORK_TANK_HIDDEN ||
-				getDrawLayer() != layer)
-		{
-			return;
+
+		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN && getDrawLayer() == layer) {
+			animate(batch, camera, layer);
 		}
-		
-		animate(batch, camera, layer);
 	}
-	
+
 	private void animate(SpriteBatch batch, Camera camera, DrawLayer layer)
 	{
 		animationState = (getEntity().getSpeed() > 0.f) ? 1 : 0;
@@ -140,47 +136,31 @@ class TankSprite extends AbstractEntitySprite<Tank>
 
 			// Progress the tank drive backward animation.
 			animate(backwardFrames);
-			
+
 			break;
 
 		default:
 			throw new GameLogicException("Programming error in tankSprite: default case reached.");
 		}
 	}
-	
-	private void updateColorSet()
-	{
-		if (this.getEntity().isLocalPlayer())
-		{
-			colorId = ColorSets.BLUE;
-		}
-		else
-		{
-			colorId = ColorSets.RED;
-		}
-	}
+
+	private static final Color tankHiddenColor = new Color(Color.WHITE).mul(1.f, 1.f, 1.f, 0.6f);
 
 	private Visibility processVisibility()
 	{
-		if (getEntity().isHidden())
-		{
-			if (getEntity().isLocalPlayer())
-			{
-				setColor(new Color(Color.WHITE).mul(1.f, 1.f, 1.f, 0.6f));
+		if (getEntity().isHidden()) {
+			if (getEntity().isLocalPlayer()) {
+				setColor(tankHiddenColor);
 				return Visibility.HIDDEN;
-			}
-			else
-			{
+			} else {
 				return Visibility.NETWORK_TANK_HIDDEN;
 			}
-		}
-		else
-		{
+		} else {
 			setColor(Color.WHITE);
 			return Visibility.VISIBLE;
 		}
 	}
-	
+
 	private void animate(TextureRegion[][] animationFrames)
 	{
 		frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
@@ -191,11 +171,11 @@ class TankSprite extends AbstractEntitySprite<Tank>
 			frameIndex = (frameIndex == animationFrames.length - 1) ? 0 : frameIndex + 1;
 		}
 	}
-	
+
 	/**
 	 * Initializes the tank. This is needed because the Tank entity may not know whether it is local
 	 * or not at construction time.
-	 * 
+	 *
 	 * @param camera
 	 *            reference to the camera.
 	 */
@@ -216,9 +196,15 @@ class TankSprite extends AbstractEntitySprite<Tank>
 			Graphics.getInstance().addCameraController(controller);
 			controller.setCamera(camera);
 		}
-		updateColorSet();
+
+		colorId = determineColorSet(getEntity());
 	}
-	
+
+	private static int determineColorSet(Tank tank)
+	{
+		return tank.isLocalPlayer() ? ColorSets.BLUE : ColorSets.RED;
+	}
+
 	private enum Visibility
 	{
 		VISIBLE, NETWORK_TANK_HIDDEN, HIDDEN
