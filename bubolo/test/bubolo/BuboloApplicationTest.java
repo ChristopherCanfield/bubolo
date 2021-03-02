@@ -1,6 +1,8 @@
 package bubolo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,17 +15,17 @@ import bubolo.graphics.LibGdxAppTester;
 public class BuboloApplicationTest
 {
 	private BuboloApplication ga;
-	
+
 	private boolean isComplete;
 	private boolean passed;
-	
+
 	@Before
 	public void setup()
 	{
 		LibGdxAppTester.createApp();
-		ga = new BuboloApplication(500, 400, true, State.MAIN_MENU);
+		ga = new BuboloApplication(500, 400, true, State.MAIN_MENU, new String[0]);
 	}
-	
+
 	@Test
 	public void testIsReady()
 	{
@@ -37,7 +39,7 @@ public class BuboloApplicationTest
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
@@ -50,21 +52,21 @@ public class BuboloApplicationTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void testRender()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
@@ -79,12 +81,12 @@ public class BuboloApplicationTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
@@ -111,40 +113,40 @@ public class BuboloApplicationTest
 	{
 		ga.resume();
 	}
-	
+
 	@Test
 	public void isGameStarted()
 	{
 		assertFalse(ga.isGameStarted());
 	}
-	
+
 	@Test
 	public void getSetState()
 	{
 		assertEquals(State.MAIN_MENU, ga.getState());
-		
+
 		ga.setState(State.GAME_STARTING);
 		assertEquals(State.GAME_STARTING, ga.getState());
 	}
-	
+
 	@Test
 	public void onStateChanged()
 	{
 		class StateChangedTest extends AbstractGameApplication
 		{
 			private boolean stateChangedCalled = false;
-			
+
 			@Override
 			protected void onStateChanged()
 			{
 				stateChangedCalled = true;
 			}
-			
+
 			public boolean getStateChangedCalled()
 			{
 				return stateChangedCalled;
 			}
-			
+
 			@Override
 			public void create()
 			{
@@ -160,15 +162,15 @@ public class BuboloApplicationTest
 			{
 			}
 		}
-		
+
 		AbstractGameApplication app = new StateChangedTest();
 		assertFalse(((StateChangedTest)app).getStateChangedCalled());
-		
+
 		app.onStateChanged();
-		
+
 		assertTrue(((StateChangedTest)app).getStateChangedCalled());
 	}
-	
+
 	@Test
 	public void disposeTest()
 	{

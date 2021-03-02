@@ -2,6 +2,7 @@ package bubolo;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
@@ -42,6 +43,8 @@ public class BuboloApplication extends AbstractGameApplication
 
 	private Screen screen;
 
+	private Path mapPath = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
+
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
 	 *
@@ -54,13 +57,19 @@ public class BuboloApplication extends AbstractGameApplication
 	 * @param initialState
 	 *            the initial application state.
 	 */
-	public BuboloApplication(int windowWidth, int windowHeight, boolean isClient,
-			State initialState)
+	public BuboloApplication(int windowWidth, int windowHeight, boolean isClient, State initialState, String[] commandLineArgs)
 	{
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
 		this.isClient = isClient;
 		this.initialState = initialState;
+
+		if (commandLineArgs.length != 0) {
+			Path argPath = FileSystems.getDefault().getPath("res", "maps/" + commandLineArgs[0]);
+			if (Files.exists(argPath)) {
+				mapPath = argPath;
+			}
+		}
 	}
 
 	/**
@@ -79,11 +88,10 @@ public class BuboloApplication extends AbstractGameApplication
 		// Server or single-player
 		if (!isClient)
 		{
-			Path path = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
 			try
 			{
 				MapImporter importer = new MapImporter();
-				world = importer.importJsonMap(path);
+				world = importer.importJsonMap(mapPath);
 			}
 			catch (IOException e)
 			{

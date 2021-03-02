@@ -31,7 +31,7 @@ public class Main
 			cfg.height = Config.InitialWindowHeight;
 			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
-					State.PLAYER_INFO), cfg));
+					State.PLAYER_INFO, args), cfg));
 		};
 
 		Runnable clientApplication = () -> {
@@ -41,7 +41,7 @@ public class Main
 			cfg.height = Config.InitialWindowHeight;
 			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, true,
-					State.PLAYER_INFO), cfg));
+					State.PLAYER_INFO, args), cfg));
 		};
 
 		Runnable singlePlayerApplication = () -> {
@@ -51,7 +51,7 @@ public class Main
 			cfg.height = Config.InitialWindowHeight;
 			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
-					State.LOCAL_GAME), cfg));
+					State.LOCAL_GAME, args), cfg));
 		};
 
 		MenuScreen menuScreen = new MenuScreen(singlePlayerApplication, serverApplication,
