@@ -3,9 +3,12 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
+import bubolo.util.Coordinates;
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.concrete.Tank;
 
@@ -54,6 +57,9 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	// Ensures that only one tank explosion is created per death.
 	private boolean explosionCreated;
 
+	// For player name drawing.
+	private static final BitmapFont font = new BitmapFont();
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "tank.png";
 
@@ -95,6 +101,12 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		explosionCreated = false;
 
 		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN && getDrawLayer() == layer) {
+			var tank = getEntity();
+			if (!tank.isLocalPlayer()) {
+				var tankCameraCoords = Coordinates.worldToCamera(camera, new Vector2(getEntity().getX(), getEntity().getY()));
+				font.draw(batch, tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
+			}
+
 			animateAndDraw(batch, camera, layer);
 		}
 	}
