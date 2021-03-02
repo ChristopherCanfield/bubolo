@@ -10,8 +10,7 @@ import javax.swing.JFrame;
 import bubolo.Config;
 
 /**
- * This is the Main Menu JFrame which will have Buttons for: START SINGLE PLAYER JOIN MULTI-PLAYER
- * (not functional) START MULTI-PLAYER (not functional) PREFERENCES EXIT
+ * Initial menu screen, which displays at program launch.
  *
  * @author BU673 - Clone Industries
  */
