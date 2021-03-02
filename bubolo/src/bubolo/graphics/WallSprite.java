@@ -13,25 +13,14 @@ import bubolo.world.entity.concrete.Wall;
  */
 class WallSprite extends AbstractEntitySprite<Wall>
 {
-	private TextureRegion[] frames;
+	private TextureRegion[] undamagedFrames;
+	private TextureRegion[][] damagedFrames = new TextureRegion[3][];
 
 	/** The file name of the texture. */
-	private static final String TEXTURE_FILE = "wall.png";
-
-	/**
-	 * Represents the total number of different damaged states that exist in this sprite's texture.
-	 */
-	// TODO (cdc - 3/27/2014): Uncomment the next line once the damaged state
-	// functionality is implemented.
-	// private static final int DAMAGED_STATES = 4;
-
-	/**
-	 * Represents the discrete damaged state that the sprite should be in, calculated from the
-	 * Entity's relative health.
-	 */
-	// TODO (cdc - 3/27/2014): Uncomment the next line once the damaged state
-	// functionality is implemented.
-	// private int damagedState;
+	private static final String UNDAMAGED_TEXTURE_FILE = "wall.png";
+	private static final String MINOR_DAMAGE_TEXTURE_FILE = "wall_damaged_minor.png";
+	private static final String MEDIUM_DAMAGE_TEXTURE_FILE = "wall_damaged_medium.png";
+	private static final String MAJOR_DAMAGE_TEXTURE_FILE = "wall_damaged_major.png";
 
 	/**
 	 * Constructor for the WallSprite. This is Package-private because sprites should not be
@@ -44,40 +33,51 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	{
 		super(DrawLayer.THIRD, wall);
 
-		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
-		frames = Graphics.getTextureRegion1d(path, getClass());
-	}
+		var undamagedTexturePath = Graphics.TEXTURE_PATH + UNDAMAGED_TEXTURE_FILE;
+		undamagedFrames = Graphics.getTextureRegion1d(undamagedTexturePath, getClass());
 
-	/**
-	 * Returns an integer between 0 and DAMAGED_STATES -1 representing the damaged state of this
-	 * Sprite's Entity. 0 means 0 HP/fully dead!
-	 */
-	private void updateDamagedState()
-	{
-		// Compute the amount of health remaining for this Sprite's Entity as a fraction
-		// of its max HP.
+		var minorDamageTexturePath = Graphics.TEXTURE_PATH + MINOR_DAMAGE_TEXTURE_FILE;
+		damagedFrames[0] = Graphics.getTextureRegion1d(minorDamageTexturePath, getClass());
 
-		// TODO (cdc - 3/27/2014): Uncomment the next lines once this method is implemented.
+		var mediumDamageTexturePath = Graphics.TEXTURE_PATH + MEDIUM_DAMAGE_TEXTURE_FILE;
+		damagedFrames[1] = Graphics.getTextureRegion1d(mediumDamageTexturePath, getClass());
 
-		// float healthFraction = (float) this.getEntity().getHP() / this.getEntity().getMaxHP();
-		// Convert that fraction to an integer between 0 and DAMAGED_STATES -1.
-
-		// damagedState = Math.round(healthFraction * DAMAGED_STATES);
+		var majorDamageTexturePath = Graphics.TEXTURE_PATH + MAJOR_DAMAGE_TEXTURE_FILE;
+		damagedFrames[2] = Graphics.getTextureRegion1d(majorDamageTexturePath, getClass());
 	}
 
 	@Override
 	public void draw(SpriteBatch batch, Camera camera)
 	{
-		updateDamagedState();
 		if (isDisposed())
 		{
 			Sprites.getInstance().removeSprite(this);
 		}
 		else
 		{
-			// TODO: Point to different texture regions based on the damagedState field,
-			// which changes with Entity HP percentage.
-			drawTexture(batch, camera, frames[this.getEntity().getTilingState()]);
+			TextureRegion[] frames;
+			if (getEntity().getHitPoints() == Wall.MAX_HIT_POINTS) {
+				frames = undamagedFrames;
+			} else {
+				frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
+			}
+			drawTexture(batch, camera, frames[getEntity().getTilingState()]);
+		}
+	}
+
+	/**
+	 * Returns the index into the damaged frames, or -1 if the wall is undamaged.
+	 */
+	private static int calculateDamagedFramesIndex(Wall entity) {
+		int health = Math.round(entity.getHitPoints());
+		if (health == Wall.MAX_HIT_POINTS) {
+			return -1;
+		} else if (health >= 75) {
+			return 0;
+		} else if (health >= 25) {
+			return 1;
+		} else {
+			return 2;
 		}
 	}
 }
