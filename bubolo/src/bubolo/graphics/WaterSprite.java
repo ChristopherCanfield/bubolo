@@ -34,7 +34,7 @@ class WaterSprite extends AbstractEntitySprite<Water>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		int currentState = this.getEntity().getTilingState();
 		if (isDisposed())
@@ -44,7 +44,7 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		}
 		else
 		{
-			drawTexture(batch, camera, layer, frames[currentState]);
+			drawTexture(batch, camera, frames[currentState]);
 		}
 
 		boolean[] corners = this.getEntity().getCornerMatches();
@@ -52,11 +52,11 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		{
 			if (!corners[0])
 			{
-				drawTexture(batch, camera, layer, frames[16]);
+				drawTexture(batch, camera, frames[16]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[20]);
+				drawTexture(batch, camera, frames[20]);
 			}
 		}
 
@@ -64,11 +64,11 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		{
 			if (!corners[1])
 			{
-				drawTexture(batch, camera, layer, frames[17]);
+				drawTexture(batch, camera, frames[17]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[21]);
+				drawTexture(batch, camera, frames[21]);
 			}
 
 		}
@@ -77,11 +77,11 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		{
 			if (!corners[2])
 			{
-				drawTexture(batch, camera, layer, frames[18]);
+				drawTexture(batch, camera, frames[18]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[22]);
+				drawTexture(batch, camera, frames[22]);
 			}
 
 		}
@@ -90,11 +90,11 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		{
 			if (!corners[3])
 			{
-				drawTexture(batch, camera, layer, frames[19]);
+				drawTexture(batch, camera, frames[19]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[23]);
+				drawTexture(batch, camera, frames[23]);
 			}
 
 		}

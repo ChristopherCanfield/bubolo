@@ -84,7 +84,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		updateDamagedState();
 		updateColorSet();
@@ -98,7 +98,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 		{
 			// TODO: Point to different texture regions based on the damagedState field,
 			// which changes with Entity HP percentage.
-			drawTexture(batch, camera, layer, frames[0][colorId]);
+			drawTexture(batch, camera, frames[0][colorId]);
 		}
 	}
 }

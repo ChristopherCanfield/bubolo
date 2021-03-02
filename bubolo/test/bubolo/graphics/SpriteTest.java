@@ -1,6 +1,7 @@
 package bubolo.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class SpriteTest
 			{
 				Sprite sprite = new MockSpriteTextureRegion();
 				batch.begin();
-				sprite.draw(batch, camera, sprite.getDrawLayer());
+				sprite.draw(batch, camera);
 				passed = true;
 				isComplete = true;
 			}
@@ -89,20 +90,5 @@ public class SpriteTest
 		}
 
 		assertTrue(passed);
-	}
-
-	@Test
-	public void testDrawTextureRegionWrongLayer()
-	{
-		Gdx.app.postRunnable(new Runnable() {
-			@Override public void run() {
-				Camera cam = new OrthographicCamera();
-				SpriteBatch spriteBatch = new SpriteBatch();
-				Sprite sprite = new MockSpriteTextureRegion();
-				DrawLayer wrongLayer = (sprite.getDrawLayer() != DrawLayer.FIRST) 
-						? DrawLayer.FIRST : DrawLayer.SECOND;
-				sprite.draw(spriteBatch, cam, wrongLayer);
-			}
-		});
 	}
 }

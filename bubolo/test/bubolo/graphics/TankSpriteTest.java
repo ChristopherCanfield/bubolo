@@ -1,31 +1,30 @@
 package bubolo.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.Gdx;
 
-import bubolo.world.entity.concrete.Road;
 import bubolo.world.entity.concrete.Tank;
 
 public class TankSpriteTest
 {
 	private SpriteBatch batch;
 	private Camera camera;
-	
+
 	private boolean isComplete;
 	private boolean passed;
-	
+
 	@Before
 	public void setUp()
-	{	
+	{
 		LibGdxAppTester.createApp();
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				batch = new SpriteBatch();
@@ -34,20 +33,20 @@ public class TankSpriteTest
 			}
 		});
 	}
-	
+
 	@Test
 	public void constructTankSprite() throws InterruptedException
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
 			{
 				// Fails if the constructor throws an exception.
 				Sprite sprite = Sprites.getInstance().createSprite(new Tank());
-				
+
 				passed = true;
 				isComplete = true;
 			}
@@ -57,24 +56,24 @@ public class TankSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
-	
+
 	@Test
 	public void drawTankSprite()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
 			{
 				Sprite sprite = Sprites.getInstance().createSprite(new Tank());
 				batch.begin();
-				sprite.draw(batch, camera, sprite.getDrawLayer());
+				sprite.draw(batch, camera);
 				passed = true;
 				isComplete = true;
 			}
@@ -84,7 +83,7 @@ public class TankSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 }

@@ -1,6 +1,6 @@
 package bubolo.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,15 +18,15 @@ public class TankExplosionSpriteTest
 {
 	private SpriteBatch batch;
 	private Camera camera;
-	
+
 	private boolean isComplete;
 	private boolean passed;
-	
+
 	@Before
 	public void setUp()
-	{	
+	{
 		LibGdxAppTester.createApp();
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				batch = new SpriteBatch();
@@ -35,27 +35,27 @@ public class TankExplosionSpriteTest
 			}
 		});
 	}
-	
+
 
 	@Test
 	public void drawSprite()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
 			{
 				Sprite sprite = new TankExplosionSprite(1, 1);
-				
+
 				try {
 					batch.begin();
-					sprite.draw(batch, camera, sprite.getDrawLayer());
+					sprite.draw(batch, camera);
 					passed = true;
 				} catch (Exception e) {
 					e.printStackTrace();
-					passed = false;	
+					passed = false;
 				} finally {
 					batch.end();
 					isComplete = true;
@@ -67,7 +67,7 @@ public class TankExplosionSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
@@ -76,7 +76,7 @@ public class TankExplosionSpriteTest
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
@@ -91,16 +91,16 @@ public class TankExplosionSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void getY()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
@@ -115,16 +115,16 @@ public class TankExplosionSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void getHeight()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
@@ -139,16 +139,16 @@ public class TankExplosionSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void getRotation()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
@@ -163,16 +163,16 @@ public class TankExplosionSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void getWidth()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
@@ -187,16 +187,16 @@ public class TankExplosionSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void isEntityDisposed()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
@@ -211,7 +211,7 @@ public class TankExplosionSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 }

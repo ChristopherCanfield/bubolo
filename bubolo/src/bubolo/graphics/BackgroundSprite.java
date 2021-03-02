@@ -36,9 +36,9 @@ class BackgroundSprite extends Sprite
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
-		drawTexture(batch, camera, layer, texture);
+		drawTexture(batch, camera, texture);
 	}
 
 	@Override

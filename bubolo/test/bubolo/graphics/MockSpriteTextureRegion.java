@@ -21,7 +21,7 @@ public class MockSpriteTextureRegion extends AbstractEntitySprite<MockTank>
 	}
 
 	@Override
-	void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	void draw(SpriteBatch batch, Camera camera)
 	{
 	}
 }

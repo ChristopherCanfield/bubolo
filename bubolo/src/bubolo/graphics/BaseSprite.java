@@ -84,7 +84,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -104,7 +104,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 					lastAnimationState = 0;
 					frameIndex = 0;
 				}
-				drawTexture(batch, camera, layer, idleFrames[colorId]);
+				drawTexture(batch, camera, idleFrames[colorId]);
 				break;
 
 			case 1:
@@ -113,7 +113,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 					frameIndex = 0;
 					lastAnimationState = 1;
 				}
-				drawTexture(batch, camera, layer, chargingFrames[frameIndex][colorId]);
+				drawTexture(batch, camera, chargingFrames[frameIndex][colorId]);
 
 				// Progress the Base charging animation.
 				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);

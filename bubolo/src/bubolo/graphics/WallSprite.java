@@ -66,7 +66,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		updateDamagedState();
 		if (isDisposed())
@@ -77,7 +77,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 		{
 			// TODO: Point to different texture regions based on the damagedState field,
 			// which changes with Entity HP percentage.
-			drawTexture(batch, camera, layer, frames[this.getEntity().getTilingState()]);
+			drawTexture(batch, camera, frames[this.getEntity().getTilingState()]);
 		}
 	}
 }

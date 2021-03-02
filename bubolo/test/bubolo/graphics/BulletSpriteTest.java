@@ -1,17 +1,17 @@
 package bubolo.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import bubolo.world.entity.Entity;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import bubolo.world.entity.Entity;
 
 /**
  * Test for bullet Sprite
@@ -21,15 +21,15 @@ public class BulletSpriteTest
 {
 	private SpriteBatch batch;
 	private Camera camera;
-	
+
 	private boolean isComplete;
 	private boolean passed;
-	
+
 	@Before
 	public void setUp()
-	{	
+	{
 		LibGdxAppTester.createApp();
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				batch = new SpriteBatch();
@@ -38,21 +38,21 @@ public class BulletSpriteTest
 			}
 		});
 	}
-	
+
 
 	@Test
 	public void drawSprite()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
 			{
 				Sprite sprite = new BulletSprite(mock(Entity.class));
 				batch.begin();
-				sprite.draw(batch, camera, sprite.getDrawLayer());
+				sprite.draw(batch, camera);
 				passed = true;
 				isComplete = true;
 			}
@@ -62,7 +62,7 @@ public class BulletSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 

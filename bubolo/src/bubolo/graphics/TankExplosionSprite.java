@@ -58,7 +58,7 @@ class TankExplosionSprite extends Sprite
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -66,7 +66,7 @@ class TankExplosionSprite extends Sprite
 		}
 		else
 		{
-			drawTexture(batch, camera, layer, frames[frameIndex][0]);
+			drawTexture(batch, camera, frames[frameIndex][0]);
 			animate();
 		}
 	}

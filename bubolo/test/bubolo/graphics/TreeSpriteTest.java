@@ -1,34 +1,30 @@
 package bubolo.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Road;
-import bubolo.world.entity.concrete.Tank;
-import bubolo.world.entity.concrete.Tree;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import bubolo.world.entity.concrete.Tree;
+
 public class TreeSpriteTest
 {
 	private SpriteBatch batch;
 	private Camera camera;
-	
+
 	private boolean isComplete;
 	private boolean passed;
-	
+
 	@Before
 	public void setUp()
-	{	
+	{
 		LibGdxAppTester.createApp();
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				batch = new SpriteBatch();
@@ -37,7 +33,7 @@ public class TreeSpriteTest
 			}
 		});
 	}
-	
+
 	@Test
 	public void constructTreeSprite() throws InterruptedException
 	{
@@ -45,41 +41,41 @@ public class TreeSpriteTest
 		{
 			isComplete = false;
 			passed = false;
-			
+
 			Gdx.app.postRunnable(new Runnable() {
 				@Override
 				public void run()
 				{
 					// Fails if the constructor throws an exception.
 					Sprite sprite = Sprites.getInstance().createSprite(new Tree());
-					
+
 					passed = true;
 					isComplete = true;
 				}
 			});
-	
+
 			while (!isComplete)
 			{
 				Thread.yield();
 			}
-			
+
 			assertTrue(passed);
 		}
-	}	
+	}
 
 	@Test
 	public void drawTreeSprite()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
 			{
 				Sprite sprite = Sprites.getInstance().createSprite(new Tree());
 				batch.begin();
-				sprite.draw(batch, camera, sprite.getDrawLayer());
+				sprite.draw(batch, camera);
 				passed = true;
 				isComplete = true;
 			}
@@ -89,7 +85,7 @@ public class TreeSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 

@@ -53,7 +53,8 @@ public class Graphics
 	private static Graphics instance = null;
 
 	// The comparator used to sort sprites.
-	private static Comparator<Sprite> spriteComparator;
+	private static final Comparator<Sprite> spriteComparator = Comparator.comparing(Sprite::getDrawLayer)
+			.thenComparing(s -> s.getClass().getSimpleName());
 
 	private List<Sprite> spritesInView = new ArrayList<Sprite>();
 
@@ -163,7 +164,6 @@ public class Graphics
 		camera = new OrthographicCamera(windowWidth, windowHeight);
 		batch = new SpriteBatch();
 		spriteSystem = Sprites.getInstance();
-		spriteComparator = new SpriteComparator();
 
 		loadAllTextures();
 
@@ -210,8 +210,7 @@ public class Graphics
 		Gdx.gl20.glClearColor(0, 0, 0, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		// Get list of sprites, and clip sprites that are outside of the camera's
-		// view.
+		// Get list of sprites, and clip sprites that are outside of the camera's view.
 		spritesInView.clear();
 		for (Sprite sprite : spriteSystem.getSprites())
 		{
@@ -221,18 +220,11 @@ public class Graphics
 			}
 		}
 
-		// Sort list by sprite type, to facilitate batching.
-		Collections.sort(spritesInView, spriteComparator);
-
 		// Draw the background layer.
 		drawBackground(world);
 
-		// Render sprites by layer.
-		drawEntities(spritesInView, DrawLayer.FIRST);
-		drawEntities(spritesInView, DrawLayer.SECOND);
-		drawEntities(spritesInView, DrawLayer.THIRD);
-		drawEntities(spritesInView, DrawLayer.FOURTH);
-		drawEntities(spritesInView, DrawLayer.TOP);
+		// Render sprites.
+		drawSpritesByLayer(spritesInView);
 		drawTankNames(spritesInView);
 
 		// Render the user interface.
@@ -271,24 +263,21 @@ public class Graphics
 	}
 
 	/**
-	 * Draw all entities in the specified layer.
+	 * Draw all sprites, ordered by draw layer.
 	 *
 	 * @param entities
 	 *            the list of entities.
-	 * @param currentLayer
-	 *            the current layer to draw.
 	 */
-	private void drawEntities(List<Sprite> sprites, DrawLayer currentLayer)
+	private void drawSpritesByLayer(List<Sprite> sprites)
 	{
-		if (sprites.size() == 0)
-		{
-			return;
-		}
+		// Sort list by draw layer, to ensure that sprites are drawn in the correct order,
+		// then by sprite type, to facilitate batching.
+		Collections.sort(spritesInView, spriteComparator);
 
 		batch.begin();
 		for (Sprite sprite : sprites)
 		{
-			sprite.draw(batch, camera, currentLayer);
+			sprite.draw(batch, camera);
 		}
 		batch.end();
 	}
@@ -323,7 +312,7 @@ public class Graphics
 				// Change the positions of the background sprites so they are always on screen.
 				sprite.x = (int) position.x;
 				sprite.y = (int) position.y;
-				sprite.draw(batch, camera, DrawLayer.BACKGROUND);
+				sprite.draw(batch, camera);
 			}
 		}
 		batch.end();
@@ -388,20 +377,6 @@ public class Graphics
 			{
 				getTexture(TEXTURE_PATH + file.getName());
 			}
-		}
-	}
-
-	/**
-	 * Comparator that is used when sorting sprites.
-	 *
-	 * @author BU CS673 - Clone Productions
-	 */
-	private static class SpriteComparator implements Comparator<Sprite>
-	{
-		@Override
-		public int compare(Sprite o1, Sprite o2)
-		{
-			return (o1.getClass().getName().compareTo(o2.getClass().getName()));
 		}
 	}
 }

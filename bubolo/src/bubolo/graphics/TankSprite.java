@@ -88,7 +88,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -112,12 +112,12 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		}
 		explosionCreated = false;
 
-		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN && getDrawLayer() == layer) {
-			animateAndDraw(batch, camera, layer);
+		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN) {
+			animateAndDraw(batch, camera);
 		}
 	}
 
-	private void animateAndDraw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	private void animateAndDraw(SpriteBatch batch, Camera camera)
 	{
 		animationState = (getEntity().getSpeed() > 0.f) ? 1 : 0;
 		switch (animationState)
@@ -128,7 +128,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 				lastAnimationState = 0;
 				frameIndex = 0;
 			}
-			drawTexture(batch, camera, layer, standingFrames[colorId]);
+			drawTexture(batch, camera, standingFrames[colorId]);
 			break;
 
 		case 1:
@@ -137,7 +137,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 				frameIndex = 0;
 				lastAnimationState = 1;
 			}
-			drawTexture(batch, camera, layer, forwardFrames[frameIndex][colorId]);
+			drawTexture(batch, camera, forwardFrames[frameIndex][colorId]);
 
 			// Progress the tank drive forward animation.
 			animate(forwardFrames);
@@ -150,7 +150,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 				frameIndex = 0;
 				lastAnimationState = 2;
 			}
-			drawTexture(batch, camera, layer, backwardFrames[frameIndex][colorId]);
+			drawTexture(batch, camera, backwardFrames[frameIndex][colorId]);
 
 			// Progress the tank drive backward animation.
 			animate(backwardFrames);

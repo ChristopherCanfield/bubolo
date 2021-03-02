@@ -1,41 +1,31 @@
 package bubolo.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-
-
-
-
-
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Rubble;
-// should be importing Pillbox, not tank, right?
-import bubolo.world.entity.concrete.Tank;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import static org.mockito.Mockito.*;
+import bubolo.world.entity.concrete.Pillbox;
 
 
 public class PillboxSpriteTest
 {
 	private SpriteBatch batch;
 	private Camera camera;
-	
+
 	private boolean isComplete;
 	private boolean passed;
-	
+
 	@Before
 	public void setUp()
-	{	
+	{
 		LibGdxAppTester.createApp();
-			
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				batch = new SpriteBatch();
@@ -44,21 +34,21 @@ public class PillboxSpriteTest
 			}
 		});
 	}
-	
+
 
 	@Test
 	public void drawSprite()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run()
 			{
 				Sprite sprite = Sprites.getInstance().createSprite(new Pillbox());
 				batch.begin();
-				sprite.draw(batch, camera, sprite.getDrawLayer());
+				sprite.draw(batch, camera);
 				passed = true;
 				isComplete = true;
 			}
@@ -68,7 +58,7 @@ public class PillboxSpriteTest
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 

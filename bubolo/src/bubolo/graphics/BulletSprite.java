@@ -36,7 +36,7 @@ class BulletSprite extends AbstractEntitySprite<Entity>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -46,7 +46,7 @@ class BulletSprite extends AbstractEntitySprite<Entity>
 		}
 		else
 		{
-			drawTexture(batch, camera, layer, image);
+			drawTexture(batch, camera, image);
 
 			this.x = Math.round(getEntity().getX());
 			this.y = Math.round(getEntity().getY());

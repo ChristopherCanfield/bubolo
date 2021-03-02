@@ -40,7 +40,7 @@ class RubbleSprite extends AbstractEntitySprite<Entity>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -48,7 +48,7 @@ class RubbleSprite extends AbstractEntitySprite<Entity>
 		}
 		else
 		{
-			drawTexture(batch, camera, layer, image);
+			drawTexture(batch, camera, image);
 		}
 	}
 

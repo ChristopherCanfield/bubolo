@@ -10,7 +10,7 @@ import bubolo.world.entity.Entity;
 
 /**
  * The graphical representation of a Tree.
- * 
+ *
  * @author BU673 - Clone Industries
  */
 class TreeSprite extends AbstractEntitySprite<Entity>
@@ -18,14 +18,14 @@ class TreeSprite extends AbstractEntitySprite<Entity>
 	private Texture image;
 
 	private float rotation;
-	
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "tree.png";
-	
+
 	/**
 	 * Constructor for the TreeSprite. This is Package-private because sprites should not
 	 * be directly created outside of the graphics system.
-	 * 
+	 *
 	 * @param tree
 	 *            Reference to the Tree that this TreeSprite represents.
 	 */
@@ -39,7 +39,7 @@ class TreeSprite extends AbstractEntitySprite<Entity>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -47,10 +47,10 @@ class TreeSprite extends AbstractEntitySprite<Entity>
 		}
 		else
 		{
-			drawTexture(batch, camera, layer, image);
+			drawTexture(batch, camera, image);
 		}
 	}
-	
+
 	@Override
 	public float getRotation()
 	{

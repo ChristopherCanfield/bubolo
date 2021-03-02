@@ -34,7 +34,7 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -42,7 +42,7 @@ class RoadSprite extends AbstractEntitySprite<Road>
 		}
 		else
 		{
-			drawTexture(batch, camera, layer, frames[this.getEntity().getTilingState()]);
+			drawTexture(batch, camera, frames[this.getEntity().getTilingState()]);
 		}
 	}
 }

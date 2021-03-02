@@ -35,7 +35,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 
 		int currentState = this.getEntity().getTilingState();
@@ -46,7 +46,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		}
 		else
 		{
-			drawTexture(batch, camera, layer, frames[currentState]);
+			drawTexture(batch, camera, frames[currentState]);
 		}
 
 		boolean[] corners = this.getEntity().getCornerMatches();
@@ -55,11 +55,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[0])
 			{
-				drawTexture(batch, camera, layer, frames[20]);
+				drawTexture(batch, camera, frames[20]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[16]);
+				drawTexture(batch, camera, frames[16]);
 			}
 		}
 
@@ -67,11 +67,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[1])
 			{
-				drawTexture(batch, camera, layer, frames[21]);
+				drawTexture(batch, camera, frames[21]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[17]);
+				drawTexture(batch, camera, frames[17]);
 			}
 
 		}
@@ -80,11 +80,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[2])
 			{
-				drawTexture(batch, camera, layer, frames[22]);
+				drawTexture(batch, camera, frames[22]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[18]);
+				drawTexture(batch, camera, frames[18]);
 			}
 
 		}
@@ -93,11 +93,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[3])
 			{
-				drawTexture(batch, camera, layer, frames[23]);
+				drawTexture(batch, camera, frames[23]);
 			}
 			else
 			{
-				drawTexture(batch, camera, layer, frames[19]);
+				drawTexture(batch, camera, frames[19]);
 			}
 		}
 	}

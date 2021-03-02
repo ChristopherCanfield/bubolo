@@ -66,7 +66,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera, DrawLayer layer)
+	public void draw(SpriteBatch batch, Camera camera)
 	{
 		if (isDisposed())
 		{
@@ -98,7 +98,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 					frameIndex = 0;
 				}
 
-				drawTexture(batch, camera, layer, idleFrames[frameIndex][colorId]);
+				drawTexture(batch, camera, idleFrames[frameIndex][colorId]);
 
 				// Progress the Mine idle animation.
 				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
@@ -116,7 +116,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 					frameIndex = 0;
 					lastAnimationState = 1;
 				}
-				drawTexture(batch, camera, layer, explodingFrames[frameIndex][colorId]);
+				drawTexture(batch, camera, explodingFrames[frameIndex][colorId]);
 
 				// Progress the mine exploding animation.
 				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
