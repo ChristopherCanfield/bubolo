@@ -330,8 +330,8 @@ public class GameWorldTest
 		w.setSpriteLoading(false);
 		Tile[][] tiles = new Tile[1][1];
 		tiles[0][0] = new Tile(0, 0);
-		w.setMapTiles(tiles);
-		assertSame(tiles, w.getMapTiles());
+		w.setTiles(tiles);
+		assertSame(tiles, w.getTiles());
 	}
 	@Test
 	public void testSetMapTiles()
@@ -373,8 +373,8 @@ public class GameWorldTest
 		World w = new GameWorld(0,0);
 		Tile[][] mapTiles = new Tile[1][1];
 		mapTiles[0][0] = new Tile(0, 0, w.addEntity(Grass.class));
-		w.setMapTiles(mapTiles);
-		assertEquals(Grass.class, w.getMapTiles()[0][0].getTerrain().getClass());
+		w.setTiles(mapTiles);
+		assertEquals(Grass.class, w.getTiles()[0][0].getTerrain().getClass());
 	}
 
 	@Test

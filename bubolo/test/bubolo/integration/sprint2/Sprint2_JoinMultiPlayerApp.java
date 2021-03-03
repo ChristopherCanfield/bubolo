@@ -183,7 +183,7 @@ public class Sprint2_JoinMultiPlayerApp implements GameApplication
 	@Override
 	public boolean isGameStarted()
 	{
-		return world.getMapTiles() != null;
+		return world.getTiles() != null;
 	}
 
 	@Override

@@ -83,6 +83,6 @@ public abstract class AbstractGameApplication implements GameApplication
 	@Override
 	public boolean isGameStarted()
 	{
-		return (isReady() && world != null && world.getMapTiles() != null);
+		return (isReady() && world != null && world.getTiles() != null);
 	}
 }

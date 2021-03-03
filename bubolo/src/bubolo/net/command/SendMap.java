@@ -43,7 +43,7 @@ public class SendMap implements NetworkCommand
 
 		this.tiles = new ArrayList<TileInfo>();
 
-		Tile[][] map = world.getMapTiles();
+		Tile[][] map = world.getTiles();
 		this.rows = map.length;
 		this.columns = map[0].length;
 
@@ -89,7 +89,7 @@ public class SendMap implements NetworkCommand
 			}
 		}
 
-		world.setMapTiles(mapTiles);
+		world.setTiles(mapTiles);
 	}
 
 	/**

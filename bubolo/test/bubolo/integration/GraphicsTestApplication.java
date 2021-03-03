@@ -100,7 +100,7 @@ public class GraphicsTestApplication extends AbstractGameApplication
 			}
 		}
 		
-		world.setMapTiles(mapTiles);
+		world.setTiles(mapTiles);
 		
 		// TODO: Adjust as needed.
 		Tank t = (Tank) world.addEntity(Tank.class).setTransform(100, 100, 0);

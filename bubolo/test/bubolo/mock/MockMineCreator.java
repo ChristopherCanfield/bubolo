@@ -52,7 +52,7 @@ public class MockMineCreator extends MockWorld
 	}
 	
 	@Override
-	public Tile[][] getMapTiles()
+	public Tile[][] getTiles()
 	{
 		return mapTiles;
 	}

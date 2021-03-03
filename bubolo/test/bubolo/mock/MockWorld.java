@@ -119,13 +119,13 @@ public class MockWorld implements World
 	}
 
 	@Override
-	public void setMapTiles(Tile[][] givenTiles)
+	public void setTiles(Tile[][] givenTiles)
 	{
 		// do nothing
 	}
 
 	@Override
-	public Tile[][] getMapTiles()
+	public Tile[][] getTiles()
 	{
 		//do nothing
 		return null;

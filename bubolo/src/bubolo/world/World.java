@@ -200,7 +200,7 @@ public interface World
 	 *
 	 * @return the 2d Tile Array representing the stationary objects in the world
 	 */
-	public Tile[][] getMapTiles();
+	public Tile[][] getTiles();
 
 	/**
 	 * Returns a Tile from a world position.
@@ -216,7 +216,7 @@ public interface World
 	 * @param mapTiles
 	 *            is the representation to set the MapTiles field to
 	 */
-	public void setMapTiles(Tile[][] mapTiles);
+	public void setTiles(Tile[][] mapTiles);
 
 	/**
 	 * Adds a controller of the specified type to the world.

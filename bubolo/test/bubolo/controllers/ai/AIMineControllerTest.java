@@ -22,7 +22,7 @@ public class AIMineControllerTest
 		GameWorld world = new GameWorld(100, 100);
 		world.setSpriteLoading(false);
 		Tile[][] tiles = createTiles(100, 100);
-		world.setMapTiles(tiles);
+		world.setTiles(tiles);
 
 		c.update(world);
 	}

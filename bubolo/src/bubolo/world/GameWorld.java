@@ -275,7 +275,7 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public Tile[][] getMapTiles()
+	public Tile[][] getTiles()
 	{
 		return mapTiles;
 	}
@@ -291,7 +291,7 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public void setMapTiles(Tile[][] mapTiles)
+	public void setTiles(Tile[][] mapTiles)
 	{
 		this.mapTiles = mapTiles;
 		setMapWidth(mapTiles.length * Coordinates.TILE_TO_WORLD_SCALE);

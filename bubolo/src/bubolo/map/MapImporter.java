@@ -268,7 +268,7 @@ public class MapImporter {
 				}
 			}
 
-			world.setMapTiles(mapTiles);
+			world.setTiles(mapTiles);
 			return Pair.of(world, diagnostics);
 		} catch (JsonException e) {
 			throw new InvalidMapException(DefaultExceptionMessage, e);

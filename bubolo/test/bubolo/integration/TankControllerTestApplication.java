@@ -87,7 +87,7 @@ public class TankControllerTestApplication extends AbstractGameApplication
 			}
 		}
 		
-		world.setMapTiles(mapTiles);
+		world.setTiles(mapTiles);
 		Tank tank = world.addEntity(Tank.class);
 		tank.setTransform(1200, 100, 0);
 		tank.setLocalPlayer(true);

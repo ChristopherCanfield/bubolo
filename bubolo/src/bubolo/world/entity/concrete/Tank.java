@@ -481,7 +481,7 @@ public class Tank extends Actor implements Damageable
 	{
 		int gridX = TileUtil.getClosestTileX(getX());
 		int gridY = TileUtil.getClosestTileY(getY());
-		Tile[][] allTiles = world.getMapTiles();
+		Tile[][] allTiles = world.getTiles();
 		if (allTiles == null || TileUtil.isValidTile(gridX, gridY, world) == false)
 		{
 			hidden = false;
@@ -898,14 +898,14 @@ public class Tank extends Actor implements Damageable
 		int xTileCoord = (int) startX / 32;
 		int yTileCoord = (int) startY / 32;
 
-		if (world.getMapTiles()[xTileCoord][yTileCoord].getTerrain().getClass() != Water.class
-				&& world.getMapTiles()[xTileCoord][yTileCoord].getTerrain().getClass() != DeepWater.class)
+		if (world.getTiles()[xTileCoord][yTileCoord].getTerrain().getClass() != Water.class
+				&& world.getTiles()[xTileCoord][yTileCoord].getTerrain().getClass() != DeepWater.class)
 		{
-			if ((!world.getMapTiles()[xTileCoord][yTileCoord].hasElement()) && (mineCount > 0))
+			if ((!world.getTiles()[xTileCoord][yTileCoord].hasElement()) && (mineCount > 0))
 			{
 				mineLayingTime = System.currentTimeMillis();
 				Mine mine = world.addEntity(Mine.class);
-				world.getMapTiles()[xTileCoord][yTileCoord].setElement(mine, world);
+				world.getTiles()[xTileCoord][yTileCoord].setElement(mine, world);
 				mine.setX(startX).setY(startY);
 				mine.setRotation(getRotation());
 				mineCount--;

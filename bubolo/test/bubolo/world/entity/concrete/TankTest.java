@@ -34,7 +34,7 @@ public class TankTest
 		grass = new Grass();
 		Tile[][] grassTile = new Tile[1][1];
 		grassTile[0][0] = new Tile(0,0,grass);
-		world.setMapTiles(grassTile);
+		world.setTiles(grassTile);
 		EntityTestCase.setTestParams(tank);
 	}
 

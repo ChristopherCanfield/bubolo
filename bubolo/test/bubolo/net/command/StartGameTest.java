@@ -59,7 +59,7 @@ public class StartGameTest
 				tiles[0][1] = new Tile(0, 1, new Grass());
 				tiles[1][0] = new Tile(1, 0, new Grass());
 				tiles[1][1] = new Tile(0, 1, new Water());
-				world.setMapTiles(tiles);
+				world.setTiles(tiles);
 				
 				Network net = NetworkSystem.getInstance();
 				net.startDebug();

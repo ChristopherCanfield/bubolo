@@ -76,7 +76,7 @@ public class AiTreeController implements Controller
 				{
 					Tree tree = world.addEntity(Tree.class);
 
-					Tile tile = world.getMapTiles()[createAtX-1][createAtY-1];
+					Tile tile = world.getTiles()[createAtX-1][createAtY-1];
 					tile.setElement(tree, world);
 
 					Network net = NetworkSystem.getInstance();
@@ -133,7 +133,7 @@ public class AiTreeController implements Controller
 	{
 		boolean unbuildable = false;
 		tempScore = 0;
-		Tile[][] tiles = world.getMapTiles();
+		Tile[][] tiles = world.getTiles();
 		Tile tile = null;
 
 		if (tiles != null)

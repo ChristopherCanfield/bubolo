@@ -154,7 +154,7 @@ public class Sprint2_SinglePlayerApp implements GameApplication
 	@Override
 	public boolean isGameStarted()
 	{
-		return world.getMapTiles() != null;
+		return world.getTiles() != null;
 	}
 
 	@Override

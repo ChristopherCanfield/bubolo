@@ -34,7 +34,7 @@ public abstract class TileUtil
 	 */
 	public static boolean isValidTile(int gridX, int gridY, World world)
 	{
-		Tile[][] mapTiles = world.getMapTiles();
+		Tile[][] mapTiles = world.getTiles();
 		if (mapTiles == null || gridX >= mapTiles.length || gridX < 0
 				|| gridY >= mapTiles[gridX].length || gridY < 0)
 		{
@@ -117,7 +117,7 @@ public abstract class TileUtil
 	public static List<Entity> getLocalEntities(int gridX, int gridY, World w)
 	{
 		ArrayList<Entity> localEnts = new ArrayList<Entity>();
-		Tile[][] worldTiles = w.getMapTiles();
+		Tile[][] worldTiles = w.getTiles();
 		if (worldTiles == null)
 		{
 			localEnts.addAll(w.getEntities());
@@ -211,7 +211,7 @@ public abstract class TileUtil
 			return false;
 		}
 
-		Tile targetTile = w.getMapTiles()[gridX][gridY];
+		Tile targetTile = w.getTiles()[gridX][gridY];
 
 		return (containsTargetTerrain(targetTile, targetClasses)
 				|| containsTargetElement(targetTile, targetClasses));
@@ -342,7 +342,7 @@ public abstract class TileUtil
 	 */
 	public static Terrain getTileTerrain(float x, float y, World w)
 	{
-		Tile[][] mapTiles = w.getMapTiles();
+		Tile[][] mapTiles = w.getTiles();
 		if(mapTiles == null)
 		{
 			return null;
@@ -374,7 +374,7 @@ public abstract class TileUtil
 	 */
 	public static Tile getEntityTile(Entity entity, World world)
 	{
-		Tile[][] tiles = world.getMapTiles();
+		Tile[][] tiles = world.getTiles();
 		int tileX = TileUtil.getClosestTileX(entity.getX());
 		int tileY = TileUtil.getClosestTileY(entity.getY());
 		return tiles[tileX][tileY];
