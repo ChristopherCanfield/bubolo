@@ -203,6 +203,14 @@ public interface World
 	public Tile[][] getMapTiles();
 
 	/**
+	 * Returns a Tile from a world position.
+	 * @param worldX the world x position.
+	 * @param worldY the world y position.
+	 * @return the tile.
+	 */
+	public Tile getTileFromWorldPosition(float worldX, float worldY);
+
+	/**
 	 * Allows the setting of a 2d Tile Array representation of stationary objects in the world
 	 *
 	 * @param mapTiles

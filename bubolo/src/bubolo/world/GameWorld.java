@@ -37,6 +37,7 @@ public class GameWorld implements World
 	private List<Entity> entities = new ArrayList<Entity>();
 	private Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
 
+	// first: x; second: y.
 	private Tile[][] mapTiles = null;
 
 	// The list of entities to remove. The entities array can't be modified while it
@@ -280,11 +281,23 @@ public class GameWorld implements World
 	}
 
 	@Override
+	public Tile getTileFromWorldPosition(float worldX, float worldY) {
+		int x = ((int) worldX) / Coordinates.TILE_TO_WORLD_SCALE;
+		int y = ((int) worldY) / Coordinates.TILE_TO_WORLD_SCALE;
+
+		var tile = mapTiles[x][y];
+		assert tile != null;
+		return tile;
+	}
+
+	@Override
 	public void setMapTiles(Tile[][] mapTiles)
 	{
 		this.mapTiles = mapTiles;
 		setMapWidth(mapTiles.length * Coordinates.TILE_TO_WORLD_SCALE);
 		setMapHeight(mapTiles[0].length * Coordinates.TILE_TO_WORLD_SCALE);
+
+		System.out.println("Map width: " + worldMapWidth / Coordinates.TILE_TO_WORLD_SCALE + " Map height: " + worldMapHeight / Coordinates.TILE_TO_WORLD_SCALE);
 
 		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
 		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.

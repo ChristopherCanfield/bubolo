@@ -16,7 +16,7 @@ import bubolo.world.entity.concrete.Tank;
 
 /**
  * A controller for the local tank. This controller maps keyboard inputs to tank commands.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class KeyboardTankController implements Controller
@@ -25,7 +25,7 @@ public class KeyboardTankController implements Controller
 
 	/**
 	 * Constructs a keyboard tank controller.
-	 * 
+	 *
 	 * @param tank
 	 *            reference to the local tank.
 	 */

@@ -13,8 +13,11 @@ import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
 import bubolo.world.Ownable;
+import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.Entity;
+import bubolo.world.entity.StationaryElement;
+import bubolo.world.entity.Terrain;
 
 /**
  * Generic entity creator for the network.
@@ -91,17 +94,21 @@ public class CreateEntity implements NetworkCommand
 	{
 		try
 		{
-			Entity entity = null;
-			if (factory == null)
-			{
+			Entity entity;
+			if (factory == null) {
 				entity = world.addEntity(type, id);
-			}
-			else
-			{
+			} else {
 				entity = world.addEntity(type, id, factory);
 			}
 
 			entity.setX(x).setY(y).setRotation(rotation);
+
+			Tile tile = world.getTileFromWorldPosition(x, y);
+			if (entity instanceof Terrain terrain) {
+				tile.setTerrain(terrain, world);
+			} else if (entity instanceof StationaryElement stationaryElement) {
+				tile.setElement(stationaryElement, world);
+			}
 
 			if (entity instanceof Ownable)
 			{

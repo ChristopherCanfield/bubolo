@@ -175,4 +175,10 @@ public class MockWorld implements World
 	{
 		return 0;
 	}
+
+	@Override
+	public Tile getTileFromWorldPosition(float worldX, float worldY) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

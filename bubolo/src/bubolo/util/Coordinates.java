@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * Utility methods for working with coordinates.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public abstract class Coordinates
@@ -18,7 +18,7 @@ public abstract class Coordinates
 
 	/**
 	 * Converts world coordinates to camera coordinates.
-	 * 
+	 *
 	 * @param camera
 	 *            the game's camera.
 	 * @param worldCoordinates
@@ -33,7 +33,7 @@ public abstract class Coordinates
 
 	/**
 	 * Converts camera coordinates to world coordinates.
-	 * 
+	 *
 	 * @param camera
 	 *            the game's camera.
 	 * @param cameraCoordinates

@@ -8,7 +8,6 @@ import bubolo.controllers.Controller;
 import bubolo.graphics.LibGdxAppTester;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
-import bubolo.world.World;
 import bubolo.world.entity.concrete.Mine;
 
 
@@ -20,7 +19,8 @@ public class AIMineControllerTest
 		LibGdxAppTester.createApp();
 		Controller c = new AiMineController(mock(Mine.class));
 
-		World world = new GameWorld(100, 100);
+		GameWorld world = new GameWorld(100, 100);
+		world.setSpriteLoading(false);
 		Tile[][] tiles = createTiles(100, 100);
 		world.setMapTiles(tiles);
 
