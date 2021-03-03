@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.concrete.Tank;
 
@@ -82,7 +82,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	void drawPlayerName(SpriteBatch batch, Camera camera) {
 		var tank = getEntity();
 		if (!tank.isLocalPlayer()) {
-			var tankCameraCoords = Coordinates.worldToCamera(camera, new Vector2(getEntity().getX(), getEntity().getY()));
+			var tankCameraCoords = Coords.worldToCamera(camera, new Vector2(getEntity().getX(), getEntity().getY()));
 			font.draw(batch, tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
 	}

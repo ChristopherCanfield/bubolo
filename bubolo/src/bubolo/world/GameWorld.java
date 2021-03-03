@@ -15,7 +15,7 @@ import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
 import bubolo.controllers.ai.AiTreeController;
 import bubolo.graphics.Sprites;
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.Actor;
 import bubolo.world.entity.Effect;
@@ -86,8 +86,8 @@ public class GameWorld implements World
 	 */
 	public GameWorld(int worldMapWidth, int worldMapHeight)
 	{
-		int tilesX = worldMapWidth / Coordinates.TILE_TO_WORLD_SCALE;
-		int tilesY = worldMapHeight / Coordinates.TILE_TO_WORLD_SCALE;
+		int tilesX = worldMapWidth / Coords.TILE_TO_WORLD_SCALE;
+		int tilesY = worldMapHeight / Coords.TILE_TO_WORLD_SCALE;
 		mapTiles = new Tile[tilesX][tilesY];
 
 		this.worldMapWidth = worldMapWidth;
@@ -282,8 +282,8 @@ public class GameWorld implements World
 
 	@Override
 	public Tile getTileFromWorldPosition(float worldX, float worldY) {
-		int x = ((int) worldX) / Coordinates.TILE_TO_WORLD_SCALE;
-		int y = ((int) worldY) / Coordinates.TILE_TO_WORLD_SCALE;
+		int x = ((int) worldX) / Coords.TILE_TO_WORLD_SCALE;
+		int y = ((int) worldY) / Coords.TILE_TO_WORLD_SCALE;
 
 		var tile = mapTiles[x][y];
 		assert tile != null;
@@ -294,10 +294,10 @@ public class GameWorld implements World
 	public void setTiles(Tile[][] mapTiles)
 	{
 		this.mapTiles = mapTiles;
-		setMapWidth(mapTiles.length * Coordinates.TILE_TO_WORLD_SCALE);
-		setMapHeight(mapTiles[0].length * Coordinates.TILE_TO_WORLD_SCALE);
+		setMapWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
+		setMapHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
 
-		System.out.println("Map width: " + worldMapWidth / Coordinates.TILE_TO_WORLD_SCALE + " Map height: " + worldMapHeight / Coordinates.TILE_TO_WORLD_SCALE);
+		System.out.println("Map width: " + worldMapWidth / Coords.TILE_TO_WORLD_SCALE + " Map height: " + worldMapHeight / Coords.TILE_TO_WORLD_SCALE);
 
 		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
 		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.

@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
  *
  * @author BU CS673 - Clone Productions
  */
-public abstract class Coordinates
+public abstract class Coords
 {
 	/**
 	 * Defines the scale used to determine the relationship between world units, map

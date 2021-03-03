@@ -21,7 +21,7 @@ import com.github.cliftonlabs.json_simple.JsonKey;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.World;
@@ -248,8 +248,8 @@ public class MapImporter {
 			int mapWidthTiles = diagnostics.tileWidth = jsonTiledMap.getInteger(Key.MapWidth);
 			Tile[][] mapTiles = new Tile[mapWidthTiles][mapHeightTiles];
 
-			GameWorld world = new GameWorld(Coordinates.TILE_TO_WORLD_SCALE * mapWidthTiles,
-					Coordinates.TILE_TO_WORLD_SCALE * mapHeightTiles);
+			GameWorld world = new GameWorld(Coords.TILE_TO_WORLD_SCALE * mapWidthTiles,
+					Coords.TILE_TO_WORLD_SCALE * mapHeightTiles);
 			world.setSpriteLoading(!disableGraphics);
 
 			JsonArray layers = (JsonArray) jsonTiledMap.get(Key.Layers.getKey());
@@ -311,8 +311,8 @@ public class MapImporter {
 					// The game world is flipped from json map indexes.
 					int gridY = mapHeightTiles - row - 1;
 					int gridX = col;
-					int posY = gridY * Coordinates.TILE_TO_WORLD_SCALE;
-					int posX = gridX * Coordinates.TILE_TO_WORLD_SCALE;
+					int posY = gridY * Coords.TILE_TO_WORLD_SCALE;
+					int posX = gridX * Coords.TILE_TO_WORLD_SCALE;
 					double rotation = Math.PI / 2.0;
 
 					entity.setTransform(posX, posY, rotation);

@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 import org.junit.Test;
 
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 import bubolo.world.World;
 
 public class MapImporterTest {
@@ -24,8 +24,8 @@ public class MapImporterTest {
 		MapImporter.Diagnostics diagnostics = results.getRight();
 
 		assertNotNull(world);
-		assertEquals(8, world.getMapWidth() / Coordinates.TILE_TO_WORLD_SCALE);
-		assertEquals(2, world.getMapHeight() / Coordinates.TILE_TO_WORLD_SCALE);
+		assertEquals(8, world.getMapWidth() / Coords.TILE_TO_WORLD_SCALE);
+		assertEquals(2, world.getMapHeight() / Coords.TILE_TO_WORLD_SCALE);
 		assertEquals(3, diagnostics.layerCount());
 		assertEquals(2, diagnostics.tilesetCount());
 		assertEquals(13, diagnostics.typesImported().size());
@@ -43,8 +43,8 @@ public class MapImporterTest {
 		MapImporter.Diagnostics diagnostics = results.getRight();
 
 		assertNotNull(world);
-		assertEquals(114, world.getMapWidth() / Coordinates.TILE_TO_WORLD_SCALE);
-		assertEquals(64, world.getMapHeight() / Coordinates.TILE_TO_WORLD_SCALE);
+		assertEquals(114, world.getMapWidth() / Coords.TILE_TO_WORLD_SCALE);
+		assertEquals(64, world.getMapHeight() / Coords.TILE_TO_WORLD_SCALE);
 		assertEquals(3, diagnostics.layerCount());
 		assertEquals(2, diagnostics.tilesetCount());
 		assertEquals(10, diagnostics.typesImported().size());

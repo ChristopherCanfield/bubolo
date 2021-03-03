@@ -3,7 +3,7 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 import bubolo.util.TextureFormatException;
 
 /**
@@ -70,8 +70,8 @@ public abstract class TextureUtil
 	private static TextureRegion[] adaptiveSplit_16(Texture tex)
 	{
 
-		if (tex.getHeight() != Coordinates.TILE_TO_WORLD_SCALE * 4
-				&& tex.getWidth() != Coordinates.TILE_TO_WORLD_SCALE * 4)
+		if (tex.getHeight() != Coords.TILE_TO_WORLD_SCALE * 4
+				&& tex.getWidth() != Coords.TILE_TO_WORLD_SCALE * 4)
 		{
 			throw new TextureFormatException("Cannot split texture into 16 tiles, wrong size!");
 		}
@@ -80,8 +80,8 @@ public abstract class TextureUtil
 
 		// Grab the 16 texture frames for a standard 4x4 layout
 
-		TextureRegion[][] allFrames = splitFrames(tex, Coordinates.TILE_TO_WORLD_SCALE,
-				Coordinates.TILE_TO_WORLD_SCALE);
+		TextureRegion[][] allFrames = splitFrames(tex, Coords.TILE_TO_WORLD_SCALE,
+				Coords.TILE_TO_WORLD_SCALE);
 
 		// Assign each texture frame to the correct index
 		adapt[0] = allFrames[0][0];
@@ -117,8 +117,8 @@ public abstract class TextureUtil
 	 */
 	private static TextureRegion[] adaptiveSplit_water(Texture tex)
 	{
-		if (tex.getHeight() != Coordinates.TILE_TO_WORLD_SCALE * 4
-				&& tex.getWidth() != Coordinates.TILE_TO_WORLD_SCALE * 6)
+		if (tex.getHeight() != Coords.TILE_TO_WORLD_SCALE * 4
+				&& tex.getWidth() != Coords.TILE_TO_WORLD_SCALE * 6)
 		{
 			throw new TextureFormatException("Cannot split texture into 16x9x9 tiles, wrong size!");
 		}
@@ -127,8 +127,8 @@ public abstract class TextureUtil
 
 		// Grab the 34 texture frames for a standard 4x4 + 3x3 + 3x3 layout
 
-		TextureRegion[][] allFrames = splitFrames(tex, Coordinates.TILE_TO_WORLD_SCALE,
-				Coordinates.TILE_TO_WORLD_SCALE);
+		TextureRegion[][] allFrames = splitFrames(tex, Coords.TILE_TO_WORLD_SCALE,
+				Coords.TILE_TO_WORLD_SCALE);
 
 		// Assign each texture frame to the correct index...
 

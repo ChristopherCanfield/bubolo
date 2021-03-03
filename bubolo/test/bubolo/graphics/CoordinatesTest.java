@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,7 +19,7 @@ public class CoordinatesTest
 		camera.translate(100.f, 40.f, 0.f);
 		camera.update();
 		Vector2 worldCoord = new Vector2(40.f, 200.f);
-		Vector2 cameraCoord = Coordinates.worldToCamera(camera, worldCoord);
+		Vector2 cameraCoord = Coords.worldToCamera(camera, worldCoord);
 		
 		assertEquals(-60, (int)cameraCoord.x);
 		assertEquals(160, (int)cameraCoord.y);
@@ -32,7 +32,7 @@ public class CoordinatesTest
 		camera.translate(100.f, 40.f, 0.f);
 		camera.update();
 		Vector2 cameraCoord = new Vector2(-60.f, 160.f);
-		Vector2 worldCoord = Coordinates.cameraToWorld(camera, cameraCoord);
+		Vector2 worldCoord = Coords.cameraToWorld(camera, cameraCoord);
 		
 		assertEquals(40, (int)worldCoord.x);
 		assertEquals(200, (int)worldCoord.y);

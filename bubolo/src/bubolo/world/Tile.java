@@ -1,6 +1,6 @@
 package bubolo.world;
 
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.Terrain;
@@ -64,7 +64,7 @@ public class Tile
 	 */
 	public float getX()
 	{
-		return gridX * Coordinates.TILE_TO_WORLD_SCALE + Coordinates.TILE_TO_WORLD_SCALE / 2;
+		return gridX * Coords.TILE_TO_WORLD_SCALE + Coords.TILE_TO_WORLD_SCALE / 2;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class Tile
 	 */
 	public float getY()
 	{
-		return gridY * Coordinates.TILE_TO_WORLD_SCALE + Coordinates.TILE_TO_WORLD_SCALE / 2;
+		return gridY * Coords.TILE_TO_WORLD_SCALE + Coords.TILE_TO_WORLD_SCALE / 2;
 	}
 
 	/**

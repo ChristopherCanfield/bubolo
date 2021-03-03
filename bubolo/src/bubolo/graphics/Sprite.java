@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import bubolo.util.Coordinates;
+import bubolo.util.Coords;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -106,7 +106,7 @@ abstract class Sprite implements Drawable
 	 */
 	protected final void drawTexture(SpriteBatch batch, Camera camera, Texture texture)
 	{
-		Vector2 cameraCoordinates = Coordinates.worldToCamera(camera,
+		Vector2 cameraCoordinates = Coords.worldToCamera(camera,
 				new Vector2(getX() - (texture.getWidth() / 2),
 						getY() - (texture.getHeight() / 2)));
 
@@ -140,7 +140,7 @@ abstract class Sprite implements Drawable
 	 */
 	protected final void drawTexture(SpriteBatch batch, Camera camera, TextureRegion texture)
 	{
-		Vector2 cameraCoordinates = Coordinates.worldToCamera(camera,
+		Vector2 cameraCoordinates = Coords.worldToCamera(camera,
 				new Vector2(getX() - (texture.getRegionWidth() / 2),
 						getY() - (texture.getRegionHeight() / 2)));
 
