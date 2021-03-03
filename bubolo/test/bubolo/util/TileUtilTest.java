@@ -1,6 +1,6 @@
 package bubolo.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -11,9 +11,7 @@ import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.entity.Entity;
 import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.Tank;
-import bubolo.world.entity.concrete.Tree;
 import bubolo.world.entity.concrete.Wall;
 import bubolo.world.entity.concrete.Water;
 
@@ -38,9 +36,11 @@ public class TileUtilTest
 		world.setMapTiles(tiles);
 		tank = world.addEntity(Tank.class);
 		tank.setTransform(16, 16, 0);
-		tiles[0][0].setElement(new Wall());
+
+		var wall = world.addEntity(Wall.class);
+		tiles[0][0].setElement(new Wall(), world);
 	}
-	
+
 	@Test
 	public void isValidTile(){
 		assertEquals(true, TileUtil.isValidTile(0,0, world));
@@ -69,7 +69,7 @@ public class TileUtilTest
 	{
 		assertEquals("Tile (1,0) has the wrong tiling state!", 9, TileUtil.getTilingState(tiles[0][0], world, new Class[] { Grass.class }));
 	}
-	
+
 	@Test
 	public void getLocalEntites(){
 		List l = TileUtil.getLocalEntities(0, 0, world);
@@ -79,7 +79,7 @@ public class TileUtilTest
 		assertEquals("List of local Entities contains incorrect objects!", false,  l.contains(tiles[0][0].getTerrain()));
 
 	}
-	
+
 	@Test
 	public void getClosestTile(){
 		int i = TileUtil.getClosestTileX(31);
@@ -88,7 +88,7 @@ public class TileUtilTest
 		assertEquals("Returned incorrect tile index for x float value.", 1, j);
 
 	}
-	
+
 	@Test
 	public void getLocalCollisions(){
 		List l = TileUtil.getLocalEntities(0, 0, world);
@@ -96,7 +96,7 @@ public class TileUtilTest
 		l = TileUtil.getLocalEntities(3*32f + 16f, 3*32f + 16f, world);
 		assertEquals("List of local Entities does not contain correct objects!", true,  l.contains(tiles[1][1].getTerrain()));
 		assertEquals("List of local Entities contains incorrect objects!", false,  l.contains(tiles[0][0].getTerrain()));
-		
+
 		List c = TileUtil.getLocalCollisions(tank, world);
 		assertEquals("List of local collisions does not contain correct objects", true, c.contains(tiles[0][0].getElement()));
 	}

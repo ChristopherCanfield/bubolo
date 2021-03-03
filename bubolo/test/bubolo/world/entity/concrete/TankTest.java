@@ -1,35 +1,21 @@
 package bubolo.world.entity.concrete;
 
-import static org.junit.Assert.*;
-
-import org.junit.BeforeClass;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import bubolo.graphics.Graphics;
 import bubolo.graphics.LibGdxAppTester;
 import bubolo.mock.MockBulletCreator;
 import bubolo.mock.MockMineCreator;
-import bubolo.mock.MockPillboxCreator;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
 import bubolo.world.entity.EntityTestCase;
-import static org.mockito.Mockito.*;
 
 public class TankTest
 {
@@ -116,58 +102,58 @@ public class TankTest
 		tank.rotateRight();
 		assertEquals(rotation + 0.05f, tank.getRotation(), 0.0001f);
 	}
-	
+
 	@Test
 	public void  getHitPoints()
 	{
 		assertEquals(100, tank.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void getMaxHitPoints()
 	{
 		assertEquals(100, tank.getMaxHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void getAmmoCount()
 	{
 		assertEquals(100, tank.getAmmoCount(), 0);
 	}
-	
+
 	@Test
 	public void getTreeCount()
 	{
 		assertEquals(0, tank.getTreeCount(), 0);
 	}
-	
+
 	@Test
 	public void getMineCount()
 	{
 		assertEquals(10, tank.getMineCount(), 0);
 	}
-	
+
 	@Test
 	public void getPillBoxCount()
 	{
 		assertEquals(0, tank.getPillboxCount(), 0);
 	}
-	
-	@Test 
+
+	@Test
 	public void isAlive()
 	{
 		assertTrue(tank.isAlive());
 		tank.takeHit(200);
 		assertFalse(tank.isAlive());
 	}
-	
+
 	@Test
 	public void takeHit()
 	{
 		tank.takeHit(20);
 		assertEquals(80, tank.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void heal()
 	{
@@ -175,14 +161,14 @@ public class TankTest
 		tank.heal(5);
 		assertEquals(85, tank.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void gatherTree()
 	{
 		tank.gatherTree();
 		assertEquals(1, tank.getTreeCount(), 0);
 	}
-	
+
 	@Test
 	public void useTrees()
 	{
@@ -190,27 +176,21 @@ public class TankTest
 		tank.useTrees(1);
 		assertEquals(0, tank.getTreeCount(), 0);
 	}
-	
+
 	@Test
 	public void gatherMine()
 	{
 		tank.gatherMine(1);
-		assertEquals(tank.TANK_MAX_MINE_COUNT, tank.getMineCount(), 0);
+		assertEquals(Tank.TANK_MAX_MINE_COUNT, tank.getMineCount(), 0);
 	}
-	@Test
-	public void gatherPillBox()
-	{
-		tank.gatherPillbox();
-		assertEquals(1, tank.getPillboxCount(), 0);
-	}
-	
+
 	@Test
 	public void gatherAmmo()
 	{
 		tank.gatherAmmo(10);
 		assertEquals(100, tank.getAmmoCount(), 0);
 	}
-	
+
 	@Test
 	public void dropMine()
 	{
@@ -220,15 +200,7 @@ public class TankTest
 		mine = tank.dropMine(m, 16, 16);
 		assertNull(mine);
 	}
-	
-	@Test
-	public void dropPillbox()
-	{
-		tank.gatherPillbox();
-		Pillbox pillbox = tank.dropPillbox(new MockPillboxCreator(), 16, 16);
-		assertNotNull(pillbox);
-	}
-	
+
 	@Test
 	public void setOwner()
 	{
@@ -241,7 +213,7 @@ public class TankTest
 		tank.setOwnerUID(tank.getId());
 		assertEquals(tank.getId(), tank.getOwnerUID());
 	}
-	
+
 	@Test
 	public void getMax()
 	{

@@ -1,6 +1,7 @@
 package bubolo.world.entity.concrete;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,11 +22,12 @@ public class TreeTest
 	@BeforeClass
 	public static void setup()
 	{
-		tree = new Tree();
-		grass = new Grass();
+		world = new GameWorld(10, 10);
+		tree = world.addEntity(Tree.class);
+		grass = world.addEntity(Grass.class);
 		Tile[][] treeTile = new Tile[1][1];
 		treeTile[0][0] = new Tile(0,0,grass);
-		treeTile[0][0].setElement(tree);
+		treeTile[0][0].setElement(tree, world);
 		EntityTestCase.setTestParams(tree);
 	}
 
@@ -39,13 +41,13 @@ public class TreeTest
 	{
 		assertEquals(1, tree.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void getMaxHitPoints()
 	{
 		assertEquals(1, tree.getMaxHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void healDamageTest()
 	{
@@ -54,7 +56,7 @@ public class TreeTest
 		tree.heal(1);
 		assertEquals(1, tree.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void onDispose()
 	{

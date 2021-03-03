@@ -1,33 +1,33 @@
 package bubolo.world;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.Terrain;
 import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Road;
 import bubolo.world.entity.concrete.Tree;
 
 public class TileTest
 {
+	private World world;
+	private Tile testTile;
+	private static final int TARGET_X_GRID = 2;
+	private static final int TARGET_Y_GRID = 3;
+	private Terrain tempTerrain = new Grass();
+	private StationaryElement tempElement = new Tree();
+	private final Terrain t = new Grass();
+	private final StationaryElement e = new Tree();
 
-	static Tile testTile;
-	static int TARGET_X_GRID = 2;
-	static int TARGET_Y_GRID = 3;
-	Terrain tempTerrain = new Grass();
-	StationaryElement tempElement = new Tree();
-	static Terrain t = new Grass();
-	static StationaryElement e = new Tree();
-
-	@BeforeClass
-	public static void setup()
+	@Before
+	public void setup()
 	{
+		world = new GameWorld(10, 10);
 		testTile = new Tile(TARGET_X_GRID, TARGET_Y_GRID, t);
-		testTile.setElement(e);
+		testTile.setElement(e, world);
 	}
 
 	@Test
@@ -39,8 +39,7 @@ public class TileTest
 	@Test
 	public void getY()
 	{
-		assertEquals("Grid returns correct world Y", testTile.getY(), TARGET_Y_GRID
-				* 32 + 16, .01);
+		assertEquals("Grid returns correct world Y", testTile.getY(), TARGET_Y_GRID * 32 + 16, .01);
 	}
 
 	@Test
@@ -94,20 +93,20 @@ public class TileTest
 		assertEquals("Tile checks element absence correctly.",
 				(new Tile(0, 1, tempTerrain)).hasElement(), false);
 	}
-	
+
 	@Test
 	public void setTerrain()
 	{
 		assertEquals("Tile sets Terrain correctly.",
-				(new Tile(0, 1, new Grass())).setTerrain(tempTerrain).getTerrain(), tempTerrain);
+				(new Tile(0, 1, new Grass())).setTerrain(tempTerrain, world).getTerrain(), tempTerrain);
 	}
 
 	@Test(expected = GameLogicException.class)
 	public void clearElement() throws GameLogicException
 	{
 		Tile tempTile = new Tile(0, 1, tempTerrain);
-		tempTile.setElement(tempElement);
-		tempTile.clearElement();
+		tempTile.setElement(tempElement, world);
+		tempTile.clearElement(world);
 		assertEquals("Tile has null Element after clear", tempTile.getElement(), null);
 	}
 
@@ -122,7 +121,7 @@ public class TileTest
 	public void noTerrainFound() throws GameLogicException
 	{
 		Tile tempTile = new Tile(0, 1, tempTerrain);
-		tempTile.setTerrain(null);
+		tempTile.setTerrain(null, world);
 		tempTile.getTerrain();
 	}
 

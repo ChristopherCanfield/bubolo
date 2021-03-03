@@ -997,7 +997,7 @@ public class Tank extends Actor implements Damageable
 	 * Maximum amount of ammo for tank
 	 * @return maximum ammo count of tank
 	 */
-	public static int getTankMaxAmmo()
+	public int getTankMaxAmmo()
 	{
 		return TANK_MAX_AMMO;
 	}
@@ -1006,7 +1006,7 @@ public class Tank extends Actor implements Damageable
 	 * Maximum amount of mines for tank
 	 * @return maximum amount of mines a tank can carry
 	 */
-	public static int getTankMaxMineCount()
+	public int getTankMaxMineCount()
 	{
 		return TANK_MAX_MINE_COUNT;
 	}

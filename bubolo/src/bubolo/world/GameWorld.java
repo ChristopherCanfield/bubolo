@@ -120,10 +120,6 @@ public class GameWorld implements World
 		worldMapWidth = width;
 	}
 
-	public void createTilesFromMapSize() {
-
-	}
-
 	/**
 	 * Whether to use the graphics subsystem. Intended for testing.
 	 */
