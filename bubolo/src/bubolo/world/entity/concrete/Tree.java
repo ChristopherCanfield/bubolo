@@ -56,7 +56,7 @@ public class Tree extends StationaryElement implements Damageable
 	@Override
 	public void update(World world) {
 		if(hitPoints <= 0) {
-			getTile().clearElement();
+			getTile().clearElement(world);
 			world.removeEntity(this);
 		}
 	}

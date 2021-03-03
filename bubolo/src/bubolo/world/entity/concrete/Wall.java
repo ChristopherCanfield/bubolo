@@ -86,12 +86,12 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 		if(hitPoints <= 0)
 		{
 			Tile tile = getTile();
-			tile.clearElement();
+			tile.clearElement(world);
 
 			// When the wall is destroyed, replace it with rubble.
 			Rubble rubble = world.addEntity(Rubble.class);
 			rubble.setX(getX()).setY(getY());
-			tile.setElement(rubble);
+			tile.setElement(rubble, world);
 
 			world.removeEntity(this);
 		}

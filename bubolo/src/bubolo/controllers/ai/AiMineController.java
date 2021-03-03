@@ -36,7 +36,7 @@ public class AiMineController implements Controller
 	@Override
 	public void update(World world)
 	{
-		for(Entity collider:TileUtil.getLocalEntities(mine.getX(),mine.getY(), world))
+		for(Entity collider : TileUtil.getLocalEntities(mine.getX(),mine.getY(), world))
 		{
 			if (mine.isActive() &&
 					collider.isSolid() && collider != mine
@@ -46,11 +46,11 @@ public class AiMineController implements Controller
 				mineExplosion.setTransform(mine.getX(), mine.getY(), 0);
 
 				Tile tile = mine.getTile();
-				tile.clearElement();
+				tile.clearElement(world);
 
 				Crater crater = world.addEntity(Crater.class);
 				crater.setX(mine.getX()).setY(mine.getY());
-				tile.setElement(crater);
+				tile.setElement(crater, world);
 
 				world.removeEntity(mine);
 				return;

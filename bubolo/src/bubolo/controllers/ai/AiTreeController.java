@@ -77,7 +77,7 @@ public class AiTreeController implements Controller
 					Tree tree = world.addEntity(Tree.class);
 
 					Tile tile = world.getMapTiles()[createAtX-1][createAtY-1];
-					tile.setElement(tree);
+					tile.setElement(tree, world);
 
 					Network net = NetworkSystem.getInstance();
 					net.send(new CreateEntity(tree.getClass(), tree.getId(),
@@ -86,7 +86,7 @@ public class AiTreeController implements Controller
 					if (!(tile.getTerrain() instanceof Grass))
 					{
 						Grass grass = world.addEntity(Grass.class);
-						tile.setTerrain(grass);
+						tile.setTerrain(grass, world);
 						net.send(new CreateEntity(grass.getClass(), grass.getId(),
 								grass.getX(), grass.getY(), grass.getRotation()));
 					}

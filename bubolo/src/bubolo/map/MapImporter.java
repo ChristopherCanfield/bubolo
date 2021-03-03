@@ -250,7 +250,7 @@ public class MapImporter {
 
 			GameWorld world = new GameWorld(Coordinates.TILE_TO_WORLD_SCALE * mapWidthTiles,
 					Coordinates.TILE_TO_WORLD_SCALE * mapHeightTiles);
-			world.setLoadSprites(!disableGraphics);
+			world.setSpriteLoading(!disableGraphics);
 
 			JsonArray layers = (JsonArray) jsonTiledMap.get(Key.Layers.getKey());
 			diagnostics.layerCount = layers.size();
@@ -331,7 +331,7 @@ public class MapImporter {
 
 	private static void addTerrain(Terrain terrain, World world, Tile[][] mapTiles, int gridX, int gridY) {
 		if (mapTiles[gridX][gridY] != null) {
-			mapTiles[gridX][gridY].setTerrain(terrain);
+			mapTiles[gridX][gridY].setTerrain(terrain, world);
 		} else {
 			mapTiles[gridX][gridY] = new Tile(gridX, gridY, terrain);
 		}
@@ -343,6 +343,6 @@ public class MapImporter {
 			Grass grass = world.addEntity(Grass.class);
 			mapTiles[gridX][gridY] = new Tile(gridX, gridY, grass);
 		}
-		mapTiles[gridX][gridY].setElement(e);
+		mapTiles[gridX][gridY].setElement(e, world);
 	}
 }

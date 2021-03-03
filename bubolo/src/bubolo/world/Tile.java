@@ -18,8 +18,8 @@ public class Tile
 	// The tile's y position, in grid coordinates.
 	private int gridY;
 
-	private Terrain myTerrain;
-	private StationaryElement myElement;
+	private Terrain terrain;
+	private StationaryElement stationaryElement;
 
 	/**
 	 * Create a new Tile with the specified Terrain at the given map unit coordinates.
@@ -36,7 +36,7 @@ public class Tile
 	 */
 	public Tile(int gridX, int gridY, Terrain t)
 	{
-		myTerrain = t;
+		terrain = t;
 		if (t != null) {
 			t.setTile(this);
 		}
@@ -104,13 +104,10 @@ public class Tile
 	 */
 	public Terrain getTerrain()
 	{
-		if (myTerrain == null)
-		{
+		if (terrain == null) {
 			throw new GameLogicException("Tile has no terrain to return!");
-		}
-		else
-		{
-			return myTerrain;
+		} else {
+			return terrain;
 		}
 	}
 
@@ -119,7 +116,7 @@ public class Tile
 	 * but it is guaranteed to have one after being added.
 	 */
 	public boolean hasTerrain() {
-		return myTerrain != null;
+		return terrain != null;
 	}
 
 	/**
@@ -129,12 +126,12 @@ public class Tile
 	 */
 	public StationaryElement getElement()
 	{
-		if (myElement == null)
-		{
+		if (stationaryElement == null) {
 			throw new GameLogicException("Tile has no element to return!");
 		}
-		else
-			return myElement;
+		else {
+			return stationaryElement;
+		}
 	}
 
 	/**
@@ -144,7 +141,7 @@ public class Tile
 	 */
 	public boolean hasElement()
 	{
-		return myElement != null;
+		return stationaryElement != null;
 	}
 
 	/**
@@ -153,15 +150,13 @@ public class Tile
 	 *
 	 * @return a reference to this Tile.
 	 */
-	public Tile clearElement()
+	public Tile clearElement(World world)
 	{
-		if (myElement != null)
-		{
-			// TODO (cdc - 2021-02-27): This isn't correct: world.removeEntity should be used instead.
-			myElement.dispose();
+		if (stationaryElement != null) {
+			world.removeEntity(stationaryElement);
+			stationaryElement = null;
 		}
 
-		myElement = null;
 		return this;
 	}
 
@@ -176,15 +171,13 @@ public class Tile
 	 *            is the StationaryElement that should be added to this Tile.
 	 * @return a reference to this Tile.
 	 */
-	public Tile setElement(StationaryElement e)
+	public Tile setElement(StationaryElement e, World world)
 	{
-		if (myElement != null)
-		{
-			// TODO (cdc - 2021-02-27): This isn't correct: world.removeEntity should be used instead.
-			myElement.dispose();
+		if (stationaryElement != null) {
+			world.removeEntity(stationaryElement);
 		}
 
-		myElement = e;
+		stationaryElement = e;
 		e.setTile(this);
 		e.updateBounds();
 		return this;
@@ -201,24 +194,22 @@ public class Tile
 	 *            is the Terrain that should be assigned to this Tile.
 	 * @return a reference to this Tile.
 	 */
-	public Tile setTerrain(Terrain t)
+	public Tile setTerrain(Terrain t, World world)
 	{
-		if (t != null)
-		{
-			if (myTerrain != null)
-			{
-				// TODO (cdc - 2021-02-27): This isn't correct: world.removeEntity should be used instead.
-				myTerrain.dispose();
+		if (t != null) {
+			if (terrain != null) {
+				world.removeEntity(terrain);
 			}
 
-			myTerrain = t;
+			terrain = t;
 			t.setTile(this);
 			t.updateBounds();
 
 			return this;
 		}
-		else
+		else {
 			throw new GameLogicException("Cannot set a Tile's Terrain object to null!");
+		}
 	}
 
 }

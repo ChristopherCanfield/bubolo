@@ -905,7 +905,7 @@ public class Tank extends Actor implements Damageable
 			{
 				mineLayingTime = System.currentTimeMillis();
 				Mine mine = world.addEntity(Mine.class);
-				world.getMapTiles()[xTileCoord][yTileCoord].setElement(mine);
+				world.getMapTiles()[xTileCoord][yTileCoord].setElement(mine, world);
 				mine.setX(startX).setY(startY);
 				mine.setRotation(getRotation());
 				mineCount--;
@@ -919,10 +919,10 @@ public class Tank extends Actor implements Damageable
 	 * This method increments the pillbox count of the tank. The caller should remove the
 	 * pillbox from the world.
 	 */
-	public void gatherPillbox()
-	{
-		pillboxCount++;
-	}
+//	public void gatherPillbox()
+//	{
+//		pillboxCount++;
+//	}
 
 	/**
 	 * This method creates a pillbox in the world from the tank's inventory
@@ -936,25 +936,25 @@ public class Tank extends Actor implements Damageable
 	 * @return - returns the created pillbox or null if there are none to place or invalid
 	 *         placement location
 	 */
-	public Pillbox dropPillbox(World world, int startX, int startY)
-	{
-
-		// TODO: Once Engineer functionality is created this code will need to be moved to
-		// the engineer and replaced with sending the engineer out to drop the Pillbox
-		if ((!world.getMapTiles()[startX / 32][startY / 32].hasElement()) && (pillboxCount > 0))
-		{
-			Pillbox pillbox = world.addEntity(Pillbox.class);
-			world.getMapTiles()[startX / 32][startY / 32].setElement(pillbox);
-			pillbox.setX(startX / 32 + 16).setY(startY / 32 + 16);
-			pillbox.setRotation(getRotation());
-			pillboxCount--;
-			return pillbox;
-		}
-		else
-		{
-			return null;
-		}
-	}
+//	public Pillbox dropPillbox(World world, int startX, int startY)
+//	{
+//
+//		// TODO: Once Engineer functionality is created this code will need to be moved to
+//		// the engineer and replaced with sending the engineer out to drop the Pillbox
+//		if ((!world.getMapTiles()[startX / 32][startY / 32].hasElement()) && (pillboxCount > 0))
+//		{
+//			Pillbox pillbox = world.addEntity(Pillbox.class);
+//			world.getMapTiles()[startX / 32][startY / 32].setElement(pillbox, world);
+//			pillbox.setX(startX / 32 + 16).setY(startY / 32 + 16);
+//			pillbox.setRotation(getRotation());
+//			pillboxCount--;
+//			return pillbox;
+//		}
+//		else
+//		{
+//			return null;
+//		}
+//	}
 
 	private void respawn(World world)
 	{

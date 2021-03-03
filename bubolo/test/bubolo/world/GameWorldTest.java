@@ -76,7 +76,7 @@ public class GameWorldTest
 	public void getTanks()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setLoadSprites(false);
+		w.setSpriteLoading(false);
 		Tank t = w.addEntity(Tank.class);
 		List l = w.getTanks();
 		assertEquals("List does not contain the target tank!", true, l.contains(t));
@@ -89,7 +89,7 @@ public class GameWorldTest
 	public void getSpawns()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setLoadSprites(false);
+		w.setSpriteLoading(false);
 		Spawn s = w.addEntity(Spawn.class);
 		List l = w.getSpawns();
 		assertEquals("List does not contain the target Spawn!", true, l.contains(s));
@@ -102,7 +102,7 @@ public class GameWorldTest
 	public void getEffects()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setLoadSprites(false);
+		w.setSpriteLoading(false);
 		Bullet b = w.addEntity(Bullet.class);
 		List l = w.getEffects();
 		assertEquals("List does not contain the target tank!", true, l.contains(b));
@@ -115,7 +115,7 @@ public class GameWorldTest
 	public void getActors()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setLoadSprites(false);
+		w.setSpriteLoading(false);
 		Tank t = w.addEntity(Tank.class);
 		List l = w.getActors();
 		assertEquals("List does not contain the target tank!", true, l.contains(t));
@@ -142,7 +142,7 @@ public class GameWorldTest
 	public void testAddEntityBase()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Base.class));
 	}
 
@@ -150,7 +150,7 @@ public class GameWorldTest
 	public void testAddEntityBullet()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Bullet.class));
 	}
 
@@ -158,7 +158,7 @@ public class GameWorldTest
 	public void testAddEntityCrater()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Crater.class));
 	}
 
@@ -166,7 +166,7 @@ public class GameWorldTest
 	public void testAddEntityDeepWater()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(DeepWater.class));
 	}
 
@@ -174,7 +174,7 @@ public class GameWorldTest
 	public void testAddEntityGrass()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Grass.class));
 	}
 
@@ -182,7 +182,7 @@ public class GameWorldTest
 	public void testAddEntityEngineer()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Engineer.class));
 	}
 
@@ -190,7 +190,7 @@ public class GameWorldTest
 	public void testAddEntityMine()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Mine.class));
 	}
 
@@ -198,7 +198,7 @@ public class GameWorldTest
 	public void testAddEntityPillbox()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Pillbox.class));
 	}
 
@@ -206,7 +206,7 @@ public class GameWorldTest
 	public void testAddEntityRoad()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Road.class));
 	}
 
@@ -214,7 +214,7 @@ public class GameWorldTest
 	public void testAddEntityRubble()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Rubble.class));
 	}
 
@@ -222,7 +222,7 @@ public class GameWorldTest
 	public void testAddEntitySwamp()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Swamp.class));
 	}
 
@@ -230,7 +230,7 @@ public class GameWorldTest
 	public void testAddEntityTank()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Tank.class));
 	}
 
@@ -238,7 +238,7 @@ public class GameWorldTest
 	public void testAddEntityTree()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Tree.class));
 	}
 
@@ -246,7 +246,7 @@ public class GameWorldTest
 	public void testAddEntityWall()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Wall.class));
 	}
 
@@ -254,7 +254,7 @@ public class GameWorldTest
 	public void testAddEntityWater()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Water.class));
 	}
 
@@ -262,7 +262,7 @@ public class GameWorldTest
 	public void testGetEntity()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 
 		assertEquals(t, world.getEntity(t.getId()));
@@ -272,7 +272,7 @@ public class GameWorldTest
 	public void testGetEntities()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 		world.update();
 
@@ -284,7 +284,7 @@ public class GameWorldTest
 	public void testRemoveEntity_Entity()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 
 		world.update();
@@ -299,7 +299,7 @@ public class GameWorldTest
 	public void testRemoveEntity_UUID()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setLoadSprites(false);
+		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 
 		world.update();
@@ -327,7 +327,7 @@ public class GameWorldTest
 	public void testGetMapTiles()
 	{
 		GameWorld w = new GameWorld(1, 1);
-		w.setLoadSprites(false);
+		w.setSpriteLoading(false);
 		Tile[][] tiles = new Tile[1][1];
 		tiles[0][0] = new Tile(0, 0);
 		w.setMapTiles(tiles);

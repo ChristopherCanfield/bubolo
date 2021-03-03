@@ -104,6 +104,8 @@ public class GameWorld implements World
 		this(0, 0);
 	}
 
+
+
 	@Override
 	public void setMapHeight(int height)
 	{
@@ -118,7 +120,14 @@ public class GameWorld implements World
 		worldMapWidth = width;
 	}
 
-	public void setLoadSprites(boolean loadSprites) {
+	public void createTilesFromMapSize() {
+
+	}
+
+	/**
+	 * Whether to use the graphics subsystem. Intended for testing.
+	 */
+	public void setSpriteLoading(boolean loadSprites) {
 		this.loadSprites = loadSprites;
 	}
 
@@ -287,7 +296,7 @@ public class GameWorld implements World
 		for (Tile[] tiles : mapTiles) {
 			for (Tile tile : tiles) {
 				if (!tile.hasTerrain()) {
-					tile.setTerrain(addEntity(Grass.class));
+					tile.setTerrain(addEntity(Grass.class), this);
 				}
 			}
 		}

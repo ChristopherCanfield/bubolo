@@ -17,7 +17,7 @@ import bubolo.world.entity.Terrain;
 
 /**
  * Command that is used to send the game map to a client.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class SendMap implements NetworkCommand
@@ -32,7 +32,7 @@ public class SendMap implements NetworkCommand
 
 	/**
 	 * Constructs a Send Map network command.
-	 * 
+	 *
 	 * @param world
 	 *            the game world.
 	 */
@@ -85,7 +85,7 @@ public class SendMap implements NetworkCommand
 				StationaryElement element = world.addEntity(t.getStationaryElementClass(),
 						t.getStationaryElementId());
 				element.setRotation((float)Math.PI / 2);
-				mapTiles[t.getGridX()][t.getGridY()].setElement(element);
+				mapTiles[t.getGridX()][t.getGridY()].setElement(element, world);
 			}
 		}
 
@@ -94,7 +94,7 @@ public class SendMap implements NetworkCommand
 
 	/**
 	 * Information about a game tile.
-	 * 
+	 *
 	 * @author BU CS673 - Clone Productions
 	 */
 	private static class TileInfo implements Serializable
@@ -125,7 +125,7 @@ public class SendMap implements NetworkCommand
 
 		/**
 		 * Returns the grid x coordinate.
-		 * 
+		 *
 		 * @return the grid x coordinate.
 		 */
 		private int getGridX()
@@ -135,7 +135,7 @@ public class SendMap implements NetworkCommand
 
 		/**
 		 * Returns the grid y coordinate.
-		 * 
+		 *
 		 * @return the grid y coordinate.
 		 */
 		private int getGridY()
@@ -145,7 +145,7 @@ public class SendMap implements NetworkCommand
 
 		/**
 		 * Returns the terrain's id.
-		 * 
+		 *
 		 * @return the terrain's id.
 		 */
 		private UUID getTerrainId()
@@ -155,7 +155,7 @@ public class SendMap implements NetworkCommand
 
 		/**
 		 * Returns the terrain class.
-		 * 
+		 *
 		 * @return the terrain class.
 		 */
 		private Class<? extends Terrain> getTerrainClass()
@@ -165,7 +165,7 @@ public class SendMap implements NetworkCommand
 
 		/**
 		 * Returns the stationary element's id.
-		 * 
+		 *
 		 * @return the stationary element's id.
 		 */
 		private UUID getStationaryElementId()
@@ -175,7 +175,7 @@ public class SendMap implements NetworkCommand
 
 		/**
 		 * Returns the stationary element class, or null if it does not exist.
-		 * 
+		 *
 		 * @return the stationary element class, or null if it does not exist.
 		 */
 		private Class<? extends StationaryElement> getStationaryElementClass()
