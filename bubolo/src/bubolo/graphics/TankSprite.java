@@ -81,7 +81,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	 */
 	void drawPlayerName(SpriteBatch batch, Camera camera) {
 		var tank = getEntity();
-		if (!tank.isLocalPlayer()) {
+		if (!tank.isLocalPlayer() && processVisibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			var tankCameraCoords = Coords.worldToCamera(camera, new Vector2(getEntity().getX(), getEntity().getY()));
 			font.draw(batch, tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}

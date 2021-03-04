@@ -35,8 +35,7 @@ public class Graphics
 	 */
 	public static final String TEXTURE_PATH = "res/textures/";
 
-	// Stores the textures, ensuring that only one is needed for all instances
-	// of a given sprite.
+	// Stores the textures, so that only one copy is stored in memory.
 	private static Map<String, Texture> textures = new HashMap<>();
 	private static Map<String, TextureRegion[]> textureRegions1d = new HashMap<>();
 	private static Map<String, TextureRegion[][]> textureRegions2d = new HashMap<>();
