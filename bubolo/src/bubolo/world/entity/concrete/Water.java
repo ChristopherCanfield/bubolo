@@ -27,7 +27,7 @@ public class Water extends Terrain implements Adaptable
 	 * Intended to be generic -- this is a list of all of the StationaryEntities classes that should
 	 * result in a valid match when checking surrounding tiles to determine adaptive tiling state.
 	 */
-	private Class<?>[] matchingTypes = new Class[] { Water.class, DeepWater.class, Crater.class };
+	private static final Class<?>[] matchingTypes = new Class[] { Water.class, DeepWater.class };
 
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.

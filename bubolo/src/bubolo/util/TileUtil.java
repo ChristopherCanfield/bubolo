@@ -18,7 +18,7 @@ import bubolo.world.entity.Terrain;
 /**
  * This utility provides various functions for working with Tile objects based on their
  * position relative to other objects in the world.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public abstract class TileUtil
@@ -28,27 +28,19 @@ public abstract class TileUtil
 	/**
 	 * Checks to see whether the tile coordinates given point to a valid tile in the given World.
 	 * @param gridX is the X component of the target tile position, in grid units.
-	 * @param gridY is the Y component of the target tile position, in grid units. 
+	 * @param gridY is the Y component of the target tile position, in grid units.
 	 * @param world is a reference to the world which should be checked for the desired Tile.
 	 * @return true if the coordinates refer to a valid Tile that exists in the given World, false otherwise.
 	 */
 	public static boolean isValidTile(int gridX, int gridY, World world)
 	{
 		Tile[][] mapTiles = world.getTiles();
-		if (mapTiles == null || gridX >= mapTiles.length || gridX < 0
-				|| gridY >= mapTiles[gridX].length || gridY < 0)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return (mapTiles != null && gridX < mapTiles.length && gridX > 0 &&  gridY < mapTiles[gridX].length && gridY > 0);
 	}
 
 	/**
 	 * Returns the x index of the closest Tile to the given world x value.
-	 * 
+	 *
 	 * @param x
 	 *            The x component of the target position in world coordinates.
 	 * @return The x component of the grid index of the tile closest to the x coordinate
@@ -61,7 +53,7 @@ public abstract class TileUtil
 
 	/**
 	 * Returns the x index of the closest Tile to the given world y value.
-	 * 
+	 *
 	 * @param y
 	 *            The y component of the target position in world coordinates.
 	 * @return The y component of the grid index of the tile closest to the y coordinate
@@ -75,7 +67,7 @@ public abstract class TileUtil
 
 	/**
 	 * get a list of entities that are currently colliding with a given entity
-	 * 
+	 *
 	 * @param entity
 	 * 			the entity to check for collisions
 	 * @param world
@@ -87,7 +79,7 @@ public abstract class TileUtil
 	{
 		ArrayList<Entity> localCollisions = new ArrayList<Entity>();
 		getLocalEntities(entity.getX(),entity.getY(),world);
-		
+
 		for(Entity collider:TileUtil.getLocalEntities(entity.getX(),entity.getY(), world))
 		{
 			if (collider.isSolid() && collider != entity)
@@ -98,14 +90,14 @@ public abstract class TileUtil
 				}
 			}
 		}
-		
+
 		return localCollisions;
 	}
-	
+
 	/**
 	 * Get all entities are likely to overlap with Entities within the given grid
 	 * location.
-	 * 
+	 *
 	 * @param gridX
 	 *            is the X index of the target grid location.
 	 * @param gridY
@@ -130,7 +122,6 @@ public abstract class TileUtil
 			{
 				for (int j = 0; j < 5; j++)
 				{
-
 					if (isValidTile(startX + i, startY + j, w))
 					{
 						Tile targetTile = worldTiles[startX + i][startY + j];
@@ -150,7 +141,6 @@ public abstract class TileUtil
 			{
 				localEnts.addAll(w.getEffects());
 			}
-
 		}
 		return localEnts;
 	}
@@ -158,7 +148,7 @@ public abstract class TileUtil
 	/**
 	 * Get all entities are likely to overlap with an Entity at the given x and y World
 	 * coordinates.
-	 * 
+	 *
 	 * @param x
 	 *            is the x component of the target Entity's position in World coordinates.
 	 * @param y
@@ -179,9 +169,9 @@ public abstract class TileUtil
 		if (targetTile.hasElement())
 		{
 			Class<? extends StationaryElement> tileClass = targetTile.getElement().getClass();
-			for (int ii = 0; ii < targetClasses.length; ii++)
+			for (int i = 0; i < targetClasses.length; i++)
 			{
-				if (targetClasses[ii] == tileClass)
+				if (targetClasses[i].equals(tileClass))
 				{
 					return true;
 				}
@@ -193,9 +183,9 @@ public abstract class TileUtil
 	private static boolean containsTargetTerrain(Tile targetTile, Class<?>[] targetClasses)
 	{
 		Class<? extends Terrain> tileClass = targetTile.getTerrain().getClass();
-		for (int ii = 0; ii < targetClasses.length; ii++)
+		for (int i = 0; i < targetClasses.length; i++)
 		{
-			if (targetClasses[ii] == tileClass)
+			if (targetClasses[i].equals(tileClass))
 			{
 				return true;
 			}
@@ -220,7 +210,7 @@ public abstract class TileUtil
 	/**
 	 * Returns the adaptive tiling state of an object located at the specified tile, given
 	 * the list of Classes that the algorithm should consider 'matches'.
-	 * 
+	 *
 	 * @param t
 	 *            is the Tile where the object to be checked is contained.
 	 * @param w
@@ -272,7 +262,7 @@ public abstract class TileUtil
 	 * Returns an array of Boolean objects, representing whether the Tiles immediately
 	 * above, below, to the left, and to the right of the target Tile contain objects of a
 	 * Class matching those specified in the targetClasses array.
-	 * 
+	 *
 	 * @param t
 	 *            is the Tile where the object to be checked is contained.
 	 * @param w
@@ -304,7 +294,7 @@ public abstract class TileUtil
 	 * Returns an array of Boolean objects, representing whether the Tiles to the top
 	 * left, top right, bottom left, and bottom right of the specified tile contain
 	 * objects of a Class matching those specified in the targetClasses array.
-	 * 
+	 *
 	 * @param t
 	 *            is the Tile where the object to be checked is contained.
 	 * @param w
@@ -331,12 +321,12 @@ public abstract class TileUtil
 
 		return corners;
 	}
-	
+
 	/**
 	 * This function is intended to return a single tile to the requester
-	 * 
+	 *
 	 * @param x the x of the requested tile in world coordinates
-	 * @param y the y of the requested tile in world coordinates 
+	 * @param y the y of the requested tile in world coordinates
 	 * @param w the world that the entity wants the tile from
 	 * @return a tile from the world
 	 */
@@ -360,17 +350,17 @@ public abstract class TileUtil
 			return mapTiles[getClosestTileX(x)][getClosestTileY(y)].getTerrain();
 		}
 	}
-	
+
 	/**
 	 * returns the closest tile to an entity
-	 * 
+	 *
 	 * @param entity
 	 * 		the entity to check for tile
 	 * @param world
 	 * 		reference to the game world
 	 * @return Tile
 	 * 		the tile that is closest to given entity
-	 * 		
+	 *
 	 */
 	public static Tile getEntityTile(Entity entity, World world)
 	{
