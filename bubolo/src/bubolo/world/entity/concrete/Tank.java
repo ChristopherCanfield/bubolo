@@ -82,10 +82,10 @@ public class Tank extends Actor implements Damageable
 	// The time that the tank will respawn.
 	private long respawnTime;
 
-	private static final long TANK_RESPAWN_TIME = 1000L;
+	private static final long TANK_RESPAWN_TIME_MILLIS = 1000L;
 
 	// Minimum amount of time between laying mines.
-	private static final long MINE_RELOAD_SPEED = 500;
+	private static final long MINE_RELOAD_SPEED_MILLIS = 500;
 
 	// The last time that the cannon was fired. Populate this with
 	// System.currentTimeMillis().
@@ -112,47 +112,28 @@ public class Tank extends Actor implements Damageable
 	private float positionOffsetAmount = 0.1f;
 
 	/**
-	 * Construct a new Tank with a random UUID.
-	 */
-
-	/**
 	 * The health of the tank
 	 */
 	private float hitPoints;
 
-	/**
-	 * The amount of ammo of the tank
-	 */
 
 	public static final int TANK_MAX_HIT_POINTS = 100;
 
 	private int ammoCount;
 
 	/**
-	 * The amount of the tree resource the tank has
+	 * The amount of ammo of the tank
 	 */
-
 	public static final int TANK_MAX_AMMO = 100;
 
-	private int treeCount;
-
-	/**
-	 * The number of mines in the tank
-	 */
-
-	public static final int TANK_MAX_TREE_INVENTORY = 100;
 
 	private int mineCount;
 
 	/**
 	 * The number of pillboxes in the tank
 	 */
+	public static final int TANK_MAX_MINE = 10;
 
-	public static final int TANK_MAX_MINE_COUNT = 10;
-
-
-
-	private int pillboxCount;
 
 	private Random randomGenerator = new Random();
 
@@ -180,9 +161,7 @@ public class Tank extends Actor implements Damageable
 		setSolid(true);
 		hitPoints = TANK_MAX_HIT_POINTS;
 		ammoCount = TANK_MAX_AMMO;
-		treeCount = 0;
-		pillboxCount = 0;
-		mineCount = TANK_MAX_MINE_COUNT;
+		mineCount = TANK_MAX_MINE;
 	}
 
 	public String getPlayerName() {
@@ -736,16 +715,6 @@ public class Tank extends Actor implements Damageable
 	}
 
 	/**
-	 * Returns the current number of trees that the tank has gathered
-	 *
-	 * @return the current tree resource count
-	 */
-	public int getTreeCount()
-	{
-		return treeCount;
-	}
-
-	/**
 	 * Returns the number of mines the tank currently contains
 	 *
 	 * @return the current mine count
@@ -753,16 +722,6 @@ public class Tank extends Actor implements Damageable
 	public int getMineCount()
 	{
 		return mineCount;
-	}
-
-	/**
-	 * Returns the number of pillboxes the tank has on board
-	 *
-	 * @return the pillbox count for the tank
-	 */
-	public int getPillboxCount()
-	{
-		return pillboxCount;
 	}
 
 	/**
@@ -791,7 +750,7 @@ public class Tank extends Actor implements Damageable
 		{
 			Audio.play(Sfx.TANK_EXPLOSION);
 			isAlive = false;
-			respawnTime = System.currentTimeMillis() + TANK_RESPAWN_TIME;
+			respawnTime = System.currentTimeMillis() + TANK_RESPAWN_TIME_MILLIS;
 		}
 	}
 
@@ -822,38 +781,10 @@ public class Tank extends Actor implements Damageable
 	 */
 	public void gatherAmmo(int newAmmo)
 	{
-		if (ammoCount + Math.abs(newAmmo) < TANK_MAX_AMMO)
-		{
-			ammoCount += Math.abs(newAmmo);
-		}
-		else
-		{
+		assert newAmmo >= 0;
+		ammoCount += newAmmo;
+		if (ammoCount > TANK_MAX_AMMO) {
 			ammoCount = TANK_MAX_AMMO;
-		}
-	}
-
-	/**
-	 * Used to increment the tree count upon gathering a tree
-	 */
-	public void gatherTree()
-	{
-		if (treeCount < TANK_MAX_TREE_INVENTORY)
-		{
-			treeCount++;
-		}
-	}
-
-	/**
-	 * This method is used to consume trees
-	 *
-	 * @param treesUsed
-	 *            - the number of trees consumed in the action
-	 */
-	public void useTrees(int treesUsed)
-	{
-		if (treeCount - Math.abs(treesUsed) >= 0)
-		{
-			treeCount -= Math.abs(treesUsed);
 		}
 	}
 
@@ -865,13 +796,10 @@ public class Tank extends Actor implements Damageable
 	 */
 	public void gatherMine(int minesGathered)
 	{
-		if (mineCount + Math.abs(minesGathered) < TANK_MAX_MINE_COUNT)
-		{
-			mineCount += minesGathered;
-		}
-		else
-		{
-			mineCount = TANK_MAX_MINE_COUNT;
+		assert minesGathered >= 0;
+		mineCount += minesGathered;
+		if (mineCount > TANK_MAX_MINE) {
+			mineCount = TANK_MAX_MINE;
 		}
 	}
 
@@ -889,7 +817,7 @@ public class Tank extends Actor implements Damageable
 	 */
 	public Mine dropMine(World world, float startX, float startY)
 	{
-		if ((System.currentTimeMillis() - mineLayingTime < MINE_RELOAD_SPEED && mineLayingTime != 0)
+		if ((System.currentTimeMillis() - mineLayingTime < MINE_RELOAD_SPEED_MILLIS && mineLayingTime != 0)
 				||startX < 0 || startX > world.getMapWidth() || startY < 0 || startY > world.getMapHeight())
 		{
 			return null;
@@ -915,47 +843,6 @@ public class Tank extends Actor implements Damageable
 		return null;
 	}
 
-	/**
-	 * This method increments the pillbox count of the tank. The caller should remove the
-	 * pillbox from the world.
-	 */
-//	public void gatherPillbox()
-//	{
-//		pillboxCount++;
-//	}
-
-	/**
-	 * This method creates a pillbox in the world from the tank's inventory
-	 *
-	 * @param world
-	 *            - the world in which the pillbox is to be created
-	 * @param startX
-	 *            - the integer X position of the pillbox in world coordinates
-	 * @param startY
-	 *            - the integer Y position of the pillbox in world coordinates
-	 * @return - returns the created pillbox or null if there are none to place or invalid
-	 *         placement location
-	 */
-//	public Pillbox dropPillbox(World world, int startX, int startY)
-//	{
-//
-//		// TODO: Once Engineer functionality is created this code will need to be moved to
-//		// the engineer and replaced with sending the engineer out to drop the Pillbox
-//		if ((!world.getMapTiles()[startX / 32][startY / 32].hasElement()) && (pillboxCount > 0))
-//		{
-//			Pillbox pillbox = world.addEntity(Pillbox.class);
-//			world.getMapTiles()[startX / 32][startY / 32].setElement(pillbox, world);
-//			pillbox.setX(startX / 32 + 16).setY(startY / 32 + 16);
-//			pillbox.setRotation(getRotation());
-//			pillboxCount--;
-//			return pillbox;
-//		}
-//		else
-//		{
-//			return null;
-//		}
-//	}
-
 	private void respawn(World world)
 	{
 		// Don't allow the tank to respawn until its respawn timer has expired.
@@ -976,8 +863,7 @@ public class Tank extends Actor implements Damageable
 
 		this.hitPoints = TANK_MAX_HIT_POINTS;
 		this.ammoCount = TANK_MAX_AMMO;
-		this.mineCount = TANK_MAX_MINE_COUNT;
-		this.treeCount = 0;
+		this.mineCount = TANK_MAX_MINE;
 		this.isAlive = true;
 	}
 
@@ -1008,6 +894,6 @@ public class Tank extends Actor implements Damageable
 	 */
 	public int getTankMaxMineCount()
 	{
-		return TANK_MAX_MINE_COUNT;
+		return TANK_MAX_MINE;
 	}
 }

@@ -122,21 +122,9 @@ public class TankTest
 	}
 
 	@Test
-	public void getTreeCount()
-	{
-		assertEquals(0, tank.getTreeCount(), 0);
-	}
-
-	@Test
 	public void getMineCount()
 	{
 		assertEquals(10, tank.getMineCount(), 0);
-	}
-
-	@Test
-	public void getPillBoxCount()
-	{
-		assertEquals(0, tank.getPillboxCount(), 0);
 	}
 
 	@Test
@@ -163,25 +151,10 @@ public class TankTest
 	}
 
 	@Test
-	public void gatherTree()
-	{
-		tank.gatherTree();
-		assertEquals(1, tank.getTreeCount(), 0);
-	}
-
-	@Test
-	public void useTrees()
-	{
-		tank.gatherTree();
-		tank.useTrees(1);
-		assertEquals(0, tank.getTreeCount(), 0);
-	}
-
-	@Test
 	public void gatherMine()
 	{
 		tank.gatherMine(1);
-		assertEquals(Tank.TANK_MAX_MINE_COUNT, tank.getMineCount(), 0);
+		assertEquals(Tank.TANK_MAX_MINE, tank.getMineCount(), 0);
 	}
 
 	@Test

@@ -108,14 +108,7 @@ public abstract class Entity implements Serializable, Drawable
 	{
 		updateBounds();
 		e.updateBounds();
-		if (Intersector.overlapConvexPolygons(bounds, e.getBounds()))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return Intersector.overlapConvexPolygons(bounds, e.getBounds());
 	}
 
 	/**
