@@ -46,7 +46,7 @@ public class Graphics
 	private final Camera camera;
 	private final ShapeRenderer shapeRenderer;
 
-	private Sprites spriteSystem;
+	private SpriteSystem spriteSystem;
 
 	// The list of camera controllers.
 	private List<CameraController> cameraControllers = new ArrayList<CameraController>();
@@ -141,7 +141,7 @@ public class Graphics
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 
-		spriteSystem = Sprites.getInstance();
+		spriteSystem = new SpriteSystem();
 
 		loadAllTextures();
 	}
@@ -158,7 +158,7 @@ public class Graphics
 		return shapeRenderer;
 	}
 
-	Sprites sprites() {
+	public SpriteSystem sprites() {
 		return spriteSystem;
 	}
 

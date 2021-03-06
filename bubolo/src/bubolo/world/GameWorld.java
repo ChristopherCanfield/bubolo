@@ -14,7 +14,7 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
 import bubolo.controllers.ai.AiTreeController;
-import bubolo.graphics.Sprites;
+import bubolo.graphics.Graphics;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.Actor;
@@ -34,34 +34,37 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class GameWorld implements World
 {
-	private List<Entity> entities = new ArrayList<Entity>();
-	private Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
+	// Reference to the graphics system, for sprite loading.
+	private final Graphics graphics;
+
+	private final List<Entity> entities = new ArrayList<Entity>();
+	private final Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
 
 	// first: x; second: y.
 	private Tile[][] mapTiles = null;
 
 	// The list of entities to remove. The entities array can't be modified while it
 	// is being iterated over.
-	private List<Entity> entitiesToRemove = new ArrayList<Entity>();
+	private final List<Entity> entitiesToRemove = new ArrayList<Entity>();
 
 	// The list of entities to add. The entities array can't be modified while it is
 	// being iterated over.
-	private List<Entity> entitiesToAdd = new ArrayList<Entity>();
+	private final List<Entity> entitiesToAdd = new ArrayList<Entity>();
 
 	// the list of Tanks that exist in the world
-	private List<Tank> tanks = new ArrayList<Tank>();
+	private final List<Tank> tanks = new ArrayList<Tank>();
 
 	// list of world controllers
-	private List<Controller> worldControllers = new ArrayList<Controller>();
+	private final List<Controller> worldControllers = new ArrayList<Controller>();
 
 	// the list of all Effects that currently exist in the world
-	private List<Entity> effects = new ArrayList<Entity>();
+	private final List<Entity> effects = new ArrayList<Entity>();
 
 	// the list of all Actors which currently exist in the world
-	private List<Entity> actors = new ArrayList<Entity>();
+	private final List<Entity> actors = new ArrayList<Entity>();
 
 	// the list of all Spawn Locations currently in the world
-	private List<Entity> spawns = new ArrayList<Entity>();
+	private final List<Entity> spawns = new ArrayList<Entity>();
 
 	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
@@ -84,7 +87,7 @@ public class GameWorld implements World
 	 * @param worldMapHeight
 	 *            the height of the game world map.
 	 */
-	public GameWorld(int worldMapWidth, int worldMapHeight)
+	public GameWorld(Graphics graphics, int worldMapWidth, int worldMapHeight)
 	{
 		int tilesX = worldMapWidth / Coords.TILE_TO_WORLD_SCALE;
 		int tilesY = worldMapHeight / Coords.TILE_TO_WORLD_SCALE;
@@ -93,6 +96,8 @@ public class GameWorld implements World
 		this.worldMapWidth = worldMapWidth;
 		this.worldMapHeight = worldMapHeight;
 
+		this.graphics = graphics;
+
 		addController(AiTreeController.class);
 	}
 
@@ -100,9 +105,9 @@ public class GameWorld implements World
 	 * Constructs a default game world. This is intended for use by the network. The map's height
 	 * and width must be set before calling the <code>update</code> method.
 	 */
-	public GameWorld()
+	public GameWorld(Graphics graphics)
 	{
-		this(0, 0);
+		this(graphics, 0, 0);
 	}
 
 
@@ -189,7 +194,7 @@ public class GameWorld implements World
 		entity.setId(id);
 
 		if (loadSprites) {
-			Sprites.getInstance().createSprite(entity);
+			graphics.sprites().createSprite(entity);
 		}
 		Controllers.getInstance().createController(entity, controllerFactory);
 

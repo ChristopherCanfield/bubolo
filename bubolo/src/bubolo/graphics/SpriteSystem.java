@@ -7,13 +7,13 @@ import java.util.Map;
 
 import bubolo.world.entity.Entity;
 import bubolo.world.entity.concrete.Base;
+import bubolo.world.entity.concrete.Bullet;
 import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.DeepWater;
 import bubolo.world.entity.concrete.Engineer;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.MineExplosion;
-import bubolo.world.entity.concrete.Bullet;
 import bubolo.world.entity.concrete.Pillbox;
 import bubolo.world.entity.concrete.Road;
 import bubolo.world.entity.concrete.Rubble;
@@ -25,36 +25,17 @@ import bubolo.world.entity.concrete.Wall;
 import bubolo.world.entity.concrete.Water;
 
 /**
- * Contains static methods for adding new sprites.
- * 
+ * Contains methods for adding new sprites.
+ *
  * @author BU CS673 - Clone Productions
  */
-public class Sprites
+public class SpriteSystem
 {
 	private Map<Class<? extends Entity>, SpriteFactory> spriteFactories;
 
 	private List<Sprite> sprites = new ArrayList<Sprite>();
 
-	private static Sprites instance;
-
-	/**
-	 * Returns the instance of this singleton.
-	 * 
-	 * @return the instance of this singleton.
-	 */
-	public static Sprites getInstance()
-	{
-		if (instance == null)
-		{
-			instance = new Sprites();
-		}
-		return instance;
-	}
-
-	/**
-	 * Private constructor to prevent this class from being instantiated.
-	 */
-	private Sprites()
+	SpriteSystem()
 	{
 		spriteFactories = setSpriteFactories();
 	}
@@ -62,7 +43,7 @@ public class Sprites
 	/**
 	 * Returns a reference to the list of sprites. Package-private because this method
 	 * should not be accessed outside of the Graphics system.
-	 * 
+	 *
 	 * @return the list of all sprites.
 	 */
 	List<Sprite> getSprites()
@@ -72,7 +53,7 @@ public class Sprites
 
 	/**
 	 * Creates a new sprite based on the type of entity provided.
-	 * 
+	 *
 	 * @param entity
 	 *            reference to an entity.
 	 * @return reference to the new sprite.
@@ -90,7 +71,7 @@ public class Sprites
 		sprites.add(sprite);
 		return sprite;
 	}
-	
+
 	/**
 	 * Adds a sprite that is not attached to an entity.
 	 * @param sprite the sprite to add.
@@ -102,7 +83,7 @@ public class Sprites
 
 	/**
 	 * Removes the specified sprite.
-	 * 
+	 *
 	 * @param sprite
 	 *            the sprite to remove.
 	 */
@@ -120,14 +101,14 @@ public class Sprites
 
 	/**
 	 * Wrapper for sprite creation functions.
-	 * 
+	 *
 	 * @author BU CS673 - Clone Productions
 	 */
 	private interface SpriteFactory
 	{
 		/**
 		 * Executes the sprite creation function.
-		 * 
+		 *
 		 * @param e
 		 *            reference to the entity that the sprite represents.
 		 * @return reference to the new sprite.
@@ -137,7 +118,7 @@ public class Sprites
 
 	/**
 	 * Creates the sprite factory objects, which map concrete classes to sprite creation.
-	 * 
+	 *
 	 * @return map of the concrete classes to sprite creator classes.
 	 */
 	private static Map<Class<? extends Entity>, SpriteFactory> setSpriteFactories()
@@ -270,7 +251,7 @@ public class Sprites
 			{
 				return new WaterSprite((Water) e);
 			}
-			
+
 		});
 
 		factories.put(Spawn.class, new SpriteFactory() {
@@ -280,6 +261,7 @@ public class Sprites
 				return new SpawnSprite(e);
 			}
 		});
+
 		return factories;
 	}
 }

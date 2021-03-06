@@ -68,7 +68,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 	{
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 		}
 		else if (!getEntity().isLocalPlayer() && getEntity().isActive())
 		{

@@ -20,7 +20,7 @@ public class SpawnSpriteViewer
 	 */
 	public void setSpawnsVisible()
 	{
-		Sprites spriteSystem = Sprites.getInstance();
+		SpriteSystem spriteSystem = SpriteSystem.getInstance();
 		List<Sprite> spriteList = spriteSystem.getSprites();
 		for (final Sprite sprite : spriteList)
 		{

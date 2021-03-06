@@ -37,7 +37,7 @@ public class SpritesTest
 			{
 				try
 				{
-					Sprites spriteSystem = Sprites.getInstance();
+					SpriteSystem spriteSystem = SpriteSystem.getInstance();
 					int spriteCount = spriteSystem.getSprites().size();
 
 					Sprite sprite1 = spriteSystem.createSprite(new Tank());
@@ -73,7 +73,7 @@ public class SpritesTest
 			{
 				try
 				{
-					Sprites spriteSystem = Sprites.getInstance();
+					SpriteSystem spriteSystem = SpriteSystem.getInstance();
 					int spriteCount = spriteSystem.getSprites().size();
 
 					spriteSystem.createSprite(new Tank());
@@ -111,7 +111,7 @@ public class SpritesTest
 			{
 				try
 				{
-					Sprites spriteSystem = Sprites.getInstance();
+					SpriteSystem spriteSystem = SpriteSystem.getInstance();
 					int spriteCount = spriteSystem.getSprites().size();
 
 					spriteSystem.addSprite(new BulletExplosionSprite(0, 0));
@@ -146,7 +146,7 @@ public class SpritesTest
 			{
 				try
 				{
-					Sprite sprite = Sprites.getInstance().createSprite(new Tree());
+					Sprite sprite = SpriteSystem.getInstance().createSprite(new Tree());
 					assertNotNull(sprite);
 					hadException = false;
 				}
@@ -176,7 +176,7 @@ public class SpritesTest
 			{
 				try
 				{
-					Sprite sprite = Sprites.getInstance().createSprite(new Grass());
+					Sprite sprite = SpriteSystem.getInstance().createSprite(new Grass());
 					assertNotNull(sprite);
 					hadException = false;
 				}
@@ -206,7 +206,7 @@ public class SpritesTest
 			{
 				try
 				{
-					Sprite sprite = Sprites.getInstance().createSprite(new Road());
+					Sprite sprite = SpriteSystem.getInstance().createSprite(new Road());
 					assertNotNull(sprite);
 					hadException = false;
 				}

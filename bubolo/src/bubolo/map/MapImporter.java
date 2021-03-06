@@ -21,6 +21,7 @@ import com.github.cliftonlabs.json_simple.JsonKey;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
+import bubolo.graphics.Graphics;
 import bubolo.util.Coords;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
@@ -120,9 +121,12 @@ public class MapImporter {
 
 	private static final String DefaultExceptionMessage = "Error parsing the json map file";
 
-	private Map<String, Tileset> tilesets = new HashMap<>();
+	private final Graphics graphics;
+	private final Map<String, Tileset> tilesets = new HashMap<>();
 
-	public MapImporter() {
+	public MapImporter(Graphics graphics) {
+		this.graphics = graphics;
+
 		// Add the known map tiles here.
 
 		Tileset stationaryElements = new Tileset("bubolo_tilset_stationaryElements");
@@ -248,7 +252,7 @@ public class MapImporter {
 			int mapWidthTiles = diagnostics.tileWidth = jsonTiledMap.getInteger(Key.MapWidth);
 			Tile[][] mapTiles = new Tile[mapWidthTiles][mapHeightTiles];
 
-			GameWorld world = new GameWorld(Coords.TILE_TO_WORLD_SCALE * mapWidthTiles,
+			GameWorld world = new GameWorld(graphics, Coords.TILE_TO_WORLD_SCALE * mapWidthTiles,
 					Coords.TILE_TO_WORLD_SCALE * mapHeightTiles);
 			world.setSpriteLoading(!disableGraphics);
 

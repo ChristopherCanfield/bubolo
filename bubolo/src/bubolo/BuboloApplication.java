@@ -90,7 +90,7 @@ public class BuboloApplication extends AbstractGameApplication
 		{
 			try
 			{
-				MapImporter importer = new MapImporter();
+				MapImporter importer = new MapImporter(graphics);
 				world = importer.importJsonMap(mapPath);
 			}
 			catch (IOException e)
@@ -102,7 +102,7 @@ public class BuboloApplication extends AbstractGameApplication
 		// Client in net game
 		else
 		{
-			world = new GameWorld();
+			world = new GameWorld(graphics);
 		}
 
 		setState(initialState);

@@ -36,7 +36,7 @@ class CraterSprite extends AbstractEntitySprite<Crater>
 	{
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 		}
 		else
 		{

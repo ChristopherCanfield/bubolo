@@ -1,8 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import bubolo.mock.MockTank;
 
 /**
@@ -21,7 +18,7 @@ public class MockSpriteTextureRegion extends AbstractEntitySprite<MockTank>
 	}
 
 	@Override
-	void draw(SpriteBatch batch, Camera camera)
+	void draw(Graphics graphics)
 	{
 	}
 }

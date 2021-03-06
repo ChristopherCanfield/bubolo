@@ -89,7 +89,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 			return;
 		}
 		else

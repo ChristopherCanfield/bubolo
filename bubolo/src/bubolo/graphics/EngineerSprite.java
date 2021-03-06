@@ -92,7 +92,7 @@ class EngineerSprite extends AbstractEntitySprite<Engineer>
 	{
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 		}
 		else
 		{

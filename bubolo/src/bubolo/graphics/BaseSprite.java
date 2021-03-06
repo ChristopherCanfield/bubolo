@@ -86,7 +86,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 	{
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 		}
 		else
 		{

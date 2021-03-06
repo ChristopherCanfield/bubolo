@@ -11,7 +11,7 @@ public class GrassSpriteTest
 	@Test
 	public void getRotation()
 	{
-		Sprite sprite = Sprites.getInstance().createSprite(new Grass());
+		Sprite sprite = SpriteSystem.getInstance().createSprite(new Grass());
 		boolean check = (sprite.getRotation() == 0 || sprite.getRotation() == (float) (Math.PI/2) || sprite.getRotation() == (float) (Math.PI) ||
 					sprite.getRotation() == (float) (3 * Math.PI / 2));
 		assertTrue(check);

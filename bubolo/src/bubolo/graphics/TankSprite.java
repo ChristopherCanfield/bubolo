@@ -90,7 +90,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	{
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 			return;
 		}
 		else if (frames == null)
@@ -102,7 +102,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 			if(!explosionCreated)
 			{
 				explosionCreated = true;
-				Sprites spriteSystem = Sprites.getInstance();
+				SpriteSystem spriteSystem = graphics.sprites();
 				spriteSystem.addSprite(
 						new TankExplosionSprite((int)getEntity().getX(), (int)getEntity().getY()));
 			}

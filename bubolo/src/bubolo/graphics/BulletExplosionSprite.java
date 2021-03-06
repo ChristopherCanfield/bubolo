@@ -60,7 +60,7 @@ class BulletExplosionSprite extends Sprite
 	{
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 		}
 		else
 		{

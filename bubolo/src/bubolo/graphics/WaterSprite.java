@@ -37,7 +37,7 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		int currentState = this.getEntity().getTilingState();
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 
 		}
 		else

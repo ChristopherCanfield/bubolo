@@ -40,7 +40,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 		}
 		else
 		{

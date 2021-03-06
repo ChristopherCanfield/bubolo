@@ -1,38 +1,38 @@
 package bubolo.graphics;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import bubolo.mock.MockTank;
-import bubolo.mock.MockWorld;
-import bubolo.world.World;
-
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
 
-import static org.mockito.Mockito.*;
+import bubolo.mock.MockTank;
+import bubolo.mock.MockWorld;
 
 public class GraphicsTest extends ApplicationAdapter
 {
 	private boolean isComplete;
 	private boolean passed;
-	
+
 	@Before
 	public void setUp()
 	{
 		LibGdxAppTester.createApp();
 	}
-	
+
 	@Test
 	public void getTexture() throws InterruptedException
 	{
 		isComplete = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				Texture texture = Graphics.getTexture(Graphics.TEXTURE_PATH + "tank.png");
@@ -52,7 +52,7 @@ public class GraphicsTest extends ApplicationAdapter
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
@@ -73,7 +73,7 @@ public class GraphicsTest extends ApplicationAdapter
 		}
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void constructGraphics()
 	{
@@ -83,38 +83,13 @@ public class GraphicsTest extends ApplicationAdapter
 			}
 		});
 	}
-	
-	@Test
-	public void getGraphicsInstance()
-	{
-		Gdx.app.postRunnable(new Runnable() {
-			@Override public void run() {
-				Graphics g = new Graphics(50, 500);
-				assertNotNull(Graphics.getInstance());				
-			}
-		});
-	}
-	
-	@Test
-	public void getGraphicsInstanceBad()
-	{
-		Gdx.app.postRunnable(new Runnable() {
-			@Override public void run() {
-				try {
-					Graphics.dispose();
-					assertNotNull(Graphics.getInstance());
-					fail("Graphics.getInstance() should throw an exception when it has not been explicitly instantiated, but it has not.");
-				} catch (Exception e) {}
-			}
-		});
-	}
 
 	@Test
 	public void draw()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
@@ -128,20 +103,20 @@ public class GraphicsTest extends ApplicationAdapter
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 			Thread.yield();
 		}
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void draw2()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
@@ -154,23 +129,23 @@ public class GraphicsTest extends ApplicationAdapter
 				} finally {
 					isComplete = true;
 				}
-				
+
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 			Thread.yield();
 		}
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void addCameraController()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
@@ -186,20 +161,20 @@ public class GraphicsTest extends ApplicationAdapter
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 			Thread.yield();
 		}
 		assertTrue(passed);
 	}
-	
+
 	@Test
 	public void addCameraControllerAndUpdate()
 	{
 		isComplete = false;
 		passed = false;
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
@@ -217,7 +192,7 @@ public class GraphicsTest extends ApplicationAdapter
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 			Thread.yield();

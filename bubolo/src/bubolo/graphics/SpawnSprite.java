@@ -42,7 +42,7 @@ class SpawnSprite extends AbstractEntitySprite<Entity>
 	{
 		if (isDisposed())
 		{
-			Sprites.getInstance().removeSprite(this);
+			graphics.sprites().removeSprite(this);
 		}
 		else if (visible)
 		{

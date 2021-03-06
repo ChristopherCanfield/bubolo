@@ -15,7 +15,7 @@ public class RubbleSpriteTest
 	@Test
 	public void getRotation()
 	{
-		Sprite sprite = Sprites.getInstance().createSprite(new Rubble());
+		Sprite sprite = SpriteSystem.getInstance().createSprite(new Rubble());
 		boolean check;
 		check = (sprite.getRotation() == 0 || sprite.getRotation() == (float) (Math.PI/2) || sprite.getRotation() == (float) (Math.PI) ||
 				sprite.getRotation() == (float) (3 * Math.PI / 2));
