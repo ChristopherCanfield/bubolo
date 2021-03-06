@@ -1,8 +1,6 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.entity.Entity;
@@ -40,7 +38,7 @@ class SpawnSprite extends AbstractEntitySprite<Entity>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -48,7 +46,7 @@ class SpawnSprite extends AbstractEntitySprite<Entity>
 		}
 		else if (visible)
 		{
-			drawTexture(batch, camera, frames[0][0]);
+			drawTexture(graphics, frames[0][0]);
 		}
 	}
 

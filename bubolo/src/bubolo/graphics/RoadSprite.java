@@ -1,7 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.entity.concrete.Road;
@@ -34,7 +32,7 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -42,7 +40,7 @@ class RoadSprite extends AbstractEntitySprite<Road>
 		}
 		else
 		{
-			drawTexture(batch, camera, frames[this.getEntity().getTilingState()]);
+			drawTexture(graphics, frames[this.getEntity().getTilingState()]);
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.entity.concrete.Wall;
@@ -47,7 +45,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -61,7 +59,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 			} else {
 				frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
 			}
-			drawTexture(batch, camera, frames[getEntity().getTilingState()]);
+			drawTexture(graphics, frames[getEntity().getTilingState()]);
 		}
 	}
 

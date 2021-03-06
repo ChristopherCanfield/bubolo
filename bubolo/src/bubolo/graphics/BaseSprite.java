@@ -1,7 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
@@ -84,7 +82,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -104,7 +102,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 					lastAnimationState = 0;
 					frameIndex = 0;
 				}
-				drawTexture(batch, camera, idleFrames[colorId]);
+				drawTexture(graphics, idleFrames[colorId]);
 				break;
 
 			case 1:
@@ -113,7 +111,7 @@ class BaseSprite extends AbstractEntitySprite<Base>
 					frameIndex = 0;
 					lastAnimationState = 1;
 				}
-				drawTexture(batch, camera, chargingFrames[frameIndex][colorId]);
+				drawTexture(graphics, chargingFrames[frameIndex][colorId]);
 
 				// Progress the Base charging animation.
 				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);

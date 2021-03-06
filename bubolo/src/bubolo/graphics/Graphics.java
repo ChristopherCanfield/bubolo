@@ -14,8 +14,10 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -40,16 +42,14 @@ public class Graphics
 	private static Map<String, TextureRegion[]> textureRegions1d = new HashMap<>();
 	private static Map<String, TextureRegion[][]> textureRegions2d = new HashMap<>();
 
-	private SpriteBatch batch;
-	private Camera camera;
+	private final SpriteBatch batch;
+	private final Camera camera;
+	private final ShapeRenderer shapeRenderer;
 
 	private Sprites spriteSystem;
 
 	// The list of camera controllers.
 	private List<CameraController> cameraControllers = new ArrayList<CameraController>();
-
-	// Static reference to this object for the getInstance() method.
-	private static Graphics instance = null;
 
 	// The comparator used to sort sprites.
 	private static final Comparator<Sprite> spriteComparator = Comparator.comparing(Sprite::getDrawLayer)
@@ -58,27 +58,6 @@ public class Graphics
 	private List<Sprite> spritesInView = new ArrayList<Sprite>();
 
 	private BackgroundSprite[][] background;
-
-	/**
-	 * Gets a reference to the Graphics system. The Graphics system must be explicitly constructed
-	 * using the <code>Graphics(width, height)</code> constructor before this is called, or an
-	 * <code>IllegalStateException</code> will be thrown. This method is package-private, because
-	 * only objects within the Graphics system should have access to it.
-	 *
-	 * @return a reference to the Graphics system.
-	 * @throws IllegalStateException
-	 *             when the Graphics system has not been explicitly constructed using the
-	 *             <code>Graphics(width, height)</code> constructor.
-	 */
-	static Graphics getInstance()
-	{
-		if (instance == null)
-		{
-			throw new IllegalStateException(
-					"Graphics.getInstance cannot be called until the Graphics system has been explicitly constructed.");
-		}
-		return instance;
-	}
 
 	/**
 	 * Returns a texture from a path. Ensures that the same texture isn't stored multiple times.
@@ -143,11 +122,9 @@ public class Graphics
 	 */
 	public static void dispose()
 	{
-		for (Texture texture : textures.values())
-		{
+		for (Texture texture : textures.values()) {
 			texture.dispose();
 		}
-		instance = null;
 	}
 
 	/**
@@ -162,14 +139,27 @@ public class Graphics
 	{
 		camera = new OrthographicCamera(windowWidth, windowHeight);
 		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
+
 		spriteSystem = Sprites.getInstance();
 
 		loadAllTextures();
+	}
 
-		synchronized (Graphics.class)
-		{
-			Graphics.instance = this;
-		}
+	Camera camera() {
+		return camera;
+	}
+
+	Batch batch() {
+		return batch;
+	}
+
+	ShapeRenderer shapeRenderer() {
+		return shapeRenderer;
+	}
+
+	Sprites sprites() {
+		return spriteSystem;
 	}
 
 	/**
@@ -276,7 +266,7 @@ public class Graphics
 		batch.begin();
 		for (Sprite sprite : sprites)
 		{
-			sprite.draw(batch, camera);
+			sprite.draw(this);
 		}
 		batch.end();
 	}
@@ -288,7 +278,7 @@ public class Graphics
 		batch.begin();
 		spritesInView.stream().filter(s -> s instanceof TankSprite).forEach(s -> {
 			TankSprite tankSprite = (TankSprite) s;
-			tankSprite.drawPlayerName(batch, camera);
+			tankSprite.drawPlayerName(this);
 		});
 		batch.end();
 	}
@@ -311,7 +301,7 @@ public class Graphics
 				// Change the positions of the background sprites so they are always on screen.
 				sprite.x = (int) position.x;
 				sprite.y = (int) position.y;
-				sprite.draw(batch, camera);
+				sprite.draw(this);
 			}
 		}
 		batch.end();

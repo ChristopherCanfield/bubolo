@@ -1,8 +1,6 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
  * Grass image used to fix gaps between certain tiles.
@@ -36,9 +34,9 @@ class BackgroundSprite extends Sprite
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
-		drawTexture(batch, camera, texture);
+		drawTexture(graphics, texture);
 	}
 
 	@Override

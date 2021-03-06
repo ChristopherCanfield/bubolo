@@ -6,10 +6,8 @@
 
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -83,35 +81,27 @@ abstract class Sprite implements Drawable
 	protected abstract boolean isDisposed();
 
 	/**
-	 * Draws the sprite to the screen.
+	 * Draws the sprite to the screen. batch.begin() must be called before calling this method.
 	 *
-	 * @param batch
-	 *            The game's SpriteBatch object. batch.begin() must have been called before the
-	 *            SpriteBatch is passed to this Sprite.
-	 * @param camera
-	 *            The game's libgdx camera..
+	 * @param graphics reference to the Graphics system.
 	 */
-	abstract void draw(SpriteBatch batch, Camera camera);
+	abstract void draw(Graphics graphics);
 
 	/**
-	 * Draws the texture to the screen.
+	 * Draws the texture to the screen. batch.begin() must be called before calling this method.
 	 *
-	 * @param batch
-	 *            The game's SpriteBatch object. batch.begin() must have been called before the
-	 *            SpriteBatch is passed to this Sprite.
-	 * @param camera
-	 *            The game's libgdx camera.
-	 * @param texture
-	 *            The texture to draw.
+	 * @param graphics The graphics system.
+	 * @param texture The texture to draw.
 	 */
-	protected final void drawTexture(SpriteBatch batch, Camera camera, Texture texture)
+	protected final void drawTexture(Graphics graphics, Texture texture)
 	{
-		Vector2 cameraCoordinates = Coords.worldToCamera(camera,
+		Vector2 cameraCoordinates = Coords.worldToCamera(graphics.camera(),
 				new Vector2(getX() - (texture.getWidth() / 2),
 						getY() - (texture.getHeight() / 2)));
 
 		Vector2 origin = getOrigin(texture.getWidth(), texture.getHeight());
 
+		var batch = graphics.batch();
 		batch.setColor(color);
 		batch.draw(
 				texture,
@@ -128,24 +118,21 @@ abstract class Sprite implements Drawable
 	}
 
 	/**
-	 * Draws the texture to the screen.
+	 * Draws the texture to the screen. batch.begin() must be called before calling this method.
 	 *
-	 * @param batch
-	 *            The game's SpriteBatch object. batch.begin() must have been called before the
-	 *            SpriteBatch is passed to this Sprite.
-	 * @param camera
-	 *            The game's libgdx camera.
+	 * @param graphics the graphics system.
 	 * @param texture
 	 *            The texture region to draw.
 	 */
-	protected final void drawTexture(SpriteBatch batch, Camera camera, TextureRegion texture)
+	protected final void drawTexture(Graphics graphics, TextureRegion texture)
 	{
-		Vector2 cameraCoordinates = Coords.worldToCamera(camera,
+		Vector2 cameraCoordinates = Coords.worldToCamera(graphics.camera(),
 				new Vector2(getX() - (texture.getRegionWidth() / 2),
 						getY() - (texture.getRegionHeight() / 2)));
 
 		Vector2 origin = getOrigin(texture.getRegionWidth(), texture.getRegionHeight());
 
+		var batch = graphics.batch();
 		batch.setColor(color);
 		batch.draw(
 				texture,

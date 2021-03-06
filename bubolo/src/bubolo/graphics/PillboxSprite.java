@@ -1,7 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.entity.concrete.Pillbox;
@@ -84,7 +82,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		updateDamagedState();
 		updateColorSet();
@@ -98,7 +96,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 		{
 			// TODO: Point to different texture regions based on the damagedState field,
 			// which changes with Entity HP percentage.
-			drawTexture(batch, camera, frames[0][colorId]);
+			drawTexture(graphics, frames[0][colorId]);
 		}
 	}
 }

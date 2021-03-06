@@ -1,7 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.entity.concrete.DeepWater;
@@ -35,7 +33,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 
 		int currentState = this.getEntity().getTilingState();
@@ -46,7 +44,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		}
 		else
 		{
-			drawTexture(batch, camera, frames[currentState]);
+			drawTexture(graphics, frames[currentState]);
 		}
 
 		boolean[] corners = this.getEntity().getCornerMatches();
@@ -55,11 +53,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[0])
 			{
-				drawTexture(batch, camera, frames[20]);
+				drawTexture(graphics, frames[20]);
 			}
 			else
 			{
-				drawTexture(batch, camera, frames[16]);
+				drawTexture(graphics, frames[16]);
 			}
 		}
 
@@ -67,11 +65,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[1])
 			{
-				drawTexture(batch, camera, frames[21]);
+				drawTexture(graphics, frames[21]);
 			}
 			else
 			{
-				drawTexture(batch, camera, frames[17]);
+				drawTexture(graphics, frames[17]);
 			}
 
 		}
@@ -80,11 +78,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[2])
 			{
-				drawTexture(batch, camera, frames[22]);
+				drawTexture(graphics, frames[22]);
 			}
 			else
 			{
-				drawTexture(batch, camera, frames[18]);
+				drawTexture(graphics, frames[18]);
 			}
 
 		}
@@ -93,11 +91,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 		{
 			if (!corners[3])
 			{
-				drawTexture(batch, camera, frames[23]);
+				drawTexture(graphics, frames[23]);
 			}
 			else
 			{
-				drawTexture(batch, camera, frames[19]);
+				drawTexture(graphics, frames[19]);
 			}
 		}
 	}

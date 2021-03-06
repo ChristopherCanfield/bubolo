@@ -2,9 +2,7 @@ package bubolo.graphics;
 
 import java.util.Random;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import bubolo.world.entity.Entity;
 
@@ -40,7 +38,7 @@ class SwampSprite extends AbstractEntitySprite<Entity>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -48,7 +46,7 @@ class SwampSprite extends AbstractEntitySprite<Entity>
 		}
 		else
 		{
-			drawTexture(batch, camera, image);
+			drawTexture(graphics, image);
 		}
 	}
 

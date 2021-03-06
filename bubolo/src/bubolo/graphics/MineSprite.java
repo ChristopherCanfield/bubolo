@@ -1,7 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
@@ -66,7 +64,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -98,7 +96,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 					frameIndex = 0;
 				}
 
-				drawTexture(batch, camera, idleFrames[frameIndex][colorId]);
+				drawTexture(graphics, idleFrames[frameIndex][colorId]);
 
 				// Progress the Mine idle animation.
 				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
@@ -116,7 +114,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 					frameIndex = 0;
 					lastAnimationState = 1;
 				}
-				drawTexture(batch, camera, explodingFrames[frameIndex][colorId]);
+				drawTexture(graphics, explodingFrames[frameIndex][colorId]);
 
 				// Progress the mine exploding animation.
 				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);

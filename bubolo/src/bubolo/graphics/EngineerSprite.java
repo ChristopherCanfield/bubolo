@@ -1,8 +1,6 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
@@ -90,7 +88,7 @@ class EngineerSprite extends AbstractEntitySprite<Engineer>
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -121,7 +119,7 @@ class EngineerSprite extends AbstractEntitySprite<Engineer>
 					lastAnimationState = 0;
 					frameIndex = 0;
 				}
-				drawTexture(batch, camera, standingFrames[colorId]);
+				drawTexture(graphics, standingFrames[colorId]);
 				break;
 
 			case 1:
@@ -130,7 +128,7 @@ class EngineerSprite extends AbstractEntitySprite<Engineer>
 					frameIndex = 0;
 					lastAnimationState = 1;
 				}
-				drawTexture(batch, camera, buildingFrames[frameIndex][colorId]);
+				drawTexture(graphics, buildingFrames[frameIndex][colorId]);
 
 				// Progress the Engineer building animation.
 				// TODO: only change frames when the Engineer is actually building.
@@ -149,7 +147,7 @@ class EngineerSprite extends AbstractEntitySprite<Engineer>
 					frameIndex = 0;
 					lastAnimationState = 2;
 				}
-				drawTexture(batch, camera, runningFrames[frameIndex][colorId]);
+				drawTexture(graphics, runningFrames[frameIndex][colorId]);
 
 				// Progress the Engineer running animation.
 				// TODO: only change frames when the Engineer is actually running.

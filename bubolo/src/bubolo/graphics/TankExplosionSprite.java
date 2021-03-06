@@ -1,7 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
@@ -58,7 +56,7 @@ class TankExplosionSprite extends Sprite
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -66,7 +64,7 @@ class TankExplosionSprite extends Sprite
 		}
 		else
 		{
-			drawTexture(batch, camera, frames[frameIndex][0]);
+			drawTexture(graphics, frames[frameIndex][0]);
 			animate();
 		}
 	}

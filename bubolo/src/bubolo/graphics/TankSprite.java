@@ -1,10 +1,8 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
@@ -79,16 +77,16 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	 * Draws the player name. This is a separate method to ensure that tank names are drawn
 	 * above all other objects.
 	 */
-	void drawPlayerName(SpriteBatch batch, Camera camera) {
+	void drawPlayerName(Graphics graphics) {
 		var tank = getEntity();
 		if (!tank.isLocalPlayer() && processVisibility() != Visibility.NETWORK_TANK_HIDDEN) {
-			var tankCameraCoords = Coords.worldToCamera(camera, new Vector2(getEntity().getX(), getEntity().getY()));
-			font.draw(batch, tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
+			var tankCameraCoords = Coords.worldToCamera(graphics.camera(), new Vector2(getEntity().getX(), getEntity().getY()));
+			font.draw(graphics.batch(), tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
 	}
 
 	@Override
-	public void draw(SpriteBatch batch, Camera camera)
+	public void draw(Graphics graphics)
 	{
 		if (isDisposed())
 		{
@@ -97,7 +95,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		}
 		else if (frames == null)
 		{
-			initialize(camera);
+			initialize(graphics);
 		}
 		else if (!getEntity().isAlive())
 		{
@@ -113,11 +111,11 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		explosionCreated = false;
 
 		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN) {
-			animateAndDraw(batch, camera);
+			animateAndDraw(graphics);
 		}
 	}
 
-	private void animateAndDraw(SpriteBatch batch, Camera camera)
+	private void animateAndDraw(Graphics graphics)
 	{
 		animationState = (getEntity().getSpeed() > 0.f) ? 1 : 0;
 		switch (animationState)
@@ -128,7 +126,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 				lastAnimationState = 0;
 				frameIndex = 0;
 			}
-			drawTexture(batch, camera, standingFrames[colorId]);
+			drawTexture(graphics, standingFrames[colorId]);
 			break;
 
 		case 1:
@@ -137,7 +135,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 				frameIndex = 0;
 				lastAnimationState = 1;
 			}
-			drawTexture(batch, camera, forwardFrames[frameIndex][colorId]);
+			drawTexture(graphics, forwardFrames[frameIndex][colorId]);
 
 			// Progress the tank drive forward animation.
 			animate(forwardFrames);
@@ -150,7 +148,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 				frameIndex = 0;
 				lastAnimationState = 2;
 			}
-			drawTexture(batch, camera, backwardFrames[frameIndex][colorId]);
+			drawTexture(graphics, backwardFrames[frameIndex][colorId]);
 
 			// Progress the tank drive backward animation.
 			animate(backwardFrames);
@@ -197,7 +195,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	 * @param camera
 	 *            reference to the camera.
 	 */
-	private void initialize(Camera camera)
+	private void initialize(Graphics graphics)
 	{
 		Texture texture = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 		frames = TextureUtil.splitFrames(texture, 32, 32);
@@ -211,8 +209,8 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		if (getEntity().isLocalPlayer())
 		{
 			CameraController controller = new TankCameraController(getEntity());
-			Graphics.getInstance().addCameraController(controller);
-			controller.setCamera(camera);
+			graphics.addCameraController(controller);
+			controller.setCamera(graphics.camera());
 		}
 
 		colorId = determineColorSet(getEntity());
