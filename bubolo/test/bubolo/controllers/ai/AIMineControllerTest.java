@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 
 import bubolo.controllers.Controller;
-import bubolo.graphics.LibGdxAppTester;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.entity.concrete.Mine;
@@ -16,7 +15,6 @@ public class AIMineControllerTest
 	@Test
 	public void test()
 	{
-		LibGdxAppTester.createApp();
 		Controller c = new AiMineController(mock(Mine.class));
 
 		GameWorld world = new GameWorld(100, 100);
@@ -27,7 +25,7 @@ public class AIMineControllerTest
 		c.update(world);
 	}
 
-	private Tile[][] createTiles(int rows, int columns) {
+	private static Tile[][] createTiles(int rows, int columns) {
 		Tile[][] tiles = new Tile[rows][columns];
 
 		for (int row = 0; row < rows; row++) {

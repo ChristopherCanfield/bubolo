@@ -1,15 +1,12 @@
 package bubolo.controllers.input;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 
 import bubolo.controllers.Controller;
-import bubolo.controllers.input.KeyboardTankController;
-import bubolo.graphics.LibGdxAppTester;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Tank;
-import static org.mockito.Mockito.mock;
 
 
 public class KeyboardTankControllerTest
@@ -17,7 +14,6 @@ public class KeyboardTankControllerTest
 	@Test
 	public void test()
 	{
-		LibGdxAppTester.createApp();
 		Controller c = new KeyboardTankController(mock(Tank.class));
 		c.update(mock(World.class));
 	}

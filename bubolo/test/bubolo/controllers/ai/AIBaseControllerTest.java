@@ -1,13 +1,12 @@
 package bubolo.controllers.ai;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
 
 import bubolo.controllers.Controller;
-
-import bubolo.graphics.LibGdxAppTester;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Base;
-import static org.mockito.Mockito.mock;
 
 
 public class AIBaseControllerTest
@@ -15,7 +14,6 @@ public class AIBaseControllerTest
 	@Test
 	public void test()
 	{
-		LibGdxAppTester.createApp();
 		Controller c = new AiBaseController(mock(Base.class));
 		c.update(mock(World.class));
 	}
