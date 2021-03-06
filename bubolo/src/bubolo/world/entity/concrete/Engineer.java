@@ -146,10 +146,10 @@ public class Engineer extends Actor implements Damageable
 	 *            how much damage the engineer has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints)
+	public void takeHit(float damagePoints)
 	{
-		hitPoints -= Math.abs(damagePoints);
-		// TODO: This method is the first opportunity to set off "death" chain of events
+		assert(damagePoints >= 0);
+		hitPoints -= damagePoints;
 	}
 
 	/**

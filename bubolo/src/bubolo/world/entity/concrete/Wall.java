@@ -137,10 +137,11 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 	 *            how much damage the wall has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints)
+	public void takeHit(float damagePoints)
 	{
+		assert(damagePoints >= 0);
+		hitPoints -= damagePoints;
 		Audio.play(Sfx.WALL_HIT);
-		hitPoints -= Math.abs(damagePoints);
 	}
 
 	/**

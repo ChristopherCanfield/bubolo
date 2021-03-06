@@ -731,9 +731,10 @@ public class Tank extends Actor implements Damageable
 	 *            how much damage the tank has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints)
+	public void takeHit(float damagePoints)
 	{
-		hitPoints -= Math.abs(damagePoints);
+		assert(damagePoints >= 0);
+		hitPoints -= damagePoints;
 		Audio.play(Sfx.TANK_HIT);
 		if (this.hitPoints <= 0)
 		{

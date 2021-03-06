@@ -10,7 +10,7 @@ import bubolo.world.entity.StationaryElement;
 /**
  * Mines can be placed by Tanks to do damage to enemy Tanks, or to destroy/modify
  * Terrain/structures.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Mine extends StationaryElement implements Ownable
@@ -38,17 +38,17 @@ public class Mine extends StationaryElement implements Ownable
 	 * Boolean representing whether this Mine is exploding! OH NO!
 	 */
 	private boolean isExploding = false;
-	
+
 	/**
 	 *  amount of time before mine becomes active in milliseconds
 	 */
 	private static int FUSE_TIME = 5000;
-	
+
 	/**
-	 * time the mine was created in milliseconds 
+	 * time the mine was created in milliseconds
 	 */
 	private long createdTime;
-	
+
 	/**
 	 * Construct a new Mine with a random UUID.
 	 */
@@ -59,7 +59,7 @@ public class Mine extends StationaryElement implements Ownable
 
 	/**
 	 * Construct a new Mine with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Tree.
 	 */
@@ -99,7 +99,7 @@ public class Mine extends StationaryElement implements Ownable
 
 	/**
 	 * Checks to see if this mine is currently exploding!
-	 * 
+	 *
 	 * @return true if this mine is in the process of exploding, false otherwise.
 	 */
 	public boolean isExploding()
@@ -109,7 +109,7 @@ public class Mine extends StationaryElement implements Ownable
 
 	/**
 	 * Sets the explosion status of this Mine.
-	 * 
+	 *
 	 * @param explode
 	 *            should be true if this mine should be exploding, false otherwise.
 	 */
@@ -117,10 +117,10 @@ public class Mine extends StationaryElement implements Ownable
 	{
 		this.isExploding = explode;
 	}
-	
+
 	/**
 	 * get the status of this mine. will be inactive until the fuse time has elapsed since the mine was created
-	 * @return 
+	 * @return
 	 * 		whether or not this mine is active
 	 */
 	public boolean isActive()
@@ -134,17 +134,17 @@ public class Mine extends StationaryElement implements Ownable
 	}
 
 	@Override
-	public UUID getOwnerUID() 
+	public UUID getOwnerUID()
 	{
 		return this.ownerUID;
 	}
 
 	@Override
-	public void setOwnerUID(UUID ownerUID) 
+	public void setOwnerUID(UUID ownerUID)
 	{
 		this.ownerUID = ownerUID;
 	}
-	
+
 	@Override
 	protected void onDispose()
 	{

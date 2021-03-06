@@ -89,9 +89,10 @@ public class Tree extends StationaryElement implements Damageable
 	 *            how much damage the tree has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints)
+	public void takeHit(float damagePoints)
 	{
-		hitPoints -= Math.abs(damagePoints);
+		assert(damagePoints >= 0);
+		hitPoints -= damagePoints;
 	}
 
 	/**

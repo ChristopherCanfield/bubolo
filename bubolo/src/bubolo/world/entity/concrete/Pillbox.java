@@ -231,7 +231,7 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	 *            how much damage the pillbox has taken
 	 */
 	@Override
-	public void takeHit(int damagePoints)
+	public void takeHit(float damagePoints)
 	{
 		assert damagePoints >= 0;
 

@@ -28,7 +28,7 @@ public interface Damageable
 	 * @param damagePoints
 	 *            how much damage the tank has taken
 	 */
-	public void takeHit(int damagePoints);
+	public void takeHit(float damagePoints);
 
 	/**
 	 * Increments the tanks health by a given amount

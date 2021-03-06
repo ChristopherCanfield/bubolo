@@ -6,7 +6,7 @@ import bubolo.world.entity.Terrain;
 
 /**
  * Grass is the standard Terrain of B.U.B.O.L.O., and offers no special movement effects.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class Grass extends Terrain
@@ -19,12 +19,12 @@ public class Grass extends Terrain
 	/**
 	 * Construct a new Grass with a random UUID.
 	 */
-	
+
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
 	 */
 	private static final float MAX_SPEED_MODIFIER = 1.0F;
-	
+
 	/**
 	 * Construct a new Grass with a random UUID.
 	 */
@@ -35,7 +35,7 @@ public class Grass extends Terrain
 
 	/**
 	 * Construct a new Grass with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Grass.
 	 */
