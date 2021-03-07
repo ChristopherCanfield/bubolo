@@ -1,9 +1,11 @@
 package bubolo.graphics;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.util.Coords;
@@ -74,15 +76,66 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	}
 
 	/**
-	 * Draws user interface elements related to the tank, such as the tank's name. This is a separate method to
-	 * ensure that tank UI elements are drawn above all other objects.
+	 * Draws the tank's name. This is a separate method to ensure that tank UI elements are drawn above all other objects.
+	 * begin() must have been called on graphics.batch() before calling this method.
 	 */
-	void drawTankUserInterface(Graphics graphics) {
+	void drawTankPlayerName(Graphics graphics) {
 		var tank = getEntity();
+		// Render non-hidden network tank names.
 		if (!tank.isLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
-			var tankCameraCoords = Coords.worldToCamera(graphics.camera(), new Vector2(getEntity().getX(), getEntity().getY()));
+			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
 			font.draw(graphics.batch(), tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
+	}
+
+	/**
+	 * Draws the tank's health bar. Uses the shape renderer, so it should be called after completing drawing uses the Batch.
+	 * Unlike with the methods that use batch(), begin() does not need to be called on graphics.shapeRenderer() before calling this method.
+	 */
+	void drawTankHealthBar(Graphics graphics) {
+		var tank = getEntity();
+		if (tank.isLocalPlayer() && tank.isAlive() && tank.getHitPoints() < tank.getMaxHitPoints()) {
+			var shapeRenderer = graphics.shapeRenderer();
+			shapeRenderer.begin(ShapeType.Filled);
+
+			float healthPct = tank.getHitPoints() / Tank.TANK_MAX_HIT_POINTS;
+			float healthBarInteriorBackgroundWidth = tank.getWidth() + 10;
+			float healthBarInteriorWidth = healthBarInteriorBackgroundWidth * healthPct;
+
+			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
+
+			// Health bar's exterior.
+			shapeRenderer.setColor(Color.BLACK);
+			shapeRenderer.rect(tankCameraCoords.x - 17, tankCameraCoords.y + 18, healthBarInteriorBackgroundWidth + 4, 8);
+
+			// Health bar's interior background.
+			shapeRenderer.setColor(Color.GRAY);
+			shapeRenderer.rect(tankCameraCoords.x - 15, tankCameraCoords.y + 20, healthBarInteriorBackgroundWidth, 4);
+
+			// Health bar's interior.
+			shapeRenderer.setColor(healthBarColor(healthPct));
+			shapeRenderer.rect(tankCameraCoords.x - 15, tankCameraCoords.y + 20, healthBarInteriorWidth, 4);
+
+			shapeRenderer.end();
+		}
+	}
+
+	private static final Color RED_ORANGE = new Color(1.0f, 0.53f, 0.0f, 1.0f);
+
+	private static Color healthBarColor(float healthPct) {
+		if (healthPct > 0.85) {
+			return Color.GREEN;
+		} else if (healthPct > 0.65) {
+			return Color.YELLOW;
+		} else if (healthPct > 0.3) {
+			return RED_ORANGE;
+		} else {
+			return Color.RED;
+		}
+	}
+
+	private static Vector2 tankCameraCoordinates(Tank tank, Camera camera) {
+		return Coords.worldToCamera(camera, new Vector2(tank.getX(), tank.getY()));
 	}
 
 	@Override

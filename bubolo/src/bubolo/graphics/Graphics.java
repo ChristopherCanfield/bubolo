@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -214,7 +215,7 @@ public class Graphics
 
 		// Render sprites.
 		drawSpritesByLayer(spritesInView);
-		drawTankNames(spritesInView);
+		drawTankUiElements(spritesInView);
 
 		// Render the user interface.
 		if (ui != null)
@@ -274,13 +275,20 @@ public class Graphics
 	/**
 	 * This is a separate method to ensure that the tank names are always drawn above all tanks and other objects.
 	 */
-	private void drawTankNames(List<Sprite> spritesInView) {
+	private void drawTankUiElements(List<Sprite> spritesInView) {
+		var tankSpritesInView = spritesInView.stream().filter(s -> s instanceof TankSprite).collect(Collectors.toList());
+
 		batch.begin();
-		spritesInView.stream().filter(s -> s instanceof TankSprite).forEach(s -> {
-			TankSprite tankSprite = (TankSprite) s;
-			tankSprite.drawTankUserInterface(this);
-		});
+		for (Sprite sprite : tankSpritesInView) {
+			TankSprite tankSprite = (TankSprite) sprite;
+			tankSprite.drawTankPlayerName(this);
+		}
 		batch.end();
+
+		for (Sprite sprite : tankSpritesInView) {
+			TankSprite tankSprite = (TankSprite) sprite;
+			tankSprite.drawTankHealthBar(this);
+		}
 	}
 
 	/**
