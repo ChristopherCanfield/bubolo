@@ -6,6 +6,8 @@ package bubolo.ui;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.badlogic.gdx.Input;
@@ -121,11 +123,36 @@ public class PlayerInfoScreen extends Screen
 		} else {
 			try {
 				table.add(new Label("IP Address:", skin)).padLeft(300.0f);
-				table.add(new Label(Inet4Address.getLocalHost().getHostAddress(), skin));
-			} catch (UnknownHostException e) {
+
+				String ipAddresses = getIpAddresses();
+				table.add(new Label(ipAddresses, skin));
+			} catch (SocketException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static String getIpAddresses() throws SocketException {
+		StringBuilder ipAddresses = new StringBuilder();
+		var networkInterfaces = NetworkInterface.getNetworkInterfaces();
+		while (networkInterfaces.hasMoreElements()) {
+			var networkInterface = networkInterfaces.nextElement();
+			var addresses = networkInterface.getInetAddresses();
+			while (addresses.hasMoreElements()) {
+				var address = addresses.nextElement();
+				if (address instanceof Inet4Address
+						// Filter out localhost.
+						&& !address.getHostAddress().contains("127.0.0.1")
+						// Filter out VirtualBox network adapters.
+						&& !address.getHostName().contains("VirtualBox")) {
+					if (!ipAddresses.isEmpty()) {
+						ipAddresses.append(", ");
+					}
+					ipAddresses.append(address.getHostAddress());
+				}
+			}
+		}
+		return ipAddresses.toString();
 	}
 
 	private void addOkButtonRow(Skin skin)
