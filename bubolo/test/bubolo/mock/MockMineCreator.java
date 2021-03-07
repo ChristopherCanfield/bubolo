@@ -58,13 +58,13 @@ public class MockMineCreator extends MockWorld
 	}
 	
 	@Override
-	public int getMapWidth()
+	public int getWidth()
 	{
 		return 32;
 	}
 	
 	@Override
-	public int getMapHeight()
+	public int getHeight()
 	{
 		return 32;
 	}

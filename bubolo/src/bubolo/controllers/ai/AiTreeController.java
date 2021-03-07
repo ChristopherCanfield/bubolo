@@ -104,14 +104,12 @@ public class AiTreeController implements Controller
 
 	private boolean pickATile(World world)
 	{
-		//get map size in tiles
-		int mapHeight = world.getMapHeight()/32;
-		int mapWidth = world.getMapWidth()/32;
+		int mapHeight = world.getTileRows();
+		int mapWidth = world.getTileColumns();
 
 		boolean tileFound = false;
 
-		//get a random tile that is not on the border
-		//if map is too small trees dont grow
+		// Select a random tile that is not on the border
 		if(mapHeight > 2 && mapWidth > 2)
 		{
 			tempX = randomGenerator.nextInt(mapWidth-2)+2;

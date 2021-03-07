@@ -161,18 +161,30 @@ public interface World
 	public void removeEntity(UUID id) throws GameLogicException;
 
 	/**
-	 * Returns the width of the game map.
+	 * Returns the width of the world.
 	 *
-	 * @return the width of the game map.
+	 * @return the width of the world.
 	 */
-	public int getMapWidth();
+	public int getWidth();
 
 	/**
-	 * Returns the height of the game map.
+	 * Returns the height of the world.
 	 *
-	 * @return the width of the game map.
+	 * @return the height of the world.
 	 */
-	public int getMapHeight();
+	public int getHeight();
+
+	/**
+	 * The number of tile columns.
+	 * @return The number of tile columns.
+	 */
+	public int getTileColumns();
+
+	/**
+	 * The number of tile rows.
+	 * @return The number of tile rows.
+	 */
+	public int getTileRows();
 
 	/**
 	 * Sets the world's height.
@@ -180,7 +192,7 @@ public interface World
 	 * @param height
 	 *            the world's height.
 	 */
-	public void setMapHeight(int height);
+	public void setHeight(int height);
 
 	/**
 	 * Sets the world's width.
@@ -188,7 +200,7 @@ public interface World
 	 * @param width
 	 *            the world's width.
 	 */
-	public void setMapWidth(int width);
+	public void setWidth(int width);
 
 	/**
 	 * Updates the game world. Must be called once per game tick.

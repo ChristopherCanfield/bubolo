@@ -58,13 +58,13 @@ public class MockWorld implements World
 	}
 
 	@Override
-	public int getMapWidth()
+	public int getWidth()
 	{
 		return 0;
 	}
 
 	@Override
-	public int getMapHeight()
+	public int getHeight()
 	{
 		return 0;
 	}
@@ -144,12 +144,12 @@ public class MockWorld implements World
 	}
 
 	@Override
-	public void setMapHeight(int height)
+	public void setHeight(int height)
 	{
 	}
 
 	@Override
-	public void setMapWidth(int width)
+	public void setWidth(int width)
 	{
 	}
 
@@ -180,5 +180,17 @@ public class MockWorld implements World
 	public Tile getTileFromWorldPosition(float worldX, float worldY) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getTileColumns() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTileRows() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

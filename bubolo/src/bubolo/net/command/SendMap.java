@@ -38,8 +38,8 @@ public class SendMap implements NetworkCommand
 	 */
 	public SendMap(World world)
 	{
-		this.worldWidth = world.getMapWidth();
-		this.worldHeight = world.getMapHeight();
+		this.worldWidth = world.getWidth();
+		this.worldHeight = world.getHeight();
 
 		this.tiles = new ArrayList<TileInfo>();
 
@@ -66,8 +66,8 @@ public class SendMap implements NetworkCommand
 	@Override
 	public void execute(World world)
 	{
-		world.setMapWidth(worldWidth);
-		world.setMapHeight(worldHeight);
+		world.setWidth(worldWidth);
+		world.setHeight(worldHeight);
 
 		Tile[][] mapTiles = new Tile[rows][columns];
 

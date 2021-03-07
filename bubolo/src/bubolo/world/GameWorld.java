@@ -73,8 +73,8 @@ public class GameWorld implements World
 	private boolean adaptableRemovedThisTick = false;
 	private boolean adaptableAddedThisTick = false;
 
-	private int worldMapWidth;
-	private int worldMapHeight;
+	private int width;
+	private int height;
 
 	// Whether the sprites are loaded when an entity is created. Intended to help with unit testing.
 	private boolean loadSprites = true;
@@ -93,8 +93,8 @@ public class GameWorld implements World
 		int tilesY = worldMapHeight / Coords.TILE_TO_WORLD_SCALE;
 		mapTiles = new Tile[tilesX][tilesY];
 
-		this.worldMapWidth = worldMapWidth;
-		this.worldMapHeight = worldMapHeight;
+		this.width = worldMapWidth;
+		this.height = worldMapHeight;
 
 		this.graphics = graphics;
 
@@ -113,17 +113,17 @@ public class GameWorld implements World
 
 
 	@Override
-	public void setMapHeight(int height)
+	public void setHeight(int height)
 	{
 		checkArgument(height > 0, "height parameter must be greater than zero: %s", height);
-		worldMapHeight = height;
+		this.height = height;
 	}
 
 	@Override
-	public void setMapWidth(int width)
+	public void setWidth(int width)
 	{
 		checkArgument(width > 0, "width parameter must be greater than zero: %s", width);
-		worldMapWidth = width;
+		this.width = width;
 	}
 
 	/**
@@ -299,10 +299,10 @@ public class GameWorld implements World
 	public void setTiles(Tile[][] mapTiles)
 	{
 		this.mapTiles = mapTiles;
-		setMapWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
-		setMapHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
+		setWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
+		setHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
 
-		System.out.println("Map width: " + worldMapWidth / Coords.TILE_TO_WORLD_SCALE + " Map height: " + worldMapHeight / Coords.TILE_TO_WORLD_SCALE);
+		System.out.println("Map width: " + width / Coords.TILE_TO_WORLD_SCALE + " Map height: " + height / Coords.TILE_TO_WORLD_SCALE);
 
 		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
 		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.
@@ -337,15 +337,28 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public int getMapWidth()
+	public int getWidth()
 	{
-		return worldMapWidth;
+		return width;
 	}
 
 	@Override
-	public int getMapHeight()
+	public int getHeight()
 	{
-		return worldMapHeight;
+		return height;
+	}
+
+
+	@Override
+	public int getTileColumns() {
+		assert width / Coords.TILE_TO_WORLD_SCALE == mapTiles.length;
+		return mapTiles.length;
+	}
+
+	@Override
+	public int getTileRows() {
+		assert height / Coords.TILE_TO_WORLD_SCALE == mapTiles[0].length;
+		return mapTiles[0].length;
 	}
 
 	@Override
@@ -357,10 +370,10 @@ public class GameWorld implements World
 			c.update(this);
 		}
 
-		checkState(worldMapWidth > 0,
-				"worldMapWidth must be greater than 0. worldMapWidth: %s", worldMapWidth);
-		checkState(worldMapHeight > 0,
-				"worldMapHeight must be greater than 0. worldMapHeight: %s", worldMapHeight);
+		checkState(width > 0,
+				"worldMapWidth must be greater than 0. worldMapWidth: %s", width);
+		checkState(height > 0,
+				"worldMapHeight must be greater than 0. worldMapHeight: %s", height);
 
 		// Update all entities.
 		for (Entity e : entities)

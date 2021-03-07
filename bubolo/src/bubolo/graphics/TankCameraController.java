@@ -65,10 +65,10 @@ class TankCameraController implements CameraController
 		{
 			cameraX = 0;
 		}
-		else if (cameraX > world.getMapWidth() - camera.viewportWidth)
+		else if (cameraX > world.getWidth() - camera.viewportWidth)
 		{
 			// Ensure that screen doesn't go negative if the world is smaller than the camera.
-			float newCameraX = world.getMapWidth() - camera.viewportWidth;
+			float newCameraX = world.getWidth() - camera.viewportWidth;
 			cameraX = (newCameraX >= 0) ? newCameraX : 0;
 		}
 
@@ -84,10 +84,10 @@ class TankCameraController implements CameraController
 		{
 			cameraY = 0;
 		}
-		else if (cameraY > world.getMapHeight() - camera.viewportHeight)
+		else if (cameraY > world.getHeight() - camera.viewportHeight)
 		{
 			// Ensure that screen doesn't go negative if the world is smaller than the camera.
-			float newCameraY = world.getMapHeight() - camera.viewportHeight;
+			float newCameraY = world.getHeight() - camera.viewportHeight;
 			cameraY = (newCameraY >= 0) ? newCameraY : 0;
 		}
 

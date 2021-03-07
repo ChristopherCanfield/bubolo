@@ -819,7 +819,7 @@ public class Tank extends Actor implements Damageable
 	public Mine dropMine(World world, float startX, float startY)
 	{
 		if ((System.currentTimeMillis() - mineLayingTime < MINE_RELOAD_SPEED_MILLIS && mineLayingTime != 0)
-				||startX < 0 || startX > world.getMapWidth() || startY < 0 || startY > world.getMapHeight())
+				||startX < 0 || startX > world.getWidth() || startY < 0 || startY > world.getHeight())
 		{
 			return null;
 		}

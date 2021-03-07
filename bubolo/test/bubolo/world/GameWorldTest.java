@@ -314,14 +314,14 @@ public class GameWorldTest
 	public void testGetMapWidth()
 	{
 		World w = new GameWorld(10, 50);
-		assertEquals(10, w.getMapWidth());
+		assertEquals(10, w.getWidth());
 	}
 
 	@Test
 	public void testGetMapHeight()
 	{
 		World w = new GameWorld(10, 50);
-		assertEquals(50, w.getMapHeight());
+		assertEquals(50, w.getHeight());
 	}
 	@Test
 	public void testGetMapTiles()
@@ -337,23 +337,23 @@ public class GameWorldTest
 	public void testSetMapTiles()
 	{
 		World w = new GameWorld(10, 50);
-		assertEquals(50, w.getMapHeight());
+		assertEquals(50, w.getHeight());
 	}
 
 	@Test
 	public void testSetMapHeight()
 	{
 		World w = new GameWorld(0, 0);
-		w.setMapHeight(40);
-		assertEquals(40, w.getMapHeight());
+		w.setHeight(40);
+		assertEquals(40, w.getHeight());
 	}
 
 	@Test
 	public void testSetMapWidth()
 	{
 		World w = new GameWorld(0, 0);
-		w.setMapWidth(75);
-		assertEquals(75, w.getMapWidth());
+		w.setWidth(75);
+		assertEquals(75, w.getWidth());
 	}
 
 	@Test
