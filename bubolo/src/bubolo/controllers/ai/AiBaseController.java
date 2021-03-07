@@ -63,31 +63,30 @@ public class AiBaseController implements Controller
 	@Override
 	public void update(World world)
 	{
-		this.base.setCharging(false);
-		for (Entity entity : TileUtil.getLocalCollisions(this.base, world))
+		base.setCharging(false);
+		for (Entity entity : TileUtil.getLocalCollisions(base, world))
 		{
-			if (entity instanceof Tank)
+			if (entity instanceof Tank tank)
 			{
-				Tank tank = (Tank) entity;
 				if (!this.base.isOwned())
 				{
-					this.base.setOwned(true);
-					this.base.setOwnerUID(tank.getId());
-					this.base.heal(100);
+					base.setOwned(true);
+					base.setOwnerUID(tank.getId());
+					base.heal(100);
 					if (tank.isLocalPlayer())
 					{
-						this.base.setLocalPlayer(true);
+						base.setLocalPlayer(true);
 						Network net = NetworkSystem.getInstance();
-						net.send(new UpdateOwnable(this.base));
+						net.send(new UpdateOwnable(base));
 					}
 					else
 					{
-						this.base.setLocalPlayer(false);
+						base.setLocalPlayer(false);
 					}
 				}
 				else
 				{
-					if(tank.getId() == this.base.getOwnerUID())
+					if(tank.getId() == base.getOwnerUID() && !isTankRecharged(tank))
 					{
 						base.setCharging(true);
 
@@ -111,11 +110,18 @@ public class AiBaseController implements Controller
 				}
 			}
 		}
+
 		if(System.currentTimeMillis() - lastReplinishment < replinishTime)
 		{
 			base.heal(HIT_POINTS_PER_HEAL);
 			base.gatherAmmo();
 			base.gatherMines();
 		}
+	}
+
+	private static boolean isTankRecharged(Tank tank) {
+		return tank.getHitPoints() >= tank.getMaxHitPoints()
+				&& tank.getAmmoCount() >= tank.getTankMaxAmmo()
+				&& tank.getMineCount() >= tank.getTankMaxMineCount();
 	}
 }
