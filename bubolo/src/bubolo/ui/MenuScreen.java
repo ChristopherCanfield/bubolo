@@ -30,7 +30,6 @@ public class MenuScreen extends JFrame
 	 */
 	public MenuScreen(Runnable singlePlayer, Runnable hostMultiPlayer, Runnable joinMultiPlayer)
 	{
-
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e)
@@ -51,6 +50,6 @@ public class MenuScreen extends JFrame
 		add(new MainPanel(), BorderLayout.NORTH);
 
 		// Add the ButtonPanel which contains the main buttons
-		add(new ButtonPanel(singlePlayer, hostMultiPlayer, joinMultiPlayer), BorderLayout.CENTER);
+		add(new ButtonPanel(this, singlePlayer, hostMultiPlayer, joinMultiPlayer), BorderLayout.CENTER);
 	}
 }

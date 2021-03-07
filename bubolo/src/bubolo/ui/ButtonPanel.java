@@ -3,6 +3,7 @@ package bubolo.ui;
 import java.awt.GridLayout;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
@@ -17,9 +18,11 @@ class ButtonPanel extends JPanel
 	/**
 	 * The Runnable that should be activated when the Start menu button is pressed.
 	 */
-	private Runnable singlePlayerTarget;
-	private Runnable hostMultiPlayerTarget;
-	private Runnable joinMultiPlayerTarget;
+	private final Runnable singlePlayerTarget;
+	private final Runnable hostMultiPlayerTarget;
+	private final Runnable joinMultiPlayerTarget;
+
+	private final JFrame parentFrame;
 
 	/**
 	 * Constructor for the Main Menu Button Panel
@@ -31,11 +34,13 @@ class ButtonPanel extends JPanel
 	 * @param joinMultiPlayer
 	 *            a runnable that launches the client multiplayer game.
 	 */
-	public ButtonPanel(Runnable singlePlayer, Runnable hostMultiPlayer, Runnable joinMultiPlayer)
+	public ButtonPanel(JFrame parentFrame, Runnable singlePlayer, Runnable hostMultiPlayer, Runnable joinMultiPlayer)
 	{
 		singlePlayerTarget = singlePlayer;
 		hostMultiPlayerTarget = hostMultiPlayer;
 		joinMultiPlayerTarget = joinMultiPlayer;
+
+		this.parentFrame = parentFrame;
 
 		setLayout(new GridLayout(4, 1));
 
@@ -97,16 +102,18 @@ class ButtonPanel extends JPanel
 	private void singleBtnPerformed()
 	{
 		singlePlayerTarget.run();
+		parentFrame.setVisible(false);
 	}
 
 	private void joinMPBtnPerformed()
 	{
 		joinMultiPlayerTarget.run();
+		parentFrame.setVisible(false);
 	}
 
 	private void hostMPBtnPerformed()
 	{
 		hostMultiPlayerTarget.run();
-
+		parentFrame.setVisible(false);
 	}
 }
