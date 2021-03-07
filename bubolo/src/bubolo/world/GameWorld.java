@@ -302,8 +302,6 @@ public class GameWorld implements World
 		setWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
 		setHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
 
-		System.out.println("Map width: " + width / Coords.TILE_TO_WORLD_SCALE + " Map height: " + height / Coords.TILE_TO_WORLD_SCALE);
-
 		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
 		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.
 		// These lines add a Grass tile to any tile that is missing an associated terrain.
