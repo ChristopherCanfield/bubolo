@@ -278,7 +278,7 @@ public class Graphics
 		batch.begin();
 		spritesInView.stream().filter(s -> s instanceof TankSprite).forEach(s -> {
 			TankSprite tankSprite = (TankSprite) s;
-			tankSprite.drawPlayerName(this);
+			tankSprite.drawTankUserInterface(this);
 		});
 		batch.end();
 	}

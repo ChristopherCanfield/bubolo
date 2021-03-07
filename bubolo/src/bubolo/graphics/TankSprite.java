@@ -74,12 +74,12 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	}
 
 	/**
-	 * Draws the player name. This is a separate method to ensure that tank names are drawn
-	 * above all other objects.
+	 * Draws user interface elements related to the tank, such as the tank's name. This is a separate method to
+	 * ensure that tank UI elements are drawn above all other objects.
 	 */
-	void drawPlayerName(Graphics graphics) {
+	void drawTankUserInterface(Graphics graphics) {
 		var tank = getEntity();
-		if (!tank.isLocalPlayer() && processVisibility() != Visibility.NETWORK_TANK_HIDDEN) {
+		if (!tank.isLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			var tankCameraCoords = Coords.worldToCamera(graphics.camera(), new Vector2(getEntity().getX(), getEntity().getY()));
 			font.draw(graphics.batch(), tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
@@ -110,7 +110,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		}
 		explosionCreated = false;
 
-		if (processVisibility() != Visibility.NETWORK_TANK_HIDDEN) {
+		if (visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			animateAndDraw(graphics);
 		}
 	}
@@ -162,7 +162,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 
 	private static final Color tankHiddenColor = new Color(Color.WHITE).mul(1.f, 1.f, 1.f, 0.6f);
 
-	private Visibility processVisibility()
+	private Visibility visibility()
 	{
 		if (getEntity().isHidden()) {
 			if (getEntity().isLocalPlayer()) {
