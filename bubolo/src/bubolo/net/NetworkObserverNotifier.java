@@ -9,6 +9,8 @@ package bubolo.net;
 import java.util.ArrayList;
 import java.util.List;
 
+import bubolo.net.command.SendMessage.MessageType;
+
 /**
  * @author BU CS673 - Clone Productions
  */
@@ -27,7 +29,7 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Adds an observer to the network observer list.
-	 * 
+	 *
 	 * @param o
 	 *            the observer to add.
 	 */
@@ -41,7 +43,7 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Removes an observer from the network observer list.
-	 * 
+	 *
 	 * @param o
 	 *            the observer to remove.
 	 */
@@ -52,7 +54,7 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Gets the observer count.
-	 * 
+	 *
 	 * @return the observer count.
 	 */
 	int getObserverCount()
@@ -62,7 +64,7 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Notifies observers that this client has connected to a server.
-	 * 
+	 *
 	 * @param clientName
 	 *            the name of the client that connected.
 	 * @param serverName
@@ -78,7 +80,7 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Notifies observers that a client has connected to this server.
-	 * 
+	 *
 	 * @param clientName
 	 *            the name of the client that connected.
 	 */
@@ -92,7 +94,7 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Notifies observers that a client has disconnected.
-	 * 
+	 *
 	 * @param clientName
 	 *            the name of the client that disconnected.
 	 */
@@ -106,7 +108,7 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Notifies observers that the game is starting.
-	 * 
+	 *
 	 * @param secondsUntilStart
 	 *            the number of seconds until the game begins.
 	 */
@@ -120,15 +122,15 @@ public class NetworkObserverNotifier
 
 	/**
 	 * Notifies observers that a message has been received.
-	 * 
+	 *
 	 * @param message
 	 *            the message text.
 	 */
-	public void notifyMessageReceived(String message)
+	public void notifyMessageReceived(MessageType messageType, String message)
 	{
 		for (final NetworkObserver o : observers)
 		{
-			o.onMessageReceived(message);
+			o.onMessageReceived(messageType, message);
 		}
 	}
 }

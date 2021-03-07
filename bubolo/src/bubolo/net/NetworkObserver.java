@@ -4,6 +4,8 @@
 
 package bubolo.net;
 
+import bubolo.net.command.SendMessage.MessageType;
+
 /**
  * Enables a subsystem to monitor network events. The subsystem must implement this interface and
  * then register with the network system using the following code:
@@ -13,14 +15,14 @@ package bubolo.net;
  * net.registerObserver(this);
  * </code>
  * </p>
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public interface NetworkObserver
 {
 	/**
 	 * Called when a player has successfully connected to the server.
-	 * 
+	 *
 	 * @param clientName
 	 *            the name of the client that connected.
 	 * @param serverName
@@ -30,7 +32,7 @@ public interface NetworkObserver
 
 	/**
 	 * Called when a new client has connected to the server.
-	 * 
+	 *
 	 * @param clientName
 	 *            the name of the new client player.
 	 */
@@ -38,7 +40,7 @@ public interface NetworkObserver
 
 	/**
 	 * Called when a client player has disconnected.
-	 * 
+	 *
 	 * @param clientName
 	 *            the name of the player who disconnected.
 	 */
@@ -46,7 +48,7 @@ public interface NetworkObserver
 
 	/**
 	 * Called when a networked game starts.
-	 * 
+	 *
 	 * @param secondsUntilStart
 	 *            the number of seconds until the game starts.
 	 */
@@ -54,9 +56,9 @@ public interface NetworkObserver
 
 	/**
 	 * Called when a message is received through the network.
-	 * 
+	 *
 	 * @param message
 	 *            the message text.
 	 */
-	void onMessageReceived(String message);
+	void onMessageReceived(MessageType messageType, String message);
 }
