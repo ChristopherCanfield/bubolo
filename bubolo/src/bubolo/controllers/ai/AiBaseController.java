@@ -73,15 +73,11 @@ public class AiBaseController implements Controller
 					base.setOwned(true);
 					base.setOwnerUID(tank.getId());
 					base.heal(100);
-					if (tank.isLocalPlayer())
-					{
+
+					if (tank.isLocalPlayer() && !base.isLocalPlayer()) {
 						base.setLocalPlayer(true);
 						Network net = NetworkSystem.getInstance();
 						net.send(new UpdateOwnable(base));
-					}
-					else
-					{
-						base.setLocalPlayer(false);
 					}
 				}
 				else

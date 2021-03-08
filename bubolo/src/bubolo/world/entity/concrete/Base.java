@@ -164,15 +164,20 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	@Override
 	public void takeHit(float damagePoints)
 	{
-		assert(hitPoints >= 0);
-		hitPoints -= damagePoints;
-		if (hitPoints <= 0 &&  isLocalPlayer())
-		{
-			this.setLocalPlayer(false);
-			this.setOwned(false);
-			this.ownerUID = null;
-			Network net = NetworkSystem.getInstance();
-			net.send(new UpdateOwnable(this));
+		assert(damagePoints >= 0);
+
+		if (hitPoints > 0) {
+			hitPoints -= damagePoints;
+			if (hitPoints < 0) { hitPoints = 0; }
+
+			if (hitPoints <= 0 &&  isLocalPlayer())
+			{
+				this.setLocalPlayer(false);
+				this.setOwned(false);
+				this.ownerUID = null;
+				Network net = NetworkSystem.getInstance();
+				net.send(new UpdateOwnable(this));
+			}
 		}
 	}
 

@@ -51,14 +51,10 @@ public class AiPillboxController implements Controller
 					Tank tank = (Tank)entity;
 					pillbox.setOwned(true);
 					pillbox.setOwnerUID(tank.getId());
-					if(tank.isLocalPlayer())
+					if(tank.isLocalPlayer() && !pillbox.isLocalPlayer())
 					{
 						pillbox.setLocalPlayer(true);
 						sendNetUpdate(pillbox);
-					}
-					else
-					{
-						pillbox.setLocalPlayer(false);
 					}
 				}
 			}
