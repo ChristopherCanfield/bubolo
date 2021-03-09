@@ -38,7 +38,7 @@ abstract class Sprite implements Drawable
 	protected Sprite(DrawLayer layer)
 	{
 		this.drawLayer = layer;
-		this.color = new Color(Color.WHITE);
+		this.color = Color.WHITE;
 	}
 
 	/**
@@ -53,7 +53,8 @@ abstract class Sprite implements Drawable
 
 	/**
 	 * Gets the sprite's color. Sprites are white by default, which means that they draw the texture
-	 * without changes.
+	 * without changes. Do not mutate the returned Color directly: Make a copy of it, and then set this
+	 * sprite's color to the new color using setColor.
 	 *
 	 * @return the sprite's color.
 	 */
