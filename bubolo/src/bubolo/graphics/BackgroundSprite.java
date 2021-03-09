@@ -11,7 +11,8 @@ class BackgroundSprite extends Sprite
 {
 	private final Texture texture;
 
-	// Package private to allow the Graphics class to update this.
+	// Package private to allow the Graphics class to update this. This is necessary because background sprites
+	// are reused.
 	int x;
 	int y;
 

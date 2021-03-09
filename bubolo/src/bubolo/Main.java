@@ -25,31 +25,19 @@ public class Main
 	public static void main(String[] args)
 	{
 		Runnable serverApplication = () -> {
-			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-			cfg.title = Config.AppTitle;
-			cfg.width = Config.InitialWindowWidth;
-			cfg.height = Config.InitialWindowHeight;
-			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
+			LwjglApplicationConfiguration cfg = defaultLwjglAppConfig();
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
 					State.PLAYER_INFO, args), cfg));
 		};
 
 		Runnable clientApplication = () -> {
-			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-			cfg.title = Config.AppTitle;
-			cfg.width = Config.InitialWindowWidth;
-			cfg.height = Config.InitialWindowHeight;
-			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
+			LwjglApplicationConfiguration cfg = defaultLwjglAppConfig();
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, true,
 					State.PLAYER_INFO, args), cfg));
 		};
 
 		Runnable singlePlayerApplication = () -> {
-			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-			cfg.title = Config.AppTitle;
-			cfg.width = Config.InitialWindowWidth;
-			cfg.height = Config.InitialWindowHeight;
-			cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
+			LwjglApplicationConfiguration cfg = defaultLwjglAppConfig();
 			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
 					State.LOCAL_GAME, args), cfg));
 		};
@@ -57,6 +45,15 @@ public class Main
 		MenuScreen menuScreen = new MenuScreen(singlePlayerApplication, serverApplication,
 				clientApplication);
 		menuScreen.setVisible(true);
+	}
+
+	private static LwjglApplicationConfiguration defaultLwjglAppConfig() {
+		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+		cfg.title = Config.AppTitle;
+		cfg.width = Config.InitialWindowWidth;
+		cfg.height = Config.InitialWindowHeight;
+		cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
+		return cfg;
 	}
 
 	/**

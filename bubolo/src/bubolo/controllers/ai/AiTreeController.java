@@ -28,6 +28,7 @@ public class AiTreeController implements Controller
 	/**
 	 * tile locations
 	 */
+	// TODO (cdc - 2021-03-08): These likely don't need to be instance variables.
 	private int createAtX = 0;
 	private int createAtY = 0 ;
 	private int tempX = 0;

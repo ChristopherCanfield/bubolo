@@ -6,7 +6,8 @@
 
 package bubolo.ui;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +18,8 @@ import bubolo.GameApplication;
 import bubolo.graphics.LibGdxAppTester;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
+import bubolo.net.command.SendMessage.MessageType;
 import bubolo.world.World;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -29,7 +30,7 @@ public class LobbyScreenTest
 	private World world;
 	private Network net;
 	private LobbyScreen screen;
-	
+
 	private boolean isComplete;
 	private boolean passed;
 
@@ -37,24 +38,24 @@ public class LobbyScreenTest
 	public void setup()
 	{
 		LibGdxAppTester.createApp();
-		
+
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				app = mock(GameApplication.class);
 				world = mock(World.class);
-				
+
 				net = NetworkSystem.getInstance();
 				net.startDebug();
 				net.startGame(world);
-				
+
 				screen = new LobbyScreen(app, world);
 			}
 		});
-		
+
 		isComplete = false;
 		passed = false;
 	}
-	
+
 	@Test
 	public void update()
 	{
@@ -71,15 +72,15 @@ public class LobbyScreenTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 			Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
-	
+
 	/**
 	 * Test method for {@link bubolo.ui.LobbyScreen#dispose()}.
 	 */
@@ -98,12 +99,12 @@ public class LobbyScreenTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 		Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
@@ -125,12 +126,12 @@ public class LobbyScreenTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 		Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
@@ -152,12 +153,12 @@ public class LobbyScreenTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 		Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
@@ -179,12 +180,12 @@ public class LobbyScreenTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 		Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
@@ -206,12 +207,12 @@ public class LobbyScreenTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 		Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 
@@ -224,7 +225,7 @@ public class LobbyScreenTest
 		Gdx.app.postRunnable(new Runnable() {
 			@Override public void run() {
 				try {
-					screen.onMessageReceived("Message");
+					screen.onMessageReceived(MessageType.Message, "Message");
 					passed = true;
 				} catch (Exception e) {
 					passed = false;
@@ -233,12 +234,12 @@ public class LobbyScreenTest
 				}
 			}
 		});
-		
+
 		while (!isComplete)
 		{
 		Thread.yield();
 		}
-		
+
 		assertTrue(passed);
 	}
 }

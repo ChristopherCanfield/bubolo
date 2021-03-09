@@ -21,7 +21,7 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class KeyboardTankController implements Controller
 {
-	private Tank tank;
+	private final Tank tank;
 
 	/**
 	 * Constructs a keyboard tank controller.

@@ -20,7 +20,7 @@ import bubolo.world.entity.concrete.MineExplosion;
  */
 public class AiMineController implements Controller
 {
-	private Mine mine;
+	private final Mine mine;
 
 	/**
 	 * constructs an AI Mine controller

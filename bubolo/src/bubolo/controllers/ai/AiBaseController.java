@@ -21,7 +21,7 @@ public class AiBaseController implements Controller
 	/**
 	 * the base this controller is controlling
 	 */
-	private Base base;
+	private final Base base;
 
 
 	/**

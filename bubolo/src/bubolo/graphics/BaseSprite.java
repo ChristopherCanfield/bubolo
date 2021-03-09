@@ -19,13 +19,13 @@ class BaseSprite extends AbstractEntitySprite<Base>
 	private int colorId = ColorSets.BLUE;
 
 	// An array of all frames held in the texture sheet, by ROW and COLUMN.
-	private TextureRegion[][] allFrames;
+	private final TextureRegion[][] allFrames;
 
 	// The list of texture regions to be used for the charging animation of an owned base.
-	private TextureRegion[][] chargingFrames;
+	private final TextureRegion[][] chargingFrames;
 
 	// The texture regions to be used for an owned base's idle animation.
-	private TextureRegion[] idleFrames;
+	private final TextureRegion[] idleFrames;
 
 	// The number of milliseconds per frame.
 	private static final long millisPerFrame = 100;

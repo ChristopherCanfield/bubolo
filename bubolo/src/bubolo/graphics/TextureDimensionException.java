@@ -1,12 +1,15 @@
-package bubolo.util;
+package bubolo.graphics;
+
+import bubolo.util.GameException;
 
 /**
- * Thrown to indicate that an operation requiring specific texture formatting was
- * attempted on a texture that does not meet the requirements.
- * 
+ * Thrown to indicate that the height or width of a texture doesn't meet the texture split
+ * requirements.
+ * @see TextureUtil
+ *
  * @author BU CS673 - Clone Productions
  */
-public class TextureFormatException extends GameException
+public class TextureDimensionException extends GameException
 {
 
 	/**
@@ -16,22 +19,22 @@ public class TextureFormatException extends GameException
 
 	/**
 	 * Constructs a TextureFormatException object with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the exception's detail message.
 	 */
-	public TextureFormatException(String message)
+	public TextureDimensionException(String message)
 	{
 		super(message);
 	}
 
 	/**
 	 * Constructs a TextureFormatException object from the specified exception.
-	 * 
+	 *
 	 * @param exception
 	 *            the exception to wrap.
 	 */
-	public TextureFormatException(Throwable exception)
+	public TextureDimensionException(Throwable exception)
 	{
 		super(exception);
 	}

@@ -18,7 +18,7 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class AiPillboxController implements Controller
 {
-	private Pillbox pillbox;
+	private final Pillbox pillbox;
 
 	/**
 	 * constructs an AI Pillbox controller

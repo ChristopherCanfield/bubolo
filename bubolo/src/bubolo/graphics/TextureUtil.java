@@ -4,11 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.Coords;
-import bubolo.util.TextureFormatException;
 
 /**
- * Used for processing standard format textures of different kinds for use in adaptive
- * tiling, animations, and coloration.
+ * Used for processing standard format textures of different kinds for use in adaptive tiling and animations.
  *
  * @author BU CS673 - Clone Productions
  */
@@ -33,7 +31,7 @@ public abstract class TextureUtil
 	{
 		if (tex.getWidth() % frameWidth != 0 || tex.getHeight() % frameHeight != 0)
 		{
-			throw new TextureFormatException("Cannot split texture into frames, wrong size!");
+			throw new TextureDimensionException("Cannot split texture into frames, wrong size!");
 		}
 		int rows = tex.getHeight() / frameHeight;
 		int columns = tex.getWidth() / frameWidth;
@@ -73,7 +71,7 @@ public abstract class TextureUtil
 		if (tex.getHeight() != Coords.TILE_TO_WORLD_SCALE * 4
 				&& tex.getWidth() != Coords.TILE_TO_WORLD_SCALE * 4)
 		{
-			throw new TextureFormatException("Cannot split texture into 16 tiles, wrong size!");
+			throw new TextureDimensionException("Cannot split texture into 16 tiles, wrong size!");
 		}
 
 		TextureRegion[] adapt = new TextureRegion[16];
@@ -120,7 +118,7 @@ public abstract class TextureUtil
 		if (tex.getHeight() != Coords.TILE_TO_WORLD_SCALE * 4
 				&& tex.getWidth() != Coords.TILE_TO_WORLD_SCALE * 6)
 		{
-			throw new TextureFormatException("Cannot split texture into 16x9x9 tiles, wrong size!");
+			throw new TextureDimensionException("Cannot split texture into 16x9x9 tiles, wrong size!");
 		}
 
 		TextureRegion[] adapt = new TextureRegion[24];
