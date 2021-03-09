@@ -29,8 +29,8 @@ public class SendMessage implements NetworkCommand
 	/**
 	 * Constructs a SendMessage network command.
 	 *
-	 * @param message
-	 *            the message to send.
+	 * @param messageType the type of message to send.
+	 * @param message the message to send.
 	 */
 	public SendMessage(MessageType messageType, String message)
 	{
@@ -41,6 +41,15 @@ public class SendMessage implements NetworkCommand
 		} else {
 			this.message = message;
 		}
+	}
+
+	/**
+	 * Constructs a SendMessage network command with the message type set to Message.
+	 *
+	 * @param message the message to send.
+	 */
+	public SendMessage(String message) {
+		this(MessageType.Message, message);
 	}
 
 	@Override

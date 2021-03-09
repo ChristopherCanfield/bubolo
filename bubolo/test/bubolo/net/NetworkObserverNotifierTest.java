@@ -4,12 +4,13 @@
 
 package bubolo.net;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
+import bubolo.net.command.SendMessage.MessageType;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -18,14 +19,14 @@ public class NetworkObserverNotifierTest
 {
 	private NetworkObserverNotifier notifier;
 	private NetObserver o;
-	
+
 	@Before
 	public void setup()
 	{
 		this.notifier = new NetworkObserverNotifier();
 		this.o = new NetObserver();
 	}
-	
+
 	/**
 	 * Test method for {@link bubolo.net.NetworkObserverNotifier#addObserver(bubolo.net.NetworkObserver)}.
 	 */
@@ -54,11 +55,11 @@ public class NetworkObserverNotifierTest
 	public void testNotifyConnect()
 	{
 		notifier.addObserver(o);
-		
+
 		final String CLIENT = "CLIENT";
 		final String SERVER = "SERVER";
 		notifier.notifyConnect(CLIENT, SERVER);
-		
+
 		assertEquals(CLIENT, o.getClientName());
 		assertEquals(SERVER, o.getServerName());
 	}
@@ -70,10 +71,10 @@ public class NetworkObserverNotifierTest
 	public void testNotifyClientConnected()
 	{
 		notifier.addObserver(o);
-		
+
 		final String CLIENT = "CLIENT";
 		notifier.notifyClientConnected(CLIENT);
-		
+
 		assertEquals(CLIENT, o.getClientName());
 	}
 
@@ -84,10 +85,10 @@ public class NetworkObserverNotifierTest
 	public void testNotifyClientDisconnected()
 	{
 		notifier.addObserver(o);
-		
+
 		final String CLIENT = "CLIENT";
 		notifier.notifyClientDisconnected(CLIENT);
-		
+
 		assertEquals(CLIENT, o.getClientName());
 	}
 
@@ -98,10 +99,10 @@ public class NetworkObserverNotifierTest
 	public void testNotifyGameStart()
 	{
 		notifier.addObserver(o);
-		
+
 		final int TIME = 8;
 		notifier.notifyGameStart(TIME);
-		
+
 		assertEquals(TIME, o.getTimeUntilStart());
 	}
 
@@ -112,10 +113,10 @@ public class NetworkObserverNotifierTest
 	public void testNotifyMessageReceived()
 	{
 		notifier.addObserver(o);
-		
+
 		final String MESSAGE = "MESSAGE";
-		notifier.notifyMessageReceived(MESSAGE);
-		
+		notifier.notifyMessageReceived(MessageType.Message, MESSAGE);
+
 		assertEquals(MESSAGE, o.getMessage());
 	}
 
@@ -125,28 +126,28 @@ public class NetworkObserverNotifierTest
 		private String serverName;
 		private String message;
 		private int timeUntilStart;
-		
+
 		private String getClientName()
 		{
 			return clientName;
 		}
-		
+
 		private String getServerName()
 		{
 			return serverName;
 		}
-		
+
 		private String getMessage()
 		{
 			return message;
 		}
-		
+
 		private int getTimeUntilStart()
 		{
 			return timeUntilStart;
 		}
-		
-		
+
+
 		@Override
 		public void onConnect(String clientName, String serverName)
 		{
@@ -173,9 +174,9 @@ public class NetworkObserverNotifierTest
 		}
 
 		@Override
-		public void onMessageReceived(String message)
+		public void onMessageReceived(MessageType messageType, String message)
 		{
-			this.message = message;	
+			this.message = message;
 		}
 	}
 }

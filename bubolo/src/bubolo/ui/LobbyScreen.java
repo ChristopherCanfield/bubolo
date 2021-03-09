@@ -182,7 +182,7 @@ public class LobbyScreen extends Screen implements NetworkObserver
 		if (!sendMessageField.getText().isEmpty())
 		{
 			Network net = NetworkSystem.getInstance();
-			net.send(new SendMessage(MessageType.Message, sendMessageField.getText()));
+			net.send(new SendMessage(sendMessageField.getText()));
 			appendToMessageHistory(messageHistory, net.getPlayerName() + ": " + sendMessageField.getText());
 			sendMessageField.setText("");
 		}
