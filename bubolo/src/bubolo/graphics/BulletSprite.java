@@ -2,19 +2,16 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.concrete.Bullet;
 
 /**
  * The graphical representation of a bullet entity.
  *
  * @author BU673 - Clone Industries
  */
-class BulletSprite extends AbstractEntitySprite<Entity>
+class BulletSprite extends AbstractEntitySprite<Bullet>
 {
 	private Texture image;
-
-	private int x;
-	private int y;
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "bullet.png";
@@ -26,7 +23,7 @@ class BulletSprite extends AbstractEntitySprite<Entity>
 	 * @param bullet
 	 *            Reference to the Bullet that this BulletSprite represents.
 	 */
-	BulletSprite(Entity bullet)
+	BulletSprite(Bullet bullet)
 	{
 		super(DrawLayer.FOURTH, bullet);
 
@@ -39,15 +36,12 @@ class BulletSprite extends AbstractEntitySprite<Entity>
 		if (isDisposed())
 		{
 			SpriteSystem spriteSystem = graphics.sprites();
-			spriteSystem.addSprite(new BulletExplosionSprite(x, y));
+			spriteSystem.addSprite(new BulletExplosionSprite(Math.round(getEntity().getX()), Math.round(getEntity().getY())));
 			spriteSystem.removeSprite(this);
 		}
 		else
 		{
 			drawTexture(graphics, image);
-
-			this.x = Math.round(getEntity().getX());
-			this.y = Math.round(getEntity().getY());
 		}
 	}
 }

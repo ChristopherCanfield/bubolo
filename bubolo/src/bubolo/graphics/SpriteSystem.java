@@ -137,7 +137,7 @@ public class SpriteSystem
 			@Override
 			public Sprite create(Entity e)
 			{
-				return new BulletSprite(e);
+				return new BulletSprite((Bullet) e);
 			}
 		});
 
