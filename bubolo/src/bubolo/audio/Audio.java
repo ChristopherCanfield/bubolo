@@ -230,7 +230,6 @@ public class Audio implements Music.OnCompletionListener
 	{
 		Sfx.CANNON_FIRED.dispose();
 		Sfx.EXPLOSION.dispose();
-		Sfx.ENGINEER_KILLED.dispose();
 		Sfx.MINE_EXPLOSION.dispose();
 		Sfx.PILLBOX_BUILT.dispose();
 		Sfx.PILLBOX_HIT.dispose();

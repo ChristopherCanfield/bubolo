@@ -10,7 +10,6 @@ import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Bullet;
 import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.DeepWater;
-import bubolo.world.entity.concrete.Engineer;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.MineExplosion;
@@ -154,14 +153,6 @@ public class SpriteSystem
 			public Sprite create(Entity e)
 			{
 				return new DeepWaterSprite((DeepWater) e);
-			}
-		});
-
-		factories.put(Engineer.class, new SpriteFactory() {
-			@Override
-			public Sprite create(Entity e)
-			{
-				return new EngineerSprite((Engineer) e);
 			}
 		});
 
