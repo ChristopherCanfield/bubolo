@@ -1,8 +1,8 @@
 package bubolo.util;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.List;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,30 +38,30 @@ public class TileUtilTest
 		tank.setTransform(16, 16, 0);
 
 		var wall = world.addEntity(Wall.class);
-		tiles[0][0].setElement(new Wall(), world);
+		tiles[0][0].setElement(wall, world);
 	}
 
 	@Test
 	public void isValidTile(){
-		assertEquals(true, TileUtil.isValidTile(0,0, world));
-		assertEquals(false, TileUtil.isValidTile(3,3, world));
-		assertEquals(false, TileUtil.isValidTile(-1,0, world));
+		assertTrue(TileUtil.isValidTile(0,0, world));
+		assertFalse(TileUtil.isValidTile(3,3, world));
+		assertFalse(TileUtil.isValidTile(-1,0, world));
 	}
 
 	@Test
 	public void getCornerStates()
 	{
 		boolean[] corners = TileUtil.getCornerMatches(tiles[0][0], world, new Class[] { Water.class });
-		assertEquals("Tile (0,0) has wrong top-right corner state!", true, corners[1]);
-		assertEquals("Tile (1,0) has wrong top-right corner state!", false, corners[0]);
+		assertTrue("Tile (0,0) has wrong top-right corner state!", corners[1]);
+		assertFalse("Tile (1,0) has wrong top-right corner state!", corners[0]);
 	}
 
 	@Test
 	public void getEdgeMatches()
 	{
 		boolean[] edges = TileUtil.getEdgeMatches(tiles[1][0], world, new Class[] { Grass.class });
-		assertEquals("Tile (1,0) has wrong top state!", false, edges[0]);
-		assertEquals("Tile (1,0) has wrong bottom state!", true, edges[2]);
+		assertFalse("Tile (1,0) has wrong top state!", edges[0]);
+		assertTrue("Tile (1,0) has wrong bottom state!", edges[2]);
 	}
 
 	@Test
@@ -72,11 +72,11 @@ public class TileUtilTest
 
 	@Test
 	public void getLocalEntites(){
-		List l = TileUtil.getLocalEntities(0, 0, world);
-		assertEquals("List of local Entities does not contain correct objects!", true,  l.contains(tiles[0][0].getTerrain()));
+		var l = TileUtil.getLocalEntities(0, 0, world);
+		assertTrue("List of local Entities does not contain correct objects!",  l.contains(tiles[0][0].getTerrain()));
 		l = TileUtil.getLocalEntities(3*32f + 16f, 3*32f + 16f, world);
-		assertEquals("List of local Entities does not contain correct objects!", true,  l.contains(tiles[1][1].getTerrain()));
-		assertEquals("List of local Entities contains incorrect objects!", false,  l.contains(tiles[0][0].getTerrain()));
+		assertTrue("List of local Entities does not contain correct objects!", l.contains(tiles[1][1].getTerrain()));
+		assertFalse("List of local Entities contains incorrect objects!", l.contains(tiles[0][0].getTerrain()));
 
 	}
 
@@ -91,14 +91,14 @@ public class TileUtilTest
 
 	@Test
 	public void getLocalCollisions(){
-		List l = TileUtil.getLocalEntities(0, 0, world);
-		assertEquals("List of local Entities does not contain correct objects!", true,  l.contains(tiles[0][0].getTerrain()));
+		var l = TileUtil.getLocalEntities(0, 0, world);
+		assertTrue("List of local Entities does not contain correct objects!", l.contains(tiles[0][0].getTerrain()));
 		l = TileUtil.getLocalEntities(3*32f + 16f, 3*32f + 16f, world);
-		assertEquals("List of local Entities does not contain correct objects!", true,  l.contains(tiles[1][1].getTerrain()));
-		assertEquals("List of local Entities contains incorrect objects!", false,  l.contains(tiles[0][0].getTerrain()));
+		assertTrue("List of local Entities does not contain correct objects!", l.contains(tiles[1][1].getTerrain()));
+		assertFalse("List of local Entities contains incorrect objects!", l.contains(tiles[0][0].getTerrain()));
 
-		List c = TileUtil.getLocalCollisions(tank, world);
-		assertEquals("List of local collisions does not contain correct objects", true, c.contains(tiles[0][0].getElement()));
+		var c = TileUtil.getLocalCollisions(tank, world);
+		assertTrue("List of local collisions does not contain correct objects", c.contains(tiles[0][0].getElement()));
 	}
 	@Test
 	public void getEntityTile()

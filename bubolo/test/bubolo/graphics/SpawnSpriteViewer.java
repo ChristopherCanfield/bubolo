@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Only for use in tests.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class SpawnSpriteViewer

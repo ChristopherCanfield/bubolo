@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -53,13 +54,15 @@ public class Audio implements Music.OnCompletionListener
 	private static long nextPlayTime;
 	private static final long soundDelay = 80L;
 
+	private static boolean initialized = false;
+
 	/**
-	 * Loads all sounds files. Calling this isn't necessary, but there will be a slight pause when
-	 * the first sound is played if this isn't called.
+	 * Initializes the sound system.
 	 */
 	public static void initialize()
 	{
 		Sfx.initialize();
+		initialized = true;
 	}
 
 	/**
@@ -70,14 +73,18 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	public static void play(SoundEffect soundEffect)
 	{
-		// Prevent the same sound from playing once per tick. This occurred because the mine explosion
-		// lasts for multiple ticks in the world.
-		if ((lastSoundPlayed1 != soundEffect && lastSoundPlayed2 != soundEffect) || nextPlayTime < System.currentTimeMillis())
-		{
-			nextPlayTime = System.currentTimeMillis() + soundDelay;
-			lastSoundPlayed2 = lastSoundPlayed1;
-			lastSoundPlayed1 = soundEffect;
-			soundEffect.play(soundEffectVolume);
+		if (initialized) {
+			// Prevent the same sound from playing once per tick. This occurred because the mine explosion
+			// lasts for multiple ticks in the world.
+			if ((lastSoundPlayed1 != soundEffect && lastSoundPlayed2 != soundEffect) || nextPlayTime < System.currentTimeMillis())
+			{
+				nextPlayTime = System.currentTimeMillis() + soundDelay;
+				lastSoundPlayed2 = lastSoundPlayed1;
+				lastSoundPlayed1 = soundEffect;
+				soundEffect.play(soundEffectVolume);
+			}
+		} else {
+			Logger.getGlobal().warning("Audio.play called before audio system was initialized.");
 		}
 	}
 
@@ -87,19 +94,23 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	public static void startMusic()
 	{
-		if (music == null)
-		{
-			loadMusic();
-			if (music.size() < 2)
+		if (initialized) {
+			if (music == null)
 			{
-				throw new GameLogicException("At least two songs must be specified.");
+				loadMusic();
+				if (music.size() < 2)
+				{
+					throw new GameLogicException("At least two songs must be specified.");
+				}
 			}
-		}
 
-		currentMusicFile = 0;
-		music.get(currentMusicFile).setVolume(musicVolume / 100.f);
-		music.get(currentMusicFile).play();
-		music.get(currentMusicFile).setOnCompletionListener(musicOnCompletionListener);
+			currentMusicFile = 0;
+			music.get(currentMusicFile).setVolume(musicVolume / 100.f);
+			music.get(currentMusicFile).play();
+			music.get(currentMusicFile).setOnCompletionListener(musicOnCompletionListener);
+		} else {
+			Logger.getGlobal().warning("Audio.startMusic called before audio system was initialized.");
+		}
 	}
 
 	/**
