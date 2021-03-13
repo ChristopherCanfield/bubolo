@@ -24,14 +24,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import bubolo.ui.Screen;
 import bubolo.util.Coords;
+import bubolo.world.EntityCreationObserver;
 import bubolo.world.World;
+import bubolo.world.entity.Entity;
 
 /**
  * The top-level class for the Graphics system.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Graphics
+public class Graphics implements EntityCreationObserver
 {
 	/**
 	 * File path where textures are stored.
@@ -159,8 +161,13 @@ public class Graphics
 		return shapeRenderer;
 	}
 
-	public SpriteSystem sprites() {
+	SpriteSystem sprites() {
 		return spriteSystem;
+	}
+
+	@Override
+	public void onEntityCreated(Entity entity) {
+		spriteSystem.createSprite(entity);
 	}
 
 	/**

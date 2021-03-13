@@ -9,6 +9,7 @@ import java.util.UUID;
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
+import bubolo.world.EntityCreationObserver;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.Entity;
@@ -192,5 +193,11 @@ public class MockWorld implements World
 	public int getTileRows() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver) {
+		// TODO Auto-generated method stub
+
 	}
 }

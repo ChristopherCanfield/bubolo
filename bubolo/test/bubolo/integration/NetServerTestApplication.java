@@ -17,6 +17,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateTank;
+import bubolo.net.command.SendMessage.MessageType;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.Screen;
 import bubolo.world.entity.concrete.Tank;
@@ -203,7 +204,7 @@ public class NetServerTestApplication extends AbstractGameApplication implements
 	}
 
 	@Override
-	public void onMessageReceived(String message)
+	public void onMessageReceived(MessageType messageType, String message)
 	{
 	}
 }

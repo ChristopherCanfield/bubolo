@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 
 import bubolo.controllers.Controller;
-import bubolo.graphics.Graphics;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.entity.concrete.Mine;
@@ -18,9 +17,7 @@ public class AIMineControllerTest
 	{
 		Controller c = new AiMineController(mock(Mine.class));
 
-		Graphics graphics = mock(Graphics.class);
-		GameWorld world = new GameWorld(graphics, 100, 100);
-		world.setSpriteLoading(false);
+		GameWorld world = new GameWorld(100, 100);
 		Tile[][] tiles = createTiles(100, 100);
 		world.setTiles(tiles);
 

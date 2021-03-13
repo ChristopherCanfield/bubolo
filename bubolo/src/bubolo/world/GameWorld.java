@@ -14,7 +14,6 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
 import bubolo.controllers.ai.AiTreeController;
-import bubolo.graphics.Graphics;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.Actor;
@@ -34,8 +33,7 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class GameWorld implements World
 {
-	// Reference to the graphics system, for sprite loading.
-	private final Graphics graphics;
+	private EntityCreationObserver entityCreationObserver;
 
 	private final List<Entity> entities = new ArrayList<Entity>();
 	private final Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
@@ -76,9 +74,6 @@ public class GameWorld implements World
 	private int width;
 	private int height;
 
-	// Whether the sprites are loaded when an entity is created. Intended to help with unit testing.
-	private boolean loadSprites = true;
-
 	/**
 	 * Constructs the GameWorld object.
 	 *
@@ -87,7 +82,7 @@ public class GameWorld implements World
 	 * @param worldMapHeight
 	 *            the height of the game world map.
 	 */
-	public GameWorld(Graphics graphics, int worldMapWidth, int worldMapHeight)
+	public GameWorld(int worldMapWidth, int worldMapHeight)
 	{
 		int tilesX = worldMapWidth / Coords.TILE_TO_WORLD_SCALE;
 		int tilesY = worldMapHeight / Coords.TILE_TO_WORLD_SCALE;
@@ -96,8 +91,6 @@ public class GameWorld implements World
 		this.width = worldMapWidth;
 		this.height = worldMapHeight;
 
-		this.graphics = graphics;
-
 		addController(AiTreeController.class);
 	}
 
@@ -105,9 +98,14 @@ public class GameWorld implements World
 	 * Constructs a default game world. This is intended for use by the network. The map's height
 	 * and width must be set before calling the <code>update</code> method.
 	 */
-	public GameWorld(Graphics graphics)
+	public GameWorld()
 	{
-		this(graphics, 0, 0);
+		this(0, 0);
+	}
+
+	@Override
+	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver) {
+		this.entityCreationObserver = entityCreationObserver;
 	}
 
 
@@ -124,13 +122,6 @@ public class GameWorld implements World
 	{
 		checkArgument(width > 0, "width parameter must be greater than zero: %s", width);
 		this.width = width;
-	}
-
-	/**
-	 * Whether to use the graphics subsystem. Intended for testing.
-	 */
-	public void setSpriteLoading(boolean loadSprites) {
-		this.loadSprites = loadSprites;
 	}
 
 	@Override
@@ -193,9 +184,6 @@ public class GameWorld implements World
 
 		entity.setId(id);
 
-		if (loadSprites) {
-			graphics.sprites().createSprite(entity);
-		}
 		Controllers.getInstance().createController(entity, controllerFactory);
 
 		if (entity instanceof Tank tank)
@@ -225,6 +213,10 @@ public class GameWorld implements World
 
 		entitiesToAdd.add(entity);
 		entityMap.put(entity.getId(), entity);
+
+		if (entityCreationObserver != null) {
+			entityCreationObserver.onEntityCreated(entity);
+		}
 
 		return entity;
 	}

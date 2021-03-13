@@ -5,16 +5,14 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import bubolo.AbstractGameApplication;
-import bubolo.GameApplication;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.graphics.Graphics;
 import bubolo.world.GameWorld;
-import bubolo.world.World;
 
 /**
  * For testing only.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class AudioTestApplication extends AbstractGameApplication
@@ -27,29 +25,29 @@ public class AudioTestApplication extends AbstractGameApplication
 		cfg.height = 600;
 		new LwjglApplication(new AudioTestApplication(600, 600), cfg);
 	}
-	
+
 	private int windowWidth;
 	private int windowHeight;
-	
+
 	private Graphics graphics;
-	
+
 	private long lastUpdate;
-	
+
 	private int frame = 0;
 	private long MAX_FRAMES = TICKS_PER_SECOND * 15;
-	
+
 	/**
 	 * The number of game ticks (calls to <code>update</code>) per second.
 	 */
 	public static final long TICKS_PER_SECOND = 30;
-	
+
 	/**
 	 * The number of milliseconds per game tick.
 	 */
 	public static final long MILLIS_PER_TICK = 1000 / TICKS_PER_SECOND;
-	
+
 	/**
-	 * Constructs an instance of the game application. Only one instance should 
+	 * Constructs an instance of the game application. Only one instance should
 	 * ever exist.
 	 * @param windowWidth the width of the window.
 	 * @param windowHeight the height of the window.
@@ -62,7 +60,7 @@ public class AudioTestApplication extends AbstractGameApplication
 
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
-	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a> 
+	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
 	@Override
 	public void create()
@@ -70,12 +68,12 @@ public class AudioTestApplication extends AbstractGameApplication
 		graphics = new Graphics(windowWidth, windowHeight);
 
 		world = new GameWorld(32*30, 32*30);
-		
+
 		Audio.startMusic();
-		
+
 		setReady(true);
 	}
-	
+
 	/**
 	 * Called automatically by the rendering library.
 	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
@@ -84,7 +82,6 @@ public class AudioTestApplication extends AbstractGameApplication
 	public void render()
 	{
 		if (frame == 0) Audio.play(Sfx.CANNON_FIRED);
-		if (frame == 15) Audio.play(Sfx.ENGINEER_KILLED);
 		if (frame == 30) Audio.play(Sfx.EXPLOSION);
 		if (frame == 45) Audio.play(Sfx.PILLBOX_BUILT);
 		if (frame == 60) Audio.play(Sfx.PILLBOX_HIT);
@@ -98,16 +95,16 @@ public class AudioTestApplication extends AbstractGameApplication
 		if (frame == 180) Audio.play(Sfx.WALL_HIT);
 		if (frame == 210) Audio.play(Sfx.TANK_EXPLOSION);
 		if (frame == 230) Audio.play(Sfx.MINE_EXPLOSION);
-		
+
 		graphics.draw(world);
-		
+
 		if (frame > MAX_FRAMES)
 		{
 			Gdx.app.exit();
 		}
 		++frame;
-		
-		// Ensure that the world is only updated as frequently as MILLIS_PER_TICK. 
+
+		// Ensure that the world is only updated as frequently as MILLIS_PER_TICK.
 		long currentMillis = System.currentTimeMillis();
 		if (currentMillis > (lastUpdate + MILLIS_PER_TICK))
 		{
@@ -115,7 +112,7 @@ public class AudioTestApplication extends AbstractGameApplication
 			lastUpdate = currentMillis;
 		}
 	}
-	
+
 	/**
 	 * Called when the application is destroyed.
 	 * @see <a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>

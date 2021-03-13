@@ -70,6 +70,13 @@ public interface World
 	public List<Entity> getEffects();
 
 	/**
+	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
+	 * is added to the world. Only one observer can be attached to the world at a time.
+	 * @param entityCreationObserver
+	 */
+	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
+
+	/**
 	 * Performs the following actions:
 	 * <ol>
 	 * <li>A new Entity of the specified type is created.</li>

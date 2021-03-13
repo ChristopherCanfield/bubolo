@@ -21,7 +21,6 @@ import com.github.cliftonlabs.json_simple.JsonKey;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
-import bubolo.graphics.Graphics;
 import bubolo.util.Coords;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
@@ -121,12 +120,9 @@ public class MapImporter {
 
 	private static final String DefaultExceptionMessage = "Error parsing the json map file";
 
-	private final Graphics graphics;
 	private final Map<String, Tileset> tilesets = new HashMap<>();
 
-	public MapImporter(Graphics graphics) {
-		this.graphics = graphics;
-
+	public MapImporter() {
 		// Add the known map tiles here.
 
 		Tileset stationaryElements = new Tileset("bubolo_tilset_stationaryElements");
@@ -205,14 +201,13 @@ public class MapImporter {
 	 * Imports the json Tiled map, and constructs a world from the data.
 	 *
 	 * @param mapPath path to the json Tiled map file.
-	 * @param disableGraphics whether sprite loading should be disabled. Intended to ease testing.
 	 * @return a Pair that contains the world and diagnostic information.
 	 * @throws IOException if the provided path can't be opened.
 	 * @throws InvalidMapException if the json Tiled map is malformed.
 	 */
-	public Pair<World, Diagnostics> importJsonMapWithDiagnostics(Path mapPath, boolean disableGraphics) throws IOException {
+	public Pair<World, Diagnostics> importJsonMapWithDiagnostics(Path mapPath) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(mapPath)) {
-			return importJsonMapWithDiagnostics(reader, disableGraphics);
+			return importJsonMapWithDiagnostics(reader);
 		}
 	}
 
@@ -230,15 +225,15 @@ public class MapImporter {
 		}
 	}
 
-	public Pair<World, Diagnostics> importJsonMapWithDiagnostics(Reader mapReader, boolean disableGraphics) {
-		return importMap(mapReader, disableGraphics);
+	public Pair<World, Diagnostics> importJsonMapWithDiagnostics(Reader mapReader) {
+		return importMap(mapReader);
 	}
 
 	public World importJsonMap(Reader mapReader) {
-		return importMap(mapReader, false).getLeft();
+		return importMap(mapReader).getLeft();
 	}
 
-	private Pair<World, Diagnostics> importMap(Reader mapReader, boolean disableGraphics) {
+	private Pair<World, Diagnostics> importMap(Reader mapReader) {
 		try {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
 			jsonTiledMap.requireKeys(Key.MapHeight, Key.MapWidth, Key.Tilesets, Key.Layers);
@@ -252,9 +247,7 @@ public class MapImporter {
 			int mapWidthTiles = diagnostics.tileWidth = jsonTiledMap.getInteger(Key.MapWidth);
 			Tile[][] mapTiles = new Tile[mapWidthTiles][mapHeightTiles];
 
-			GameWorld world = new GameWorld(graphics, Coords.TILE_TO_WORLD_SCALE * mapWidthTiles,
-					Coords.TILE_TO_WORLD_SCALE * mapHeightTiles);
-			world.setSpriteLoading(!disableGraphics);
+			GameWorld world = new GameWorld(Coords.TILE_TO_WORLD_SCALE * mapWidthTiles, Coords.TILE_TO_WORLD_SCALE * mapHeightTiles);
 
 			JsonArray layers = (JsonArray) jsonTiledMap.get(Key.Layers.getKey());
 			diagnostics.layerCount = layers.size();

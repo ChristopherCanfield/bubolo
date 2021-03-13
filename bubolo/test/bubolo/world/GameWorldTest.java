@@ -7,23 +7,15 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.List;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.badlogic.gdx.Gdx;
 
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.ai.AiTreeController;
-import bubolo.graphics.Graphics;
-import bubolo.graphics.LibGdxAppTester;
 import bubolo.world.entity.Entity;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Bullet;
 import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.DeepWater;
-import bubolo.world.entity.concrete.Engineer;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.Pillbox;
@@ -38,26 +30,6 @@ import bubolo.world.entity.concrete.Water;
 
 public class GameWorldTest
 {
-	@BeforeClass
-	public static void setupClass()
-	{
-		LibGdxAppTester.createApp();
-
-		Gdx.app.postRunnable(new Runnable() {
-			@Override public void run() {
-//				batch = new SpriteBatch();
-//				camera = new OrthographicCamera(100, 100);
-				Graphics g = new Graphics(50, 500);
-			}
-		});
-	}
-
-	@Test
-	public void testGameWorld()
-	{
-		World w = new GameWorld(100, 1000);
-	}
-
 	@Test
 	public void gameWorldBadWidth()
 	{
@@ -76,9 +48,8 @@ public class GameWorldTest
 	public void getTanks()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setSpriteLoading(false);
 		Tank t = w.addEntity(Tank.class);
-		List l = w.getTanks();
+		var l = w.getTanks();
 		assertEquals("List does not contain the target tank!", true, l.contains(t));
 		w.removeEntity(t);
 		l = w.getTanks();
@@ -89,9 +60,8 @@ public class GameWorldTest
 	public void getSpawns()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setSpriteLoading(false);
 		Spawn s = w.addEntity(Spawn.class);
-		List l = w.getSpawns();
+		var l = w.getSpawns();
 		assertEquals("List does not contain the target Spawn!", true, l.contains(s));
 		w.removeEntity(s);
 		l = w.getSpawns();
@@ -102,9 +72,8 @@ public class GameWorldTest
 	public void getEffects()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setSpriteLoading(false);
 		Bullet b = w.addEntity(Bullet.class);
-		List l = w.getEffects();
+		var l = w.getEffects();
 		assertEquals("List does not contain the target tank!", true, l.contains(b));
 		w.removeEntity(b);
 		l = w.getEffects();
@@ -115,9 +84,8 @@ public class GameWorldTest
 	public void getActors()
 	{
 		GameWorld w= new GameWorld(500, 500);
-		w.setSpriteLoading(false);
 		Tank t = w.addEntity(Tank.class);
-		List l = w.getActors();
+		var l = w.getActors();
 		assertEquals("List does not contain the target tank!", true, l.contains(t));
 		w.removeEntity(t);
 		l = w.getActors();
@@ -142,7 +110,6 @@ public class GameWorldTest
 	public void testAddEntityBase()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Base.class));
 	}
 
@@ -150,7 +117,6 @@ public class GameWorldTest
 	public void testAddEntityBullet()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Bullet.class));
 	}
 
@@ -158,7 +124,6 @@ public class GameWorldTest
 	public void testAddEntityCrater()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Crater.class));
 	}
 
@@ -166,7 +131,6 @@ public class GameWorldTest
 	public void testAddEntityDeepWater()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(DeepWater.class));
 	}
 
@@ -174,23 +138,13 @@ public class GameWorldTest
 	public void testAddEntityGrass()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Grass.class));
-	}
-
-	@Test
-	public void testAddEntityEngineer()
-	{
-		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
-		assertNotNull(world.addEntity(Engineer.class));
 	}
 
 	@Test
 	public void testAddEntityMine()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Mine.class));
 	}
 
@@ -198,7 +152,6 @@ public class GameWorldTest
 	public void testAddEntityPillbox()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Pillbox.class));
 	}
 
@@ -206,7 +159,6 @@ public class GameWorldTest
 	public void testAddEntityRoad()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Road.class));
 	}
 
@@ -214,7 +166,6 @@ public class GameWorldTest
 	public void testAddEntityRubble()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Rubble.class));
 	}
 
@@ -222,7 +173,6 @@ public class GameWorldTest
 	public void testAddEntitySwamp()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Swamp.class));
 	}
 
@@ -230,7 +180,6 @@ public class GameWorldTest
 	public void testAddEntityTank()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Tank.class));
 	}
 
@@ -238,7 +187,6 @@ public class GameWorldTest
 	public void testAddEntityTree()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Tree.class));
 	}
 
@@ -246,7 +194,6 @@ public class GameWorldTest
 	public void testAddEntityWall()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Wall.class));
 	}
 
@@ -254,7 +201,6 @@ public class GameWorldTest
 	public void testAddEntityWater()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		assertNotNull(world.addEntity(Water.class));
 	}
 
@@ -262,7 +208,6 @@ public class GameWorldTest
 	public void testGetEntity()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 
 		assertEquals(t, world.getEntity(t.getId()));
@@ -272,7 +217,6 @@ public class GameWorldTest
 	public void testGetEntities()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 		world.update();
 
@@ -284,7 +228,6 @@ public class GameWorldTest
 	public void testRemoveEntity_Entity()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 
 		world.update();
@@ -299,7 +242,6 @@ public class GameWorldTest
 	public void testRemoveEntity_UUID()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		world.setSpriteLoading(false);
 		Entity t = world.addEntity(Tank.class);
 
 		world.update();
@@ -327,7 +269,6 @@ public class GameWorldTest
 	public void testGetMapTiles()
 	{
 		GameWorld w = new GameWorld(1, 1);
-		w.setSpriteLoading(false);
 		Tile[][] tiles = new Tile[1][1];
 		tiles[0][0] = new Tile(0, 0);
 		w.setTiles(tiles);

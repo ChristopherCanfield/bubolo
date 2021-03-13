@@ -9,7 +9,6 @@ import java.nio.file.Path;
 
 import org.junit.Test;
 
-import bubolo.graphics.Graphics;
 import bubolo.util.Coords;
 import bubolo.world.World;
 
@@ -17,10 +16,9 @@ public class MapImporterTest {
 
 	@Test
 	public void importAllTerrainTypes() throws IOException {
-		Graphics graphics = new Graphics(0, 0);
-		MapImporter importer = new MapImporter(graphics);
+		MapImporter importer = new MapImporter();
 		Path mapPath = FileSystems.getDefault().getPath("res", "maps/Test/AllTerrainTypes.json");
-		var results = importer.importJsonMapWithDiagnostics(mapPath, true);
+		var results = importer.importJsonMapWithDiagnostics(mapPath);
 
 		World world = results.getLeft();
 		MapImporter.Diagnostics diagnostics = results.getRight();
@@ -37,10 +35,9 @@ public class MapImporterTest {
 
 	@Test
 	public void importEverardIsland() throws IOException {
-		Graphics graphics = new Graphics(0, 0);
-		MapImporter importer = new MapImporter(graphics);
+		MapImporter importer = new MapImporter();
 		Path mapPath = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
-		var results = importer.importJsonMapWithDiagnostics(mapPath, true);
+		var results = importer.importJsonMapWithDiagnostics(mapPath);
 
 		World world = results.getLeft();
 		MapImporter.Diagnostics diagnostics = results.getRight();

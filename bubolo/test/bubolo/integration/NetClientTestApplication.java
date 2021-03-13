@@ -6,8 +6,10 @@ import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.Random;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
 import bubolo.AbstractGameApplication;
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
@@ -15,6 +17,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateTank;
+import bubolo.net.command.SendMessage.MessageType;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.Screen;
 import bubolo.world.GameWorld;
@@ -22,7 +25,7 @@ import bubolo.world.entity.concrete.Tank;
 
 /**
  * For testing only.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class NetClientTestApplication extends AbstractGameApplication implements NetworkObserver
@@ -68,7 +71,7 @@ public class NetClientTestApplication extends AbstractGameApplication implements
 
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
-	 * 
+	 *
 	 * @param windowWidth
 	 *            the width of the window.
 	 * @param windowHeight
@@ -82,7 +85,7 @@ public class NetClientTestApplication extends AbstractGameApplication implements
 
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
@@ -102,7 +105,7 @@ public class NetClientTestApplication extends AbstractGameApplication implements
 
 	/**
 	 * Called automatically by the rendering library.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
@@ -153,7 +156,7 @@ public class NetClientTestApplication extends AbstractGameApplication implements
 
 	/**
 	 * Called when the application is destroyed.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
@@ -203,7 +206,7 @@ public class NetClientTestApplication extends AbstractGameApplication implements
 	}
 
 	@Override
-	public void onMessageReceived(String message)
+	public void onMessageReceived(MessageType messageType, String message)
 	{
 	}
 }

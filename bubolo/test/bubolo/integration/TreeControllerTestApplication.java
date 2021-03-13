@@ -86,7 +86,7 @@ public class TreeControllerTestApplication implements GameApplication
 		Path path = FileSystems.getDefault().getPath("res", "maps/ParserTestMap.json");
 		try
 		{
-			var importer = new MapImporter(graphics);
+			var importer = new MapImporter();
 			world = importer.importJsonMap(path);
 		}
 		catch (IOException e )
