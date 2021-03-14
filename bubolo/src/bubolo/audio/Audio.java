@@ -3,12 +3,15 @@ package bubolo.audio;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.google.common.base.Preconditions;
 
@@ -36,10 +39,10 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	public static final String SFX_PATH = "res/sfx/";
 
-	// The sound effects volume. The default is 50%.
-	private static int soundEffectVolume = 50;
-	// The music volume. The default is 50%.
-	private static int musicVolume = 50;
+	// The sound effects volume. The default is 75%.
+	private static float soundEffectVolume = 0.75f;
+	// The music volume. The default is 75%.
+	private static float musicVolume = 0.75f;
 
 	// A list of all music files.
 	private static List<Music> music;
@@ -49,10 +52,12 @@ public class Audio implements Music.OnCompletionListener
 	// The music on completion listener. This is used when a song has finished playing.
 	private static Music.OnCompletionListener musicOnCompletionListener = new Audio();
 
-	private static SoundEffect lastSoundPlayed1;
-	private static SoundEffect lastSoundPlayed2;
+	private static Sfx lastSoundPlayed1;
+	private static Sfx lastSoundPlayed2;
 	private static long nextPlayTime;
-	private static final long soundDelay = 80L;
+	private static final long soundDelay = 60L;
+
+	private static final Map<Sfx, Sound> soundEffects = new HashMap<>();
 
 	private static boolean initialized = false;
 
@@ -61,8 +66,8 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	public static void initialize()
 	{
-		Sfx.initialize();
 		initialized = true;
+		preloadCoreSoundEffects();
 	}
 
 	/**
@@ -71,7 +76,7 @@ public class Audio implements Music.OnCompletionListener
 	 * Audio.play(Sfx.TANK_HIT);</code>
 	 * @param soundEffect the sound effect to play.
 	 */
-	public static void play(SoundEffect soundEffect)
+	public static void play(Sfx soundEffect)
 	{
 		if (initialized) {
 			// Prevent the same sound from playing once per tick. This occurred because the mine explosion
@@ -81,7 +86,9 @@ public class Audio implements Music.OnCompletionListener
 				nextPlayTime = System.currentTimeMillis() + soundDelay;
 				lastSoundPlayed2 = lastSoundPlayed1;
 				lastSoundPlayed1 = soundEffect;
-				soundEffect.play(soundEffectVolume);
+
+				Sound sound = getSoundEffect(soundEffect);
+				sound.play(soundEffectVolume);
 			}
 		} else {
 			Logger.getGlobal().warning("Audio.play called before audio system was initialized.");
@@ -105,7 +112,7 @@ public class Audio implements Music.OnCompletionListener
 			}
 
 			currentMusicFile = 0;
-			music.get(currentMusicFile).setVolume(musicVolume / 100.f);
+			music.get(currentMusicFile).setVolume(musicVolume);
 			music.get(currentMusicFile).play();
 			music.get(currentMusicFile).setOnCompletionListener(musicOnCompletionListener);
 		} else {
@@ -191,68 +198,90 @@ public class Audio implements Music.OnCompletionListener
 	}
 
 	/**
-	 * Sets the sound effect volume, from 0 (mute) to 100 (max volume).
-	 * @param volume the new sound effect volume, ranging from 0 to 100.
-	 * @throws IllegalArgumentException if volume is less than 0 or greater than 100.
+	 * Sets the sound effect volume, from 0 (mute) to 1 (max volume).
+	 * @param volume the new sound effect volume, ranging from 0 to 1.
+	 * @throws IllegalArgumentException if volume is less than 0 or greater than 1.
 	 */
-	public static void setSoundEffectVolume(int volume)
+	public static void setSoundEffectVolume(float volume)
 	{
 		Preconditions.checkArgument(volume >= 0, "Sound effect volume was less than zero: %s", volume);
-		Preconditions.checkArgument(volume <= 100, "Sound effect volume was greater than 100: %s", volume);
+		Preconditions.checkArgument(volume <= 1, "Sound effect volume was greater than one: %s", volume);
 
 		soundEffectVolume = volume;
 	}
 
 	/**
-	 * Gets the sound effect volume, in the range [0, 100].
+	 * Gets the sound effect volume, in the range [0, 1].
 	 * @return the sound effect volume.
 	 */
-	public static int getSoundEffectVolume()
+	public static float getSoundEffectVolume()
 	{
 		return soundEffectVolume;
 	}
 
 	/**
-	 * Sets the music volume, from 0 (mute) to 100 (max volume).
-	 * @param volume the new music volume, ranging from 0 to 100.
-	 * @throws IllegalArgumentException if volume is less than 0 or greater than 100.
+	 * Sets the music volume, from 0 (mute) to 1 (max volume).
+	 * @param volume the new music volume, ranging from 0 to 1.
+	 * @throws IllegalArgumentException if volume is less than 0 or greater than 1.
 	 */
-	public static void setMusicVolume(int volume)
+	public static void setMusicVolume(float volume)
 	{
 		Preconditions.checkArgument(volume >= 0, "Music volume was less than zero: %s", volume);
-		Preconditions.checkArgument(volume <= 100, "Music volume was greater than 100: %s", volume);
+		Preconditions.checkArgument(volume <= 1, "Music volume was greater than one: %s", volume);
 
 		musicVolume = volume;
 	}
 
 	/**
-	 * Gets the music volume, in the range [0, 100].
+	 * Gets the music volume, in the range [0, 1].
 	 * @return the music volume.
 	 */
-	public static int getMusicVolume()
+	public static float getMusicVolume()
 	{
 		return musicVolume;
 	}
 
 	/**
-	 * Diposes all sound effects and music files.
+	 * Preloads the core sound effects, to prevent slight hickups that can occur when a sound is first used.
+	 */
+	private static void preloadCoreSoundEffects() {
+		getSoundEffect(Sfx.CANNON_FIRED);
+		getSoundEffect(Sfx.MINE_EXPLOSION);
+		getSoundEffect(Sfx.TANK_EXPLOSION);
+		getSoundEffect(Sfx.PILLBOX_HIT);
+		getSoundEffect(Sfx.TREE_HIT);
+		getSoundEffect(Sfx.WALL_HIT);
+		getSoundEffect(Sfx.TANK_HIT);
+	}
+
+	/**
+	 * Gets the specified sound effect. Loads the sound file and stores it in memory if needed.
+	 * @param sfx the sound effect to get.
+	 * @return reference to the loaded sound effect.
+	 */
+	private static Sound getSoundEffect(Sfx sfx) {
+		Sound soundEffect = soundEffects.get(sfx);
+		if (soundEffect == null) {
+			soundEffect = loadSoundEffect(sfx);
+			soundEffects.put(sfx, soundEffect);
+		}
+		return soundEffect;
+	}
+
+	private static Sound loadSoundEffect(Sfx sfx) {
+		FileHandle soundFile = new FileHandle(new File(Audio.SFX_PATH + sfx.fileName));
+		Sound sound = Gdx.audio.newSound(soundFile);
+		return sound;
+	}
+
+	/**
+	 * Disposes all sound effects and music files.
 	 */
 	public static void dispose()
 	{
-		Sfx.CANNON_FIRED.dispose();
-		Sfx.EXPLOSION.dispose();
-		Sfx.MINE_EXPLOSION.dispose();
-		Sfx.PILLBOX_BUILT.dispose();
-		Sfx.PILLBOX_HIT.dispose();
-		Sfx.ROAD_BUILT.dispose();
-		Sfx.TANK_DROWNED.dispose();
-		Sfx.TANK_EXPLOSION.dispose();
-		Sfx.TANK_HIT.dispose();
-		Sfx.TANK_IN_SHALLOW_WATER.dispose();
-		Sfx.TREE_GATHERED.dispose();
-		Sfx.TREE_HIT.dispose();
-		Sfx.WALL_BUILT.dispose();
-		Sfx.WALL_HIT.dispose();
+		for (Sound soundEffect : soundEffects.values()) {
+			soundEffect.dispose();
+		}
 
 		if (music != null)
 		{

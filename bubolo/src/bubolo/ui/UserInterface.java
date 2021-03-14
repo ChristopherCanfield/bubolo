@@ -28,12 +28,12 @@ public abstract class UserInterface
 	/**
 	 * Sound Effects Volume Default
 	 */
-	public static final int SFXVOL_DEFAULT = Audio.getSoundEffectVolume();
+	public static final float SFXVOL_DEFAULT = Audio.getSoundEffectVolume();
 
 	/**
 	 * Music Volume Default
 	 */
-	public static final int MFXVOL_DEFAULT = Audio.getMusicVolume();
+	public static final float MFXVOL_DEFAULT = Audio.getMusicVolume();
 
 	/**
 	 * Screen Size Default
