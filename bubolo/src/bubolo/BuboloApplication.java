@@ -6,6 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -31,6 +35,8 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class BuboloApplication extends AbstractGameApplication
 {
+	private static Logger logger = Logger.getLogger("bubolo");
+
 	private final int windowWidth;
 	private final int windowHeight;
 
@@ -81,6 +87,8 @@ public class BuboloApplication extends AbstractGameApplication
 	@Override
 	public void create()
 	{
+		initializeLogger();
+
 		Audio.initialize();
 		graphics = new Graphics(windowWidth, windowHeight);
 		network = NetworkSystem.getInstance();
@@ -91,7 +99,7 @@ public class BuboloApplication extends AbstractGameApplication
 			try
 			{
 				MapImporter importer = new MapImporter();
-				world = importer.importJsonMap(mapPath);
+				world = importer.importJsonMap(mapPath, graphics);
 			}
 			catch (IOException e)
 			{
@@ -109,6 +117,20 @@ public class BuboloApplication extends AbstractGameApplication
 		setState(initialState);
 	}
 
+	private static void initializeLogger() {
+		try {
+			// TODO (cdc - 2021-03-16): This file probably belongs in appdata and equivalent on other systems, rather than temp.
+			FileHandler fileHandler = new FileHandler("%t" + Config.AppTitle + ".log");
+			fileHandler.setFormatter(new SimpleFormatter());
+			logger.addHandler(fileHandler);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+			logger = Logger.getGlobal();
+		}
+
+		logger.setLevel(Level.WARNING);
+	}
+
 	/**
 	 * Called automatically by the rendering library.
 	 *
@@ -118,8 +140,6 @@ public class BuboloApplication extends AbstractGameApplication
 	@Override
 	public void render()
 	{
-		//Logger.getGlobal().info("FPS: " + Gdx.app.getGraphics().getFramesPerSecond() + " | Frame time: " + Gdx.app.getGraphics().getDeltaTime());
-
 		final State state = getState();
 		if (state == State.NET_GAME)
 		{

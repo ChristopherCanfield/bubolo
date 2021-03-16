@@ -20,6 +20,8 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
 import bubolo.util.Coords;
+import bubolo.util.Nullable;
+import bubolo.world.EntityCreationObserver;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.World;
@@ -216,25 +218,22 @@ public class MapImporter {
 	 * Imports the json Tiled map, and constructs a world from the data.
 	 *
 	 * @param mapPath path to the json Tiled map file.
+	 * @param entityCreationObserver an observer that will be attached to the world.
 	 * @return the fully constructed world.
 	 * @throws IOException if the provided path can't be opened.
 	 * @throws InvalidMapException if the json Tiled map is malformed.
 	 */
-	public World importJsonMap(Path mapPath) throws IOException {
+	public World importJsonMap(Path mapPath, EntityCreationObserver entityCreationObserver) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(mapPath)) {
-			return importJsonMap(reader);
+			return importMap(reader, entityCreationObserver).world();
 		}
 	}
 
 	public Result importJsonMapWithDiagnostics(Reader mapReader) {
-		return importMap(mapReader);
+		return importMap(mapReader, null);
 	}
 
-	public World importJsonMap(Reader mapReader) {
-		return importMap(mapReader).world();
-	}
-
-	private Result importMap(Reader mapReader) {
+	private Result importMap(Reader mapReader, @Nullable EntityCreationObserver entityCreationObserver) {
 		try {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
 			jsonTiledMap.requireKeys(Key.MapHeight, Key.MapWidth, Key.Tilesets, Key.Layers);
@@ -249,6 +248,7 @@ public class MapImporter {
 			Tile[][] mapTiles = new Tile[mapWidthTiles][mapHeightTiles];
 
 			GameWorld world = new GameWorld(Coords.TILE_TO_WORLD_SCALE * mapWidthTiles, Coords.TILE_TO_WORLD_SCALE * mapHeightTiles);
+			world.setEntityCreationObserver(entityCreationObserver);
 
 			JsonArray layers = (JsonArray) jsonTiledMap.get(Key.Layers.getKey());
 			diagnostics.layerCount = layers.size();
