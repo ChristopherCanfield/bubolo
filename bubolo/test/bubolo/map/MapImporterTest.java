@@ -20,8 +20,8 @@ public class MapImporterTest {
 		Path mapPath = FileSystems.getDefault().getPath("res", "maps/Test/AllTerrainTypes.json");
 		var results = importer.importJsonMapWithDiagnostics(mapPath);
 
-		World world = results.getLeft();
-		MapImporter.Diagnostics diagnostics = results.getRight();
+		World world = results.world();
+		MapImporter.Diagnostics diagnostics = results.diagnostics();
 
 		assertNotNull(world);
 		assertEquals(8, world.getWidth() / Coords.TILE_TO_WORLD_SCALE);
@@ -39,8 +39,8 @@ public class MapImporterTest {
 		Path mapPath = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
 		var results = importer.importJsonMapWithDiagnostics(mapPath);
 
-		World world = results.getLeft();
-		MapImporter.Diagnostics diagnostics = results.getRight();
+		World world = results.world();
+		MapImporter.Diagnostics diagnostics = results.diagnostics();
 
 		assertNotNull(world);
 		assertEquals(114, world.getWidth() / Coords.TILE_TO_WORLD_SCALE);

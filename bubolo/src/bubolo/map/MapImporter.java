@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonKey;
@@ -197,6 +195,9 @@ public class MapImporter {
 		}
 	}
 
+	public static record Result(World world, Diagnostics diagnostics) {
+	}
+
 	/**
 	 * Imports the json Tiled map, and constructs a world from the data.
 	 *
@@ -205,7 +206,7 @@ public class MapImporter {
 	 * @throws IOException if the provided path can't be opened.
 	 * @throws InvalidMapException if the json Tiled map is malformed.
 	 */
-	public Pair<World, Diagnostics> importJsonMapWithDiagnostics(Path mapPath) throws IOException {
+	public Result importJsonMapWithDiagnostics(Path mapPath) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(mapPath)) {
 			return importJsonMapWithDiagnostics(reader);
 		}
@@ -225,15 +226,15 @@ public class MapImporter {
 		}
 	}
 
-	public Pair<World, Diagnostics> importJsonMapWithDiagnostics(Reader mapReader) {
+	public Result importJsonMapWithDiagnostics(Reader mapReader) {
 		return importMap(mapReader);
 	}
 
 	public World importJsonMap(Reader mapReader) {
-		return importMap(mapReader).getLeft();
+		return importMap(mapReader).world();
 	}
 
-	private Pair<World, Diagnostics> importMap(Reader mapReader) {
+	private Result importMap(Reader mapReader) {
 		try {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
 			jsonTiledMap.requireKeys(Key.MapHeight, Key.MapWidth, Key.Tilesets, Key.Layers);
@@ -266,7 +267,7 @@ public class MapImporter {
 			}
 
 			world.setTiles(mapTiles);
-			return Pair.of(world, diagnostics);
+			return new Result(world, diagnostics);
 		} catch (JsonException e) {
 			throw new InvalidMapException(DefaultExceptionMessage, e);
 		} catch (NoSuchElementException e) {

@@ -4,19 +4,15 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-import org.json.simple.parser.ParseException;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import bubolo.AbstractGameApplication;
-import bubolo.GameApplication;
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.world.World;
 import bubolo.world.entity.concrete.Tank;
 
 public class CollisionTestApplication extends AbstractGameApplication
@@ -48,7 +44,7 @@ public class CollisionTestApplication extends AbstractGameApplication
 
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
-	 * 
+	 *
 	 * @param windowWidth
 	 *            the width of the window.
 	 * @param windowHeight
@@ -62,7 +58,7 @@ public class CollisionTestApplication extends AbstractGameApplication
 
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
@@ -70,7 +66,7 @@ public class CollisionTestApplication extends AbstractGameApplication
 	public void create()
 	{
 		Audio.initialize();
-		
+
 		network = NetworkSystem.getInstance();
 		network.startDebug();
 
@@ -97,7 +93,7 @@ public class CollisionTestApplication extends AbstractGameApplication
 
 	/**
 	 * Called automatically by the rendering library.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
@@ -108,8 +104,8 @@ public class CollisionTestApplication extends AbstractGameApplication
 		world.update();
 
 		// (cdc - 4/3/2014): Commented out, b/c update was being called twice. Additionally,
-		// the game is extremely jittery when this is used instead of calling update continuously. 
-		
+		// the game is extremely jittery when this is used instead of calling update continuously.
+
 		// Ensure that the world is only updated as frequently as MILLIS_PER_TICK.
 //		long currentMillis = System.currentTimeMillis();
 //		if (currentMillis > (lastUpdate + MILLIS_PER_TICK))
@@ -121,7 +117,7 @@ public class CollisionTestApplication extends AbstractGameApplication
 
 	/**
 	 * Called when the application is destroyed.
-	 * 
+	 *
 	 * @see <a
 	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
