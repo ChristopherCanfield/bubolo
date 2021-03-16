@@ -12,7 +12,7 @@
 			<attribute name="javadoc_location" value="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="libs/libgdx/gdx-backend-lwjgl-natives.jar"/>
 	<classpathentry kind="lib" path="libs/libgdx/gdx-backend-lwjgl.jar"/>
 	<classpathentry kind="lib" path="libs/libgdx/gdx-natives.jar"/>
