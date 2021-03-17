@@ -125,7 +125,6 @@ public class BuboloApplication extends AbstractGameApplication
 			logger.addHandler(fileHandler);
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
-			logger = Logger.getGlobal();
 		}
 
 		logger.setLevel(Level.WARNING);
