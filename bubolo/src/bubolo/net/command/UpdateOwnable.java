@@ -7,9 +7,9 @@
 package bubolo.net.command;
 
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bubolo.Config;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
 import bubolo.world.Ownable;
@@ -55,7 +55,7 @@ public class UpdateOwnable implements NetworkCommand
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().log(Level.WARNING, "UpdateOwnable net command: Unable to find ownable entity. ID: " + id);
+			Logger.getLogger(Config.AppProgramaticTitle).warning("UpdateOwnable net command: Unable to find ownable entity. ID: " + id);
 		}
 	}
 }

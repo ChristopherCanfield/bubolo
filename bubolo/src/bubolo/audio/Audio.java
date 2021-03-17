@@ -15,6 +15,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.google.common.base.Preconditions;
 
+import bubolo.Config;
 import bubolo.util.GameLogicException;
 
 /**
@@ -24,6 +25,8 @@ import bubolo.util.GameLogicException;
  */
 public class Audio implements Music.OnCompletionListener
 {
+	private static final Logger logger = Logger.getLogger(Config.AppProgramaticTitle);
+
 	/**
 	 * Instances of this class should not be directly constructed.
 	 */
@@ -91,7 +94,7 @@ public class Audio implements Music.OnCompletionListener
 				sound.play(soundEffectVolume);
 			}
 		} else {
-			Logger.getGlobal().warning("Audio.play called before audio system was initialized.");
+			logger.warning("Audio.play called before audio system was initialized.");
 		}
 	}
 
@@ -116,7 +119,7 @@ public class Audio implements Music.OnCompletionListener
 			music.get(currentMusicFile).play();
 			music.get(currentMusicFile).setOnCompletionListener(musicOnCompletionListener);
 		} else {
-			Logger.getGlobal().warning("Audio.startMusic called before audio system was initialized.");
+			logger.warning("Audio.startMusic called before audio system was initialized.");
 		}
 	}
 

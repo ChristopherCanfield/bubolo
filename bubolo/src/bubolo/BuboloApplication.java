@@ -35,7 +35,7 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class BuboloApplication extends AbstractGameApplication
 {
-	private static Logger logger = Logger.getLogger("bubolo");
+	private static Logger logger = Logger.getLogger(Config.AppProgramaticTitle);
 
 	private final int windowWidth;
 	private final int windowHeight;

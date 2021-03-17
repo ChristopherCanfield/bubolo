@@ -242,7 +242,6 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 			hitPoints = -10;
 		}
 
-		//Logger.getGlobal().info("Pillbox " + getId() + " health at " + getHitPoints());
 		if (hitPoints <= 0) {
 			if (isLocalPlayer() && ownerUID != null) {
 				this.setLocalPlayer(false);

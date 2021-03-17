@@ -8,6 +8,7 @@ package bubolo.net.command;
 
 import java.util.logging.Logger;
 
+import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.net.NetworkTankController;
 import bubolo.world.World;
@@ -59,7 +60,7 @@ public class CreateTank extends CreateEntity
 		}
 		catch (Exception e)
 		{
-			Logger.getGlobal().severe("CreateTank net command: The tank was not created. ID: " + getId());
+			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateTank net command: The tank was not created. ID: " + getId());
 		}
 	}
 }

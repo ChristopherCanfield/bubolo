@@ -9,6 +9,7 @@ package bubolo.net.command;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import bubolo.Config;
 import bubolo.util.GameLogicException;
 import bubolo.world.World;
 import bubolo.world.entity.Entity;
@@ -61,7 +62,7 @@ public class CreateBullet extends CreateEntity
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().severe("CreateBullet net command: The bullet was not created. ID: " + getId());
+			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateBullet net command: The bullet was not created. ID: " + getId());
 		}
 	}
 }

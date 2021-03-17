@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bubolo.Config;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
 import bubolo.world.World;
@@ -55,7 +56,7 @@ public class MoveEntity implements NetworkCommand
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().log(Level.WARNING, "MoveEntity net command: Unable to find entity " + id);
+			Logger.getLogger(Config.AppProgramaticTitle).log(Level.WARNING, "MoveEntity net command: Unable to find entity " + id);
 		}
 	}
 }

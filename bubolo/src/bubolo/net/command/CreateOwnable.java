@@ -9,6 +9,7 @@ package bubolo.net.command;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import bubolo.Config;
 import bubolo.util.GameLogicException;
 import bubolo.world.Ownable;
 import bubolo.world.World;
@@ -68,7 +69,7 @@ public class CreateOwnable extends CreateEntity
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().severe("CreateOwnable net command: The entity was not created. ID: " + getId());
+			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateOwnable net command: The entity was not created. ID: " + getId());
 		}
 	}
 }

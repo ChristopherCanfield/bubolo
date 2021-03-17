@@ -9,6 +9,7 @@ package bubolo.net.command;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
@@ -117,7 +118,7 @@ public class CreateEntity implements NetworkCommand
 		}
 		catch (GameLogicException e)
 		{
-			Logger.getGlobal().severe("CreateEntity net command: Entity was not created. ID: " + id);
+			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateEntity net command: Entity was not created. ID: " + id);
 		}
 	}
 

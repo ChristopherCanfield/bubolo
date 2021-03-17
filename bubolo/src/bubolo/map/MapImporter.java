@@ -19,6 +19,7 @@ import com.github.cliftonlabs.json_simple.JsonKey;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
+import bubolo.Config;
 import bubolo.util.Coords;
 import bubolo.util.Nullable;
 import bubolo.world.EntityCreationObserver;
@@ -293,7 +294,7 @@ public class MapImporter {
 
 			// Log a warning for unknown tileset, and then skip it.
 			} else {
-				Logger.getGlobal().warning("Unknown tileset found in map file: " + tilesetName);
+				Logger.getLogger(Config.AppProgramaticTitle).warning("Unknown tileset found in map file: " + tilesetName);
 			}
 		}
 	}

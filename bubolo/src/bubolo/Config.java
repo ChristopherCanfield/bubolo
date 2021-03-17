@@ -6,6 +6,7 @@ package bubolo;
  */
 public class Config {
 	public static final String AppTitle = "Bubolo";
+	public static final String AppProgramaticTitle = "bubolo";
 	public static final String AppAuthor = "Clone Productions";
 
 	public static final int FPS = 60;
