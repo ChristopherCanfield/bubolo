@@ -294,7 +294,7 @@ public class Graphics implements EntityCreationObserver
 
 		for (Sprite sprite : tankSpritesInView) {
 			TankSprite tankSprite = (TankSprite) sprite;
-			tankSprite.drawTankHealthBar(this);
+			tankSprite.drawTankUi(this);
 		}
 	}
 

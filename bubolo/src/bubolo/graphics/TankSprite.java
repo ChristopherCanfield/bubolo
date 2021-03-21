@@ -1,7 +1,9 @@
 package bubolo.graphics;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -63,6 +65,12 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "tank.png";
 
+	private static final String BULLET_TEXTURE_FILE = "bullet.png";
+	private static final String MINE_TEXTURE_FILE = "mine.png";
+
+	private final Texture bulletTexture;
+	private final Texture mineTexture;
+
 	/**
 	 * Constructor for the TankSprite. This is Package-private because sprites should not be
 	 * directly created outside of the graphics system.
@@ -73,6 +81,9 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	TankSprite(Tank tank)
 	{
 		super(DrawLayer.FOURTH, tank);
+
+		bulletTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + BULLET_TEXTURE_FILE);
+		mineTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + MINE_TEXTURE_FILE);
 	}
 
 	/**
@@ -89,12 +100,19 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	}
 
 	/**
-	 * Draws the tank's health bar. Uses the shape renderer, so it should be called after completing drawing uses the Batch.
+	 * Draws the tank's health bar. Uses the shape renderer, so it should be called after completing drawing that uses the Batch.
 	 * Unlike with the methods that use batch(), begin() does not need to be called on graphics.shapeRenderer() before calling this method.
 	 */
-	void drawTankHealthBar(Graphics graphics) {
+	void drawTankUi(Graphics graphics) {
 		var tank = getEntity();
-		if (tank.isLocalPlayer() && tank.isAlive() && tank.getHitPoints() < tank.getMaxHitPoints()) {
+		if (tank.isLocalPlayer()) {
+			drawHealthBar(tank, graphics);
+			drawTankAmmo(tank, graphics);
+		}
+	}
+
+	private static void drawHealthBar(Tank tank, Graphics graphics) {
+		if (tank.isAlive() && tank.getHitPoints() < tank.getMaxHitPoints()) {
 			var shapeRenderer = graphics.shapeRenderer();
 			shapeRenderer.begin(ShapeType.Filled);
 
@@ -102,7 +120,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 			float healthBarInteriorBackgroundWidth = tank.getWidth() + 10;
 			float healthBarInteriorWidth = healthBarInteriorBackgroundWidth * healthPct;
 
-			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
+			var tankCameraCoords = tankCameraCoordinates(tank, graphics.camera());
 
 			// Health bar's exterior.
 			shapeRenderer.setColor(Color.BLACK);
@@ -132,6 +150,56 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		} else {
 			return Color.RED;
 		}
+	}
+
+	private static final Color TANK_UI_BOX_COLOR = new Color(50/255f, 50/255f, 50/255f, 100/255f);
+
+	private void drawTankAmmo(Tank tank, Graphics graphics) {
+		drawTankAmmoBackground(graphics);
+		drawTankAmmoIconsAndValues(tank, graphics);
+	}
+
+	private static void drawTankAmmoBackground(Graphics graphics) {
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		var shapeRenderer = graphics.shapeRenderer();
+		shapeRenderer.begin(ShapeType.Filled);
+
+		shapeRenderer.setColor(TANK_UI_BOX_COLOR);
+
+		float screenHalfWidth = graphics.camera().viewportWidth / 2.0f;
+		float screenHeight = graphics.camera().viewportHeight;
+		shapeRenderer.rect(screenHalfWidth - 70, screenHeight - 25, 140, 30);
+
+		shapeRenderer.end();
+
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(Color.BLACK);
+		shapeRenderer.rect(screenHalfWidth - 70, screenHeight - 25, 140, 30);
+
+		shapeRenderer.end();
+
+		Gdx.gl.glDisable(GL20.GL_BLEND);
+	}
+
+	private void drawTankAmmoIconsAndValues(Tank tank, Graphics graphics) {
+		var spriteBatch = graphics.batch();
+		spriteBatch.begin();
+
+		float screenHalfWidth = graphics.camera().viewportWidth / 2.0f;
+		float screenHeight = graphics.camera().viewportHeight;
+		float bulletWidth = bulletTexture.getWidth() * 2;
+		float bulletHeight = bulletTexture.getHeight() * 2;
+		spriteBatch.draw(bulletTexture, screenHalfWidth - 60, screenHeight - 20, bulletWidth, bulletHeight);
+
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.getAmmoCount()), screenHalfWidth - 60 + 10, screenHeight - 5);
+
+		float mineWidth = mineTexture.getWidth() / 6;
+		float mineHeight = mineTexture.getHeight() / 3;
+		spriteBatch.draw(mineTexture, screenHalfWidth + 13, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
+
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.getMineCount()), screenHalfWidth + 13 + 22, screenHeight - 5);
+
+		spriteBatch.end();
 	}
 
 	private static Vector2 tankCameraCoordinates(Tank tank, Camera camera) {
