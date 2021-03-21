@@ -75,7 +75,7 @@ public class ParserTestApplication extends AbstractGameApplication
 		try
 		{
 			var importer = new MapImporter();
-			world = importer.importJsonMap(path);
+			world = importer.importJsonMap(path, graphics);
 		}
 		catch (IOException e)
 		{

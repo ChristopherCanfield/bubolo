@@ -9,8 +9,9 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Test;
+
+import bubolo.mock.NullOutputStream;
 
 /**
  * @author BU CS673 - Clone Productions
