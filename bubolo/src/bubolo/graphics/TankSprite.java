@@ -62,6 +62,8 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	// For player name drawing.
 	private static final BitmapFont font = new BitmapFont();
 
+	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229/255f, 74/255f, 39/255f, 1);
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "tank.png";
 
@@ -70,6 +72,9 @@ class TankSprite extends AbstractEntitySprite<Tank>
 
 	private final Texture bulletTexture;
 	private final Texture mineTexture;
+
+	private static final Color TANK_UI_BOX_COLOR = new Color(50/255f, 50/255f, 50/255f, 110/255f);
+	private static final Color TANK_UI_FONT_COLOR = new Color(240/255f, 240/255f, 240/255f, 1f);
 
 	/**
 	 * Constructor for the TankSprite. This is Package-private because sprites should not be
@@ -95,6 +100,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		// Render non-hidden network tank names.
 		if (!tank.isLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
+			font.setColor(ENEMY_TANK_NAME_COLOR);
 			font.draw(graphics.batch(), tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
 	}
@@ -152,14 +158,13 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		}
 	}
 
-	private static final Color TANK_UI_BOX_COLOR = new Color(50/255f, 50/255f, 50/255f, 100/255f);
-
 	private void drawTankAmmo(Tank tank, Graphics graphics) {
 		drawTankAmmoBackground(graphics);
 		drawTankAmmoIconsAndValues(tank, graphics);
 	}
 
 	private static void drawTankAmmoBackground(Graphics graphics) {
+		// Blending is required to enable transparency.
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		var shapeRenderer = graphics.shapeRenderer();
 		shapeRenderer.begin(ShapeType.Filled);
@@ -172,6 +177,7 @@ class TankSprite extends AbstractEntitySprite<Tank>
 
 		shapeRenderer.end();
 
+		// Draw a thin border around the ammo UI box.
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.BLACK);
 		shapeRenderer.rect(screenHalfWidth - 70, screenHeight - 25, 140, 30);
@@ -189,15 +195,23 @@ class TankSprite extends AbstractEntitySprite<Tank>
 		float screenHeight = graphics.camera().viewportHeight;
 		float bulletWidth = bulletTexture.getWidth() * 2;
 		float bulletHeight = bulletTexture.getHeight() * 2;
+		// Draw the bullet texture.
 		spriteBatch.draw(bulletTexture, screenHalfWidth - 60, screenHeight - 20, bulletWidth, bulletHeight);
 
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.getAmmoCount()), screenHalfWidth - 60 + 10, screenHeight - 5);
+		int textVerticalPosition = (int) screenHeight - 5;
+		// Render the ammo count text.
+		font.setColor(TANK_UI_FONT_COLOR);
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.getAmmoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
 
+		// Mine texture divided by number of frames per row.
 		float mineWidth = mineTexture.getWidth() / 6;
+		// Mine texture divided by number of frames per column.
 		float mineHeight = mineTexture.getHeight() / 3;
+		// Draw the mine texture.
 		spriteBatch.draw(mineTexture, screenHalfWidth + 13, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
 
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.getMineCount()), screenHalfWidth + 13 + 22, screenHeight - 5);
+		// Render the mine count text.
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.getMineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}
