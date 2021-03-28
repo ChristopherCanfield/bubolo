@@ -59,7 +59,7 @@ public class CreateOwnable extends CreateEntity
 			Ownable ownable = (Ownable)world.getEntity(getId());
 			if (ownerUID != null)
 			{
-				ownable.setOwnerUID(ownerUID);
+				ownable.setOwnerId(ownerUID);
 				ownable.setOwned(true);
 			}
 			else

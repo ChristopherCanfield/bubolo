@@ -17,19 +17,19 @@ public interface Ownable
 	public UUID getId();
 
 	/**
-	 * Returns the UID of the tank that owns this entity.  If not owned returns null.
+	 * Returns the UID of the tank that owns this entity. Returns null if not owned.
 	 *
 	 * @return the UID of the tank that owns this entity.
 	 */
-	public UUID getOwnerUID();
+	public UUID getOwnerId();
 
 	/**
 	 * Sets the UID of the tank that owns this entity.
 	 *
-	 * @param ownerUID
+	 * @param ownerId
 	 * 		the UID to of the tank that now owns this entity.
 	 */
-	public void setOwnerUID(UUID ownerUID);
+	public void setOwnerId(UUID ownerId);
 
 	/**
 	 * Returns whether this Entity belongs to the local player.
@@ -52,12 +52,7 @@ public interface Ownable
 	 *
 	 * @return true if this Entity belongs to any player, false otherwise.
 	 */
-	public boolean isOwned();
-
-	/**
-	 * Sets whether this Entity belongs to any player or not.
-	 *
-	 * @param owned true if this Entity belongs to a player.
-	 */
-	public void setOwned(boolean owned);
+	default public boolean isOwned() {
+		return getOwnerId() != null;
+	}
 }

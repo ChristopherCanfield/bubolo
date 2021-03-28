@@ -177,14 +177,14 @@ public class TankTest
 	@Test
 	public void setOwner()
 	{
-		tank.setOwnerUID(tank.getId());
-		assertEquals(tank.getId(), tank.getOwnerUID());
+		tank.setOwnerId(tank.getId());
+		assertEquals(tank.getId(), tank.getOwnerId());
 	}
 	@Test
 	public void getOwner()
 	{
-		tank.setOwnerUID(tank.getId());
-		assertEquals(tank.getId(), tank.getOwnerUID());
+		tank.setOwnerId(tank.getId());
+		assertEquals(tank.getId(), tank.getOwnerId());
 	}
 
 	@Test

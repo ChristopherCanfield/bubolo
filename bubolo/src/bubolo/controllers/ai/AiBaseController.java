@@ -70,8 +70,7 @@ public class AiBaseController implements Controller
 			{
 				if (!this.base.isOwned())
 				{
-					base.setOwned(true);
-					base.setOwnerUID(tank.getId());
+					base.setOwnerId(tank.getId());
 					base.heal(100);
 
 					if (tank.isLocalPlayer() && !base.isLocalPlayer()) {
@@ -82,7 +81,7 @@ public class AiBaseController implements Controller
 				}
 				else
 				{
-					if(tank.getId() == base.getOwnerUID() && !isTankRecharged(tank))
+					if(tank.getId() == base.getOwnerId() && !isTankRecharged(tank))
 					{
 						base.setCharging(true);
 

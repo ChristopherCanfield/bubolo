@@ -49,8 +49,7 @@ public class AiPillboxController implements Controller
 				if (entity instanceof Tank)
 				{
 					Tank tank = (Tank)entity;
-					pillbox.setOwned(true);
-					pillbox.setOwnerUID(tank.getId());
+					pillbox.setOwnerId(tank.getId());
 					if(tank.isLocalPlayer() && !pillbox.isLocalPlayer())
 					{
 						pillbox.setLocalPlayer(true);
@@ -76,7 +75,7 @@ public class AiPillboxController implements Controller
 
 		for (Tank tank : world.getTanks()) {
 			// Don't attack the owner's tank, or hidden tanks.
-			if(!tank.getId().equals(pillbox.getOwnerUID()) && !tank.isHidden()) {
+			if(!tank.getId().equals(pillbox.getOwnerId()) && !tank.isHidden()) {
 				if (targetInRange(tank)) {
 					double xdistance = Math.abs(pillbox.getX() - tank.getX());
 					double ydistance = Math.abs(pillbox.getY() - tank.getY());

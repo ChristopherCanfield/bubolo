@@ -56,11 +56,6 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	private boolean isLocalPlayer = false;
 
 	/**
-	 * Boolean representing whether this Pillbox is owned by a player.
-	 */
-	private boolean isOwned = false;
-
-	/**
 	 * The health of the pillbox
 	 */
 	private float hitPoints;
@@ -117,21 +112,21 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	}
 
 	@Override
-	public boolean isOwned()
+	public UUID getOwnerId()
 	{
-		return isOwned;
+		return this.ownerUID;
 	}
 
 	@Override
-	public void setOwned(boolean owned)
+	public void setOwnerId(UUID ownerId)
 	{
-		this.isOwned = owned;
-
 		// If the Pillbox gained a new owner, set its health to a small positive value, so another player
 		// can't instantly grab it without needing to reduce its health.
-		if (owned) {
+		if (ownerId != null && !ownerId.equals(this.ownerUID)) {
 			hitPoints = 10;
 		}
+
+		this.ownerUID = ownerId;
 	}
 
 	/**
@@ -250,7 +245,6 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 		if (hitPoints <= 0) {
 			if (isLocalPlayer() && ownerUID != null) {
 				this.setLocalPlayer(false);
-				this.setOwned(false);
 				this.ownerUID = null;
 				Network net = NetworkSystem.getInstance();
 				net.send(new UpdateOwnable(this));
@@ -272,17 +266,5 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 		if (hitPoints > MAX_HIT_POINTS) {
 			hitPoints = MAX_HIT_POINTS;
 		}
-	}
-
-	@Override
-	public UUID getOwnerUID()
-	{
-		return this.ownerUID;
-	}
-
-	@Override
-	public void setOwnerUID(UUID ownerUID)
-	{
-		this.ownerUID = ownerUID;
 	}
 }

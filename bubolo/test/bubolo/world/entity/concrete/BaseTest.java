@@ -1,6 +1,9 @@
 package bubolo.world.entity.concrete;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.UUID;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,8 +34,8 @@ public class BaseTest
 	@Test
 	public void isOwned()
 	{
-		base.setOwned(true);
-		assertEquals("Base ownership state set correctly.", true, base.isOwned());
+		base.setOwnerId(UUID.randomUUID());
+		assertTrue("Base ownership state set correctly.", base.isOwned());
 	}
 
 	@Test
@@ -41,19 +44,19 @@ public class BaseTest
 		base.setCharging(true);
 		assertEquals("Base charging state set correctly.", true, base.isCharging());
 	}
-	
+
 	@Test
 	public void  getHitPoints()
 	{
 		assertEquals(100, base.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void getMaxHitPoints()
 	{
 		assertEquals(100, base.getMaxHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void healDamageTest()
 	{
@@ -62,7 +65,7 @@ public class BaseTest
 		base.heal(1);
 		assertEquals(100, base.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void ammoTest()
 	{
@@ -72,9 +75,9 @@ public class BaseTest
 		base.giveAmmo();
 		assertEquals(base.getMaxAmmoCount() - 5, base.getAmmoCount(), 0);
 		base.gatherAmmo();
-		assertEquals(base.getMaxAmmoCount(), base.getAmmoCount(), 0);		
+		assertEquals(base.getMaxAmmoCount(), base.getAmmoCount(), 0);
 	}
-	
+
 	@Test
 	public void mineTest()
 	{
@@ -89,16 +92,16 @@ public class BaseTest
 	@Test
 	public void setOwner()
 	{
-		base.setOwnerUID(base.getId());
-		assertEquals(base.getId(), base.getOwnerUID());
+		base.setOwnerId(base.getId());
+		assertEquals(base.getId(), base.getOwnerId());
 	}
 	@Test
 	public void getOwner()
 	{
-		base.setOwnerUID(base.getId());
-		assertEquals(base.getId(), base.getOwnerUID());
+		base.setOwnerId(base.getId());
+		assertEquals(base.getId(), base.getOwnerId());
 	}
-	
+
 	@Test
 	public void giveHitPoints()
 	{

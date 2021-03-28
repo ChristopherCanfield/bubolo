@@ -32,11 +32,6 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	private boolean isLocalPlayer = false;
 
 	/**
-	 * Boolean representing whether this Base is owned by a player.
-	 */
-	private boolean isOwned = false;
-
-	/**
 	 * Boolean representing whether this Base is currently charging a Tank.
 	 *
 	 */
@@ -98,18 +93,6 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	public void setLocalPlayer(boolean local)
 	{
 		this.isLocalPlayer = local;
-	}
-
-	@Override
-	public boolean isOwned()
-	{
-		return isOwned;
-	}
-
-	@Override
-	public void setOwned(boolean owned)
-	{
-		this.isOwned = owned;
 	}
 
 	/**
@@ -178,7 +161,6 @@ public class Base extends StationaryElement implements Ownable, Damageable
 			if (hitPoints <= 0 &&  isLocalPlayer())
 			{
 				this.setLocalPlayer(false);
-				this.setOwned(false);
 				this.ownerUID = null;
 				Network net = NetworkSystem.getInstance();
 				net.send(new UpdateOwnable(this));
@@ -331,13 +313,13 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	}
 
 	@Override
-	public UUID getOwnerUID()
+	public UUID getOwnerId()
 	{
 		return this.ownerUID;
 	}
 
 	@Override
-	public void setOwnerUID(UUID ownerUID)
+	public void setOwnerId(UUID ownerUID)
 	{
 		this.ownerUID = ownerUID;
 	}

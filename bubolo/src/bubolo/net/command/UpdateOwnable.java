@@ -40,7 +40,7 @@ public class UpdateOwnable implements NetworkCommand
 	{
 		this.id = ownable.getId();
 		this.isOwned = ownable.isOwned();
-		this.ownerUID = ownable.getOwnerUID();
+		this.ownerUID = ownable.getOwnerId();
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class UpdateOwnable implements NetworkCommand
 			Entity entity = world.getEntity(id);
 			Ownable ownable = (Ownable)entity;
 			ownable.setOwned(this.isOwned);
-			ownable.setOwnerUID(this.ownerUID);
+			ownable.setOwnerId(this.ownerUID);
 		}
 		catch (GameLogicException e)
 		{

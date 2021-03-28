@@ -1,6 +1,9 @@
 package bubolo.world.entity.concrete;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.UUID;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,10 +34,10 @@ public class MineTest
 	@Test
 	public void isOwned()
 	{
-		mine.setOwned(true);
-		assertEquals("Mine ownership state set correctly.", true, mine.isOwned());
+		mine.setOwnerId(UUID.randomUUID());
+		assertTrue("Mine ownership state set correctly.", mine.isOwned());
 	}
-	
+
 	@Test
 	public void isExploding()
 	{
@@ -44,16 +47,16 @@ public class MineTest
 	@Test
 	public void setOwner()
 	{
-		mine.setOwnerUID(mine.getId());
-		assertEquals(mine.getId(), mine.getOwnerUID());
+		mine.setOwnerId(mine.getId());
+		assertEquals(mine.getId(), mine.getOwnerId());
 	}
 	@Test
 	public void getOwner()
 	{
-		mine.setOwnerUID(mine.getId());
-		assertEquals(mine.getId(), mine.getOwnerUID());
+		mine.setOwnerId(mine.getId());
+		assertEquals(mine.getId(), mine.getOwnerId());
 	}
-	
+
 	@Test
 	public void onDispose()
 	{

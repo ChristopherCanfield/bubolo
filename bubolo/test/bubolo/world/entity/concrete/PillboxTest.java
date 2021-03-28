@@ -4,13 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
 import bubolo.graphics.LibGdxAppTester;
 import bubolo.mock.MockBulletCreator;
-import bubolo.world.GameWorld;
 import bubolo.world.entity.EntityTestCase;
 
 public class PillboxTest
@@ -37,8 +37,8 @@ public class PillboxTest
 	@Test
 	public void isOwned()
 	{
-		pillbox.setOwned(true);
-		assertEquals("Pillbox ownership state set correctly.", true, pillbox.isOwned());
+		pillbox.setOwnerId(UUID.randomUUID());
+		assertTrue("Pillbox ownership state set correctly.", pillbox.isOwned());
 	}
 	@Test
 	public void aimCannon()
@@ -54,7 +54,7 @@ public class PillboxTest
 		float direction = 60;
 		pillbox.aimCannon(direction);
 		assertEquals("Pillbox aimed correctly", true, pillbox.getCannonRotation() == direction);
-		
+
 	}
 	@Test
 	public void isCannonReady()
@@ -64,14 +64,14 @@ public class PillboxTest
 		assertTrue(p.isCannonReady());
 		p.fireCannon(new MockBulletCreator());
 		assertFalse(p.isCannonReady());
-		
+
 	}
 	@Test
 	public void fireCannon()
 	{
 		LibGdxAppTester.createApp();
 		pillbox.fireCannon(new MockBulletCreator());
-		
+
 	}
 	@Test
 	public void getRange()
@@ -92,13 +92,13 @@ public class PillboxTest
 	{
 		assertEquals(100, pillbox.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void getMaxHitPoints()
 	{
 		assertEquals(100, pillbox.getMaxHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void healDamageTest()
 	{
@@ -107,17 +107,17 @@ public class PillboxTest
 		pillbox.heal(1);
 		assertEquals(100, pillbox.getHitPoints(), 0);
 	}
-	
+
 	@Test
 	public void setOwner()
 	{
-		pillbox.setOwnerUID(pillbox.getId());
-		assertEquals(pillbox.getId(), pillbox.getOwnerUID());
+		pillbox.setOwnerId(pillbox.getId());
+		assertEquals(pillbox.getId(), pillbox.getOwnerId());
 	}
 	@Test
 	public void getOwner()
 	{
-		pillbox.setOwnerUID(pillbox.getId());
-		assertEquals(pillbox.getId(), pillbox.getOwnerUID());
+		pillbox.setOwnerId(pillbox.getId());
+		assertEquals(pillbox.getId(), pillbox.getOwnerId());
 	}
 }

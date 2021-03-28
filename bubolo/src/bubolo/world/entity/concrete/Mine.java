@@ -30,11 +30,6 @@ public class Mine extends StationaryElement implements Ownable
 	private boolean isLocalPlayer = true;
 
 	/**
-	 * Boolean representing whether this Mine is owned by a player.
-	 */
-	private boolean isOwned = false;
-
-	/**
 	 * Boolean representing whether this Mine is exploding! OH NO!
 	 */
 	private boolean isExploding = false;
@@ -85,18 +80,6 @@ public class Mine extends StationaryElement implements Ownable
 		this.isLocalPlayer = local;
 	}
 
-	@Override
-	public boolean isOwned()
-	{
-		return isOwned;
-	}
-
-	@Override
-	public void setOwned(boolean owned)
-	{
-		this.isOwned = owned;
-	}
-
 	/**
 	 * Checks to see if this mine is currently exploding!
 	 *
@@ -134,13 +117,13 @@ public class Mine extends StationaryElement implements Ownable
 	}
 
 	@Override
-	public UUID getOwnerUID()
+	public UUID getOwnerId()
 	{
 		return this.ownerUID;
 	}
 
 	@Override
-	public void setOwnerUID(UUID ownerUID)
+	public void setOwnerId(UUID ownerUID)
 	{
 		this.ownerUID = ownerUID;
 	}

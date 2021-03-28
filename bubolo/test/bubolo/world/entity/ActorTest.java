@@ -1,11 +1,13 @@
 package bubolo.world.entity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.UUID;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import bubolo.world.entity.Actor;
 import bubolo.world.entity.concrete.Tank;
 
 public class ActorTest
@@ -26,14 +28,14 @@ public class ActorTest
 	public void isLocalPlayer()
 	{
 		act.setLocalPlayer(true);
-		assertEquals("Actor local player ownership set correctly.", true, act.isLocalPlayer());
+		assertTrue("Actor local player ownership set correctly.", act.isLocalPlayer());
 	}
 
 	@Test
 	public void isOwned()
 	{
-		act.setOwned(true);
-		assertEquals("Actor ownership state set correctly.", true, act.isOwned());
+		act.setOwnerId(UUID.randomUUID());
+		assertTrue("Actor ownership state set correctly.", act.isOwned());
 	}
 
 	@Test

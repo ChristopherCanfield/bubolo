@@ -7,7 +7,7 @@ import bubolo.world.Ownable;
 /**
  * Basic class representing MobileEntities that exhibit some kind of behavior in the game
  * world, such as tanks and humans.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public abstract class Actor extends Entity implements Ownable
@@ -24,11 +24,6 @@ public abstract class Actor extends Entity implements Ownable
 	private boolean isLocalPlayer;
 
 	/**
-	 * Boolean representing whether this Actor is owned by a player.
-	 */
-	private boolean isOwned = true;
-
-	/**
 	 * Construct a new Actor with a random UUID.
 	 */
 	public Actor()
@@ -38,7 +33,7 @@ public abstract class Actor extends Entity implements Ownable
 
 	/**
 	 * Construct a new Actor with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Actor.
 	 */
@@ -57,17 +52,5 @@ public abstract class Actor extends Entity implements Ownable
 	public void setLocalPlayer(boolean local)
 	{
 		this.isLocalPlayer = local;
-	}
-
-	@Override
-	public boolean isOwned()
-	{
-		return isOwned;
-	}
-
-	@Override
-	public void setOwned(boolean owned)
-	{
-		this.isOwned = owned;
 	}
 }
