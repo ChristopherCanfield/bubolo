@@ -1,14 +1,18 @@
 package bubolo.world;
 
 /**
- * Interface for Entities that are able to be affected by other objects through taking
- * damage. Outlines methods relating to getting, checking, and modifying the HP of
- * Entities.
+ * Interface for Entities that can take damage.
  *
  * @author BU CS673 - Clone Productions
  */
 public interface Damageable
 {
+	public int getHeight();
+	public int getWidth();
+
+	public float getX();
+	public float getY();
+
 	/**
 	 * Returns the current health of the tank
 	 *
@@ -38,4 +42,10 @@ public interface Damageable
 	 */
 	public void heal(float healPoints);
 
+	/**
+	 * Whether the entity is alive or not.
+	 *
+	 * @return true if the entity is alive.
+	 */
+	public boolean isAlive();
 }

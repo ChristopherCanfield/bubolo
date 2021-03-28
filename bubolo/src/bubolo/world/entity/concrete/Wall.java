@@ -130,6 +130,11 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 		return MAX_HIT_POINTS;
 	}
 
+	@Override
+	public boolean isAlive() {
+		return hitPoints > 0;
+	}
+
 	/**
 	 * Changes the hit point count after taking damage
 	 *

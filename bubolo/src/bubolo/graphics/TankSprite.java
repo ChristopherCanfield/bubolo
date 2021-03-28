@@ -113,49 +113,8 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	public void drawUiElements(Graphics graphics) {
 		var tank = getEntity();
 		if (tank.isLocalPlayer()) {
-			drawHealthBar(tank, graphics);
+			StatusBarRenderer.drawHealthBar(tank, graphics.shapeRenderer(), graphics.camera());
 			drawTankAmmo(tank, graphics);
-		}
-	}
-
-	private static void drawHealthBar(Tank tank, Graphics graphics) {
-		if (tank.isAlive() && tank.getHitPoints() < tank.getMaxHitPoints()) {
-			var shapeRenderer = graphics.shapeRenderer();
-			shapeRenderer.begin(ShapeType.Filled);
-
-			float healthPct = tank.getHitPoints() / Tank.TANK_MAX_HIT_POINTS;
-			float healthBarInteriorBackgroundWidth = tank.getWidth() + 10;
-			float healthBarInteriorWidth = healthBarInteriorBackgroundWidth * healthPct;
-
-			var tankCameraCoords = tankCameraCoordinates(tank, graphics.camera());
-
-			// Health bar's exterior.
-			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.rect(tankCameraCoords.x - 17, tankCameraCoords.y + 18, healthBarInteriorBackgroundWidth + 4, 8);
-
-			// Health bar's interior background.
-			shapeRenderer.setColor(Color.GRAY);
-			shapeRenderer.rect(tankCameraCoords.x - 15, tankCameraCoords.y + 20, healthBarInteriorBackgroundWidth, 4);
-
-			// Health bar's interior.
-			shapeRenderer.setColor(healthBarColor(healthPct));
-			shapeRenderer.rect(tankCameraCoords.x - 15, tankCameraCoords.y + 20, healthBarInteriorWidth, 4);
-
-			shapeRenderer.end();
-		}
-	}
-
-	private static final Color RED_ORANGE = new Color(1.0f, 0.53f, 0.0f, 1.0f);
-
-	private static Color healthBarColor(float healthPct) {
-		if (healthPct > 0.85) {
-			return Color.GREEN;
-		} else if (healthPct > 0.65) {
-			return Color.YELLOW;
-		} else if (healthPct > 0.3) {
-			return RED_ORANGE;
-		} else {
-			return Color.RED;
 		}
 	}
 
