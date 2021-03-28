@@ -19,7 +19,7 @@ import bubolo.world.entity.concrete.Tank;
  *
  * @author BU CS673 - Clone Productions
  */
-class TankSprite extends AbstractEntitySprite<Tank>
+class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 {
 	// The index representing which animation frame will be drawn.
 	private int frameIndex;
@@ -109,7 +109,8 @@ class TankSprite extends AbstractEntitySprite<Tank>
 	 * Draws the tank's health bar. Uses the shape renderer, so it should be called after completing drawing that uses the Batch.
 	 * Unlike with the methods that use batch(), begin() does not need to be called on graphics.shapeRenderer() before calling this method.
 	 */
-	void drawTankUi(Graphics graphics) {
+	@Override
+	public void drawUiElements(Graphics graphics) {
 		var tank = getEntity();
 		if (tank.isLocalPlayer()) {
 			drawHealthBar(tank, graphics);

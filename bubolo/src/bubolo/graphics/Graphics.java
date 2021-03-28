@@ -283,18 +283,24 @@ public class Graphics implements EntityCreationObserver
 	 * This is a separate method to ensure that the tank names are always drawn above all tanks and other objects.
 	 */
 	private void drawTankUiElements(List<Sprite> spritesInView) {
-		var tankSpritesInView = spritesInView.stream().filter(s -> s instanceof TankSprite).collect(Collectors.toList());
+		var uiDrawablesInView = spritesInView.stream().filter(s -> s instanceof UiDrawable).collect(Collectors.toList());
 
+		// Render the player names.
 		batch.begin();
-		for (Sprite sprite : tankSpritesInView) {
-			TankSprite tankSprite = (TankSprite) sprite;
-			tankSprite.drawTankPlayerName(this);
+		for (Sprite sprite : uiDrawablesInView) {
+			if (sprite instanceof TankSprite tankSprite) {
+				tankSprite.drawTankPlayerName(this);
+			}
 		}
 		batch.end();
 
-		for (Sprite sprite : tankSpritesInView) {
-			TankSprite tankSprite = (TankSprite) sprite;
-			tankSprite.drawTankUi(this);
+		// Render UI elements.
+		for (Sprite sprite : uiDrawablesInView) {
+			assert sprite instanceof UiDrawable;
+
+			if (sprite instanceof UiDrawable uiDrawable) {
+				uiDrawable.drawUiElements(this);
+			}
 		}
 	}
 
