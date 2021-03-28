@@ -8,7 +8,7 @@ import bubolo.world.World;
 /**
  * Basic class for DrawableEntities that do not move (i.e., those that are fixed a single location
  * on the map grid).
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public abstract class StationaryEntity extends Entity
@@ -23,17 +23,10 @@ public abstract class StationaryEntity extends Entity
 	 */
 	private static final long serialVersionUID = 7748173162492885868L;
 
-	/**
-	 * Construct a new StationaryEntity with a random UUID.
-	 */
-	public StationaryEntity()
-	{
-		this(UUID.randomUUID());
-	}
 
 	/**
 	 * Construct a new StationaryEntity with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new StationaryEntity.
 	 */
@@ -44,7 +37,7 @@ public abstract class StationaryEntity extends Entity
 
 	/**
 	 * Sets the Tile object that this StationaryEntity belongs to.
-	 * 
+	 *
 	 * @param t
 	 *            is the Tile object into which this StationaryEntity should be stored.
 	 * @return a reference to this StationaryEntity.
@@ -57,7 +50,7 @@ public abstract class StationaryEntity extends Entity
 
 	/**
 	 * Returns the Tile object to which this StationaryEntity belongs.
-	 * 
+	 *
 	 * @return a reference to this StationaryEntity's Tile object.
 	 */
 	public Tile getTile()

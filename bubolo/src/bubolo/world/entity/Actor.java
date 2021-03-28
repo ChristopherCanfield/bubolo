@@ -5,8 +5,7 @@ import java.util.UUID;
 import bubolo.world.Ownable;
 
 /**
- * Basic class representing MobileEntities that exhibit some kind of behavior in the game
- * world, such as tanks and humans.
+ * Represents MobileEntities that exhibit some kind of behavior in the game world, such as tanks and humans.
  *
  * @author BU CS673 - Clone Productions
  */
@@ -23,13 +22,7 @@ public abstract class Actor extends Entity implements Ownable
 	 */
 	private boolean isLocalPlayer;
 
-	/**
-	 * Construct a new Actor with a random UUID.
-	 */
-	public Actor()
-	{
-		this(UUID.randomUUID());
-	}
+	private UUID ownerUID;
 
 	/**
 	 * Construct a new Actor with the specified UUID.
@@ -52,5 +45,17 @@ public abstract class Actor extends Entity implements Ownable
 	public void setLocalPlayer(boolean local)
 	{
 		this.isLocalPlayer = local;
+	}
+
+	@Override
+	public UUID getOwnerId()
+	{
+		return this.ownerUID;
+	}
+
+	@Override
+	public void setOwnerId(UUID ownerUID)
+	{
+		this.ownerUID = ownerUID;
 	}
 }

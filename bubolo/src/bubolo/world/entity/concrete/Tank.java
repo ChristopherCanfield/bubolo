@@ -35,12 +35,6 @@ public class Tank extends Actor implements Damageable
 	 */
 	private static final long serialVersionUID = 457933513574468829L;
 
-	/**
-	 * UID of the owner of this Tank.
-	 * TODO (cdc - 2021-03-01): Is this needed?
-	 */
-	private UUID ownerUID;
-
 	private String playerName;
 
 	// Max speed in pixels per tick.
@@ -269,6 +263,7 @@ public class Tank extends Actor implements Damageable
 	 * than disposed.
 	 * @return true if the tank is alive, or false otherwise.
 	 */
+	@Override
 	public boolean isAlive()
 	{
 		return isAlive;
@@ -866,18 +861,6 @@ public class Tank extends Actor implements Damageable
 		this.ammoCount = TANK_MAX_AMMO;
 		this.mineCount = TANK_MAX_MINE;
 		this.isAlive = true;
-	}
-
-	@Override
-	public UUID getOwnerId()
-	{
-		return this.ownerUID;
-	}
-
-	@Override
-	public void setOwnerId(UUID ownerUID)
-	{
-		this.ownerUID = ownerUID;
 	}
 
 	/**
