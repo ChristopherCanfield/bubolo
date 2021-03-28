@@ -545,6 +545,11 @@ public class Tank extends Actor implements Damageable
 		float newX = (float) (xPos + Math.cos(rotation) * (speed));
 		float newY = (float) (yPos + Math.sin(rotation) * (speed));
 
+		// Prevent the tank from exiting the game world.
+		if (newX < 0 || newX > world.getWidth() || newY < 0 || newY > world.getHeight()) {
+			return;
+		}
+
 		/**
 		 * Update (replace) the right and left bumper polygons to make sure collisions are
 		 * accurate.
