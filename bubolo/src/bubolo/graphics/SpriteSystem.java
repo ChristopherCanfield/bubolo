@@ -63,7 +63,7 @@ public class SpriteSystem
 		{
 			throw new IllegalStateException(
 					"createSprite is unable to create a sprite from entity type "
-							+ entity.getClass().getName());
+							+ entity.getClass().getName() + " because no factory exists.");
 		}
 
 		Sprite sprite = spriteFactories.get(entity.getClass()).create(entity);
@@ -88,14 +88,7 @@ public class SpriteSystem
 	 */
 	public void removeSprite(Sprite sprite)
 	{
-		for (int i = 0; i < sprites.size(); ++i)
-		{
-			if (sprites.get(i) == sprite)
-			{
-				sprites.remove(i);
-				break;
-			}
-		}
+		sprites.remove(sprite);
 	}
 
 	/**
