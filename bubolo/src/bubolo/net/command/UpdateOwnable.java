@@ -27,8 +27,7 @@ public class UpdateOwnable implements NetworkCommand
 
 	private final UUID id;
 
-	private final boolean isOwned;
-	private final UUID ownerUID;
+	private final UUID ownerId;
 
 	/**
 	 * Update the status of an ownable entity
@@ -39,8 +38,7 @@ public class UpdateOwnable implements NetworkCommand
 	public UpdateOwnable(Ownable ownable)
 	{
 		this.id = ownable.getId();
-		this.isOwned = ownable.isOwned();
-		this.ownerUID = ownable.getOwnerId();
+		this.ownerId = ownable.getOwnerId();
 	}
 
 	@Override
@@ -50,8 +48,7 @@ public class UpdateOwnable implements NetworkCommand
 		{
 			Entity entity = world.getEntity(id);
 			Ownable ownable = (Ownable)entity;
-			ownable.setOwned(this.isOwned);
-			ownable.setOwnerId(this.ownerUID);
+			ownable.setOwnerId(this.ownerId);
 		}
 		catch (GameLogicException e)
 		{

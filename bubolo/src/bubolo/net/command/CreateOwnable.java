@@ -24,7 +24,7 @@ public class CreateOwnable extends CreateEntity
 {
 	private static final long serialVersionUID = 1L;
 
-	private final UUID ownerUID;
+	private final UUID ownerId;
 
 	/**
 	 * Constructs a CreateOwnable object.
@@ -39,14 +39,13 @@ public class CreateOwnable extends CreateEntity
 	 *            the ownable's y position.
 	 * @param rotation
 	 *            the ownable's rotation.
-	 * @param ownerUID
+	 * @param ownerId
 	 *            the id of the entity that owns the ownable.
 	 */
-	public CreateOwnable(Class<? extends Entity> type, UUID id, float x, float y, float rotation,
-			UUID ownerUID)
+	public CreateOwnable(Class<? extends Entity> type, UUID id, float x, float y, float rotation, UUID ownerId)
 	{
 		super(type, id, x, y, rotation);
-		this.ownerUID = ownerUID;
+		this.ownerId = ownerId;
 	}
 
 	@Override
@@ -57,15 +56,7 @@ public class CreateOwnable extends CreateEntity
 		try
 		{
 			Ownable ownable = (Ownable)world.getEntity(getId());
-			if (ownerUID != null)
-			{
-				ownable.setOwnerId(ownerUID);
-				ownable.setOwned(true);
-			}
-			else
-			{
-				ownable.setOwned(false);
-			}
+			ownable.setOwnerId(ownerId);
 		}
 		catch (GameLogicException e)
 		{
