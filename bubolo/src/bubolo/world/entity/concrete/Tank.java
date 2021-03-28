@@ -517,13 +517,60 @@ public class Tank extends Actor implements Damageable
 			modifiedMaxSpeed = maxSpeed * currentTerrain.getMaxSpeedModifier();
 		}
 
-		/**
+		/*
+		 * Store the Tank's current positioning and speed data, for use in calculations.
+		 */
+		float xPos = getX();
+		float yPos = getY();
+		float rotation = getRotation();
+
+		/*
+		 * The position where the Tank will be after one game tick, if it continues its
+		 * current trajectory and speed.
+		 */
+		float newX = (float) (xPos + Math.cos(rotation) * speed);
+		float newY = (float) (yPos + Math.sin(rotation) * speed);
+
+		// Prevent the tank from exiting the game world.
+		if (world.containsPoint(newX, newY)) {
+			return;
+		}
+
+		/*
+		 * Update (replace) the right and left bumper polygons to make sure collisions are
+		 * accurate.
+		 */
+		updateBumpers();
+
+		/*
 		 * Booleans used to record which, if any, bumpers were hit.
 		 */
 		boolean collidingLeft = false;
 		boolean collidingRight = false;
 
-		/**
+		// Currently checks against all Entities in the world, then checks each of the
+		// ones that overlap to see if they overlap the bumpers.
+		List<Entity> possibleCollisions = getLookaheadEntities(world);
+		for (int i = 0; i < possibleCollisions.size(); i++)
+		{
+			Entity collider = possibleCollisions.get(i);
+			if (collider.isSolid())
+			{
+				if (!collidingLeft) {
+					collidingLeft = hitLeftBumper(collider);
+				}
+				if (!collidingRight) {
+					collidingRight = hitRightBumper(collider);
+				}
+			}
+
+			// If colliders were found on the left and right, there is no need to continue checking.
+			if (collidingLeft && collidingRight) {
+				break;
+			}
+		}
+
+		/*
 		 * Floats used the offset that should be applied to the Tank to record wall
 		 * collisions.
 		 */
@@ -531,52 +578,7 @@ public class Tank extends Actor implements Damageable
 		float xOffset = 0;
 		float yOffset = 0;
 
-		/**
-		 * Store the Tank's current positioning and speed data, for use in calculations.
-		 */
-		float xPos = getX();
-		float yPos = getY();
-		float rotation = getRotation();
-
-		/**
-		 * The position where the Tank will be after one game tick, if it continues its
-		 * current trajectory and speed.
-		 */
-		float newX = (float) (xPos + Math.cos(rotation) * (speed));
-		float newY = (float) (yPos + Math.sin(rotation) * (speed));
-
-		// Prevent the tank from exiting the game world.
-		if (world.containsPoint(newX, newY)) {
-			return;
-		}
-
-		/**
-		 * Update (replace) the right and left bumper polygons to make sure collisions are
-		 * accurate.
-		 */
-		updateBumpers();
-
-		// Currently checks against all Entities in the world, then checks each of the
-		// ones that
-		// overlap to see if they overlap the bumpers.
-		List<Entity> possibleCollisions = getLookaheadEntities(world);
-		for (int i = 0; i < possibleCollisions.size(); i++)
-		{
-			Entity collider = possibleCollisions.get(i);
-			if (collider.isSolid())
-			{
-				if (hitLeftBumper(collider))
-				{
-					collidingLeft = true;
-				}
-				if (hitRightBumper(collider))
-				{
-					collidingRight = true;
-				}
-			}
-		}
-
-		/**
+		/*
 		 * If the Tank hit something with its left bumper, restrict travel in the
 		 * appropriate direction, and offset/rotate the Tank to 'slide' away from the
 		 * collision.
@@ -618,7 +620,7 @@ public class Tank extends Actor implements Damageable
 			}
 		}
 
-		/**
+		/*
 		 * If the Tank hit something with its right bumper, restrict travel in the
 		 * appropriate direction, and offset/rotate the Tank to 'slide' away from the
 		 * collision.
@@ -660,7 +662,7 @@ public class Tank extends Actor implements Damageable
 			}
 		}
 
-		/**
+		/*
 		 * If the speed of the Tank is greater than zero, modify its position and rotation
 		 * by the offsets given earlier. Note that if a Tank collides on the left and
 		 * right bumpers simultaneously, the rotational offsets will cancel each other
