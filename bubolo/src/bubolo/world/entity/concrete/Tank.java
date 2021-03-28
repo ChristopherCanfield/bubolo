@@ -97,13 +97,13 @@ public class Tank extends Actor implements Damageable
 	 * The default amount to rotate the Tank by when a bumper collision is detected. Used
 	 * to prevent getting 'stuck' on walls.
 	 */
-	private float rotationOffsetAmount = (float) Math.toRadians(1);
+	private static final float rotationOffsetAmount = (float) Math.toRadians(1);
 
 	/**
 	 * The default amount to reposition the Tank by when a bumper collision is detected.
 	 * Used to prevent getting 'stuck' on walls.
 	 */
-	private float positionOffsetAmount = 0.1f;
+	private static final float positionOffsetAmount = 0.1f;
 
 	/**
 	 * The health of the tank
