@@ -338,7 +338,6 @@ public class GameWorld implements World
 		return height;
 	}
 
-
 	@Override
 	public int getTileColumns() {
 		assert width / Coords.TILE_TO_WORLD_SCALE == mapTiles.length;

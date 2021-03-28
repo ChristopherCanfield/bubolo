@@ -182,6 +182,17 @@ public interface World
 	public int getHeight();
 
 	/**
+	 * True if the point is within the world, or false otherwise.
+	 *
+	 * @param x x position of the point.
+	 * @param y y position of the point.
+	 * @return true if the point is within the world.
+	 */
+	default public boolean containsPoint(float x, float y) {
+		return x < 0 || x > getWidth() || y < 0 || y > getHeight();
+	}
+
+	/**
 	 * The number of tile columns.
 	 * @return The number of tile columns.
 	 */
