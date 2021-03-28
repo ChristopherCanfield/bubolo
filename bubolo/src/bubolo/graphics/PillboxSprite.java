@@ -9,7 +9,7 @@ import bubolo.world.entity.concrete.Pillbox;
  *
  * @author BU673 - Clone Industries
  */
-class PillboxSprite extends AbstractEntitySprite<Pillbox>
+class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 {
 	private TextureRegion[][] frames;
 
@@ -97,6 +97,14 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 			// TODO: Point to different texture regions based on the damagedState field,
 			// which changes with Entity HP percentage.
 			drawTexture(graphics, frames[0][colorId]);
+		}
+	}
+
+	@Override
+	public void drawUiElements(Graphics graphics) {
+		var e = getEntity();
+		if (e.isLocalPlayer()) {
+			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
 		}
 	}
 }

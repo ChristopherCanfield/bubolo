@@ -18,7 +18,7 @@ final class StatusBarRenderer {
 	private StatusBarRenderer() {}
 
 	/**
-	 * Draws a health bar above an entity.
+	 * Draws a health bar above an entity. Only draws the health bar if the entity is alive and health is not at 100%.
 	 *
 	 * @param entity the damageable entity that will gain a health bar.
 	 * @param shapeRenderer
@@ -36,15 +36,15 @@ final class StatusBarRenderer {
 
 			// Health bar's exterior.
 			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.rect(tankCameraCoords.x - 17, tankCameraCoords.y + 18, healthBarInteriorBackgroundWidth + 4, 8);
+			shapeRenderer.rect(tankCameraCoords.x - 19, tankCameraCoords.y + 18, healthBarInteriorBackgroundWidth + 4, 8);
 
 			// Health bar's interior background.
 			shapeRenderer.setColor(Color.GRAY);
-			shapeRenderer.rect(tankCameraCoords.x - 15, tankCameraCoords.y + 20, healthBarInteriorBackgroundWidth, 4);
+			shapeRenderer.rect(tankCameraCoords.x - 17, tankCameraCoords.y + 20, healthBarInteriorBackgroundWidth, 4);
 
 			// Health bar's interior.
 			shapeRenderer.setColor(healthBarColor(healthPct));
-			shapeRenderer.rect(tankCameraCoords.x - 15, tankCameraCoords.y + 20, healthBarInteriorWidth, 4);
+			shapeRenderer.rect(tankCameraCoords.x - 17, tankCameraCoords.y + 20, healthBarInteriorWidth, 4);
 
 			shapeRenderer.end();
 		}

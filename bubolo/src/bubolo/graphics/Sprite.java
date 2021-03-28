@@ -25,7 +25,7 @@ abstract class Sprite implements Drawable
 	// The sprite's color. White draws the texture as it appears in the file.
 	private Color color;
 
-	// Ideally, these probably should not be placed into Sprite<T>.
+	// Ideally, these probably should not be placed into Sprite.
 	private static final float SCALE_X = 1.f;
 	private static final float SCALE_Y = 1.f;
 
