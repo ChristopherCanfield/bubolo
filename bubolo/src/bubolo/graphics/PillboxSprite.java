@@ -67,11 +67,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox>
 
 	private void updateColorSet()
 	{
-		if (!this.getEntity().isOwned())
+		if (!getEntity().isOwned())
 		{
 			colorId = ColorSets.NEUTRAL;
 		}
-		else if (this.getEntity().isLocalPlayer())
+		else if (getEntity().isLocalPlayer())
 		{
 			colorId = ColorSets.BLUE;
 		}
