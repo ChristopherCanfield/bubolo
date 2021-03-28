@@ -27,7 +27,7 @@ public abstract class Coords
 	 */
 	public static Vector2 worldToCamera(Camera camera, Vector2 worldCoordinates)
 	{
-		return new Vector2(worldCoordinates.x - camera.position.x ,
+		return new Vector2(worldCoordinates.x - camera.position.x,
 				worldCoordinates.y - camera.position.y);
 	}
 

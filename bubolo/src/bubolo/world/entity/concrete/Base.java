@@ -80,8 +80,8 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	public Base(UUID id)
 	{
 		super(id);
-		setWidth(32);
-		setHeight(32);
+		setWidth(26);
+		setHeight(30);
 		updateBounds();
 		hitPoints = MAX_HIT_POINTS;
 		ammoCount = MAX_AMMO_COUNT;

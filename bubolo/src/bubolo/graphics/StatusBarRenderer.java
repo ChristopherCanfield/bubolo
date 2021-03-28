@@ -32,19 +32,21 @@ final class StatusBarRenderer {
 			float healthBarInteriorBackgroundWidth = entity.getWidth() + 10;
 			float healthBarInteriorWidth = healthBarInteriorBackgroundWidth * healthPct;
 
-			var tankCameraCoords = Coords.worldToCamera(camera, new Vector2(entity.getX(), entity.getY()));
+			var cameraCoords = Coords.worldToCamera(camera, new Vector2(entity.getX(), entity.getY()));
+			var entityHalfWidth = entity.getWidth() / 2.0f;
+			var entityHalfHeight = entity.getHeight() / 2.0f;
 
 			// Health bar's exterior.
 			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.rect(tankCameraCoords.x - 19, tankCameraCoords.y + 18, healthBarInteriorBackgroundWidth + 4, 8);
+			shapeRenderer.rect(cameraCoords.x - entityHalfWidth - 8, cameraCoords.y + entityHalfHeight + 6, healthBarInteriorBackgroundWidth + 4, 8);
 
 			// Health bar's interior background.
 			shapeRenderer.setColor(Color.GRAY);
-			shapeRenderer.rect(tankCameraCoords.x - 17, tankCameraCoords.y + 20, healthBarInteriorBackgroundWidth, 4);
+			shapeRenderer.rect(cameraCoords.x - entityHalfWidth - 6, cameraCoords.y + entityHalfHeight + 8, healthBarInteriorBackgroundWidth, 4);
 
 			// Health bar's interior.
 			shapeRenderer.setColor(healthBarColor(healthPct));
-			shapeRenderer.rect(tankCameraCoords.x - 17, tankCameraCoords.y + 20, healthBarInteriorWidth, 4);
+			shapeRenderer.rect(cameraCoords.x - entityHalfWidth - 6, cameraCoords.y + entityHalfHeight + 8, healthBarInteriorWidth, 4);
 
 			shapeRenderer.end();
 		}

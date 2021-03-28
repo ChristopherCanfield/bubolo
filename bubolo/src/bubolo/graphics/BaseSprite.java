@@ -10,7 +10,7 @@ import bubolo.world.entity.concrete.Base;
  *
  * @author BU673 - Clone Industries
  */
-class BaseSprite extends AbstractEntitySprite<Base>
+class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 {
 	// The index representing which animation frame will be drawn.
 	private int frameIndex;
@@ -127,6 +127,14 @@ class BaseSprite extends AbstractEntitySprite<Base>
 				throw new GameLogicException(
 						"Programming error in BaseSprite: default case reached.");
 			}
+		}
+	}
+
+	@Override
+	public void drawUiElements(Graphics graphics) {
+		var e = getEntity();
+		if (e.isLocalPlayer()) {
+			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
 		}
 	}
 }
