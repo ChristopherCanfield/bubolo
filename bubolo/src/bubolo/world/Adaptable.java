@@ -1,9 +1,11 @@
 package bubolo.world;
 
 /**
- * Interface for Entities that are owned by a specific player. Used to determine object
- * color, friendly/enemy units, etc.
- * 
+ * Used by tiled sprites, such as roads, water, and walls, to select matching adjacent textures.
+ *
+ * TODO (cdc - 2021-03-29): This should be in the graphics system, not the world, because it only
+ * affects the visual representation.
+ *
  * @author BU CS673 - Clone Productions
  */
 public interface Adaptable
@@ -19,10 +21,4 @@ public interface Adaptable
 	 * @return the current adaptive tiling state of this Entity.
 	 */
 	public int getTilingState();
-
-	/**
-	 * Manually sets the adaptive tiling state of this Entity.
-	 * @param newState the new adaptive tiling state.
-	 */
-	public void setTilingState(int newState);
 }

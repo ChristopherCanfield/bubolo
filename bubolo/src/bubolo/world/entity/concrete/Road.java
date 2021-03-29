@@ -63,25 +63,13 @@ public class Road extends Terrain implements Adaptable
 	@Override
 	public void updateTilingState(World w)
 	{
-		if (this.getTile() != null)
-		{
-			setTilingState(TileUtil.getTilingState(this.getTile(), w, matchingTypes));
-		}
-		else
-		{
-			setTilingState(0);
-		}
+		var tile = getTile();
+		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
 	}
 
 	@Override
 	public int getTilingState()
 	{
 		return tilingState;
-	}
-
-	@Override
-	public void setTilingState(int newState)
-	{
-		tilingState = newState;
 	}
 }

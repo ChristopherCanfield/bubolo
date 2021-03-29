@@ -72,14 +72,14 @@ public class DeepWater extends Terrain implements Adaptable
 	@Override
 	public void updateTilingState(World w)
 	{
-		if (this.getTile() != null)
+		if (getTile() != null)
 		{
-			setTilingState(TileUtil.getTilingState(this.getTile(), w, matchingTypes));
-			cornerMatches = TileUtil.getCornerMatches(this.getTile(), w, matchingTypes);
+			tilingState = TileUtil.getTilingState(getTile(), w, matchingTypes);
+			cornerMatches = TileUtil.getCornerMatches(getTile(), w, matchingTypes);
 		}
 		else
 		{
-			setTilingState(0);
+			tilingState = 0;
 		}
 	}
 
@@ -93,11 +93,5 @@ public class DeepWater extends Terrain implements Adaptable
 	public int getTilingState()
 	{
 		return tilingState;
-	}
-
-	@Override
-	public void setTilingState(int newState)
-	{
-		tilingState = newState;
 	}
 }
