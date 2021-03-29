@@ -2,7 +2,7 @@ package bubolo.controllers;
 
 import java.io.Serializable;
 
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Interface for controller factories, which allow the controllers that will be
@@ -17,5 +17,5 @@ public interface ControllerFactory extends Serializable
 	 * This method should be used to add controllers that reference the entity.
 	 * @param entity the new entity.
 	 */
-	public void create(Entity entity);
+	public void create(OldEntity entity);
 }

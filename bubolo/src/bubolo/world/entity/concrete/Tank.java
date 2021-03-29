@@ -19,7 +19,7 @@ import bubolo.world.Damageable;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.Actor;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.Terrain;
 
@@ -329,10 +329,10 @@ public class Tank extends Actor implements Damageable
 	 * Returns a list of all Entities that would overlap with this Tank if it was where it
 	 * will be in one game tick, along its current trajectory.
 	 */
-	private List<Entity> getLookaheadEntities(World w)
+	private List<OldEntity> getLookaheadEntities(World w)
 	{
-		ArrayList<Entity> intersects = new ArrayList<Entity>();
-		List<Entity> localEntities = TileUtil.getLocalEntities(getX(), getY(), w);
+		ArrayList<OldEntity> intersects = new ArrayList<OldEntity>();
+		List<OldEntity> localEntities = TileUtil.getLocalEntities(getX(), getY(), w);
 		for (int ii = 0; ii < localEntities.size(); ii++)
 		{
 			if (localEntities.get(ii) != this)
@@ -406,7 +406,7 @@ public class Tank extends Actor implements Damageable
 	/**
 	 * Checks to see if an Entity overlaps with this Tank's left bumper.
 	 */
-	private boolean hitLeftBumper(Entity e)
+	private boolean hitLeftBumper(OldEntity e)
 	{
 		return Intersector.overlapConvexPolygons(e.getBounds(), leftBumper);
 	}
@@ -414,7 +414,7 @@ public class Tank extends Actor implements Damageable
 	/**
 	 * Checks to see if an Entity overlaps with this Tank's right bumper.
 	 */
-	private boolean hitRightBumper(Entity e)
+	private boolean hitRightBumper(OldEntity e)
 	{
 		return Intersector.overlapConvexPolygons(e.getBounds(), rightBumper);
 	}
@@ -550,10 +550,10 @@ public class Tank extends Actor implements Damageable
 
 		// Currently checks against all Entities in the world, then checks each of the
 		// ones that overlap to see if they overlap the bumpers.
-		List<Entity> possibleCollisions = getLookaheadEntities(world);
+		List<OldEntity> possibleCollisions = getLookaheadEntities(world);
 		for (int i = 0; i < possibleCollisions.size(); i++)
 		{
-			Entity collider = possibleCollisions.get(i);
+			OldEntity collider = possibleCollisions.get(i);
 			if (collider.isSolid())
 			{
 				if (!collidingLeft) {
@@ -854,10 +854,10 @@ public class Tank extends Actor implements Damageable
 			return;
 		}
 
-		List<Entity> spawns = world.getSpawns();
+		List<OldEntity> spawns = world.getSpawns();
 		if (spawns.size() > 0)
 		{
-			Entity spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+			OldEntity spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
 			this.setTransform(spawn.getX(), spawn.getY(), 0);
 
 			Network net = NetworkSystem.getInstance();

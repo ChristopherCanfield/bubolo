@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import bubolo.Config;
 import bubolo.util.GameLogicException;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Bullet;
 
 /**
@@ -42,7 +42,7 @@ public class CreateBullet extends CreateEntity
 	 * @param parentId
 	 *            the id of the entity that created the bullet.
 	 */
-	public CreateBullet(Class<? extends Entity> type, UUID id, float x, float y, float rotation,
+	public CreateBullet(Class<? extends OldEntity> type, UUID id, float x, float y, float rotation,
 			UUID parentId)
 	{
 		super(type, id, x, y, rotation);
@@ -57,7 +57,7 @@ public class CreateBullet extends CreateEntity
 		try
 		{
 			Bullet bullet = (Bullet)world.getEntity(getId());
-			Entity parent = world.getEntity(parentId);
+			OldEntity parent = world.getEntity(parentId);
 			bullet.setParent(parent);
 		}
 		catch (GameLogicException e)

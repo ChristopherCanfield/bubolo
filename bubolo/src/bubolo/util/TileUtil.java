@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Intersector;
 
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.Terrain;
 
@@ -75,12 +75,12 @@ public abstract class TileUtil
 	 * @return
 	 * 			the list of entities that are colliding with the given entity
 	 */
-	public static List<Entity> getLocalCollisions(Entity entity, World world)
+	public static List<OldEntity> getLocalCollisions(OldEntity entity, World world)
 	{
-		ArrayList<Entity> localCollisions = new ArrayList<Entity>();
+		ArrayList<OldEntity> localCollisions = new ArrayList<OldEntity>();
 		getLocalEntities(entity.getX(),entity.getY(),world);
 
-		for(Entity collider:TileUtil.getLocalEntities(entity.getX(),entity.getY(), world))
+		for(OldEntity collider:TileUtil.getLocalEntities(entity.getX(),entity.getY(), world))
 		{
 			if (collider.isSolid() && collider != entity)
 			{
@@ -106,9 +106,9 @@ public abstract class TileUtil
 	 *            is the World in which the Entities reside.
 	 * @return a List of all Entities which could be near the target location.
 	 */
-	public static List<Entity> getLocalEntities(int gridX, int gridY, World w)
+	public static List<OldEntity> getLocalEntities(int gridX, int gridY, World w)
 	{
-		ArrayList<Entity> localEnts = new ArrayList<Entity>();
+		ArrayList<OldEntity> localEnts = new ArrayList<OldEntity>();
 		Tile[][] worldTiles = w.getTiles();
 		if (worldTiles == null)
 		{
@@ -157,7 +157,7 @@ public abstract class TileUtil
 	 *            is the World in which the Entities reside.
 	 * @return a List of all Entities which could be near the target location.
 	 */
-	public static List<Entity> getLocalEntities(float x, float y, World w)
+	public static List<OldEntity> getLocalEntities(float x, float y, World w)
 	{
 		int gridX = getClosestTileX(x);
 		int gridY = getClosestTileY(y);
@@ -362,7 +362,7 @@ public abstract class TileUtil
 	 * 		the tile that is closest to given entity
 	 *
 	 */
-	public static Tile getEntityTile(Entity entity, World world)
+	public static Tile getEntityTile(OldEntity entity, World world)
 	{
 		Tile[][] tiles = world.getTiles();
 		int tileX = TileUtil.getClosestTileX(entity.getX());

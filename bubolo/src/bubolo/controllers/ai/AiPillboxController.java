@@ -6,7 +6,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
 import bubolo.util.TileUtil;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Pillbox;
 import bubolo.world.entity.concrete.Tank;
 
@@ -44,7 +44,7 @@ public class AiPillboxController implements Controller
 
 		if(!pillbox.isOwned() && pillbox.getHitPoints() <= 0)
 		{
-			for(Entity entity : TileUtil.getLocalCollisions(pillbox, world))
+			for(OldEntity entity : TileUtil.getLocalCollisions(pillbox, world))
 			{
 				if (entity instanceof Tank)
 				{
@@ -99,7 +99,7 @@ public class AiPillboxController implements Controller
 	 *            the tank the pillbox is targeting
 	 * @return targetInRange returns true if the target is within range of this pillbox
 	 */
-	private boolean targetInRange(Entity target)
+	private boolean targetInRange(OldEntity target)
 	{
 		double xdistance = Math.abs(pillbox.getX() - target.getX());
 		double ydistance = Math.abs(pillbox.getY() - target.getY());
@@ -115,7 +115,7 @@ public class AiPillboxController implements Controller
 	 *            the Tank for the pillbox to target
 	 * @return the angle toward the closest tank. returns -1 if no tanks in range
 	 */
-	private float getTargetDirection(Entity target)
+	private float getTargetDirection(OldEntity target)
 	{
 		double xvector = 0;
 		double yvector = 0;

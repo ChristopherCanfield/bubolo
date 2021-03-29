@@ -11,7 +11,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public abstract class StationaryEntity extends Entity
+public abstract class StationaryEntity extends OldEntity
 {
 	/**
 	 * The Tile object to which this StationaryEntity belongs. Used for positioning.

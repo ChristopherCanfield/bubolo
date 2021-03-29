@@ -3,14 +3,14 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * The graphical representation of Spawn entity.
  *
  * @author BU673 - Clone Industries
  */
-class SpawnSprite extends AbstractEntitySprite<Entity>
+class SpawnSprite extends AbstractEntitySprite<OldEntity>
 {
 	private final Texture image;
 
@@ -29,7 +29,7 @@ class SpawnSprite extends AbstractEntitySprite<Entity>
 	 * @param spawn
 	 *            Reference to the spawn that this SpawnSprite represents.
 	 */
-	SpawnSprite(Entity spawn)
+	SpawnSprite(OldEntity spawn)
 	{
 		super(DrawLayer.SECOND, spawn);
 

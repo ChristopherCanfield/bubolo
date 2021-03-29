@@ -11,12 +11,12 @@ import bubolo.controllers.Controller;
 import bubolo.mock.MockWorld;
 import bubolo.world.GameWorld;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Tank;
 
 public class EntityTest
 {
-	static Entity ent;
+	static OldEntity ent;
 	static World world;
 
 	/**
@@ -49,9 +49,9 @@ public class EntityTest
 	
 	@Test
 	public void overlapsEntity(){
-		Entity ent1 = new MockEntity();
-		Entity ent2 = new MockEntity();
-		Entity ent3 = new MockEntity();
+		OldEntity ent1 = new MockEntity();
+		OldEntity ent2 = new MockEntity();
+		OldEntity ent3 = new MockEntity();
 		ent1.setTransform(16, 16, 0);
 		ent2.setTransform(16, 32, 0);
 		ent3.setTransform(60, 60, 0);
@@ -118,7 +118,7 @@ public class EntityTest
 	@Test
 	public void addController()
 	{
-		Entity tank = new Tank();
+		OldEntity tank = new Tank();
 		tank.addController(mock(Controller.class));
 		assertEquals(1, tank.getControllerCount());
 	}
@@ -126,7 +126,7 @@ public class EntityTest
 	@Test
 	public void updateTest()
 	{
-		Entity tank = new Tank();
+		OldEntity tank = new Tank();
 		tank.addController(new Controller() 
 		{
 			@Override
@@ -141,7 +141,7 @@ public class EntityTest
 	@Test
 	public void isDisposed()
 	{
-		Entity e = new MockEntity();
+		OldEntity e = new MockEntity();
 		assertFalse(e.isDisposed());
 	}
 

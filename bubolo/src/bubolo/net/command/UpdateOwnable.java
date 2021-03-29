@@ -14,7 +14,7 @@ import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
 import bubolo.world.Ownable;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Moves an entity in the world.
@@ -46,7 +46,7 @@ public class UpdateOwnable implements NetworkCommand
 	{
 		try
 		{
-			Entity entity = world.getEntity(id);
+			OldEntity entity = world.getEntity(id);
 			Ownable ownable = (Ownable)entity;
 			ownable.setOwnerId(this.ownerId);
 		}

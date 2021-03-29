@@ -6,7 +6,7 @@ import bubolo.util.TileUtil;
 import bubolo.world.Damageable;
 import bubolo.world.World;
 import bubolo.world.entity.Effect;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * MineExplosions are created when mines blow up! They're large, and create Craters on top of
@@ -76,7 +76,7 @@ public class MineExplosion extends Effect
 	{
 		if((EXPLOSION_LENGTH + this.explosionStart) > System.currentTimeMillis())
 		{
-			for(Entity collider:TileUtil.getLocalCollisions(this, world))
+			for(OldEntity collider:TileUtil.getLocalCollisions(this, world))
 			{
 				if (collider instanceof Damageable)
 				{

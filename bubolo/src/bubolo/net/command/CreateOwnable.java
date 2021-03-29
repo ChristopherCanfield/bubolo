@@ -13,7 +13,7 @@ import bubolo.Config;
 import bubolo.util.GameLogicException;
 import bubolo.world.Ownable;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Creates an ownable entity on remote computers.
@@ -42,7 +42,7 @@ public class CreateOwnable extends CreateEntity
 	 * @param ownerId
 	 *            the id of the entity that owns the ownable.
 	 */
-	public CreateOwnable(Class<? extends Entity> type, UUID id, float x, float y, float rotation, UUID ownerId)
+	public CreateOwnable(Class<? extends OldEntity> type, UUID id, float x, float y, float rotation, UUID ownerId)
 	{
 		super(type, id, x, y, rotation);
 		this.ownerId = ownerId;

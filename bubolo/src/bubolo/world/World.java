@@ -7,7 +7,7 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Tank;
 
 /**
@@ -27,7 +27,7 @@ public interface World
 	 * @throws GameLogicException
 	 *             if the entity is not found.
 	 */
-	public Entity getEntity(UUID id) throws GameLogicException;
+	public OldEntity getEntity(UUID id) throws GameLogicException;
 
 	/**
 	 * Returns the list of all entities in the world. Ordering should not be assumed, and may change
@@ -35,7 +35,7 @@ public interface World
 	 *
 	 * @return the list of entities.
 	 */
-	public List<Entity> getEntities();
+	public List<OldEntity> getEntities();
 
 	/**
 	 * Returns the list of all tanks in the world. Ordering should not be assumed, and may change
@@ -51,7 +51,7 @@ public interface World
 	 *
 	 * @return the list of Spawns.
 	 */
-	public List<Entity> getSpawns();
+	public List<OldEntity> getSpawns();
 
 	/**
 	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
@@ -59,7 +59,7 @@ public interface World
 	 *
 	 * @return the list of actors.
 	 */
-	public List<Entity> getActors();
+	public List<OldEntity> getActors();
 
 	/**
 	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
@@ -67,7 +67,7 @@ public interface World
 	 *
 	 * @return the list of effects.
 	 */
-	public List<Entity> getEffects();
+	public List<OldEntity> getEffects();
 
 	/**
 	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
@@ -93,7 +93,7 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c) throws GameLogicException;
+	public <T extends OldEntity> T addEntity(Class<T> c) throws GameLogicException;
 
 	/**
 	 * @see World#addEntity(Class)
@@ -107,7 +107,7 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, @Nullable UUID id) throws GameLogicException;
+	public <T extends OldEntity> T addEntity(Class<T> c, @Nullable UUID id) throws GameLogicException;
 
 	/**
 	 * @see World#addEntity(Class)
@@ -124,7 +124,7 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, @Nullable ControllerFactory controllerFactory)
+	public <T extends OldEntity> T addEntity(Class<T> c, @Nullable ControllerFactory controllerFactory)
 			throws GameLogicException;
 
 	/**
@@ -143,7 +143,7 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, @Nullable UUID id,
+	public <T extends OldEntity> T addEntity(Class<T> c, @Nullable UUID id,
 			@Nullable ControllerFactory controllerFactory)
 			throws GameLogicException;
 
@@ -154,7 +154,7 @@ public interface World
 	 * @param e
 	 *            the entity to remove.
 	 */
-	public void removeEntity(Entity e);
+	public void removeEntity(OldEntity e);
 
 	/**
 	 * Removes an entity from the world. After this method is called, the specified entity will no

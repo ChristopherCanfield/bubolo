@@ -7,7 +7,7 @@ import java.util.UUID;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.MockEntity;
 import bubolo.world.entity.concrete.Bullet;
 
@@ -21,26 +21,26 @@ import static org.mockito.Mockito.mock;
 public class MockBulletCreator extends MockWorld
 {
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c) throws GameLogicException
+	public <T extends OldEntity> T addEntity(Class<T> c) throws GameLogicException
 	{
 		return (T) new Bullet();
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id) throws GameLogicException
+	public <T extends OldEntity> T addEntity(Class<T> c, UUID id) throws GameLogicException
 	{
 		return (T) new Bullet();
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
+	public <T extends OldEntity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
 			throws GameLogicException
 	{
 		return (T) new Bullet();
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
+	public <T extends OldEntity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
 			throws GameLogicException
 	{
 		return (T) new Bullet();

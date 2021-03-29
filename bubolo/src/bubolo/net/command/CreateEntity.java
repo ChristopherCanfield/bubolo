@@ -16,7 +16,7 @@ import bubolo.util.GameLogicException;
 import bubolo.world.Ownable;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.Terrain;
 
@@ -29,7 +29,7 @@ public class CreateEntity implements NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
-	private final Class<? extends Entity> type;
+	private final Class<? extends OldEntity> type;
 	private final UUID id;
 
 	private final int x;
@@ -53,7 +53,7 @@ public class CreateEntity implements NetworkCommand
 	 * @param rotation
 	 *            the entity's rotation.
 	 */
-	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation)
+	public CreateEntity(Class<? extends OldEntity> type, UUID id, float x, float y, float rotation)
 	{
 		this.type = type;
 		this.id = id;
@@ -79,7 +79,7 @@ public class CreateEntity implements NetworkCommand
 	 * @param factory
 	 *            factory for adding custom controllers to this entity.
 	 */
-	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation,
+	public CreateEntity(Class<? extends OldEntity> type, UUID id, float x, float y, float rotation,
 			ControllerFactory factory)
 	{
 		this.type = type;
@@ -95,7 +95,7 @@ public class CreateEntity implements NetworkCommand
 	{
 		try
 		{
-			Entity entity;
+			OldEntity entity;
 			if (factory == null) {
 				entity = world.addEntity(type, id);
 			} else {

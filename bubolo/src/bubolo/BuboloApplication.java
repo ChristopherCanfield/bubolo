@@ -25,7 +25,7 @@ import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
 import bubolo.world.GameWorld;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Tank;
 
 /**
@@ -217,11 +217,11 @@ public class BuboloApplication extends AbstractGameApplication
 	 */
 	private static Vector2 getRandomSpawn(World world)
 	{
-		List<Entity> spawns = world.getSpawns();
+		List<OldEntity> spawns = world.getSpawns();
 		if (spawns.size() > 0)
 		{
 			Random randomGenerator = new Random();
-			Entity spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+			OldEntity spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
 			return new Vector2(spawn.getX(), spawn.getY());
 		}
 		return null;

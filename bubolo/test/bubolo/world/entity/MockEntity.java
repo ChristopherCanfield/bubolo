@@ -3,7 +3,7 @@ package bubolo.world.entity;
 import java.util.UUID;
 
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Dummy Entity class for unit testing methods without any Graphics involvement. This allows the
@@ -11,7 +11,7 @@ import bubolo.world.entity.Entity;
  * 
  * @author BU CS673 - Clone Productions
  */
-public class MockEntity extends Entity
+public class MockEntity extends OldEntity
 {
 	/**
 	 * Used in serialization/de-serialization.

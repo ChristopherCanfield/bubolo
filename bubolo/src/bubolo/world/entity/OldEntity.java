@@ -18,7 +18,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public abstract class Entity implements Serializable, Drawable
+public abstract class OldEntity implements Serializable, Drawable
 {
 	// Used when serializing and deserializing.
 	private static final long serialVersionUID = -7558368147503376322L;
@@ -56,7 +56,7 @@ public abstract class Entity implements Serializable, Drawable
 	 * @param newID
 	 *            is the existing UUID to be assigned to the new Entity.
 	 */
-	public Entity(UUID newID)
+	public OldEntity(UUID newID)
 	{
 		updateBounds();
 		myID = newID;
@@ -73,7 +73,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the initial rotation in radians.
 	 * @return a reference to this Entity.
 	 */
-	public Entity setTransform(float x, float y, float rot)
+	public OldEntity setTransform(float x, float y, float rot)
 	{
 		setX(x);
 		setY(y);
@@ -93,7 +93,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the initial rotation in radians.
 	 * @return a reference to this Entity.
 	 */
-	public Entity setTransform(float x, float y, double rot) {
+	public OldEntity setTransform(float x, float y, double rot) {
 		return setTransform(x, y, (float) rot);
 	}
 
@@ -104,31 +104,12 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the Entity that this Entity should be checked against.
 	 * @return true if this Entity overlaps with the Entity specified, false otherwise.
 	 */
-	public boolean overlapsEntity(Entity e)
+	public boolean overlapsEntity(OldEntity e)
 	{
 		updateBounds();
 		e.updateBounds();
 		return Intersector.overlapConvexPolygons(bounds, e.getBounds());
 	}
-
-	/**
-	 * Returns a list of all of the Entities that this Entity overlaps with. Currently checks all
-	 * Entities found in the given world, and could be optimized to check only Entities within a
-	 * reasonable range -- StationaryEntities found in the tiles surrounding this Entity's position
-	 * and all Effects and Actors, which are mobile.
-	 *
-	 * @param w
-	 *            is the World object where this Entity is contained.
-	 * @return a list of all of the Entities which this Entity overlaps with.
-	 */
-	// TODO: Unit test and implement this method for generally getting collisions for an Entity.
-	// Currently unimplemented, needs unit tests and use cases!
-	/*
-	 * protected List<Entity> getOverlappingEntities(World w) { ArrayList<Entity> intersects = new
-	 * ArrayList<Entity>(); List<Entity> allEntities = w.getEntities(); for (int ii = 0; ii <
-	 * allEntities.size(); ii++) { if (overlapsEntity(allEntities.get(ii))) {
-	 * intersects.add(allEntities.get(ii)); } } return intersects; }
-	 */
 
 	/**
 	 * The Entity's unique id.
@@ -209,7 +190,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is true if the Entity should be considered "solid", false otherwise.
 	 * @return a reference to this Entity, for chaining.
 	 */
-	protected Entity setSolid(boolean solidity)
+	protected OldEntity setSolid(boolean solidity)
 	{
 		solid = solidity;
 		return this;
@@ -254,7 +235,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the desired rotation state of this Entity in radians.
 	 * @return this Entity, after the rotation action has been completed.
 	 */
-	public Entity setRotation(float newRotation)
+	public OldEntity setRotation(float newRotation)
 	{
 		float procRotation = newRotation;
 		if (newRotation < 0)
@@ -273,7 +254,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the desired rotation state of this Entity in radians.
 	 * @return this Entity, after the rotation action has been completed.
 	 */
-	public Entity setRotation(double newRotation)
+	public OldEntity setRotation(double newRotation)
 	{
 		return setRotation((float) newRotation);
 	}
@@ -286,7 +267,7 @@ public abstract class Entity implements Serializable, Drawable
 	 * @return this Entity.
 	 */
 
-	public Entity setX(float x)
+	public OldEntity setX(float x)
 	{
 		xPos = x;
 		updateBounds();
@@ -300,7 +281,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the desired y position in world coordinates.
 	 * @return this Entity.
 	 */
-	public Entity setY(float y)
+	public OldEntity setY(float y)
 	{
 		yPos = y;
 		updateBounds();
@@ -314,7 +295,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the desired Entity width in world coordinates.
 	 * @return this Entity.
 	 */
-	public Entity setWidth(int size)
+	public OldEntity setWidth(int size)
 	{
 		width = size;
 		return this;
@@ -327,7 +308,7 @@ public abstract class Entity implements Serializable, Drawable
 	 *            is the desired Entity height in world coordinates.
 	 * @return this Entity.
 	 */
-	public Entity setHeight(int size)
+	public OldEntity setHeight(int size)
 	{
 		height = size;
 		return this;

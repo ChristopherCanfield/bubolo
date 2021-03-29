@@ -13,7 +13,7 @@ import bubolo.util.TileUtil;
 import bubolo.world.Damageable;
 import bubolo.world.World;
 import bubolo.world.entity.Effect;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Bullets are shot by Tanks and Pillboxes, and can cause damage to StationaryElements and other
@@ -49,7 +49,7 @@ public class Bullet extends Effect
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
 
-	private Entity parent = null;
+	private OldEntity parent = null;
 
 	/**
 	 * Construct a new Bullet with a random UUID.
@@ -120,7 +120,7 @@ public class Bullet extends Effect
 	 * @return
 	 * 		the entity that spawned this bullet
 	 */
-	public Entity getParent()
+	public OldEntity getParent()
 	{
 		return this.parent;
 	}
@@ -129,7 +129,7 @@ public class Bullet extends Effect
 	 * @param parent
 	 * 		the entity to set as the parent of this bullet
 	 */
-	public void setParent(Entity parent)
+	public void setParent(OldEntity parent)
 	{
 		this.parent = parent;
 
@@ -152,7 +152,7 @@ public class Bullet extends Effect
 
 		distanceTraveled += (Math.abs(movementX) + Math.abs(movementY));
 
-		for(Entity collider:getLookaheadEntities(world))
+		for(OldEntity collider:getLookaheadEntities(world))
 		{
 			if (collider instanceof Damageable)
 			{
@@ -182,11 +182,11 @@ public class Bullet extends Effect
 	 * Returns a list of all Entities that would overlap with this Tank if it was where it
 	 * will be in one game tick, along its current trajectory.
 	 */
-	private List<Entity> getLookaheadEntities(World w)
+	private List<OldEntity> getLookaheadEntities(World w)
 	{
-		ArrayList<Entity> intersects = new ArrayList<Entity>();
+		ArrayList<OldEntity> intersects = new ArrayList<OldEntity>();
 
-		for (Entity localEntity: TileUtil.getLocalEntities(getX(),getY(), w))
+		for (OldEntity localEntity: TileUtil.getLocalEntities(getX(),getY(), w))
 		{
 			if (localEntity!=this && localEntity!=this.parent)
 			{

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Bullet;
 import bubolo.world.entity.concrete.Tank;
 
@@ -32,7 +32,7 @@ public class CreateBulletTest
 		Bullet bullet = new Bullet();
 		world.add(bullet);
 		
-		Entity tank = new Tank();
+		OldEntity tank = new Tank();
 		world.add(tank);
 		
 		NetworkCommand command = new CreateBullet(bullet.getClass(), bullet.getId(), bullet.getX(), 

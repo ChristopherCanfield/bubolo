@@ -11,7 +11,7 @@ import bubolo.world.World;
  * 
  * @author BU CS673 - Clone Productions
  */
-public abstract class Effect extends Entity
+public abstract class Effect extends OldEntity
 {
 
 	/**

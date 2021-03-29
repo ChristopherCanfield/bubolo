@@ -6,7 +6,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
 import bubolo.util.TileUtil;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Tank;
 
@@ -64,7 +64,7 @@ public class AiBaseController implements Controller
 	public void update(World world)
 	{
 		base.setCharging(false);
-		for (Entity entity : TileUtil.getLocalCollisions(base, world))
+		for (OldEntity entity : TileUtil.getLocalCollisions(base, world))
 		{
 			if (entity instanceof Tank tank)
 			{

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Tank;
 import bubolo.world.entity.concrete.Wall;
@@ -103,7 +103,7 @@ public class TileUtilTest
 	@Test
 	public void getEntityTile()
 	{
-		Entity entity = new Tank().setTransform(31, 42, 0);
+		OldEntity entity = new Tank().setTransform(31, 42, 0);
 		Tile tile = TileUtil.getEntityTile(entity, world);
 		assertEquals("returned incorrect tile", 0, tile.getGridX());
 		assertEquals("returned incorrect tile", 1, tile.getGridY());

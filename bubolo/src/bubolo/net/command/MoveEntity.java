@@ -14,7 +14,7 @@ import bubolo.Config;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Moves an entity in the world.
@@ -38,7 +38,7 @@ public class MoveEntity implements NetworkCommand
 	 * @param entity
 	 *            the entity to move.
 	 */
-	public MoveEntity(Entity entity)
+	public MoveEntity(OldEntity entity)
 	{
 		this.id = entity.getId();
 		this.x = (int)entity.getX();
@@ -51,7 +51,7 @@ public class MoveEntity implements NetworkCommand
 	{
 		try
 		{
-			Entity entity = world.getEntity(id);
+			OldEntity entity = world.getEntity(id);
 			entity.setX(x).setY(y).setRotation(rotation);
 		}
 		catch (GameLogicException e)

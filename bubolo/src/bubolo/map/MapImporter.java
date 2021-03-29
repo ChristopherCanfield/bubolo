@@ -26,7 +26,7 @@ import bubolo.world.EntityCreationObserver;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.Terrain;
 import bubolo.world.entity.concrete.Base;
@@ -47,6 +47,7 @@ import bubolo.world.entity.concrete.Water;
  * Imports the Tiled-generated map.
  *
  * @author Christopher D. Canfield
+ * @since 0.4.0
  */
 public class MapImporter {
 	/**
@@ -58,7 +59,7 @@ public class MapImporter {
 		/**
 		 * Map of tile IDs to Entity creation functions. The tile ID is the tile's gid minus the tileset's firstGid.
 		 */
-		final Map<Integer, Function<World, Entity>> tiles = new HashMap<>();
+		final Map<Integer, Function<World, OldEntity>> tiles = new HashMap<>();
 
 		int firstGid;
 
@@ -306,7 +307,7 @@ public class MapImporter {
 			for (Tileset ts : tilesets.values()) {
 				// Add the entity if it is known to this tileset.
 				if (ts.isGidInThisTileset(tileGid)) {
-					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world);
+					OldEntity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world);
 					// The game world is flipped from json map indexes.
 					int gridY = mapHeightTiles - row - 1;
 					int gridX = col;

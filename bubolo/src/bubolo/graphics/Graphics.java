@@ -26,7 +26,7 @@ import bubolo.ui.Screen;
 import bubolo.util.Coords;
 import bubolo.world.EntityCreationObserver;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * The top-level class for the Graphics system.
@@ -166,7 +166,7 @@ public class Graphics implements EntityCreationObserver
 	}
 
 	@Override
-	public void onEntityCreated(Entity entity) {
+	public void onEntityCreated(OldEntity entity) {
 		spriteSystem.createSprite(entity);
 	}
 

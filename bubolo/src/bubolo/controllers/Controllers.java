@@ -8,7 +8,7 @@ import bubolo.controllers.ai.AiMineController;
 import bubolo.controllers.ai.AiPillboxController;
 import bubolo.controllers.input.KeyboardTankController;
 import bubolo.util.Nullable;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.Pillbox;
@@ -21,7 +21,7 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class Controllers
 {
-	private Map<Class<? extends Entity>, ControllerFactory> defaultFactories;
+	private Map<Class<? extends OldEntity>, ControllerFactory> defaultFactories;
 
 	private static Controllers instance;
 
@@ -57,7 +57,7 @@ public class Controllers
 	 * @param factory
 	 *            reference to a controller factory, or null if the default behavior should be used.
 	 */
-	public void createController(Entity entity, @Nullable ControllerFactory factory)
+	public void createController(OldEntity entity, @Nullable ControllerFactory factory)
 	{
 		ControllerFactory controllerFactory = factory;
 		if (controllerFactory == null)
@@ -76,9 +76,9 @@ public class Controllers
 	 * 
 	 * @return reference to the ControllerFactory map.
 	 */
-	private static Map<Class<? extends Entity>, ControllerFactory> setDefaultControllerFactories()
+	private static Map<Class<? extends OldEntity>, ControllerFactory> setDefaultControllerFactories()
 	{
-		Map<Class<? extends Entity>, ControllerFactory> factories = new HashMap<>();
+		Map<Class<? extends OldEntity>, ControllerFactory> factories = new HashMap<>();
 
 		// TODO: Add default factories here.
 
@@ -86,7 +86,7 @@ public class Controllers
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void create(Entity entity)
+			public void create(OldEntity entity)
 			{
 				entity.addController(new KeyboardTankController((Tank)entity));
 			}
@@ -96,7 +96,7 @@ public class Controllers
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void create(Entity entity)
+			public void create(OldEntity entity)
 			{
 				entity.addController(new AiPillboxController((Pillbox)entity));
 			}
@@ -106,7 +106,7 @@ public class Controllers
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void create(Entity entity)
+			public void create(OldEntity entity)
 			{
 				entity.addController(new AiMineController((Mine)entity));
 			}
@@ -116,7 +116,7 @@ public class Controllers
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void create(Entity entity)
+			public void create(OldEntity entity)
 			{
 				entity.addController(new AiBaseController((Base)entity));
 			}

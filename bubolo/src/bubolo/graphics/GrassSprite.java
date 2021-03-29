@@ -4,14 +4,14 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 
 /**
  * The graphical representation of grass entity.
  *
  * @author BU673 - Clone Industries
  */
-class GrassSprite extends AbstractEntitySprite<Entity>
+class GrassSprite extends AbstractEntitySprite<OldEntity>
 {
 	private final Texture image;
 
@@ -27,7 +27,7 @@ class GrassSprite extends AbstractEntitySprite<Entity>
 	 * @param grass
 	 *            Reference to the Grass that this GrassSprite represents.
 	 */
-	GrassSprite(Entity grass)
+	GrassSprite(OldEntity grass)
 	{
 		super(DrawLayer.FIRST, grass);
 

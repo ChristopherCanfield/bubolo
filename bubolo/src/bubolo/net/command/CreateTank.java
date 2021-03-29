@@ -12,7 +12,7 @@ import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.net.NetworkTankController;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Tank;
 
 /**
@@ -37,7 +37,7 @@ public class CreateTank extends CreateEntity
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void create(Entity entity)
+					public void create(OldEntity entity)
 					{
 						entity.addController(new NetworkTankController());
 					}

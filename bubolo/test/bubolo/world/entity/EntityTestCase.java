@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.junit.Test;
 
 import bubolo.world.Tile;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Grass;
 
 public class EntityTestCase
@@ -25,7 +25,7 @@ public class EntityTestCase
 	
 	static Tile TARGET_TILE= new Tile(2, 3, new Grass());
 
-	public static Entity setTestParams(Entity e)
+	public static OldEntity setTestParams(OldEntity e)
 	{
 		return e.setTransform(TARGET_X, TARGET_Y, TARGET_ROT);
 	}
@@ -36,7 +36,7 @@ public class EntityTestCase
 	 * 
 	 * @return true if the Entities match each other and false if they do not.
 	 */
-	public static boolean matches(Entity e1, Entity e2)
+	public static boolean matches(OldEntity e1, OldEntity e2)
 	{
 		if (!e1.getId().equals(e2.getId()) || e1.getX() != e2.getX() || e1.getY() != e2.getY()
 				|| e1.getWidth() != e2.getWidth() || e1.getHeight() != e2.getHeight()
@@ -53,7 +53,7 @@ public class EntityTestCase
 	 * 
 	 * @return true if the Entities match each other and false if they do not.
 	 */
-	public static boolean matches_NO_UUID(Entity e1, Entity e2)
+	public static boolean matches_NO_UUID(OldEntity e1, OldEntity e2)
 	{
 		if (e1.getX() != e2.getX() || e1.getY() != e2.getY() || e1.getWidth() != e2.getWidth()
 				|| e1.getHeight() != e2.getHeight() || e1.getRotation() != e2.getRotation())

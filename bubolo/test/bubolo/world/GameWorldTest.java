@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.ai.AiTreeController;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Bullet;
 import bubolo.world.entity.concrete.Crater;
@@ -208,7 +208,7 @@ public class GameWorldTest
 	public void testGetEntity()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		Entity t = world.addEntity(Tank.class);
+		OldEntity t = world.addEntity(Tank.class);
 
 		assertEquals(t, world.getEntity(t.getId()));
 	}
@@ -217,7 +217,7 @@ public class GameWorldTest
 	public void testGetEntities()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		Entity t = world.addEntity(Tank.class);
+		OldEntity t = world.addEntity(Tank.class);
 		world.update();
 
 		assertEquals(1, world.getEntities().size());
@@ -228,7 +228,7 @@ public class GameWorldTest
 	public void testRemoveEntity_Entity()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		Entity t = world.addEntity(Tank.class);
+		OldEntity t = world.addEntity(Tank.class);
 
 		world.update();
 		assertTrue(world.getEntities().contains(t));
@@ -242,7 +242,7 @@ public class GameWorldTest
 	public void testRemoveEntity_UUID()
 	{
 		GameWorld world = new GameWorld(1, 2);
-		Entity t = world.addEntity(Tank.class);
+		OldEntity t = world.addEntity(Tank.class);
 
 		world.update();
 		assertTrue(world.getEntities().contains(t));
@@ -301,7 +301,7 @@ public class GameWorldTest
 	public void testAddEntity()
 	{
 		World w = new GameWorld(0,0);
-		Entity e = new Grass();
+		OldEntity e = new Grass();
 		ControllerFactory c;
 		c = null;
 		w.addEntity(e.getClass(), e.getId());

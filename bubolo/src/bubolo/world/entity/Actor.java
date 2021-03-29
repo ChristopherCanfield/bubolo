@@ -9,7 +9,7 @@ import bubolo.world.Ownable;
  *
  * @author BU CS673 - Clone Productions
  */
-public abstract class Actor extends Entity implements Ownable
+public abstract class Actor extends OldEntity implements Ownable
 {
 
 	/**

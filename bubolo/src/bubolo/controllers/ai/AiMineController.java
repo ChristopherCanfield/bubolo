@@ -6,7 +6,7 @@ import bubolo.controllers.Controller;
 import bubolo.util.TileUtil;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
+import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.MineExplosion;
@@ -36,7 +36,7 @@ public class AiMineController implements Controller
 	@Override
 	public void update(World world)
 	{
-		for(Entity collider : TileUtil.getLocalEntities(mine.getX(),mine.getY(), world))
+		for(OldEntity collider : TileUtil.getLocalEntities(mine.getX(),mine.getY(), world))
 		{
 			if (mine.isActive() &&
 					collider.isSolid() && collider != mine
