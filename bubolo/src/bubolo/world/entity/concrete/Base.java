@@ -21,10 +21,6 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	 * the uid of the tank that owns this Base
 	 */
 	private UUID ownerUID;
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = 7700096718365746352L;
 
 	/**
 	 * Boolean representing whether this Base belongs to the local player.

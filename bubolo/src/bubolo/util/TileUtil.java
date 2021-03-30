@@ -13,7 +13,7 @@ import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 
 /**
  * This utility provides various functions for working with Tile objects based on their
@@ -182,7 +182,7 @@ public abstract class TileUtil
 
 	private static boolean containsTargetTerrain(Tile targetTile, Class<?>[] targetClasses)
 	{
-		Class<? extends Terrain> tileClass = targetTile.getTerrain().getClass();
+		Class<? extends OldTerrain> tileClass = targetTile.getTerrain().getClass();
 		for (int i = 0; i < targetClasses.length; i++)
 		{
 			if (targetClasses[i].equals(tileClass))
@@ -330,7 +330,7 @@ public abstract class TileUtil
 	 * @param w the world that the entity wants the tile from
 	 * @return a tile from the world
 	 */
-	public static Terrain getTileTerrain(float x, float y, World w)
+	public static OldTerrain getTileTerrain(float x, float y, World w)
 	{
 		Tile[][] mapTiles = w.getTiles();
 		if(mapTiles == null)

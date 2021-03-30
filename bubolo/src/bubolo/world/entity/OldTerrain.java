@@ -8,7 +8,7 @@ import java.util.UUID;
  * 
  * @author BU CS673 - Clone Productions
  */
-public abstract class Terrain extends StationaryEntity
+public abstract class OldTerrain extends StationaryEntity
 {
 
 	/**
@@ -26,7 +26,7 @@ public abstract class Terrain extends StationaryEntity
 	 * @param maxSpeedModifier
 	 *            the percentage factor for capping an objects speed while traversing this terrain.
 	 */
-	public Terrain(UUID id, float maxSpeedModifier)
+	public OldTerrain(UUID id, float maxSpeedModifier)
 	{
 		super(id);
 		this.maxSpeedModifier = maxSpeedModifier;

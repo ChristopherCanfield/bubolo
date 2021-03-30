@@ -1,11 +1,9 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
-import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
+import bubolo.world.StaticEntity;
+import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
-import bubolo.world.entity.StationaryElement;
 
 /**
  * Craters are created when another Terrain type is blown up using a Mine. They reduce Tank movement
@@ -13,13 +11,8 @@ import bubolo.world.entity.StationaryElement;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Crater extends StationaryElement implements Adaptable
+public class Crater extends StaticEntity implements TerrainImprovement, Adaptable
 {
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = -6010471913649546792L;
-
 	private int tilingState = 0;
 
 	/**
@@ -28,39 +21,26 @@ public class Crater extends StationaryElement implements Adaptable
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Crater.class, Water.class };
 
-	/**
-	 * Construct a new Crater with a random UUID.
-	 */
-	public Crater()
+	private static final float speedModifier = 1.25f;
+
+	private static final int width = 32;
+	private static final int height = 32;
+
+	public Crater(ConstructionArgs args)
 	{
-		this(UUID.randomUUID());
+		super(args, width, height);
 	}
 
-	/**
-	 * Construct a new Crater with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Grass.
-	 */
-	public Crater(UUID id)
-	{
-		super(id);
-		setWidth(32);
-		setHeight(32);
-		updateBounds();
+	@Override
+	public float speedModifier() {
+		return speedModifier;
 	}
 
 	@Override
 	public void updateTilingState(World w)
 	{
-		var tile = getTile();
-		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
-	}
-
-	@Override
-	public void update(World w)
-	{
-		updateTilingState(w);
+		//var tile = getTile();
+		//tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
 	}
 
 	@Override

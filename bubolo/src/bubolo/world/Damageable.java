@@ -7,11 +7,11 @@ package bubolo.world;
  */
 public interface Damageable
 {
-	public int getHeight();
-	public int getWidth();
+	public int height();
+	public int width();
 
-	public float getX();
-	public float getY();
+	public float x();
+	public float y();
 
 	/**
 	 * Returns the current health of the tank

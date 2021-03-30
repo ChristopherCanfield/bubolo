@@ -8,7 +8,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateEntity;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Tree;
 
@@ -146,7 +146,7 @@ public class AiTreeController implements Controller
 		}
 		else
 		{
-			Terrain terrain = tile.getTerrain();
+			OldTerrain terrain = tile.getTerrain();
 
 			// Trees will grow on grass.
 			if (!tile.hasElement() && terrain.getClass() == Grass.class)
@@ -191,7 +191,7 @@ public class AiTreeController implements Controller
 
 		if (!tile.hasElement())
 		{
-			Terrain terrain = tile.getTerrain();
+			OldTerrain terrain = tile.getTerrain();
 			if (terrain.getClass() == Grass.class)
 			{
 				score = grassScore/8;

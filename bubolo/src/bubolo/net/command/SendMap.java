@@ -13,7 +13,7 @@ import bubolo.net.NetworkCommand;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 
 /**
  * Command that is used to send the game map to a client.
@@ -73,7 +73,7 @@ public class SendMap implements NetworkCommand
 
 		for (final TileInfo t : tiles)
 		{
-			Terrain terrain = world.addEntity(t.getTerrainClass(), t.getTerrainId());
+			OldTerrain terrain = world.addEntity(t.getTerrainClass(), t.getTerrainId());
 			terrain.setRotation((float)Math.PI / 2.f);
 			mapTiles[t.getGridX()][t.getGridY()] = new Tile(
 					t.getGridX(),
@@ -104,14 +104,14 @@ public class SendMap implements NetworkCommand
 		private final int gridX;
 		private final int gridY;
 
-		private final Class<? extends Terrain> terrainClass;
+		private final Class<? extends OldTerrain> terrainClass;
 		private final UUID terrainId;
 
 		private final Class<? extends StationaryElement> stationaryElementClass;
 		private final UUID stationaryElementId;
 
 		private TileInfo(int gridX, int gridY,
-				Class<? extends Terrain> terrainClass, UUID terrainId,
+				Class<? extends OldTerrain> terrainClass, UUID terrainId,
 				Class<? extends StationaryElement> stationaryElementClass,
 				UUID stationaryElementId)
 		{
@@ -158,7 +158,7 @@ public class SendMap implements NetworkCommand
 		 *
 		 * @return the terrain class.
 		 */
-		private Class<? extends Terrain> getTerrainClass()
+		private Class<? extends OldTerrain> getTerrainClass()
 		{
 			return terrainClass;
 		}

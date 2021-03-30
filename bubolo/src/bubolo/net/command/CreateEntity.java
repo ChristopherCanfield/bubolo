@@ -18,7 +18,7 @@ import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 
 /**
  * Generic entity creator for the network.
@@ -105,7 +105,7 @@ public class CreateEntity implements NetworkCommand
 			entity.setX(x).setY(y).setRotation(rotation);
 
 			Tile tile = world.getTileFromWorldPosition(x, y);
-			if (entity instanceof Terrain terrain) {
+			if (entity instanceof OldTerrain terrain) {
 				tile.setTerrain(terrain, world);
 			} else if (entity instanceof StationaryElement stationaryElement) {
 				tile.setElement(stationaryElement, world);

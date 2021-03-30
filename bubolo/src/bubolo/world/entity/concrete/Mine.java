@@ -19,10 +19,6 @@ public class Mine extends StationaryElement implements Ownable
 	 * the UID of the Tank that owns this Mine
 	 */
 	private UUID ownerUID;
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = -4956203172414751370L;
 
 	/**
 	 * Boolean representing whether this Mine belongs to the local player.

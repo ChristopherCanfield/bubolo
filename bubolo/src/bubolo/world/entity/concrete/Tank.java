@@ -20,8 +20,8 @@ import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.Actor;
 import bubolo.world.entity.OldEntity;
+import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
 
 /**
  * The tank, which may be controlled by a local player, a networked player, or an AI bot.
@@ -30,11 +30,6 @@ import bubolo.world.entity.Terrain;
  */
 public class Tank extends Actor implements Damageable
 {
-	/**
-	 * Used when serializing and de-serializing.
-	 */
-	private static final long serialVersionUID = 457933513574468829L;
-
 	private String playerName;
 
 	// Max speed in pixels per tick.
@@ -511,7 +506,7 @@ public class Tank extends Actor implements Damageable
 	 */
 	private void moveTank(World world)
 	{
-		Terrain currentTerrain = TileUtil.getTileTerrain(getX(), getY(), world);
+		OldTerrain currentTerrain = TileUtil.getTileTerrain(getX(), getY(), world);
 		if (currentTerrain != null)
 		{
 			modifiedMaxSpeed = maxSpeed * currentTerrain.getMaxSpeedModifier();

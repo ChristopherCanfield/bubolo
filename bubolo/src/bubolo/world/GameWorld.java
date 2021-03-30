@@ -20,7 +20,7 @@ import bubolo.world.entity.Actor;
 import bubolo.world.entity.Effect;
 import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
@@ -308,7 +308,7 @@ public class GameWorld implements World
 		for (int i = 0; i < 2; i++) {
 			for (Tile[] tiles : mapTiles) {
 				for (Tile tile : tiles) {
-					Terrain terrain = tile.getTerrain();
+					OldTerrain terrain = tile.getTerrain();
 					updateTilingStateIfAdaptable(this, terrain);
 
 					if (tile.hasElement()) {

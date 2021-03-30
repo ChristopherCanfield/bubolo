@@ -23,11 +23,6 @@ import bubolo.world.entity.OldEntity;
  */
 public class Bullet extends Effect
 {
-	/**
-	 * Used when serializing and de-serializing.
-	 */
-	private static final long serialVersionUID = -9153862417398330898L;
-
 	// The max distance the bullet can travel, in world units.
 	private static final float MAX_DISTANCE = 600;
 

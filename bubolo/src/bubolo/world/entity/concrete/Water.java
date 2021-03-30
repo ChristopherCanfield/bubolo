@@ -1,11 +1,8 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
-import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
+import bubolo.world.Terrain;
 import bubolo.world.World;
-import bubolo.world.entity.Terrain;
 
 /**
  * Water terrain can be crossed by a Tank, but can deal damage over time.
@@ -14,11 +11,6 @@ import bubolo.world.entity.Terrain;
  */
 public class Water extends Terrain implements Adaptable
 {
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = 7556626906247082191L;
-
 	private int tilingState = 0;
 
 	private boolean[] cornerMatches = new boolean[4];
@@ -32,45 +24,25 @@ public class Water extends Terrain implements Adaptable
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
 	 */
-	private static final float MAX_SPEED_MODIFIER = 0.4f;
+	private static final float speedModifier = 0.4f;
 
-	/**
-	 * Construct a new Water with a random UUID.
-	 */
-	public Water()
-	{
-		this(UUID.randomUUID());
-	}
+	private static final int width = 32;
+	private static final int height = 32;
 
-	/**
-	 * Construct a new Water with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Grass.
-	 */
-	public Water(UUID id)
+	public Water(ConstructionArgs args)
 	{
-		super(id, MAX_SPEED_MODIFIER);
-		setWidth(32);
-		setHeight(32);
-		updateBounds();
-	}
-
-	@Override
-	public void update(World w)
-	{
-		super.update(w);
+		super(args, width, height, speedModifier);
 	}
 
 	@Override
 	public void updateTilingState(World w)
 	{
-		if (getTile() != null) {
-			tilingState = TileUtil.getTilingState(this.getTile(), w, matchingTypes);
-			cornerMatches = TileUtil.getCornerMatches(this.getTile(), w, matchingTypes);
-		} else {
-			tilingState = 0;
-		}
+//		if (getTile() != null) {
+//			tilingState = TileUtil.getTilingState(this.getTile(), w, matchingTypes);
+//			cornerMatches = TileUtil.getCornerMatches(this.getTile(), w, matchingTypes);
+//		} else {
+//			tilingState = 0;
+//		}
 	}
 
 	/**

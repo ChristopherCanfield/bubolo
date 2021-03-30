@@ -1,40 +1,29 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
-import bubolo.world.entity.StationaryElement;
+import bubolo.world.StaticEntity;
+import bubolo.world.TerrainImprovement;
 
 /**
  * Rubble is created when structures (like Walls) are destroyed.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Rubble extends StationaryElement
+public class Rubble extends StaticEntity implements TerrainImprovement
 {
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = 6510667006657276377L;
+	private static final float speedModifier = 0.6f;
+	private static final int width = 32;
+	private static final int height = 32;
 
 	/**
 	 * Construct a new Rubble with a random UUID.
 	 */
-	public Rubble()
+	public Rubble(ConstructionArgs args)
 	{
-		this(UUID.randomUUID());
+		super(args, width, height);
 	}
 
-	/**
-	 * Construct a new Rubble with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Grass.
-	 */
-	public Rubble(UUID id)
-	{
-		super(id);
-		setWidth(32);
-		setHeight(32);
-		updateBounds();
+	@Override
+	public float speedModifier() {
+		return speedModifier;
 	}
 }

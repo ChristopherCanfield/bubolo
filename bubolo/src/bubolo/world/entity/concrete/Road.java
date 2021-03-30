@@ -1,11 +1,8 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
-import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
+import bubolo.world.Terrain;
 import bubolo.world.World;
-import bubolo.world.entity.Terrain;
 
 /**
  * Road is a Terrain type that offers tanks improved movement speed.
@@ -14,11 +11,6 @@ import bubolo.world.entity.Terrain;
  */
 public class Road extends Terrain implements Adaptable
 {
-	/**
-	 * Used when serializing and de-serializing.
-	 */
-	private static final long serialVersionUID = -5302600252810938564L;
-
 	private int tilingState = 0;
 
 	/**
@@ -30,41 +22,24 @@ public class Road extends Terrain implements Adaptable
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
 	 */
-	private static final float MAX_SPEED_MODIFIER = 1.25F;
+	private static final float speedModifier = 1.25f;
+
+	private static final int width = 32;
+	private static final int height = 32;
 
 	/**
 	 * Construct a new Road with a random UUID.
 	 */
-	public Road()
+	public Road(ConstructionArgs args)
 	{
-		this(UUID.randomUUID());
-	}
-
-	/**
-	 * Construct a new Road with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Road.
-	 */
-	public Road(UUID id)
-	{
-		super(id, MAX_SPEED_MODIFIER);
-		setWidth(32);
-		setHeight(32);
-		updateBounds();
-	}
-
-	@Override
-	public void update(World w)
-	{
-		super.update(w);
+		super(args, width, height, speedModifier);
 	}
 
 	@Override
 	public void updateTilingState(World w)
 	{
-		var tile = getTile();
-		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
+//		var tile = getTile();
+//		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
 	}
 
 	@Override

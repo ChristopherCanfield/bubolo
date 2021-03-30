@@ -1,64 +1,48 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.world.Damageable;
-import bubolo.world.World;
-import bubolo.world.entity.StationaryElement;
+import bubolo.world.StaticEntity;
+import bubolo.world.TerrainImprovement;
 
 /**
  * Trees are StationaryElements that can spread over time, and hide Tanks that drive over them.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Tree extends StationaryElement implements Damageable
+public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 {
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = 4072369464678115753L;
-
 	/**
 	 * The health of the tree
 	 */
-	private float hitPoints;
+	private float hitPoints = maxHitPoints;
 
 	/**
 	 * The maximum amount of hit points of the tree
 	 */
-	public static final int MAX_HIT_POINTS = 1;
+	public static final int maxHitPoints = 1;
 
-	/**
-	 * Construct a new Tree with a random UUID.
-	 */
-	public Tree()
-	{
-		this(UUID.randomUUID());
+	private static final float speedModifier = 1.25f;
+
+	private static final int width = 32;
+	private static final int height = 32;
+
+	public Tree(ConstructionArgs args) {
+		super(args, width, height);
 	}
 
-	/**
-	 * Construct a new Tree with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Tree.
-	 */
-	public Tree(UUID id)
-	{
-		super(id);
-		setWidth(32);
-		setHeight(32);
-		updateBounds();
-		hitPoints = MAX_HIT_POINTS;
-	}
+//	@Override
+//	public void update(World world) {
+//		if(hitPoints <= 0) {
+//			getTile().clearElement(world);
+//			world.removeEntity(this);
+//		}
+//	}
 
 	@Override
-	public void update(World world) {
-		if(hitPoints <= 0) {
-			getTile().clearElement(world);
-			world.removeEntity(this);
-		}
+	public float speedModifier() {
+		return speedModifier;
 	}
 
 	/**
@@ -79,7 +63,7 @@ public class Tree extends StationaryElement implements Damageable
 	@Override
 	public int getMaxHitPoints()
 	{
-		return MAX_HIT_POINTS;
+		return maxHitPoints;
 	}
 
 	@Override
@@ -108,13 +92,13 @@ public class Tree extends StationaryElement implements Damageable
 	@Override
 	public void heal(float healPoints)
 	{
-		if (hitPoints + Math.abs(healPoints) < MAX_HIT_POINTS)
+		if (hitPoints + Math.abs(healPoints) < maxHitPoints)
 		{
 			hitPoints += Math.abs(healPoints);
 		}
 		else
 		{
-			hitPoints = MAX_HIT_POINTS;
+			hitPoints = maxHitPoints;
 		}
 	}
 

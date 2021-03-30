@@ -28,7 +28,7 @@ import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.DeepWater;
@@ -317,7 +317,7 @@ public class MapImporter {
 
 					entity.setTransform(posX, posY, rotation);
 
-					if (entity instanceof Terrain terrain) {
+					if (entity instanceof OldTerrain terrain) {
 						addTerrain(terrain, world, mapTiles, gridX, gridY);
 					} else if (entity instanceof StationaryElement stationaryElement) {
 						addStationaryElement(stationaryElement, world, mapTiles, gridX, gridY);
@@ -329,7 +329,7 @@ public class MapImporter {
 		}
 	}
 
-	private static void addTerrain(Terrain terrain, World world, Tile[][] mapTiles, int gridX, int gridY) {
+	private static void addTerrain(OldTerrain terrain, World world, Tile[][] mapTiles, int gridX, int gridY) {
 		if (mapTiles[gridX][gridY] != null) {
 			mapTiles[gridX][gridY].setTerrain(terrain, world);
 		} else {

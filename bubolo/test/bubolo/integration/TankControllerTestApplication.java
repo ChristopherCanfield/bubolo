@@ -12,7 +12,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Tank;
 

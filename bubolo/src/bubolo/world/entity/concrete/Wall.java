@@ -1,39 +1,32 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
+import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
-import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
+import bubolo.world.BoundingBox;
+import bubolo.world.Collidable;
 import bubolo.world.Damageable;
-import bubolo.world.Tile;
+import bubolo.world.StaticEntity;
+import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
-import bubolo.world.entity.StationaryElement;
 
 /**
  * Walls are intended to impede Tank movement, and create Rubble Terrain when destroyed.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Wall extends StationaryElement implements Adaptable, Damageable
+public class Wall extends StaticEntity implements TerrainImprovement, Collidable, Adaptable, Damageable
 {
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = -4591161497141031916L;
-
 	private int tilingState = 0;
 
-	/**
-	 * The health of the tree
-	 */
-	private float hitPoints;
+	private static final int maxHitPoints = 100;
 
 	/**
-	 * The maximum amount of hit points of the tree
+	 * The wall's health.
 	 */
-	public static final int MAX_HIT_POINTS = 100;
+	private float hitPoints = maxHitPoints;
 
 	/**
 	 * Intended to be generic -- this is a list of all of the StationaryEntities classes that should
@@ -41,55 +34,41 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Wall.class };
 
-	/**
-	 * Construct a new Wall with a random UUID.
-	 */
-	public Wall()
-	{
-		this(UUID.randomUUID());
-	}
+	private static final int width = 30;
+	private static final int height = 30;
 
-	/**
-	 * Construct a new Wall with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Tree.
-	 */
-	public Wall(UUID id)
+	private BoundingBox boundingBox = new BoundingBox();
+
+	public Wall(ConstructionArgs args)
 	{
-		super(id);
-		setWidth(30);
-		setHeight(30);
-		updateBounds();
-		setSolid(true);
-		hitPoints = MAX_HIT_POINTS;
+		super(args, width, height);
 	}
 
 	@Override
 	public void updateTilingState(World w)
 	{
-		var tile = getTile();
-		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
+//		var tile = getTile();
+//		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
 	}
 
-	@Override
-	public void update(World world)
-	{
-		super.update(world);
-
-		if(hitPoints <= 0)
-		{
-			Tile tile = getTile();
-			tile.clearElement(world);
-
-			// When the wall is destroyed, replace it with rubble.
-			Rubble rubble = world.addEntity(Rubble.class);
-			rubble.setX(getX()).setY(getY());
-			tile.setElement(rubble, world);
-
-			world.removeEntity(this);
-		}
-	}
+//	@Override
+//	public void update(World world)
+//	{
+//		super.update(world);
+//
+//		if(hitPoints <= 0)
+//		{
+//			Tile tile = getTile();
+//			tile.clearElement(world);
+//
+//			// When the wall is destroyed, replace it with rubble.
+//			Rubble rubble = world.addEntity(Rubble.class);
+//			rubble.setX(getX()).setY(getY());
+//			tile.setElement(rubble, world);
+//
+//			world.removeEntity(this);
+//		}
+//	}
 
 	@Override
 	public int getTilingState()
@@ -115,7 +94,7 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 	@Override
 	public int getMaxHitPoints()
 	{
-		return MAX_HIT_POINTS;
+		return maxHitPoints;
 	}
 
 	@Override
@@ -145,14 +124,28 @@ public class Wall extends StationaryElement implements Adaptable, Damageable
 	@Override
 	public void heal(float healPoints)
 	{
-		if (hitPoints + Math.abs(healPoints) < MAX_HIT_POINTS)
+		if (hitPoints + Math.abs(healPoints) < maxHitPoints)
 		{
 			hitPoints += Math.abs(healPoints);
 		}
-
 		else
 		{
-			hitPoints = MAX_HIT_POINTS;
+			hitPoints = maxHitPoints;
 		}
+	}
+
+	@Override
+	public boolean isSolid() {
+		return true;
+	}
+
+	@Override
+	public Polygon bounds() {
+		return boundingBox.bounds();
+	}
+
+	@Override
+	public void updateBounds() {
+		boundingBox.updateBounds(this);
 	}
 }

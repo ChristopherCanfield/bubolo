@@ -3,7 +3,7 @@ package bubolo.world;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 
 /**
  * Tiles represent one 'unit square' on a game map. They must contain one Terrain, and can have
@@ -18,7 +18,7 @@ public class Tile
 	// The tile's y position, in grid coordinates.
 	private int gridY;
 
-	private Terrain terrain;
+	private OldTerrain terrain;
 	private StationaryElement stationaryElement;
 
 	/**
@@ -34,7 +34,7 @@ public class Tile
 	 * @param t
 	 *            is the Terrain that should be applied to this Tile.
 	 */
-	public Tile(int gridX, int gridY, Terrain t)
+	public Tile(int gridX, int gridY, OldTerrain t)
 	{
 		terrain = t;
 		if (t != null) {
@@ -102,7 +102,7 @@ public class Tile
 	 *
 	 * @return this Tile's Terrain object.
 	 */
-	public Terrain getTerrain()
+	public OldTerrain getTerrain()
 	{
 		if (terrain == null) {
 			throw new GameLogicException("Tile has no terrain to return!");
@@ -194,7 +194,7 @@ public class Tile
 	 *            is the Terrain that should be assigned to this Tile.
 	 * @return a reference to this Tile.
 	 */
-	public Tile setTerrain(Terrain t, World world)
+	public Tile setTerrain(OldTerrain t, World world)
 	{
 		if (t != null) {
 			if (terrain != null) {

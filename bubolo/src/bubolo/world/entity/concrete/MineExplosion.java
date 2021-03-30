@@ -17,11 +17,6 @@ import bubolo.world.entity.OldEntity;
 public class MineExplosion extends Effect
 {
 	/**
-	 * Used when serializing and de-serializing.
-	 */
-	private static final long serialVersionUID = -8107393112729824023L;
-
-	/**
 	 * Damage done on explosion
 	 */
 	private static final float DAMAGE_PER_TICK = 2;

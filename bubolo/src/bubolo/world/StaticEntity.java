@@ -15,6 +15,10 @@ public class StaticEntity extends Entity {
 	private final int width;
 	private final int height;
 
+	protected StaticEntity(ConstructionArgs args, int width, int height) {
+		this(args.id(), args.x(), args.y(), width, height);
+	}
+
 	protected StaticEntity(UUID id, float x, float y, int width, int height) {
 		super(id);
 

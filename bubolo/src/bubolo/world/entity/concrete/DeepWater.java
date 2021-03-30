@@ -1,11 +1,8 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
-import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
+import bubolo.world.Terrain;
 import bubolo.world.World;
-import bubolo.world.entity.Terrain;
 
 /**
  * Deep water is intended to act as a barrier to prevent Tanks from leaving the map.
@@ -14,11 +11,6 @@ import bubolo.world.entity.Terrain;
  */
 public class DeepWater extends Terrain implements Adaptable
 {
-	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = -4427335167013500776L;
-
 	private int tilingState = 0;
 
 	private boolean[] cornerMatches = new boolean[4];
@@ -26,7 +18,10 @@ public class DeepWater extends Terrain implements Adaptable
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
 	 */
-	private static final float MAX_SPEED_MODIFIER = 0.2F;
+	private static final float speedModifier = 0.2f;
+
+	private static final int width = 32;
+	private static final int height = 32;
 
 	/**
 	 * Intended to be generic -- this is a list of all of the StationaryEntities classes that should
@@ -34,26 +29,9 @@ public class DeepWater extends Terrain implements Adaptable
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Water.class };
 
-	/**
-	 * Construct a new DeepWater with a random UUID.
-	 */
-	public DeepWater()
+	public DeepWater(ConstructionArgs args)
 	{
-		this(UUID.randomUUID());
-	}
-
-	/**
-	 * Construct a new DeepWater with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Grass.
-	 */
-	public DeepWater(UUID id)
-	{
-		super(id, MAX_SPEED_MODIFIER);
-		setWidth(32);
-		setHeight(32);
-		updateBounds();
+		super(args, width, height, speedModifier);
 	}
 
 	/**
@@ -72,21 +50,15 @@ public class DeepWater extends Terrain implements Adaptable
 	@Override
 	public void updateTilingState(World w)
 	{
-		if (getTile() != null)
-		{
-			tilingState = TileUtil.getTilingState(getTile(), w, matchingTypes);
-			cornerMatches = TileUtil.getCornerMatches(getTile(), w, matchingTypes);
-		}
-		else
-		{
-			tilingState = 0;
-		}
-	}
-
-	@Override
-	public void update(World w)
-	{
-		super.update(w);
+//		if (getTile() != null)
+//		{
+//			tilingState = TileUtil.getTilingState(getTile(), w, matchingTypes);
+//			cornerMatches = TileUtil.getCornerMatches(getTile(), w, matchingTypes);
+//		}
+//		else
+//		{
+//			tilingState = 0;
+//		}
 	}
 
 	@Override

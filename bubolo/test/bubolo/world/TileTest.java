@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import bubolo.util.GameLogicException;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
+import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Tree;
 
@@ -17,9 +17,9 @@ public class TileTest
 	private Tile testTile;
 	private static final int TARGET_X_GRID = 2;
 	private static final int TARGET_Y_GRID = 3;
-	private Terrain tempTerrain = new Grass();
+	private OldTerrain tempTerrain = new Grass();
 	private StationaryElement tempElement = new Tree();
-	private final Terrain t = new Grass();
+	private final OldTerrain t = new Grass();
 	private final StationaryElement e = new Tree();
 
 	@Before

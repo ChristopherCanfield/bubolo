@@ -46,11 +46,6 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	private double range = 300;
 
 	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = 278726024001386941L;
-
-	/**
 	 * Boolean representing whether this Pillbox belongs to the local player.
 	 */
 	private boolean isLocalPlayer = false;
