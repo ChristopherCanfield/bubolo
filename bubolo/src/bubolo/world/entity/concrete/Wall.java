@@ -97,11 +97,6 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 		return maxHitPoints;
 	}
 
-	@Override
-	public boolean isAlive() {
-		return hitPoints > 0;
-	}
-
 	/**
 	 * Changes the hit point count after taking damage
 	 *
@@ -124,12 +119,10 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	@Override
 	public void heal(float healPoints)
 	{
-		if (hitPoints + Math.abs(healPoints) < maxHitPoints)
-		{
-			hitPoints += Math.abs(healPoints);
-		}
-		else
-		{
+		assert(healPoints >= 0);
+		if (hitPoints + healPoints < maxHitPoints) {
+			hitPoints += healPoints;
+		} else {
 			hitPoints = maxHitPoints;
 		}
 	}

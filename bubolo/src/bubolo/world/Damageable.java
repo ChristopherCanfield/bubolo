@@ -47,5 +47,7 @@ public interface Damageable
 	 *
 	 * @return true if the entity is alive.
 	 */
-	public boolean isAlive();
+	default public boolean isAlive() {
+		return getHitPoints() > 0;
+	}
 }

@@ -2,6 +2,7 @@ package bubolo.world.entity.concrete;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
+import bubolo.util.GameLogicException;
 import bubolo.world.Damageable;
 import bubolo.world.StaticEntity;
 import bubolo.world.TerrainImprovement;
@@ -32,14 +33,6 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 		super(args, width, height);
 	}
 
-//	@Override
-//	public void update(World world) {
-//		if(hitPoints <= 0) {
-//			getTile().clearElement(world);
-//			world.removeEntity(this);
-//		}
-//	}
-
 	@Override
 	public float speedModifier() {
 		return speedModifier;
@@ -66,11 +59,6 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 		return maxHitPoints;
 	}
 
-	@Override
-	public boolean isAlive() {
-		return hitPoints > 0;
-	}
-
 	/**
 	 * Changes the hit point count after taking damage
 	 *
@@ -82,24 +70,19 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 	{
 		assert(damagePoints >= 0);
 		hitPoints -= damagePoints;
+
+		if (hitPoints <= 0) {
+			dispose();
+		}
 	}
 
 	/**
-	 * Increments the pillbox's health by a given amount
-	 *
-	 * @param healPoints - how many points the tree is given
+	 * Not implemented for trees.
 	 */
 	@Override
 	public void heal(float healPoints)
 	{
-		if (hitPoints + Math.abs(healPoints) < maxHitPoints)
-		{
-			hitPoints += Math.abs(healPoints);
-		}
-		else
-		{
-			hitPoints = maxHitPoints;
-		}
+		throw new GameLogicException("Trees cannot be healed.");
 	}
 
 	@Override
