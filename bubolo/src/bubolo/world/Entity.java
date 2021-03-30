@@ -17,9 +17,17 @@ public abstract class Entity {
 	private final UUID id;
 	private boolean disposed;
 
-	protected Entity(UUID id) {
+	private final int width;
+	private final int height;
+
+	protected Entity(UUID id, int width, int height) {
 		assert id != null;
+		assert width >= 0;
+		assert height >= 0;
+
 		this.id = id;
+		this.width = width;
+		this.height = height;
 	}
 
 	/**
@@ -32,11 +40,15 @@ public abstract class Entity {
 	/**
 	 * @return The object's width in world units.
 	 */
-	public abstract int width();
+	public int width() {
+		return width;
+	}
 	/**
 	 * @return The object's height in world units.
 	 */
-	public abstract int height();
+	public int height() {
+		return height;
+	}
 
 	/**
 	 * @return The object's x position in world units.

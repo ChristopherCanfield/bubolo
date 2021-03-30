@@ -1,7 +1,5 @@
 package bubolo.world;
 
-import java.util.UUID;
-
 /**
  * Game world objects that never move, and that do not have intelligence.
  *
@@ -12,31 +10,11 @@ public class StaticEntity extends Entity {
 	private final float x;
 	private final float y;
 
-	private final int width;
-	private final int height;
-
 	protected StaticEntity(ConstructionArgs args, int width, int height) {
-		this(args.id(), args.x(), args.y(), width, height);
-	}
+		super(args.id(), width, height);
 
-	protected StaticEntity(UUID id, float x, float y, int width, int height) {
-		super(id);
-
-		this.x = x;
-		this.y = y;
-
-		this.width = width;
-		this.height = height;
-	}
-
-	@Override
-	public int width() {
-		return width;
-	}
-
-	@Override
-	public int height() {
-		return height;
+		this.x = args.x();
+		this.y = args.y();
 	}
 
 	@Override
