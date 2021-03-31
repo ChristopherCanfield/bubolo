@@ -36,20 +36,20 @@ public class AiMineController implements Controller
 	@Override
 	public void update(World world)
 	{
-		for(OldEntity collider : TileUtil.getLocalEntities(mine.getX(),mine.getY(), world))
+		for(OldEntity collider : TileUtil.getLocalEntities(mine.x(), mine.y(), world))
 		{
 			if (mine.isActive() &&
 					collider.isSolid() && collider != mine
-					&& Intersector.overlapConvexPolygons(collider.getBounds(), mine.getBounds())) {
+					&& Intersector.overlapConvexPolygons(collider.getBounds(), mine.bounds())) {
 
 				MineExplosion mineExplosion = world.addEntity(MineExplosion.class);
-				mineExplosion.setTransform(mine.getX(), mine.getY(), 0);
+				mineExplosion.setTransform(mine.x(), mine.y(), 0);
 
 				Tile tile = mine.getTile();
 				tile.clearElement(world);
 
 				Crater crater = world.addEntity(Crater.class);
-				crater.setX(mine.getX()).setY(mine.getY());
+				crater.setX(mine.x()).setY(mine.y());
 				tile.setElement(crater, world);
 
 				world.removeEntity(mine);

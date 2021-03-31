@@ -1,7 +1,5 @@
 package bubolo.world;
 
-import java.util.UUID;
-
 /**
  * Game world objects
  *
@@ -13,11 +11,8 @@ public class Terrain extends StaticEntity {
 	private TerrainImprovement improvement;
 
 	protected Terrain(ConstructionArgs args, int width, int height, float speedModifier) {
-		this(args.id(), args.x(), args.y(), width, height, speedModifier);
-	}
+		super(args, width, height);
 
-	protected Terrain(UUID id, float x, float y, int width, int height, float speedModifier) {
-		super(id, x, y, width, height);
 		this.speedModifier = speedModifier;
 	}
 

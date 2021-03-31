@@ -7,7 +7,7 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
-import bubolo.world.entity.OldEntity;
+import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
 
 /**
@@ -27,7 +27,7 @@ public interface World
 	 * @throws GameLogicException
 	 *             if the entity is not found.
 	 */
-	public OldEntity getEntity(UUID id) throws GameLogicException;
+	public Entity getEntity(UUID id) throws GameLogicException;
 
 	/**
 	 * Returns the list of all entities in the world. Ordering should not be assumed, and may change
@@ -35,7 +35,7 @@ public interface World
 	 *
 	 * @return the list of entities.
 	 */
-	public List<OldEntity> getEntities();
+	public List<Entity> getEntities();
 
 	/**
 	 * Returns the list of all tanks in the world. Ordering should not be assumed, and may change
@@ -51,7 +51,7 @@ public interface World
 	 *
 	 * @return the list of Spawns.
 	 */
-	public List<OldEntity> getSpawns();
+	public List<Spawn> getSpawns();
 
 	/**
 	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
@@ -59,15 +59,7 @@ public interface World
 	 *
 	 * @return the list of actors.
 	 */
-	public List<OldEntity> getActors();
-
-	/**
-	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
-	 * between calls.
-	 *
-	 * @return the list of effects.
-	 */
-	public List<OldEntity> getEffects();
+	public List<ActorEntity> getActors();
 
 	/**
 	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
@@ -93,21 +85,7 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends OldEntity> T addEntity(Class<T> c) throws GameLogicException;
-
-	/**
-	 * @see World#addEntity(Class)
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
-	 * @param id
-	 *            the UUID that will be used for the entity.
-	 * @return reference to the new entity.
-	 * @throws GameLogicException
-	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
-	 *             entity.
-	 */
-	public <T extends OldEntity> T addEntity(Class<T> c, @Nullable UUID id) throws GameLogicException;
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException;
 
 	/**
 	 * @see World#addEntity(Class)
@@ -124,48 +102,14 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends OldEntity> T addEntity(Class<T> c, @Nullable ControllerFactory controllerFactory)
-			throws GameLogicException;
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory) throws GameLogicException;
 
 	/**
-	 * @see World#addEntity(Class)
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
-	 * @param id
-	 *            the UUID that will be used for the entity.
-	 * @param controllerFactory
-	 *            an object that implements the ControllerFactory interface. This should be used to
-	 *            override the default controller settings. In other words, use a controller factory
-	 *            to set different controller(s) for an entity than the default.
-	 * @return reference to the new entity.
-	 * @throws GameLogicException
-	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
-	 *             entity.
-	 */
-	public <T extends OldEntity> T addEntity(Class<T> c, @Nullable UUID id,
-			@Nullable ControllerFactory controllerFactory)
-			throws GameLogicException;
-
-	/**
-	 * Removes an entity from the world. After this method is called, the specified entity will no
-	 * longer be drawn or updated.
+	 * Removes an entity from the world.
 	 *
-	 * @param e
-	 *            the entity to remove.
+	 * @param e the entity to remove.
 	 */
-	public void removeEntity(OldEntity e);
-
-	/**
-	 * Removes an entity from the world. After this method is called, the specified entity will no
-	 * longer be drawn or updated. Throws a GameLogicException if the entity is not found.
-	 *
-	 * @param id
-	 *            the unique id of the entity to remove.
-	 * @throws GameLogicException
-	 *             if the entity is not found.
-	 */
-	public void removeEntity(UUID id) throws GameLogicException;
+	public void removeEntity(Entity e);
 
 	/**
 	 * Returns the width of the world.

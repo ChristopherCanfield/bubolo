@@ -6,7 +6,6 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
 import bubolo.util.TileUtil;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Tank;
 
@@ -64,24 +63,26 @@ public class AiBaseController implements Controller
 	public void update(World world)
 	{
 		base.setCharging(false);
-		for (OldEntity entity : TileUtil.getLocalCollisions(base, world))
+		for (Entity entity : TileUtil.getLocalCollisions(base, world))
 		{
 			if (entity instanceof Tank tank)
 			{
-				if (!this.base.isOwned())
+				if (!base.hasOwner())
 				{
-					base.setOwnerId(tank.getId());
+					base.setOwner(tank);
 					base.heal(100);
 
-					if (tank.isLocalPlayer() && !base.isLocalPlayer()) {
-						base.setLocalPlayer(true);
+					if (tank.isOwnedByLocalPlayer() && !base.isOwnedByLocalPlayer()) {
+						base.setOwnedByLocalPlayer(true);
+						base.setOwner(tank);
+
 						Network net = NetworkSystem.getInstance();
 						net.send(new UpdateOwnable(base));
 					}
 				}
 				else
 				{
-					if(tank.getId() == base.getOwnerId() && !isTankRecharged(tank))
+					if(tank.id().equals(base.owner().id()) && !isTankRecharged(tank))
 					{
 						base.setCharging(true);
 

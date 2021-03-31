@@ -3,6 +3,7 @@ package bubolo.world;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,11 +17,9 @@ import bubolo.controllers.Controllers;
 import bubolo.controllers.ai.AiTreeController;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.Actor;
-import bubolo.world.entity.Effect;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.OldTerrain;
+import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
@@ -35,34 +34,31 @@ public class GameWorld implements World
 {
 	private EntityCreationObserver entityCreationObserver;
 
-	private final List<OldEntity> entities = new ArrayList<OldEntity>();
-	private final Map<UUID, OldEntity> entityMap = new HashMap<UUID, OldEntity>();
+	private final List<Entity> entities = new ArrayList<>();
+	private final Map<UUID, Entity> entityMap = new HashMap<>();
 
 	// first: x; second: y.
 	private Tile[][] mapTiles = null;
 
 	// The list of entities to remove. The entities array can't be modified while it
 	// is being iterated over.
-	private final List<OldEntity> entitiesToRemove = new ArrayList<OldEntity>();
+	private final List<Entity> entitiesToRemove = new ArrayList<>();
 
 	// The list of entities to add. The entities array can't be modified while it is
 	// being iterated over.
-	private final List<OldEntity> entitiesToAdd = new ArrayList<OldEntity>();
+	private final List<Entity> entitiesToAdd = new ArrayList<>();
 
 	// the list of Tanks that exist in the world
-	private final List<Tank> tanks = new ArrayList<Tank>();
+	private final List<Tank> tanks = new ArrayList<>();
 
 	// list of world controllers
-	private final List<Controller> worldControllers = new ArrayList<Controller>();
-
-	// the list of all Effects that currently exist in the world
-	private final List<OldEntity> effects = new ArrayList<OldEntity>();
+	private final List<Controller> worldControllers = new ArrayList<>();
 
 	// the list of all Actors which currently exist in the world
-	private final List<OldEntity> actors = new ArrayList<OldEntity>();
+	private final List<ActorEntity> actors = new ArrayList<>();
 
 	// the list of all Spawn Locations currently in the world
-	private final List<OldEntity> spawns = new ArrayList<OldEntity>();
+	private final List<Spawn> spawns = new ArrayList<>();
 
 	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
@@ -125,7 +121,7 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public OldEntity getEntity(UUID id) throws GameLogicException
+	public Entity getEntity(UUID id) throws GameLogicException
 	{
 		OldEntity entity = entityMap.get(id);
 		if (entity == null)
@@ -137,73 +133,46 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public List<OldEntity> getEntities()
+	public List<Entity> getEntities()
 	{
 		List<OldEntity> copyOfEntities = Collections.unmodifiableList(entities);
 		return copyOfEntities;
 	}
 
 	@Override
-	public <T extends OldEntity> T addEntity(Class<T> c) throws GameLogicException
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException
 	{
-		return addEntity(c, UUID.randomUUID(), null);
+		return addEntity(c, args, null);
 	}
 
 	@Override
-	public <T extends OldEntity> T addEntity(Class<T> c, UUID id) throws GameLogicException
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, ControllerFactory controllerFactory) throws GameLogicException, IllegalStateException
 	{
-		return addEntity(c, id, null);
-	}
-
-	@Override
-	public <T extends OldEntity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
-			throws GameLogicException
-	{
-		return addEntity(c, UUID.randomUUID(), controllerFactory);
-	}
-
-	@Override
-	public <T extends OldEntity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
-			throws GameLogicException, IllegalStateException
-	{
-		if (entityMap.containsKey(id))
-		{
-			throw new GameLogicException("The specified entity already exists. Entity id: " + id +
-					". Entity type: " + entityMap.get(id).getClass().getName());
+		if (entityMap.containsKey(args.id())) {
+			throw new GameLogicException("The specified entity already exists. Entity id: " + args.id()
+					+ ". Entity type: " + entityMap.get(args.id()).getClass().getName());
 		}
 
 		T entity;
-		try
-		{
-			entity = c.newInstance();
-		}
-		catch (InstantiationException | IllegalAccessException e)
-		{
+		try {
+			var constructor = c.getDeclaredConstructor(Entity.ConstructionArgs.class);
+			entity = constructor.newInstance(args);
+		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
 			throw new GameLogicException(e.getMessage());
 		}
 
-		entity.setId(id);
-
-		Controllers.getInstance().createController(entity, controllerFactory);
-
-		if (entity instanceof Tank tank)
-		{
+		if (entity instanceof Tank tank) {
 			tanks.add(tank);
 		}
 
-		if (entity instanceof Effect)
-		{
-			effects.add(entity);
+		if (entity instanceof ActorEntity actor) {
+			actors.add(actor);
+
+			Controllers.getInstance().createController(actor, controllerFactory);
 		}
 
-		if (entity instanceof Actor)
-		{
-			actors.add(entity);
-		}
-
-		if (entity instanceof Spawn)
-		{
-			spawns.add(entity);
+		if (entity instanceof Spawn spawn) {
+			spawns.add(spawn);
 		}
 
 		if (entity instanceof Adaptable adaptable) {
@@ -212,7 +181,7 @@ public class GameWorld implements World
 		}
 
 		entitiesToAdd.add(entity);
-		entityMap.put(entity.getId(), entity);
+		entityMap.put(entity.id(), entity);
 
 		if (entityCreationObserver != null) {
 			entityCreationObserver.onEntityCreated(entity);
@@ -222,28 +191,20 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public void removeEntity(OldEntity e)
+	public void removeEntity(Entity e)
 	{
 		e.dispose();
-		entityMap.remove(e.getId());
+		entityMap.remove(e.id());
 
-		if (e instanceof Tank)
-		{
+		if (e instanceof Tank) {
 			tanks.remove(e);
 		}
 
-		if (e instanceof Actor)
-		{
+		if (e instanceof ActorEntity) {
 			actors.remove(e);
 		}
 
-		if (e instanceof Effect)
-		{
-			effects.remove(e);
-		}
-
-		if (e instanceof Spawn)
-		{
+		if (e instanceof Spawn) {
 			spawns.remove(e);
 		}
 
@@ -254,21 +215,9 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public List<OldEntity> getActors()
+	public List<ActorEntity> getActors()
 	{
 		return actors;
-	}
-
-	@Override
-	public List<OldEntity> getEffects()
-	{
-		return effects;
-	}
-
-	@Override
-	public void removeEntity(UUID id) throws GameLogicException
-	{
-		removeEntity(entityMap.get(id));
 	}
 
 	@Override
@@ -365,12 +314,10 @@ public class GameWorld implements World
 				"worldMapHeight must be greater than 0. worldMapHeight: %s", height);
 
 		// Update all entities.
-		for (OldEntity e : entities)
-		{
+		for (Entity e : entities) {
 			if (!e.isDisposed()) { e.update(this); }
 
-			if (e.isDisposed())
-			{
+			if (e.isDisposed()) {
 				entitiesToRemove.add(e);
 			}
 		}
@@ -400,9 +347,9 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public List<OldEntity> getSpawns()
+	public List<Spawn> getSpawns()
 	{
-		List<OldEntity> copyOfSpawns = Collections.unmodifiableList(spawns);
+		List<Spawn> copyOfSpawns = Collections.unmodifiableList(spawns);
 		return copyOfSpawns;
 	}
 

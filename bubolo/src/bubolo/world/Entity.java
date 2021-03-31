@@ -86,8 +86,10 @@ public abstract class Entity {
 	 * This method must be called when the entity should be removed from the game.
 	 */
 	public final void dispose() {
-		disposed = true;
-		onDispose();
+		if (!disposed) {
+			disposed = true;
+			onDispose();
+		}
 	}
 
 	/**

@@ -73,17 +73,17 @@ public class KeyboardTankController implements Controller
 	{
 		if (Gdx.input.isKeyPressed(Keys.SPACE) && tank.isCannonReady() && (tank.getAmmoCount() > 0) )
 		{
-			float tankCenterX = tank.getX();
-			float tankCenterY = tank.getY();
+			float tankCenterX = tank.x();
+			float tankCenterY = tank.y();
 
 			Bullet bullet = tank.fireCannon(world,
-					tankCenterX + 18 * (float)Math.cos(tank.getRotation()),
-					tankCenterY + 18 * (float)Math.sin(tank.getRotation()));
+					tankCenterX + 18 * (float) Math.cos(tank.rotation()),
+					tankCenterY + 18 * (float) Math.sin(tank.rotation()));
 			if(bullet != null)
 			{
 				Network net = NetworkSystem.getInstance();
-				net.send(new CreateBullet(Bullet.class, bullet.getId(), bullet.getX(), bullet.getY(),
-					bullet.getRotation(), tank.getId()));
+				net.send(new CreateBullet(Bullet.class, bullet.id(), bullet.x(), bullet.y(),
+					bullet.rotation(), tank.id()));
 			}
 
 		}
@@ -100,17 +100,16 @@ public class KeyboardTankController implements Controller
 	 {
 		 if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT) && (tank.getMineCount() > 0))
 		 {
-				float tankCenterX = tank.getX();
-				float tankCenterY = tank.getY();
+				float tankCenterX = tank.x();
+				float tankCenterY = tank.y();
 
 				Mine mine = tank.dropMine(world,
-						tankCenterX + 18 * (float)Math.cos(tank.getRotation()),
-						tankCenterY + 18 * (float)Math.sin(tank.getRotation()));
+						tankCenterX + 18 * (float)Math.cos(tank.rotation()),
+						tankCenterY + 18 * (float)Math.sin(tank.rotation()));
 				if(mine != null)
 				{
 					Network net = NetworkSystem.getInstance();
-					net.send(new CreateEntity(Mine.class, mine.getId(), mine.getX(), mine.getY(),
-						mine.getRotation()));
+					net.send(new CreateEntity(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation()));
 				}
 		 }
 	 }
