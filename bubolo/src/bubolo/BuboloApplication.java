@@ -168,8 +168,9 @@ public class BuboloApplication extends AbstractGameApplication
 	@Override
 	public void onStateChanged()
 	{
-		if (getState() == State.NET_GAME)
-		{
+		var state = getState();
+		switch (state) {
+		case NET_GAME: {
 			screen.dispose();
 
 			Entity.ConstructionArgs args;
@@ -188,31 +189,40 @@ public class BuboloApplication extends AbstractGameApplication
 			network.send(new CreateTank(tank));
 
 			setReady(true);
-		}
-		else if (getState() == State.LOCAL_GAME)
-		{
-			if (screen != null)
-			{
-				screen.dispose();
+		} break;
+		case LOCAL_GAME: {
+			screen.dispose();
+
+			Entity.ConstructionArgs args;
+			if (!isClient) {
+				Vector2 spawnLocation = getRandomSpawn(world);
+				args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
+			} else {
+				// TODO (cdc - 2021-03-31): What is the purpose of using this, rather than spawn locations?
+				args = new Entity.ConstructionArgs(UUID.randomUUID(), getRandomX(), 200, 0);
 			}
 
-			Vector2 spawnLocation = getRandomSpawn(world);
-			var args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
 			Tank tank = world.addEntity(Tank.class, args);
-
+			tank.setPlayerName(network.getPlayerName());
 			tank.setOwnedByLocalPlayer(true);
 
-			network.startDebug();
+			network.send(new CreateTank(tank));
 
 			setReady(true);
-		}
-		else if (getState() == State.GAME_LOBBY)
-		{
+		} break;
+		case GAME_LOBBY:
 			screen = new LobbyScreen(this, world);
-		}
-		else if (getState() == State.PLAYER_INFO)
-		{
+			break;
+		case PLAYER_INFO:
 			screen = new PlayerInfoScreen(this, isClient);
+			break;
+		case GAME_STARTING:
+			// Do nothing.
+			break;
+		case MAIN_MENU:
+			// Do nothing.
+			// TODO (cdc - 2021-03-31): Allow the main menu to be displayed again.
+			break;
 		}
 	}
 
