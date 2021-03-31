@@ -11,8 +11,7 @@ import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
 
 /**
- * Provides access to game entities. This is the primary interface between the Model and other
- * systems.
+ * Stores and processes game entities.
  *
  * @author BU CS673 - Clone Productions
  */
@@ -142,48 +141,26 @@ public interface World
 	public int getTileRows();
 
 	/**
-	 * Sets the world's height.
-	 *
-	 * @param height
-	 *            the world's height.
-	 */
-	public void setHeight(int height);
-
-	/**
-	 * Sets the world's width.
-	 *
-	 * @param width
-	 *            the world's width.
-	 */
-	public void setWidth(int width);
-
-	/**
 	 * Updates the game world. Must be called once per game tick.
 	 */
 	public void update();
 
 	/**
-	 * Returns a 2d Tile Array representation of stationary objects in the world
+	 * Returns the terrain in the specified (column, row) tile position.
 	 *
-	 * @return the 2d Tile Array representing the stationary objects in the world
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 * @return the terrain in the specified tile position.
 	 */
-	public Tile[][] getTiles();
+	public Terrain getTerrain(int column, int row);
 
 	/**
-	 * Returns a Tile from a world position.
+	 * Returns a Terrain from a world position.
 	 * @param worldX the world x position.
 	 * @param worldY the world y position.
 	 * @return the tile.
 	 */
-	public Tile getTileFromWorldPosition(float worldX, float worldY);
-
-	/**
-	 * Allows the setting of a 2d Tile Array representation of stationary objects in the world
-	 *
-	 * @param mapTiles
-	 *            is the representation to set the MapTiles field to
-	 */
-	public void setTiles(Tile[][] mapTiles);
+	public Terrain getTerrainFromWorldPosition(float worldX, float worldY);
 
 	/**
 	 * Adds a controller of the specified type to the world.

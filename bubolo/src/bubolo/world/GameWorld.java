@@ -1,8 +1,5 @@
 package bubolo.world;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
@@ -21,10 +17,6 @@ import bubolo.controllers.Controllers;
 import bubolo.controllers.ai.AiTreeController;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.OldTerrain;
-import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.concrete.Grass;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
 
@@ -46,7 +38,7 @@ public class GameWorld implements World
 	private final List<Spawn> spawns = new ArrayList<>();
 
 	// first: column; second: row.
-	private Tile[][] mapTiles = null;
+	private Terrain[][] terrain;
 
 	// The entities to remove.
 	private final Set<Entity> entitiesToRemove = new HashSet<>();
@@ -65,57 +57,36 @@ public class GameWorld implements World
 	private boolean adaptableRemovedThisTick = false;
 	private boolean adaptableAddedThisTick = false;
 
-	private int width;
-	private int height;
+	// Width in world units.
+	private final int width;
+	// Height in world units.
+	private final int height;
 
 	/**
-	 * Constructs the GameWorld object.
+	 * Constructs a GameWorld object.
 	 *
-	 * @param worldMapWidth
-	 *            the width of the game world map.
-	 * @param worldMapHeight
-	 *            the height of the game world map.
+	 * @param worldTileColumns the width of the game world map, in tiles.
+	 * @param worldTileRows the height of the game world map, in tiles.
 	 */
-	public GameWorld(int worldMapWidth, int worldMapHeight)
+	public GameWorld(int worldTileColumns, int worldTileRows)
 	{
-		int tilesX = worldMapWidth / Coords.TILE_TO_WORLD_SCALE;
-		int tilesY = worldMapHeight / Coords.TILE_TO_WORLD_SCALE;
-		mapTiles = new Tile[tilesX][tilesY];
+		assert(worldTileColumns > 0);
+		assert(worldTileRows > 0);
 
-		this.width = worldMapWidth;
-		this.height = worldMapHeight;
+		assert worldTileColumns < 2_500 : "Unlikely worldTileColumns value passed to GameWorld: " + worldTileColumns;
+		assert worldTileRows < 2_500 : "Unlikely worldTileRows value passed to GameWorld: " + worldTileRows;
+
+		terrain = new Terrain[worldTileColumns][worldTileRows];
+
+		width = worldTileColumns * Coords.TILE_TO_WORLD_SCALE;
+		height = worldTileRows * Coords.TILE_TO_WORLD_SCALE;
 
 		addController(AiTreeController.class);
-	}
-
-	/**
-	 * Constructs a default game world. This is intended for use by the network. The map's height
-	 * and width must be set before calling the <code>update</code> method.
-	 */
-	public GameWorld()
-	{
-		this(0, 0);
 	}
 
 	@Override
 	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver) {
 		this.entityCreationObserver = entityCreationObserver;
-	}
-
-
-
-	@Override
-	public void setHeight(int height)
-	{
-		checkArgument(height > 0, "height parameter must be greater than zero: %s", height);
-		this.height = height;
-	}
-
-	@Override
-	public void setWidth(int width)
-	{
-		checkArgument(width > 0, "width parameter must be greater than zero: %s", width);
-		this.width = width;
 	}
 
 	@Override
@@ -195,55 +166,54 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public Tile[][] getTiles()
-	{
-		return mapTiles;
+	public Terrain getTerrain(int column, int row) {
+		return terrain[column][row];
 	}
 
 	@Override
-	public Tile getTileFromWorldPosition(float worldX, float worldY) {
-		int x = ((int) worldX) / Coords.TILE_TO_WORLD_SCALE;
-		int y = ((int) worldY) / Coords.TILE_TO_WORLD_SCALE;
+	public Terrain getTerrainFromWorldPosition(float worldX, float worldY) {
+		int column = (int) worldX / Coords.TILE_TO_WORLD_SCALE;
+		int row = (int) worldY / Coords.TILE_TO_WORLD_SCALE;
 
-		var tile = mapTiles[x][y];
-		assert tile != null;
-		return tile;
+		var t = terrain[column][row];
+		assert t != null;
+		return t;
 	}
 
-	@Override
-	public void setTiles(Tile[][] mapTiles)
-	{
-		this.mapTiles = mapTiles;
-		setWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
-		setHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
+//	@Override
+//	public void setTiles(Tile[][] mapTiles)
+//	{
+//		this.mapTiles = mapTiles;
+//		setWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
+//		setHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
+//
+//		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
+//		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.
+//		// These lines add a Grass tile to any tile that is missing an associated terrain.
+//		for (Tile[] tiles : mapTiles) {
+//			for (Tile tile : tiles) {
+//				if (!tile.hasTerrain()) {
+//					tile.setTerrain(addEntity(Grass.class), this);
+//				}
+//			}
+//		}
+//
+//		for (int i = 0; i < 2; i++) {
+//			for (Tile[] tiles : mapTiles) {
+//				for (Tile tile : tiles) {
+//					OldTerrain terrain = tile.getTerrain();
+//					updateTilingStateIfAdaptable(this, terrain);
+//
+//					if (tile.hasElement()) {
+//						StationaryElement element = tile.getElement();
+//						updateTilingStateIfAdaptable(this, element);
+//					}
+//				}
+//			}
+//		}
+//	}
 
-		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
-		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.
-		// These lines add a Grass tile to any tile that is missing an associated terrain.
-		for (Tile[] tiles : mapTiles) {
-			for (Tile tile : tiles) {
-				if (!tile.hasTerrain()) {
-					tile.setTerrain(addEntity(Grass.class), this);
-				}
-			}
-		}
-
-		for (int i = 0; i < 2; i++) {
-			for (Tile[] tiles : mapTiles) {
-				for (Tile tile : tiles) {
-					OldTerrain terrain = tile.getTerrain();
-					updateTilingStateIfAdaptable(this, terrain);
-
-					if (tile.hasElement()) {
-						StationaryElement element = tile.getElement();
-						updateTilingStateIfAdaptable(this, element);
-					}
-				}
-			}
-		}
-	}
-
-	private static void updateTilingStateIfAdaptable(World world, OldEntity e) {
+	private static void updateTilingStateIfAdaptable(World world, Entity e) {
 		if (e instanceof Adaptable adaptable) {
 			adaptable.updateTilingState(world);
 		}
@@ -263,14 +233,12 @@ public class GameWorld implements World
 
 	@Override
 	public int getTileColumns() {
-		assert width / Coords.TILE_TO_WORLD_SCALE == mapTiles.length;
-		return mapTiles.length;
+		return terrain.length;
 	}
 
 	@Override
 	public int getTileRows() {
-		assert height / Coords.TILE_TO_WORLD_SCALE == mapTiles[0].length;
-		return mapTiles[0].length;
+		return terrain[0].length;
 	}
 
 	@Override
@@ -281,19 +249,13 @@ public class GameWorld implements World
 			c.update(this);
 		}
 
-		// TODO (cdc - 2021-03-31): Remove these once world/entity refactoring is complete.
-		checkState(width > 0,
-				"worldMapWidth must be greater than 0. worldMapWidth: %s", width);
-		checkState(height > 0,
-				"worldMapHeight must be greater than 0. worldMapHeight: %s", height);
-
 		// Update all actors.
 		actors.forEach(actor -> actor.update(this));
 
 		// Check for disposed entities.
 		entitiesToRemove.addAll(entities.stream()
 				.filter(e -> e.isDisposed())
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		removeEntities(entitiesToRemove);
@@ -328,7 +290,11 @@ public class GameWorld implements World
 			actors.removeAll(markedForRemoval);
 			spawns.removeAll(markedForRemoval);
 
-			adaptableRemovedThisTick = adaptables.removeAll(markedForRemoval);
+			var adaptablesToRemove = markedForRemoval.stream()
+					.filter(e -> e instanceof Adaptable)
+					.map(e -> (Adaptable) e)
+					.toList();
+			adaptableRemovedThisTick = adaptables.removeAll(adaptablesToRemove);
 		}
 	}
 
@@ -349,20 +315,15 @@ public class GameWorld implements World
 	@Override
 	public void addController(Class<? extends Controller> controllerType)
 	{
-		for (Controller c : worldControllers)
-		{
-			if (c.getClass() == controllerType)
-			{
+		for (Controller c : worldControllers) {
+			if (c.getClass() == controllerType) {
 				return;
 			}
 		}
 
-		try
-		{
-			worldControllers.add(controllerType.newInstance());
-		}
-		catch (InstantiationException | IllegalAccessException e)
-		{
+		try {
+			worldControllers.add(controllerType.getConstructor().newInstance());
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new GameLogicException(e);
 		}
 	}
