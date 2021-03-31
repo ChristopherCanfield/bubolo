@@ -45,8 +45,6 @@ public class Bullet extends ActorEntity implements Collidable
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
 
-	private ActorEntity parent = null;
-
 	private static final int width = 4;
 	private static final int height = 8;
 
@@ -72,22 +70,6 @@ public class Bullet extends ActorEntity implements Collidable
 		// TODO (cdc - 2014-03-21): This could be made into a controller. However, it's so
 		// simple, what's the point?
 		move(world);
-	}
-
-	/**
-	 * @return the entity that spawned this bullet
-	 */
-	public ActorEntity getParent() {
-		return parent;
-	}
-	/**
-	 * Sets the Parent of this bullet. Bullets never hurt their own parents.
-	 *
-	 * @param parent the ActorEntity to set as the parent of this bullet.
-	 */
-	public void setParent(ActorEntity parent) {
-		this.parent = parent;
-
 	}
 
 	/**
@@ -144,7 +126,7 @@ public class Bullet extends ActorEntity implements Collidable
 
 		for (OldEntity localEntity: TileUtil.getLocalEntities(getX(),getY(), w))
 		{
-			if ((localEntity != this && localEntity != parent) && localEntity instanceof Collidable collidable)
+			if ((localEntity != this && localEntity != owner()) && localEntity instanceof Collidable collidable)
 			{
 				if (overlapsEntity(collidable) || Intersector.overlapConvexPolygons(lookAheadBounds(), collidable.bounds())) {
 					intersects.add(localEntity);

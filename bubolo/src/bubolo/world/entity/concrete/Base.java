@@ -1,13 +1,14 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
+import com.badlogic.gdx.math.Polygon;
 
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
+import bubolo.world.ActorEntity;
+import bubolo.world.BoundingBox;
+import bubolo.world.Collidable;
 import bubolo.world.Damageable;
-import bubolo.world.Ownable;
-import bubolo.world.entity.StationaryElement;
 
 /**
  * Bases allow Tanks to heal and recover their mines, and capturing them is the primary
@@ -15,80 +16,46 @@ import bubolo.world.entity.StationaryElement;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Base extends StationaryElement implements Ownable, Damageable
+public class Base extends ActorEntity implements Collidable, Damageable
 {
 	/**
-	 * the uid of the tank that owns this Base
-	 */
-	private UUID ownerUID;
-
-	/**
-	 * Boolean representing whether this Base belongs to the local player.
-	 */
-	private boolean isLocalPlayer = false;
-
-	/**
-	 * Boolean representing whether this Base is currently charging a Tank.
-	 *
+	 * Whether this Base is currently charging a Tank.
 	 */
 	private boolean isCharging = false;
 
 	/**
-	 * The current number of hit points of the base.
+	 * The number of hit points the base has.
 	 */
-	private float hitPoints;
+	private float hitPoints = maxHitPoints;
 
-	private static final int MAX_HIT_POINTS = 100;
+	private static final int maxHitPoints = 100;
 
-	private static final int HIT_POINTS_REPLENISH_RATE = 5;
+	private static final int hitPointsRechargeRate = 5;
 
-	private int mineCount;
+	private int mineCount = MAX_MINE_COUNT;
 
 	private static final int MAX_MINE_COUNT = 10;
 
 	private static final int MINE_REPLENISH_RATE = 1;
 
-	private int ammoCount;
+	private int ammoCount = MAX_AMMO_COUNT;
 
 	private static final int MAX_AMMO_COUNT = 100;
 
 	private static final int AMMO_REPLENISH_RATE = 5;
 
-	/**
-	 * Construct a new Base with a random UUID.
-	 */
-	public Base()
-	{
-		this(UUID.randomUUID());
-	}
+	private static final int width = 26;
+	private static final int height = 30;
+
+	private final BoundingBox boundingBox = new BoundingBox();
 
 	/**
-	 * Construct a new Base with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Tree.
+	 * Construct a new Base.
 	 */
-	public Base(UUID id)
+	public Base(ConstructionArgs args)
 	{
-		super(id);
-		setWidth(26);
-		setHeight(30);
+		super(args, width, height);
 		updateBounds();
-		hitPoints = MAX_HIT_POINTS;
-		ammoCount = MAX_AMMO_COUNT;
-		mineCount = MAX_MINE_COUNT;
-	}
-
-	@Override
-	public boolean isLocalPlayer()
-	{
-		return isLocalPlayer;
-	}
-
-	@Override
-	public void setLocalPlayer(boolean local)
-	{
-		this.isLocalPlayer = local;
 	}
 
 	/**
@@ -131,12 +98,7 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	@Override
 	public int getMaxHitPoints()
 	{
-		return MAX_HIT_POINTS;
-	}
-
-	@Override
-	public boolean isAlive() {
-		return hitPoints > 0;
+		return maxHitPoints;
 	}
 
 	/**
@@ -154,10 +116,11 @@ public class Base extends StationaryElement implements Ownable, Damageable
 			hitPoints -= damagePoints;
 			if (hitPoints < 0) { hitPoints = 0; }
 
-			if (hitPoints <= 0 &&  isLocalPlayer())
+			if (hitPoints <= 0 &&  isOwnedByLocalPlayer())
 			{
-				this.setLocalPlayer(false);
-				this.ownerUID = null;
+				setOwnedByLocalPlayer(false);
+				setOwner(null);
+
 				Network net = NetworkSystem.getInstance();
 				net.send(new UpdateOwnable(this));
 			}
@@ -172,14 +135,11 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	@Override
 	public void heal(float healPoints)
 	{
-		if (hitPoints + Math.abs(healPoints) < MAX_HIT_POINTS)
-		{
-			hitPoints += Math.abs(healPoints);
-		}
-
-		else
-		{
-			hitPoints = MAX_HIT_POINTS;
+		assert(healPoints >= 0);
+		if (hitPoints + healPoints < maxHitPoints) {
+			hitPoints += healPoints;
+		} else {
+			hitPoints = maxHitPoints;
 		}
 	}
 
@@ -295,29 +255,30 @@ public class Base extends StationaryElement implements Ownable, Damageable
 	 */
 	public float giveHitPoints()
 	{
-		if(hitPoints - HIT_POINTS_REPLENISH_RATE < 0)
-		{
-			float hitPointsGiven = hitPoints;
+		float hitPointsGiven;
+		if(hitPoints - hitPointsRechargeRate < 0) {
+			hitPointsGiven = hitPoints;
 			hitPoints = 0;
 			return hitPointsGiven;
+		} else {
+			hitPoints -= hitPointsRechargeRate;
+			hitPointsGiven = hitPointsRechargeRate;
 		}
-		else
-		{
-			hitPoints -= HIT_POINTS_REPLENISH_RATE;
-			return HIT_POINTS_REPLENISH_RATE;
-		}
+		return hitPointsGiven;
 	}
 
 	@Override
-	public UUID getOwnerId()
-	{
-		return this.ownerUID;
+	public boolean isSolid() {
+		return false;
 	}
 
 	@Override
-	public void setOwnerId(UUID ownerUID)
-	{
-		this.ownerUID = ownerUID;
+	public Polygon bounds() {
+		return boundingBox.bounds();
 	}
 
+	@Override
+	public void updateBounds() {
+		boundingBox.updateBounds(this);
+	}
 }

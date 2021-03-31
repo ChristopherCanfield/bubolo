@@ -21,6 +21,9 @@ public abstract class ActorEntity extends Entity {
 
 	private float rotation;
 
+	private ActorEntity owner;
+	private boolean ownedByLocalPlayer;
+
 	private List<Controller> controllers;
 
 	protected ActorEntity(ConstructionArgs args, int width, int height) {
@@ -60,6 +63,28 @@ public abstract class ActorEntity extends Entity {
 	}
 
 	/**
+	 * @return The object's owner, or null if there isn't an owner.
+	 */
+	public ActorEntity owner() {
+		return owner;
+	}
+
+	public void setOwner(ActorEntity owner) {
+		this.owner = owner;
+	}
+
+	/**
+	 * @return Whether this object is owned by the local player.
+	 */
+	public boolean isOwnedByLocalPlayer() {
+		return ownedByLocalPlayer;
+	}
+
+	public void setOwnedByLocalPlayer(boolean ownedByLocalPlayer) {
+		this.ownedByLocalPlayer = ownedByLocalPlayer;
+	}
+
+	/**
 	 * Called once per tick by the game world.
 	 *
 	 * @param world reference to the game world.
@@ -70,11 +95,13 @@ public abstract class ActorEntity extends Entity {
 	}
 
 	/**
-	 * Called once per tick, after any attached controllers have been updated.
+	 * Called once per tick, after any attached controllers have been updated. Derived classes can override
+	 * this to perform updates, if needed.
 	 *
 	 * @param world reference to the game world.
 	 */
-	abstract protected void onUpdate(World world);
+	protected void onUpdate(World world) {
+	}
 
 	/**
 	 * Adds a controller to this actor.
