@@ -70,7 +70,7 @@ class MineSprite extends AbstractEntitySprite<Mine>
 		{
 			graphics.sprites().removeSprite(this);
 		}
-		else if (!getEntity().isLocalPlayer() && getEntity().isActive())
+		else if (!getEntity().isOwnedByLocalPlayer() && getEntity().isActive())
 		{
 			// Hide other people's mines, but give other players a chance to see it while the mine
 			// is arming.

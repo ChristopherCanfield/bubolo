@@ -36,7 +36,7 @@ class BulletSprite extends AbstractEntitySprite<Bullet>
 		if (isDisposed())
 		{
 			SpriteSystem spriteSystem = graphics.sprites();
-			spriteSystem.addSprite(new BulletExplosionSprite(Math.round(getEntity().getX()), Math.round(getEntity().getY())));
+			spriteSystem.addSprite(new BulletExplosionSprite(Math.round(getEntity().x()), Math.round(getEntity().y())));
 			spriteSystem.removeSprite(this);
 		}
 		else

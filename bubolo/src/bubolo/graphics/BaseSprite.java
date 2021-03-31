@@ -66,12 +66,12 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 
 	private void updateColorSet()
 	{
-		if (!this.getEntity().isOwned())
+		if (!getEntity().hasOwner())
 		{
 			animationState = 0;
 			colorId = ColorSets.NEUTRAL;
 		}
-		else if (this.getEntity().isLocalPlayer())
+		else if (getEntity().isOwnedByLocalPlayer())
 		{
 			colorId = ColorSets.BLUE;
 		}
@@ -133,7 +133,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
-		if (e.isLocalPlayer()) {
+		if (e.isOwnedByLocalPlayer()) {
 			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
 		}
 	}

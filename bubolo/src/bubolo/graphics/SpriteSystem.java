@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bubolo.world.entity.OldEntity;
+import bubolo.world.Entity;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Bullet;
 import bubolo.world.entity.concrete.Crater;
@@ -30,7 +30,7 @@ import bubolo.world.entity.concrete.Water;
  */
 public class SpriteSystem
 {
-	private Map<Class<? extends OldEntity>, SpriteFactory> spriteFactories;
+	private Map<Class<? extends Entity>, SpriteFactory> spriteFactories;
 
 	private List<Sprite> sprites = new ArrayList<Sprite>();
 
@@ -57,7 +57,7 @@ public class SpriteSystem
 	 *            reference to an entity.
 	 * @return reference to the new sprite.
 	 */
-	public Sprite createSprite(OldEntity entity)
+	public Sprite createSprite(Entity entity)
 	{
 		if (!spriteFactories.containsKey(entity.getClass()))
 		{
@@ -105,7 +105,7 @@ public class SpriteSystem
 		 *            reference to the entity that the sprite represents.
 		 * @return reference to the new sprite.
 		 */
-		Sprite create(OldEntity e);
+		Sprite create(Entity e);
 	}
 
 	/**
@@ -113,13 +113,13 @@ public class SpriteSystem
 	 *
 	 * @return map of the concrete classes to sprite creator classes.
 	 */
-	private static Map<Class<? extends OldEntity>, SpriteFactory> setSpriteFactories()
+	private static Map<Class<? extends Entity>, SpriteFactory> setSpriteFactories()
 	{
-		Map<Class<? extends OldEntity>, SpriteFactory> factories = new HashMap<>();
+		Map<Class<? extends Entity>, SpriteFactory> factories = new HashMap<>();
 
 		factories.put(Base.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new BaseSprite((Base) e);
 			}
@@ -127,7 +127,7 @@ public class SpriteSystem
 
 		factories.put(Bullet.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new BulletSprite((Bullet) e);
 			}
@@ -135,7 +135,7 @@ public class SpriteSystem
 
 		factories.put(Crater.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new CraterSprite((Crater) e);
 			}
@@ -143,7 +143,7 @@ public class SpriteSystem
 
 		factories.put(DeepWater.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new DeepWaterSprite((DeepWater) e);
 			}
@@ -151,15 +151,15 @@ public class SpriteSystem
 
 		factories.put(Grass.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
-				return new GrassSprite(e);
+				return new GrassSprite((Grass) e);
 			}
 		});
 
 		factories.put(Mine.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new MineSprite((Mine) e);
 			}
@@ -167,7 +167,7 @@ public class SpriteSystem
 
 		factories.put(MineExplosion.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new MineExplosionSprite((MineExplosion) e);
 			}
@@ -175,7 +175,7 @@ public class SpriteSystem
 
 		factories.put(Pillbox.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new PillboxSprite((Pillbox) e);
 			}
@@ -183,7 +183,7 @@ public class SpriteSystem
 
 		factories.put(Road.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new RoadSprite((Road) e);
 			}
@@ -191,23 +191,23 @@ public class SpriteSystem
 
 		factories.put(Rubble.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
-				return new RubbleSprite(e);
+				return new RubbleSprite((Rubble) e);
 			}
 		});
 
 		factories.put(Swamp.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
-				return new SwampSprite(e);
+				return new SwampSprite((Swamp) e);
 			}
 		});
 
 		factories.put(Tank.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new TankSprite((Tank) e);
 			}
@@ -215,15 +215,15 @@ public class SpriteSystem
 
 		factories.put(Tree.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
-				return new TreeSprite(e);
+				return new TreeSprite((Tree) e);
 			}
 		});
 
 		factories.put(Wall.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new WallSprite((Wall) e);
 			}
@@ -231,7 +231,7 @@ public class SpriteSystem
 
 		factories.put(Water.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
 				return new WaterSprite((Water) e);
 			}
@@ -240,9 +240,9 @@ public class SpriteSystem
 
 		factories.put(Spawn.class, new SpriteFactory() {
 			@Override
-			public Sprite create(OldEntity e)
+			public Sprite create(Entity e)
 			{
-				return new SpawnSprite(e);
+				return new SpawnSprite((Spawn) e);
 			}
 		});
 

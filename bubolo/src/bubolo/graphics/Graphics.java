@@ -24,9 +24,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import bubolo.ui.Screen;
 import bubolo.util.Coords;
+import bubolo.world.Entity;
 import bubolo.world.EntityCreationObserver;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 
 /**
  * The top-level class for the Graphics system.
@@ -166,7 +166,7 @@ public class Graphics implements EntityCreationObserver
 	}
 
 	@Override
-	public void onEntityCreated(OldEntity entity) {
+	public void onEntityCreated(Entity entity) {
 		spriteSystem.createSprite(entity);
 	}
 

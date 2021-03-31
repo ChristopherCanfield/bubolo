@@ -67,11 +67,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 
 	private void updateColorSet()
 	{
-		if (!getEntity().isOwned())
+		if (!getEntity().hasOwner())
 		{
 			colorId = ColorSets.NEUTRAL;
 		}
-		else if (getEntity().isLocalPlayer())
+		else if (getEntity().isOwnedByLocalPlayer())
 		{
 			colorId = ColorSets.BLUE;
 		}
@@ -103,7 +103,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
-		if (e.isLocalPlayer()) {
+		if (e.isOwnedByLocalPlayer()) {
 			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
 		}
 	}

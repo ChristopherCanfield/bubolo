@@ -1,6 +1,6 @@
 package bubolo.graphics;
 
-import bubolo.world.entity.OldEntity;
+import bubolo.world.Entity;
 
 /**
  * Abstract base class for sprites, which draw textures to a quad at a specific x,y location.
@@ -14,7 +14,7 @@ import bubolo.world.entity.OldEntity;
  *
  * @author BU CS673 - Clone Productions
  */
-abstract class AbstractEntitySprite<T extends OldEntity> extends Sprite
+abstract class AbstractEntitySprite<T extends Entity> extends Sprite
 {
 	// Reference to the entity that this sprite represents.
 	private final T entity;
@@ -57,30 +57,30 @@ abstract class AbstractEntitySprite<T extends OldEntity> extends Sprite
 	@Override
 	public float getX()
 	{
-		return entity.getX();
+		return entity.x();
 	}
 
 	@Override
 	public float getY()
 	{
-		return entity.getY();
+		return entity.y();
 	}
 
 	@Override
 	public int getWidth()
 	{
-		return entity.getWidth();
+		return entity.width();
 	}
 
 	@Override
 	public int getHeight()
 	{
-		return entity.getHeight();
+		return entity.height();
 	}
 
 	@Override
 	public float getRotation()
 	{
-		return entity.getRotation();
+		return entity.rotation();
 	}
 }

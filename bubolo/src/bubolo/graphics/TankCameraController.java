@@ -1,14 +1,15 @@
 package bubolo.graphics;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.badlogic.gdx.graphics.Camera;
 
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Tank;
-import static com.google.common.base.Preconditions.*;
 
 /**
  * Controller that moves the camera based on the tank's position.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 class TankCameraController implements CameraController
@@ -19,7 +20,7 @@ class TankCameraController implements CameraController
 	/**
 	 * Constructs a TankCameraController. Package-private because TankCameraControllers are internal
 	 * to the Graphics system.
-	 * 
+	 *
 	 * @param tank
 	 */
 	TankCameraController(Tank tank)
@@ -58,7 +59,7 @@ class TankCameraController implements CameraController
 
 	private static float calculateCameraX(Camera camera, Tank tank, World world)
 	{
-		float tankX = tank.getX();
+		float tankX = tank.x();
 
 		float cameraX = tankX - camera.viewportWidth / 2.f;
 		if (cameraX < 0)
@@ -77,7 +78,7 @@ class TankCameraController implements CameraController
 
 	private static float calculateCameraY(Camera camera, Tank tank, World world)
 	{
-		float tankY = tank.getY();
+		float tankY = tank.y();
 
 		float cameraY = tankY - camera.viewportHeight / 2.f;
 		if (cameraY < 0)

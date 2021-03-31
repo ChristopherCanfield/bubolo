@@ -54,7 +54,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 		else
 		{
 			TextureRegion[] frames;
-			if (getEntity().getHitPoints() == Wall.MAX_HIT_POINTS) {
+			if (getEntity().getHitPoints() == getEntity().getMaxHitPoints()) {
 				frames = undamagedFrames;
 			} else {
 				frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
@@ -68,7 +68,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	 */
 	private static int calculateDamagedFramesIndex(Wall entity) {
 		int health = Math.round(entity.getHitPoints());
-		if (health == Wall.MAX_HIT_POINTS) {
+		if (health == entity.getMaxHitPoints()) {
 			return -1;
 		} else if (health >= 75) {
 			return 0;
