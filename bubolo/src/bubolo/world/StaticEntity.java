@@ -3,10 +3,14 @@ package bubolo.world;
 /**
  * Game world objects that never move, and that do not have intelligence.
  *
+ * The primary differences between StaticEntities and ActorEntities are:
+ * - StaticEntities can't be moved after construction, because their position is final.
+ * - StaticEntities don't have a public update method that is called by the world each game tick.
+ *
  * @author Christopher D. Canfield
  * @since 0.4.0
  */
-public class StaticEntity extends Entity {
+public abstract class StaticEntity extends Entity {
 	private final float x;
 	private final float y;
 

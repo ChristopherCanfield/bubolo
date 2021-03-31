@@ -2,7 +2,6 @@ package bubolo.world.entity.concrete;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
@@ -10,9 +9,11 @@ import com.badlogic.gdx.math.Polygon;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.util.TileUtil;
+import bubolo.world.ActorEntity;
+import bubolo.world.BoundingBox;
+import bubolo.world.Collidable;
 import bubolo.world.Damageable;
 import bubolo.world.World;
-import bubolo.world.entity.Effect;
 import bubolo.world.entity.OldEntity;
 
 /**
@@ -21,10 +22,10 @@ import bubolo.world.entity.OldEntity;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Bullet extends Effect
+public class Bullet extends ActorEntity implements Collidable
 {
 	// The max distance the bullet can travel, in world units.
-	private static final float MAX_DISTANCE = 600;
+	private static final float maxDistance = 600;
 
 	// The distance the bullet has traveled.
 	private int distanceTraveled;
@@ -35,97 +36,56 @@ public class Bullet extends Effect
 	// The y movement per tick.
 	private float movementY;
 
-	// The bullet's movement speed.
-	private static final float SPEED = 6.f;
+	// The bullet's movement speed, in game world units per tick.
+	private static final float speed = 6.f;
 
 	// The bullet's movement speed.
-	private static final int DAMAGEDONE = 10;
+	private static final int damage = 10;
 
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
 
-	private OldEntity parent = null;
+	private ActorEntity parent = null;
+
+	private static final int width = 4;
+	private static final int height = 8;
+
+	private final BoundingBox boundingBox = new BoundingBox();
 
 	/**
-	 * Construct a new Bullet with a random UUID.
+	 * Constructs a new Bullet.
 	 */
-	public Bullet()
+	public Bullet(ConstructionArgs args)
 	{
-		this(false);
-	}
-
-	/**
-	 * Package-private constructor for testing. Allows the sound to be suppressed.
-	 *
-	 * @param noSound
-	 *            true if there should be no bullet creation sound, or false otherwise.
-	 */
-	Bullet(boolean noSound)
-	{
-		this(UUID.randomUUID(), noSound);
-	}
-
-	/**
-	 * Construct a new Bullet with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Bullet.
-	 * @param noSound
-	 *            should be true if a sound should not be played upon Bullet construction, false
-	 *            otherwise.
-	 */
-	public Bullet(UUID id, boolean noSound)
-	{
-		super(id);
-		setWidth(4);
-		setHeight(8);
+		super(args, width, height);
 		updateBounds();
 
-		// Play cannon fired sound effect.
-		if (!noSound)
-		{
-			Audio.play(Sfx.CANNON_FIRED);
-		}
-	}
-
-	/**
-	 * Construct a new Bullet with the specified UUID, and play the bullet created sound by default.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Bullet.
-	 */
-	public Bullet(UUID id)
-	{
-		this(id, false);
+		Audio.play(Sfx.CANNON_FIRED);
 	}
 
 	@Override
-	public void update(World world)
-	{
-		if (!initialized)
-		{
+	protected void onUpdate(World world) {
+		if (!initialized) {
 			initialize();
 		}
+
 		// TODO (cdc - 2014-03-21): This could be made into a controller. However, it's so
 		// simple, what's the point?
 		move(world);
 	}
+
 	/**
-	 * return the Entity that spawned this bullet
-	 * @return
-	 * 		the entity that spawned this bullet
+	 * @return the entity that spawned this bullet
 	 */
-	public OldEntity getParent()
-	{
-		return this.parent;
+	public ActorEntity getParent() {
+		return parent;
 	}
 	/**
-	 *  sets the Parent field of this bullet
-	 * @param parent
-	 * 		the entity to set as the parent of this bullet
+	 * Sets the Parent of this bullet. Bullets never hurt their own parents.
+	 *
+	 * @param parent the ActorEntity to set as the parent of this bullet.
 	 */
-	public void setParent(OldEntity parent)
-	{
+	public void setParent(ActorEntity parent) {
 		this.parent = parent;
 
 	}
@@ -136,14 +96,14 @@ public class Bullet extends Effect
 	 */
 	private void move(World world)
 	{
-		if (distanceTraveled > MAX_DISTANCE)
+		if (distanceTraveled > maxDistance)
 		{
 			world.removeEntity(this);
 			return;
 		}
 
-		setX(getX() + movementX);
-		setY(getY() + movementY);
+		setX(x() + movementX);
+		setY(y() + movementY);
 
 		distanceTraveled += (Math.abs(movementX) + Math.abs(movementY));
 
@@ -151,10 +111,10 @@ public class Bullet extends Effect
 		{
 			if (collider instanceof Damageable)
 			{
-				if (Intersector.overlapConvexPolygons(collider.getBounds(), this.getBounds()))
+				if (Intersector.overlapConvexPolygons(collider.getBounds(), bounds()))
 				{
 					Damageable damageableCollider = (Damageable)collider;
-					damageableCollider.takeHit(DAMAGEDONE);
+					damageableCollider.takeHit(damage);
 					world.removeEntity(this);
 					return;
 				}
@@ -168,11 +128,12 @@ public class Bullet extends Effect
 	 */
 	private void initialize()
 	{
-		movementX = (float)(Math.cos(getRotation()) * SPEED);
-		movementY = (float)(Math.sin(getRotation()) * SPEED);
+		movementX = (float) (Math.cos(rotation()) * speed);
+		movementY = (float) (Math.sin(rotation()) * speed);
 
 		initialized = true;
 	}
+
 	/**
 	 * Returns a list of all Entities that would overlap with this Tank if it was where it
 	 * will be in one game tick, along its current trajectory.
@@ -183,26 +144,40 @@ public class Bullet extends Effect
 
 		for (OldEntity localEntity: TileUtil.getLocalEntities(getX(),getY(), w))
 		{
-			if (localEntity!=this && localEntity!=this.parent)
+			if ((localEntity != this && localEntity != parent) && localEntity instanceof Collidable collidable)
 			{
-				if (overlapsEntity(localEntity)
-						||Intersector.overlapConvexPolygons(lookAheadBounds(), localEntity.getBounds()))
-				{
+				if (overlapsEntity(collidable) || Intersector.overlapConvexPolygons(lookAheadBounds(), collidable.bounds())) {
 					intersects.add(localEntity);
 				}
 			}
 		}
+
 		return intersects;
 	}
 
 	private Polygon lookAheadBounds()
 	{
-		Polygon lookAheadBounds = getBounds();
+		Polygon lookAheadBounds = bounds();
 
-		float newX = (float) (getX() + Math.cos(getRotation()) * SPEED);
-		float newY = (float) (getY() + Math.sin(getRotation()) * SPEED);
+		float newX = (float) (x() + Math.cos(rotation()) * speed);
+		float newY = (float) (y() + Math.sin(rotation()) * speed);
 
 		lookAheadBounds.setPosition(newX, newY);
 		return lookAheadBounds;
+	}
+
+	@Override
+	public boolean isSolid() {
+		return false;
+	}
+
+	@Override
+	public Polygon bounds() {
+		return boundingBox.bounds();
+	}
+
+	@Override
+	public void updateBounds() {
+		boundingBox.updateBounds(this);
 	}
 }
