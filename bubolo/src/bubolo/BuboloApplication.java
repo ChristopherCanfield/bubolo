@@ -193,20 +193,11 @@ public class BuboloApplication extends AbstractGameApplication
 		case LOCAL_GAME: {
 			screen.dispose();
 
-			Entity.ConstructionArgs args;
-			if (!isClient) {
-				Vector2 spawnLocation = getRandomSpawn(world);
-				args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
-			} else {
-				// TODO (cdc - 2021-03-31): What is the purpose of using this, rather than spawn locations?
-				args = new Entity.ConstructionArgs(UUID.randomUUID(), getRandomX(), 200, 0);
-			}
+			Vector2 spawnLocation = getRandomSpawn(world);
+			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
-			tank.setPlayerName(network.getPlayerName());
 			tank.setOwnedByLocalPlayer(true);
-
-			network.send(new CreateTank(tank));
 
 			setReady(true);
 		} break;
