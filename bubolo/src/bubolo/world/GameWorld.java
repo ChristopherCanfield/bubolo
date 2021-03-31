@@ -5,11 +5,15 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
@@ -37,28 +41,22 @@ public class GameWorld implements World
 	private final List<Entity> entities = new ArrayList<>();
 	private final Map<UUID, Entity> entityMap = new HashMap<>();
 
-	// first: x; second: y.
+	private final List<Tank> tanks = new ArrayList<>();
+	private final List<ActorEntity> actors = new ArrayList<>();
+	private final List<Spawn> spawns = new ArrayList<>();
+
+	// first: column; second: row.
 	private Tile[][] mapTiles = null;
 
-	// The list of entities to remove. The entities array can't be modified while it
-	// is being iterated over.
-	private final List<Entity> entitiesToRemove = new ArrayList<>();
+	// The entities to remove.
+	private final Set<Entity> entitiesToRemove = new HashSet<>();
 
 	// The list of entities to add. The entities array can't be modified while it is
 	// being iterated over.
 	private final List<Entity> entitiesToAdd = new ArrayList<>();
 
-	// the list of Tanks that exist in the world
-	private final List<Tank> tanks = new ArrayList<>();
-
 	// list of world controllers
 	private final List<Controller> worldControllers = new ArrayList<>();
-
-	// the list of all Actors which currently exist in the world
-	private final List<ActorEntity> actors = new ArrayList<>();
-
-	// the list of all Spawn Locations currently in the world
-	private final List<Spawn> spawns = new ArrayList<>();
 
 	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
@@ -123,7 +121,7 @@ public class GameWorld implements World
 	@Override
 	public Entity getEntity(UUID id) throws GameLogicException
 	{
-		OldEntity entity = entityMap.get(id);
+		Entity entity = entityMap.get(id);
 		if (entity == null)
 		{
 			throw new GameLogicException(
@@ -135,7 +133,7 @@ public class GameWorld implements World
 	@Override
 	public List<Entity> getEntities()
 	{
-		List<OldEntity> copyOfEntities = Collections.unmodifiableList(entities);
+		List<Entity> copyOfEntities = Collections.unmodifiableList(entities);
 		return copyOfEntities;
 	}
 
@@ -188,30 +186,6 @@ public class GameWorld implements World
 		}
 
 		return entity;
-	}
-
-	@Override
-	public void removeEntity(Entity e)
-	{
-		e.dispose();
-		entityMap.remove(e.id());
-
-		if (e instanceof Tank) {
-			tanks.remove(e);
-		}
-
-		if (e instanceof ActorEntity) {
-			actors.remove(e);
-		}
-
-		if (e instanceof Spawn) {
-			spawns.remove(e);
-		}
-
-		if (e instanceof Adaptable adaptable) {
-			adaptables.remove(adaptable);
-			adaptableRemovedThisTick = true;
-		}
 	}
 
 	@Override
@@ -303,26 +277,26 @@ public class GameWorld implements World
 	public void update()
 	{
 		// Update all world controllers
-		for (Controller c : worldControllers)
-		{
+		for (Controller c : worldControllers) {
 			c.update(this);
 		}
 
+		// TODO (cdc - 2021-03-31): Remove these once world/entity refactoring is complete.
 		checkState(width > 0,
 				"worldMapWidth must be greater than 0. worldMapWidth: %s", width);
 		checkState(height > 0,
 				"worldMapHeight must be greater than 0. worldMapHeight: %s", height);
 
-		// Update all entities.
-		for (Entity e : entities) {
-			if (!e.isDisposed()) { e.update(this); }
+		// Update all actors.
+		actors.forEach(actor -> actor.update(this));
 
-			if (e.isDisposed()) {
-				entitiesToRemove.add(e);
-			}
-		}
+		// Check for disposed entities.
+		entitiesToRemove.addAll(entities.parallelStream()
+				.filter(e -> e.isDisposed())
+				.collect(Collectors.toList())
+		);
 
-		entities.removeAll(entitiesToRemove);
+		removeEntities(entitiesToRemove);
 		entitiesToRemove.clear();
 
 		// Update the tiling state of each entity to add, if applicable.
@@ -337,6 +311,25 @@ public class GameWorld implements World
 			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
 		}
 		adaptableAddedThisTick = false;
+	}
+
+	/**
+	 * Removes a collection of entities from the game world. Must not be called during iteration of
+	 * the entities, tanks, actors, spawns, or adaptables lists.
+	 *
+	 * @param markedForRemoval a collection of entities to remove.
+	 */
+	private void removeEntities(Collection<Entity> markedForRemoval) {
+		if (!markedForRemoval.isEmpty()) {
+			entities.removeAll(markedForRemoval);
+			entityMap.values().removeAll(markedForRemoval);
+
+			tanks.removeAll(markedForRemoval);
+			actors.removeAll(markedForRemoval);
+			spawns.removeAll(markedForRemoval);
+
+			adaptableRemovedThisTick = adaptables.removeAll(markedForRemoval);
+		}
 	}
 
 	@Override

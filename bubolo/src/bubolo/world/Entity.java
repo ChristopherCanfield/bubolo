@@ -83,7 +83,7 @@ public abstract class Entity {
 	}
 
 	/**
-	 * This method must be called when the entity should be removed from the game.
+	 * Marks an entity for removal at the end of the current game tick.
 	 */
 	public final void dispose() {
 		if (!disposed) {
@@ -95,7 +95,19 @@ public abstract class Entity {
 	/**
 	 * Called when dispose is called.
 	 */
-	protected void onDispose()
-	{
+	protected void onDispose() {
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof Entity otherEntity) {
+			return id.equals(otherEntity.id());
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 }

@@ -105,13 +105,6 @@ public interface World
 	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory) throws GameLogicException;
 
 	/**
-	 * Removes an entity from the world.
-	 *
-	 * @param e the entity to remove.
-	 */
-	public void removeEntity(Entity e);
-
-	/**
 	 * Returns the width of the world.
 	 *
 	 * @return the width of the world.
