@@ -9,11 +9,12 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Intersector;
 
+import bubolo.world.Entity;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.OldTerrain;
+import bubolo.world.entity.StationaryElement;
 
 /**
  * This utility provides various functions for working with Tile objects based on their
@@ -46,24 +47,24 @@ public abstract class TileUtil
 	 * @return The x component of the grid index of the tile closest to the x coordinate
 	 *         given.
 	 */
-	public static int getClosestTileX(float x)
-	{
-		return (int) (x / 32);
-	}
-
-	/**
-	 * Returns the x index of the closest Tile to the given world y value.
-	 *
-	 * @param y
-	 *            The y component of the target position in world coordinates.
-	 * @return The y component of the grid index of the tile closest to the y coordinate
-	 *         given.
-	 */
-
-	public static int getClosestTileY(float y)
-	{
-		return (int) (y / 32);
-	}
+//	public static int getClosestTileX(float x)
+//	{
+//		return (int) (x / 32);
+//	}
+//
+//	/**
+//	 * Returns the x index of the closest Tile to the given world y value.
+//	 *
+//	 * @param y
+//	 *            The y component of the target position in world coordinates.
+//	 * @return The y component of the grid index of the tile closest to the y coordinate
+//	 *         given.
+//	 */
+//
+//	public static int getClosestTileY(float y)
+//	{
+//		return (int) (y / 32);
+//	}
 
 	/**
 	 * get a list of entities that are currently colliding with a given entity
@@ -157,7 +158,7 @@ public abstract class TileUtil
 	 *            is the World in which the Entities reside.
 	 * @return a List of all Entities which could be near the target location.
 	 */
-	public static List<OldEntity> getLocalEntities(float x, float y, World w)
+	public static List<Entity> getLocalEntities(float x, float y, World w)
 	{
 		int gridX = getClosestTileX(x);
 		int gridY = getClosestTileY(y);
@@ -362,11 +363,11 @@ public abstract class TileUtil
 	 * 		the tile that is closest to given entity
 	 *
 	 */
-	public static Tile getEntityTile(OldEntity entity, World world)
+	public static Tile getEntityTile(Entity entity, World world)
 	{
 		Tile[][] tiles = world.getTiles();
-		int tileX = TileUtil.getClosestTileX(entity.getX());
-		int tileY = TileUtil.getClosestTileY(entity.getY());
+		int tileX = TileUtil.getClosestTileX(entity.x());
+		int tileY = TileUtil.getClosestTileY(entity.y());
 		return tiles[tileX][tileY];
 	}
 }

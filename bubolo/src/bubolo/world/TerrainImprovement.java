@@ -1,5 +1,9 @@
 package bubolo.world;
 
+import java.util.UUID;
+
+import bubolo.util.Coords;
+
 /**
  * An object that can be built on top of terrain. Terrain improvements are mutually exclusive; that is, only
  * one type of terrain improvement may exist on a terrain at a time.
@@ -15,7 +19,33 @@ public interface TerrainImprovement {
 	 *
 	 * @return the terrain improvement's impact on tank movement speed, or zero if this does not affect tank movement speed.
 	 */
-	default public float speedModifier() {
+	default float speedModifier() {
 		return 0;
+	}
+
+
+	UUID id();
+
+	/**
+	 * @return The object's x position in world units.
+	 */
+	float x();
+	/**
+	 * @return The object's y position in world units.
+	 */
+	float y();
+
+	/**
+	 * @return the world column that the object is in.
+	 */
+	default int tileColumn() {
+		return (int) x() / Coords.TILE_TO_WORLD_SCALE;
+	}
+
+	/**
+	 * @return the world row that the object is in.
+	 */
+	default int tileRow() {
+		return (int) y() / Coords.TILE_TO_WORLD_SCALE;
 	}
 }

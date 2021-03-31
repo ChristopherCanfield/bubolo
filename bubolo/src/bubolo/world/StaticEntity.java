@@ -1,5 +1,7 @@
 package bubolo.world;
 
+import bubolo.util.Coords;
+
 /**
  * Game world objects that never move, and that do not have intelligence.
  *
@@ -34,5 +36,19 @@ public abstract class StaticEntity extends Entity {
 	@Override
 	public float rotation() {
 		return (float) (Math.PI / 2.0);
+	}
+
+	/**
+	 * @return the world column that the object is in.
+	 */
+	public int tileColumn() {
+		return (int) x() / Coords.TILE_TO_WORLD_SCALE;
+	}
+
+	/**
+	 * @return the world row that the object is in.
+	 */
+	public int tileRow() {
+		return (int) y() / Coords.TILE_TO_WORLD_SCALE;
 	}
 }
