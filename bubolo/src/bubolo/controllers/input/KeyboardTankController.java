@@ -82,8 +82,7 @@ public class KeyboardTankController implements Controller
 			if(bullet != null)
 			{
 				Network net = NetworkSystem.getInstance();
-				net.send(new CreateBullet(Bullet.class, bullet.id(), bullet.x(), bullet.y(),
-					bullet.rotation(), tank.id()));
+				net.send(new CreateBullet(bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), tank.id()));
 			}
 
 		}

@@ -5,8 +5,8 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
 import bubolo.util.TileUtil;
+import bubolo.world.Entity;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.concrete.Pillbox;
 import bubolo.world.entity.concrete.Tank;
 
@@ -42,17 +42,17 @@ public class AiPillboxController implements Controller
 			}
 		}
 
-		if(!pillbox.isOwned() && pillbox.getHitPoints() <= 0)
+		if(!pillbox.hasOwner() && pillbox.getHitPoints() <= 0)
 		{
-			for(OldEntity entity : TileUtil.getLocalCollisions(pillbox, world))
+			for(Entity entity : TileUtil.getLocalCollisions(pillbox, world))
 			{
 				if (entity instanceof Tank)
 				{
-					Tank tank = (Tank)entity;
-					pillbox.setOwnerId(tank.getId());
-					if(tank.isLocalPlayer() && !pillbox.isLocalPlayer())
+					Tank tank = (Tank) entity;
+					pillbox.setOwner(tank);
+					if(tank.isOwnedByLocalPlayer() && !pillbox.isOwnedByLocalPlayer())
 					{
-						pillbox.setLocalPlayer(true);
+						pillbox.setOwnedByLocalPlayer(true);
 						sendNetUpdate(pillbox);
 					}
 				}
@@ -75,10 +75,10 @@ public class AiPillboxController implements Controller
 
 		for (Tank tank : world.getTanks()) {
 			// Don't attack the owner's tank, or hidden tanks.
-			if(!tank.getId().equals(pillbox.getOwnerId()) && !tank.isHidden()) {
+			if(!tank.equals(pillbox.owner()) && !tank.isHidden()) {
 				if (targetInRange(tank)) {
-					double xdistance = Math.abs(pillbox.getX() - tank.getX());
-					double ydistance = Math.abs(pillbox.getY() - tank.getY());
+					double xdistance = Math.abs(pillbox.x() - tank.x());
+					double ydistance = Math.abs(pillbox.y() - tank.y());
 					double newTargetDistance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
 
 					// Select the closest tank as the target.
@@ -99,10 +99,10 @@ public class AiPillboxController implements Controller
 	 *            the tank the pillbox is targeting
 	 * @return targetInRange returns true if the target is within range of this pillbox
 	 */
-	private boolean targetInRange(OldEntity target)
+	private boolean targetInRange(Entity target)
 	{
-		double xdistance = Math.abs(pillbox.getX() - target.getX());
-		double ydistance = Math.abs(pillbox.getY() - target.getY());
+		double xdistance = Math.abs(pillbox.x() - target.x());
+		double ydistance = Math.abs(pillbox.y() - target.y());
 		double distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
 
 		return (distance < pillbox.getRange());
@@ -115,14 +115,14 @@ public class AiPillboxController implements Controller
 	 *            the Tank for the pillbox to target
 	 * @return the angle toward the closest tank. returns -1 if no tanks in range
 	 */
-	private float getTargetDirection(OldEntity target)
+	private float getTargetDirection(Entity target)
 	{
 		double xvector = 0;
 		double yvector = 0;
 		float direction = -1;
 
-		xvector = target.getX() - pillbox.getX();
-		yvector = target.getY() - pillbox.getY();
+		xvector = target.x() - pillbox.x();
+		yvector = target.y() - pillbox.y();
 		direction = (float) Math.atan2(yvector, xvector);
 
 		return direction;

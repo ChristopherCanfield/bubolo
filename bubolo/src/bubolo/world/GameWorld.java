@@ -291,7 +291,7 @@ public class GameWorld implements World
 		actors.forEach(actor -> actor.update(this));
 
 		// Check for disposed entities.
-		entitiesToRemove.addAll(entities.parallelStream()
+		entitiesToRemove.addAll(entities.stream()
 				.filter(e -> e.isDisposed())
 				.collect(Collectors.toList())
 		);

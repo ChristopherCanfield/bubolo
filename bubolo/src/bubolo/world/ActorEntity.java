@@ -45,7 +45,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		return rotation;
 	}
 
-	protected ActorEntity setRotation(float radians) {
+	public ActorEntity setRotation(float radians) {
 		this.rotation = radians;
 		return this;
 	}
@@ -55,7 +55,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		return x;
 	}
 
-	protected ActorEntity setX(float x) {
+	public ActorEntity setX(float x) {
 		this.x = x;
 		return this;
 	}
@@ -65,7 +65,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		return y;
 	}
 
-	protected ActorEntity setY(float y) {
+	public ActorEntity setY(float y) {
 		this.y = y;
 		return this;
 	}

@@ -3,6 +3,7 @@ package bubolo.world.entity.concrete;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
@@ -15,11 +16,12 @@ import bubolo.net.command.MoveTank;
 import bubolo.net.command.NetTankSpeed;
 import bubolo.util.TileUtil;
 import bubolo.world.ActorEntity;
+import bubolo.world.Collidable;
 import bubolo.world.Damageable;
+import bubolo.world.Entity;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.StationaryElement;
 
 /**
@@ -258,11 +260,10 @@ public class Tank extends ActorEntity implements Damageable
 		{
 			cannonFireTime = System.currentTimeMillis();
 
-			Bullet bullet = world.addEntity(Bullet.class);
+			var args = new Entity.ConstructionArgs(UUID.randomUUID(), startX, startY, rotation());
+			Bullet bullet = world.addEntity(Bullet.class, args);
 			bullet.setOwner(this);
 
-			bullet.setX(startX).setY(startY);
-			bullet.setRotation(getRotation());
 			ammoCount--;
 
 			return bullet;
@@ -296,17 +297,15 @@ public class Tank extends ActorEntity implements Damageable
 	 * Returns a list of all Entities that would overlap with this Tank if it was where it
 	 * will be in one game tick, along its current trajectory.
 	 */
-	private List<OldEntity> getLookaheadEntities(World w)
+	private List<Entity> getLookaheadEntities(World w)
 	{
-		ArrayList<OldEntity> intersects = new ArrayList<OldEntity>();
-		List<OldEntity> localEntities = TileUtil.getLocalEntities(x(), y(), w);
-		for (int ii = 0; ii < localEntities.size(); ii++)
-		{
-			if (localEntities.get(ii) != this)
-			{
+		var intersects = new ArrayList<Entity>();
+		var localEntities = TileUtil.getLocalEntities(x(), y(), w);
+		for (int ii = 0; ii < localEntities.size(); ii++) {
+			if (localEntities.get(ii) != this) {
 				if (overlapsEntity(localEntities.get(ii))
 						|| Intersector.overlapConvexPolygons(lookAheadBounds(),
-								localEntities.get(ii).getBounds()))
+								localEntities.get(ii).bounds()))
 				{
 					intersects.add(localEntities.get(ii));
 				}
@@ -373,17 +372,17 @@ public class Tank extends ActorEntity implements Damageable
 	/**
 	 * Checks to see if an Entity overlaps with this Tank's left bumper.
 	 */
-	private boolean hitLeftBumper(OldEntity e)
+	private boolean hitLeftBumper(Collidable e)
 	{
-		return Intersector.overlapConvexPolygons(e.getBounds(), leftBumper);
+		return Intersector.overlapConvexPolygons(e.bounds(), leftBumper);
 	}
 
 	/**
 	 * Checks to see if an Entity overlaps with this Tank's right bumper.
 	 */
-	private boolean hitRightBumper(OldEntity e)
+	private boolean hitRightBumper(Collidable e)
 	{
-		return Intersector.overlapConvexPolygons(e.getBounds(), rightBumper);
+		return Intersector.overlapConvexPolygons(e.bounds(), rightBumper);
 	}
 
 	/**
@@ -466,7 +465,7 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	private void moveTank(World world)
 	{
-		OldTerrain currentTerrain = TileUtil.getTileTerrain(getX(), getY(), world);
+		var currentTerrain = TileUtil.getTileTerrain(x(), y(), world);
 		if (currentTerrain != null)
 		{
 			modifiedMaxSpeed = maxSpeed * currentTerrain.getMaxSpeedModifier();
@@ -505,12 +504,10 @@ public class Tank extends ActorEntity implements Damageable
 
 		// Currently checks against all Entities in the world, then checks each of the
 		// ones that overlap to see if they overlap the bumpers.
-		List<OldEntity> possibleCollisions = getLookaheadEntities(world);
-		for (int i = 0; i < possibleCollisions.size(); i++)
-		{
+		var possibleCollisions = getLookaheadEntities(world);
+		for (int i = 0; i < possibleCollisions.size(); i++) {
 			OldEntity collider = possibleCollisions.get(i);
-			if (collider.isSolid())
-			{
+			if (collider.isSolid()) {
 				if (!collidingLeft) {
 					collidingLeft = hitLeftBumper(collider);
 				}
@@ -807,11 +804,11 @@ public class Tank extends ActorEntity implements Damageable
 			return;
 		}
 
-		List<OldEntity> spawns = world.getSpawns();
+		var spawns = world.getSpawns();
 		if (spawns.size() > 0) {
-			OldEntity spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-			setX(spawn.getX());
-			setY(spawn.getY());
+			Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+			setX(spawn.x());
+			setY(spawn.y());
 
 			Network net = NetworkSystem.getInstance();
 			net.send(new MoveTank(this));

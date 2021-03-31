@@ -5,6 +5,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
 import bubolo.util.TileUtil;
+import bubolo.world.Entity;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Tank;
