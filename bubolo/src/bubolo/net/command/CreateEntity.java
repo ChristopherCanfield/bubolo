@@ -13,12 +13,12 @@ import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
+import bubolo.world.Entity;
 import bubolo.world.Ownable;
+import bubolo.world.Terrain;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.OldTerrain;
 
 /**
  * Generic entity creator for the network.
@@ -29,7 +29,7 @@ public class CreateEntity implements NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
-	private final Class<? extends OldEntity> type;
+	private final Class<? extends Entity> type;
 	private final UUID id;
 
 	private final int x;
@@ -53,7 +53,7 @@ public class CreateEntity implements NetworkCommand
 	 * @param rotation
 	 *            the entity's rotation.
 	 */
-	public CreateEntity(Class<? extends OldEntity> type, UUID id, float x, float y, float rotation)
+	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation)
 	{
 		this.type = type;
 		this.id = id;
@@ -79,8 +79,7 @@ public class CreateEntity implements NetworkCommand
 	 * @param factory
 	 *            factory for adding custom controllers to this entity.
 	 */
-	public CreateEntity(Class<? extends OldEntity> type, UUID id, float x, float y, float rotation,
-			ControllerFactory factory)
+	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation, ControllerFactory factory)
 	{
 		this.type = type;
 		this.id = id;
@@ -95,17 +94,13 @@ public class CreateEntity implements NetworkCommand
 	{
 		try
 		{
-			OldEntity entity;
-			if (factory == null) {
-				entity = world.addEntity(type, id);
-			} else {
-				entity = world.addEntity(type, id, factory);
-			}
+			var args = new Entity.ConstructionArgs(id, x, y, rotation);
 
-			entity.setX(x).setY(y).setRotation(rotation);
+			Entity entity;
+			entity = world.addEntity(type, args, factory);
 
 			Tile tile = world.getTileFromWorldPosition(x, y);
-			if (entity instanceof OldTerrain terrain) {
+			if (entity instanceof Terrain terrain) {
 				tile.setTerrain(terrain, world);
 			} else if (entity instanceof StationaryElement stationaryElement) {
 				tile.setElement(stationaryElement, world);

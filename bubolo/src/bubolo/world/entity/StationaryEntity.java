@@ -11,6 +11,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
+@Deprecated
 public abstract class StationaryEntity extends OldEntity
 {
 	/**

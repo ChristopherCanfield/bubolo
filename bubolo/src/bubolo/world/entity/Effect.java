@@ -8,9 +8,10 @@ import bubolo.world.World;
  * Basic class representing effects that are generally drawn overtop of other Entities.
  * Includes things like bullets and explosions, which can move, cause damage, and trigger
  * collisions, but are not controlled by a player and are not Damageable.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
+@Deprecated
 public abstract class Effect extends OldEntity
 {
 
@@ -29,7 +30,7 @@ public abstract class Effect extends OldEntity
 
 	/**
 	 * Construct a new Effect with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Actor.
 	 */
@@ -37,7 +38,7 @@ public abstract class Effect extends OldEntity
 	{
 		super(id);
 	}
-	
+
 	@Override
 	public void update(World world)
 	{

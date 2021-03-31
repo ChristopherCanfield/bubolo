@@ -10,7 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
 import com.github.cliftonlabs.json_simple.JsonArray;
@@ -22,13 +23,13 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 import bubolo.Config;
 import bubolo.util.Coords;
 import bubolo.util.Nullable;
+import bubolo.world.Entity;
 import bubolo.world.EntityCreationObserver;
 import bubolo.world.GameWorld;
+import bubolo.world.Terrain;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.OldTerrain;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.DeepWater;
@@ -59,7 +60,7 @@ public class MapImporter {
 		/**
 		 * Map of tile IDs to Entity creation functions. The tile ID is the tile's gid minus the tileset's firstGid.
 		 */
-		final Map<Integer, Function<World, OldEntity>> tiles = new HashMap<>();
+		final Map<Integer, BiFunction<World, Entity.ConstructionArgs, Entity>> tiles = new HashMap<>();
 
 		int firstGid;
 
@@ -128,43 +129,43 @@ public class MapImporter {
 		// Add the known map tiles here.
 
 		Tileset stationaryElements = new Tileset("bubolo_tilset_stationaryElements");
-		stationaryElements.tiles.put(0, world -> world.addEntity(Pillbox.class));
-		stationaryElements.tiles.put(1, world -> world.addEntity(Tree.class));
-		stationaryElements.tiles.put(2, world -> world.addEntity(Mine.class));
-		stationaryElements.tiles.put(3, world -> world.addEntity(Wall.class));
-		stationaryElements.tiles.put(4, world -> world.addEntity(Base.class));
-		stationaryElements.tiles.put(5, world -> world.addEntity(Crater.class));
-		stationaryElements.tiles.put(6, world -> world.addEntity(Rubble.class));
-		stationaryElements.tiles.put(7, world -> world.addEntity(Spawn.class));
+		stationaryElements.tiles.put(0, (world, args) -> world.addEntity(Pillbox.class, args));
+		stationaryElements.tiles.put(1, (world, args) -> world.addEntity(Tree.class, args));
+		stationaryElements.tiles.put(2, (world, args) -> world.addEntity(Mine.class, args));
+		stationaryElements.tiles.put(3, (world, args) -> world.addEntity(Wall.class, args));
+		stationaryElements.tiles.put(4, (world, args) -> world.addEntity(Base.class, args));
+		stationaryElements.tiles.put(5, (world, args) -> world.addEntity(Crater.class, args));
+		stationaryElements.tiles.put(6, (world, args) -> world.addEntity(Rubble.class, args));
+		stationaryElements.tiles.put(7, (world, args) -> world.addEntity(Spawn.class, args));
 		tilesets.put(stationaryElements.name, stationaryElements);
 
 		Tileset terrain = new Tileset("bubolo_tilset_terrain");
-		terrain.tiles.put(0, world -> world.addEntity(Grass.class));
-		terrain.tiles.put(1, world -> world.addEntity(Swamp.class));
-		terrain.tiles.put(2, world -> world.addEntity(Water.class));
-		terrain.tiles.put(3, world -> world.addEntity(DeepWater.class));
-		terrain.tiles.put(4, world -> world.addEntity(Road.class));
+		terrain.tiles.put(0, (world, args) -> world.addEntity(Grass.class, args));
+		terrain.tiles.put(1, (world, args) -> world.addEntity(Swamp.class, args));
+		terrain.tiles.put(2, (world, args) -> world.addEntity(Water.class, args));
+		terrain.tiles.put(3, (world, args) -> world.addEntity(DeepWater.class, args));
+		terrain.tiles.put(4, (world, args) -> world.addEntity(Road.class, args));
 		tilesets.put(terrain.name, terrain);
 
 		// Tilesets for the original layout, which put rubble and craters in the terrain category.
 		// Needed so the Everard Island map will continue to work.
 		Tileset stationaryElements_oldLayout = new Tileset("bubolo_tilset_stationaryElements_oldLayout");
-		stationaryElements_oldLayout.tiles.put(0, world -> world.addEntity(Pillbox.class));
-		stationaryElements_oldLayout.tiles.put(1, world -> world.addEntity(Tree.class));
-		stationaryElements_oldLayout.tiles.put(2, world -> world.addEntity(Mine.class));
-		stationaryElements_oldLayout.tiles.put(3, world -> world.addEntity(Wall.class));
-		stationaryElements_oldLayout.tiles.put(4, world -> world.addEntity(Base.class));
-		stationaryElements_oldLayout.tiles.put(5, world -> world.addEntity(Spawn.class));
+		stationaryElements_oldLayout.tiles.put(0, (world, args) -> world.addEntity(Pillbox.class, args));
+		stationaryElements_oldLayout.tiles.put(1, (world, args) -> world.addEntity(Tree.class, args));
+		stationaryElements_oldLayout.tiles.put(2, (world, args) -> world.addEntity(Mine.class, args));
+		stationaryElements_oldLayout.tiles.put(3, (world, args) -> world.addEntity(Wall.class, args));
+		stationaryElements_oldLayout.tiles.put(4, (world, args) -> world.addEntity(Base.class, args));
+		stationaryElements_oldLayout.tiles.put(5, (world, args) -> world.addEntity(Spawn.class, args));
 		tilesets.put(stationaryElements_oldLayout.name, stationaryElements_oldLayout);
 
 		Tileset terrain_oldLayout = new Tileset("bubolo_tilset_terrain_oldLayout");
-		terrain_oldLayout.tiles.put(0, world -> world.addEntity(Grass.class));
-		terrain_oldLayout.tiles.put(1, world -> world.addEntity(Swamp.class));
-		terrain_oldLayout.tiles.put(2, world -> world.addEntity(Water.class));
-		terrain_oldLayout.tiles.put(3, world -> world.addEntity(DeepWater.class));
-		terrain_oldLayout.tiles.put(4, world -> world.addEntity(Road.class));
-		terrain_oldLayout.tiles.put(5, world -> world.addEntity(Crater.class));
-		terrain_oldLayout.tiles.put(6, world -> world.addEntity(Rubble.class));
+		terrain_oldLayout.tiles.put(0, (world, args) -> world.addEntity(Grass.class, args));
+		terrain_oldLayout.tiles.put(1, (world, args) -> world.addEntity(Swamp.class, args));
+		terrain_oldLayout.tiles.put(2, (world, args) -> world.addEntity(Water.class, args));
+		terrain_oldLayout.tiles.put(3, (world, args) -> world.addEntity(DeepWater.class, args));
+		terrain_oldLayout.tiles.put(4, (world, args) -> world.addEntity(Road.class, args));
+		terrain_oldLayout.tiles.put(5, (world, args) -> world.addEntity(Crater.class, args));
+		terrain_oldLayout.tiles.put(6, (world, args) -> world.addEntity(Rubble.class, args));
 		tilesets.put(terrain_oldLayout.name, terrain_oldLayout);
 	}
 
@@ -307,7 +308,6 @@ public class MapImporter {
 			for (Tileset ts : tilesets.values()) {
 				// Add the entity if it is known to this tileset.
 				if (ts.isGidInThisTileset(tileGid)) {
-					OldEntity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world);
 					// The game world is flipped from json map indexes.
 					int gridY = mapHeightTiles - row - 1;
 					int gridX = col;
@@ -315,9 +315,10 @@ public class MapImporter {
 					int posX = gridX * Coords.TILE_TO_WORLD_SCALE;
 					double rotation = Math.PI / 2.0;
 
-					entity.setTransform(posX, posY, rotation);
+					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, (float) rotation);
+					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world, args);
 
-					if (entity instanceof OldTerrain terrain) {
+					if (entity instanceof Terrain terrain) {
 						addTerrain(terrain, world, mapTiles, gridX, gridY);
 					} else if (entity instanceof StationaryElement stationaryElement) {
 						addStationaryElement(stationaryElement, world, mapTiles, gridX, gridY);
@@ -329,7 +330,7 @@ public class MapImporter {
 		}
 	}
 
-	private static void addTerrain(OldTerrain terrain, World world, Tile[][] mapTiles, int gridX, int gridY) {
+	private static void addTerrain(Terrain terrain, World world, Tile[][] mapTiles, int gridX, int gridY) {
 		if (mapTiles[gridX][gridY] != null) {
 			mapTiles[gridX][gridY].setTerrain(terrain, world);
 		} else {

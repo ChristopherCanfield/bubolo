@@ -5,9 +5,10 @@ import java.util.UUID;
 /**
  * Terrain objects represent the base of the game world at a given grid position. A grid location
  * must contain one Terrain object.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
+@Deprecated
 public abstract class OldTerrain extends StationaryEntity
 {
 
@@ -20,7 +21,7 @@ public abstract class OldTerrain extends StationaryEntity
 
 	/**
 	 * Construct a new Terrain with the specified UUID.
-	 * 
+	 *
 	 * @param id
 	 *            is the existing UUID to be applied to the new Terrain.
 	 * @param maxSpeedModifier
@@ -34,7 +35,7 @@ public abstract class OldTerrain extends StationaryEntity
 
 	/**
 	 * Returns the percentage factor for capping an objects speed while traversing this terrain.
-	 * 
+	 *
 	 * @return maxSpeedModifier the percentage factor for capping an objects speed while traversing
 	 *         this terrain.
 	 */

@@ -10,6 +10,7 @@ import java.util.UUID;
  *
  * @author BU CS673 - Clone Productions
  */
+@Deprecated
 public abstract class StationaryElement extends StationaryEntity
 {
 	/**

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,9 +24,10 @@ import bubolo.ui.LobbyScreen;
 import bubolo.ui.PlayerInfoScreen;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
+import bubolo.world.Entity;
 import bubolo.world.GameWorld;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
+import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
 
 /**
@@ -170,15 +172,18 @@ public class BuboloApplication extends AbstractGameApplication
 		{
 			screen.dispose();
 
-			Tank tank = world.addEntity(Tank.class);
-			tank.setPlayerName(network.getPlayerName());
-			tank.setLocalPlayer(true);
+			Entity.ConstructionArgs args;
 			if (!isClient) {
 				Vector2 spawnLocation = getRandomSpawn(world);
-				tank.setX(spawnLocation.x).setY(spawnLocation.y).setRotation(0);
+				args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
 			} else {
-				tank.setX(getRandomX()).setY(200).setRotation(0);
+				// TODO (cdc - 2021-03-31): What is the purpose of using this, rather than spawn locations?
+				args = new Entity.ConstructionArgs(UUID.randomUUID(), getRandomX(), 200, 0);
 			}
+
+			Tank tank = world.addEntity(Tank.class, args);
+			tank.setPlayerName(network.getPlayerName());
+			tank.setOwnedByLocalPlayer(true);
 
 			network.send(new CreateTank(tank));
 
@@ -191,10 +196,11 @@ public class BuboloApplication extends AbstractGameApplication
 				screen.dispose();
 			}
 
-			Tank tank = world.addEntity(Tank.class);
 			Vector2 spawnLocation = getRandomSpawn(world);
-			tank.setX(spawnLocation.x).setY(spawnLocation.y).setRotation(0);
-			tank.setLocalPlayer(true);
+			var args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
+			Tank tank = world.addEntity(Tank.class, args);
+
+			tank.setOwnedByLocalPlayer(true);
 
 			network.startDebug();
 
@@ -217,12 +223,12 @@ public class BuboloApplication extends AbstractGameApplication
 	 */
 	private static Vector2 getRandomSpawn(World world)
 	{
-		List<OldEntity> spawns = world.getSpawns();
+		List<Spawn> spawns = world.getSpawns();
 		if (spawns.size() > 0)
 		{
 			Random randomGenerator = new Random();
-			OldEntity spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-			return new Vector2(spawn.getX(), spawn.getY());
+			Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+			return new Vector2(spawn.x(), spawn.y());
 		}
 		return null;
 	}
