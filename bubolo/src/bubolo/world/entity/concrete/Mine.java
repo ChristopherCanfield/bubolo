@@ -1,11 +1,8 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
-import bubolo.world.Ownable;
-import bubolo.world.entity.StationaryElement;
+import bubolo.world.ActorEntity;
 
 /**
  * Mines can be placed by Tanks to do damage to enemy Tanks, or to destroy/modify
@@ -13,18 +10,8 @@ import bubolo.world.entity.StationaryElement;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Mine extends StationaryElement implements Ownable
+public class Mine extends ActorEntity
 {
-	/**
-	 * the UID of the Tank that owns this Mine
-	 */
-	private UUID ownerUID;
-
-	/**
-	 * Boolean representing whether this Mine belongs to the local player.
-	 */
-	private boolean isLocalPlayer = true;
-
 	/**
 	 * Boolean representing whether this Mine is exploding! OH NO!
 	 */
@@ -40,40 +27,19 @@ public class Mine extends StationaryElement implements Ownable
 	 */
 	private long createdTime;
 
-	/**
-	 * Construct a new Mine with a random UUID.
-	 */
-	public Mine()
-	{
-		this(UUID.randomUUID());
-	}
+	private static final int width = 25;
+	private static final int height = 25;
 
 	/**
-	 * Construct a new Mine with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Tree.
+	 * Constructs a new Mine.
 	 */
-	public Mine(UUID id)
+	public Mine(ConstructionArgs args)
 	{
-		super(id);
-		setWidth(25);
-		setHeight(25);
-		this.createdTime = System.currentTimeMillis();
-		setLocalPlayer(true);
+		super(args, width, height);
+
+		createdTime = System.currentTimeMillis();
+		setOwnedByLocalPlayer(true);
 		updateBounds();
-	}
-
-	@Override
-	public boolean isLocalPlayer()
-	{
-		return isLocalPlayer;
-	}
-
-	@Override
-	public void setLocalPlayer(boolean local)
-	{
-		this.isLocalPlayer = local;
 	}
 
 	/**
@@ -113,20 +79,13 @@ public class Mine extends StationaryElement implements Ownable
 	}
 
 	@Override
-	public UUID getOwnerId()
-	{
-		return this.ownerUID;
-	}
-
-	@Override
-	public void setOwnerId(UUID ownerUID)
-	{
-		this.ownerUID = ownerUID;
-	}
-
-	@Override
 	protected void onDispose()
 	{
 		Audio.play(Sfx.MINE_EXPLOSION);
+	}
+
+	@Override
+	public boolean isSolid() {
+		return false;
 	}
 }

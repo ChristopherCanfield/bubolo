@@ -3,6 +3,8 @@ package bubolo.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.math.Polygon;
+
 import bubolo.controllers.Controller;
 
 /**
@@ -11,11 +13,12 @@ import bubolo.controllers.Controller;
  * The primary differences between ActorEntities and StaticEntities are:
  * - Unlike StaticEntities, ActorEntities can be moved after construction.
  * - ActorEntities have a public update method that is called by the world each game tick.
+ * - ActorEntities are always Collidable, though they may not be solid.
  *
  * @author Christopher D. Canfield
  * @since 0.4.0
  */
-public abstract class ActorEntity extends Entity {
+public abstract class ActorEntity extends Entity implements Collidable {
 	private float x;
 	private float y;
 
@@ -23,6 +26,8 @@ public abstract class ActorEntity extends Entity {
 
 	private ActorEntity owner;
 	private boolean ownedByLocalPlayer;
+
+	private BoundingBox boundingBox = new BoundingBox();
 
 	private List<Controller> controllers;
 
@@ -40,8 +45,9 @@ public abstract class ActorEntity extends Entity {
 		return rotation;
 	}
 
-	protected void setRotation(float radians) {
+	protected ActorEntity setRotation(float radians) {
 		this.rotation = radians;
+		return this;
 	}
 
 	@Override
@@ -49,8 +55,9 @@ public abstract class ActorEntity extends Entity {
 		return x;
 	}
 
-	protected void setX(float x) {
+	protected ActorEntity setX(float x) {
 		this.x = x;
+		return this;
 	}
 
 	@Override
@@ -58,8 +65,9 @@ public abstract class ActorEntity extends Entity {
 		return y;
 	}
 
-	protected void setY(float y) {
+	protected ActorEntity setY(float y) {
 		this.y = y;
+		return this;
 	}
 
 	/**
@@ -69,8 +77,22 @@ public abstract class ActorEntity extends Entity {
 		return owner;
 	}
 
-	public void setOwner(ActorEntity owner) {
+	public final void setOwner(ActorEntity owner) {
+		boolean isNewOwner = this.owner != owner;
 		this.owner = owner;
+
+		if (isNewOwner) {
+			onOwnerChanged(owner);
+		}
+	}
+
+	/**
+	 * Called when the ActorEntity receives a new owner. Derived classes can override this method to be notified
+	 * of owner changes.
+	 *
+	 * @param newOwner the actor's new owner.
+	 */
+	protected void onOwnerChanged(ActorEntity newOwner) {
 	}
 
 	/**
@@ -103,6 +125,16 @@ public abstract class ActorEntity extends Entity {
 	protected void onUpdate(World world) {
 	}
 
+	@Override
+	public Polygon bounds() {
+		return boundingBox.bounds();
+	}
+
+	@Override
+	public void updateBounds() {
+		boundingBox.updateBounds(this);
+	}
+
 	/**
 	 * Adds a controller to this actor.
 	 *
@@ -124,9 +156,7 @@ public abstract class ActorEntity extends Entity {
 	protected void updateControllers(World world)
 	{
 		if (controllers != null) {
-			for (Controller c : controllers) {
-				c.update(world);
-			}
+			controllers.forEach(c -> c.update(world));
 		}
 	}
 }

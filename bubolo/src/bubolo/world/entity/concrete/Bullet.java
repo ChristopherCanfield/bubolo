@@ -22,7 +22,7 @@ import bubolo.world.entity.OldEntity;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Bullet extends ActorEntity implements Collidable
+public class Bullet extends ActorEntity
 {
 	// The max distance the bullet can travel, in world units.
 	private static final float maxDistance = 600;
@@ -124,10 +124,8 @@ public class Bullet extends ActorEntity implements Collidable
 	{
 		ArrayList<OldEntity> intersects = new ArrayList<OldEntity>();
 
-		for (OldEntity localEntity: TileUtil.getLocalEntities(getX(),getY(), w))
-		{
-			if ((localEntity != this && localEntity != owner()) && localEntity instanceof Collidable collidable)
-			{
+		for (OldEntity localEntity: TileUtil.getLocalEntities(x(),y(), w)) {
+			if ((localEntity != this && localEntity != owner()) && localEntity instanceof Collidable collidable) {
 				if (overlapsEntity(collidable) || Intersector.overlapConvexPolygons(lookAheadBounds(), collidable.bounds())) {
 					intersects.add(localEntity);
 				}
@@ -151,15 +149,5 @@ public class Bullet extends ActorEntity implements Collidable
 	@Override
 	public boolean isSolid() {
 		return false;
-	}
-
-	@Override
-	public Polygon bounds() {
-		return boundingBox.bounds();
-	}
-
-	@Override
-	public void updateBounds() {
-		boundingBox.updateBounds(this);
 	}
 }

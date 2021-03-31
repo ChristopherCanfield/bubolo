@@ -1,17 +1,15 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
 import bubolo.Config;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
+import bubolo.world.ActorEntity;
 import bubolo.world.Damageable;
-import bubolo.world.Ownable;
+import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
-import bubolo.world.entity.StationaryElement;
 
 /**
  * Pillboxes are stationary defensive structures that can be placed by a Tank. They shoot at an
@@ -19,12 +17,8 @@ import bubolo.world.entity.StationaryElement;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Pillbox extends StationaryElement implements Ownable, Damageable
+public class Pillbox extends ActorEntity implements Damageable, TerrainImprovement
 {
-	/**
-	 * UID of tank that owns this Pillbox
-	 */
-	private UUID ownerUID;
 	/*
 	 * time at witch cannon was last fired
 	 */
@@ -46,14 +40,9 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	private double range = 300;
 
 	/**
-	 * Boolean representing whether this Pillbox belongs to the local player.
-	 */
-	private boolean isLocalPlayer = false;
-
-	/**
 	 * The health of the pillbox
 	 */
-	private float hitPoints;
+	private float hitPoints = MAX_HIT_POINTS;
 
 	/**
 	 * The maximum amount of hit points of the pillbox
@@ -63,65 +52,31 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
 
-	/**
-	 * Construct a new Pillbox with a random UUID.
-	 */
-	public Pillbox()
-	{
-		this(UUID.randomUUID());
-	}
+	private static final int width = 27;
+	private static final int height = 27;
 
 	/**
-	 * Construct a new Pillbox with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Tree.
+	 * Constructs a new Pillbox.
 	 */
-	public Pillbox(UUID id)
+	public Pillbox(ConstructionArgs args)
 	{
-		super(id);
-		setWidth(27);
-		setHeight(27);
+		super(args, width, height);
 		updateBounds();
-		setSolid(true);
-		hitPoints = MAX_HIT_POINTS;
 	}
 
 	@Override
-	public void update(World world) {
-		super.update(world);
-
+	protected void onUpdate(World world) {
 		heal(hpPerTick);
 	}
 
 	@Override
-	public boolean isLocalPlayer()
-	{
-		return isLocalPlayer;
-	}
-
-	@Override
-	public void setLocalPlayer(boolean local)
-	{
-		this.isLocalPlayer = local;
-	}
-
-	@Override
-	public UUID getOwnerId()
-	{
-		return this.ownerUID;
-	}
-
-	@Override
-	public void setOwnerId(UUID ownerId)
+	protected void onOwnerChanged(ActorEntity newOwner)
 	{
 		// If the Pillbox gained a new owner, set its health to a small positive value, so another player
 		// can't instantly grab it without needing to reduce its health.
-		if (ownerId != null && !ownerId.equals(this.ownerUID)) {
+		if (newOwner != null) {
 			hitPoints = 10;
 		}
-
-		this.ownerUID = ownerId;
 	}
 
 	/**
@@ -165,10 +120,11 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 	{
 		cannonFireTime = System.currentTimeMillis();
 
+		// TODO (cdc - 2021-03-30): Update this once world.addEntity has been updated.
 		Bullet bullet = world.addEntity(Bullet.class);
-		bullet.setParent(this);
+		bullet.setOwner(this);
 
-		bullet.setX(this.getX()).setY(this.getY());
+		bullet.setX(x()).setY(y());
 		bullet.setRotation(getCannonRotation());
 	}
 
@@ -238,9 +194,10 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 		}
 
 		if (hitPoints <= 0) {
-			if (isLocalPlayer() && ownerUID != null) {
-				this.setLocalPlayer(false);
-				this.ownerUID = null;
+			if (isOwnedByLocalPlayer() && owner() != null) {
+				setOwnedByLocalPlayer(false);
+				setOwner(null);
+
 				Network net = NetworkSystem.getInstance();
 				net.send(new UpdateOwnable(this));
 			}
@@ -261,5 +218,10 @@ public class Pillbox extends StationaryElement implements Ownable, Damageable
 		if (hitPoints > MAX_HIT_POINTS) {
 			hitPoints = MAX_HIT_POINTS;
 		}
+	}
+
+	@Override
+	public boolean isSolid() {
+		return true;
 	}
 }

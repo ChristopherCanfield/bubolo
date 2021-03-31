@@ -1,14 +1,12 @@
 package bubolo.world.entity.concrete;
 
-import com.badlogic.gdx.math.Polygon;
-
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
 import bubolo.world.ActorEntity;
 import bubolo.world.BoundingBox;
-import bubolo.world.Collidable;
 import bubolo.world.Damageable;
+import bubolo.world.TerrainImprovement;
 
 /**
  * Bases allow Tanks to heal and recover their mines, and capturing them is the primary
@@ -16,7 +14,7 @@ import bubolo.world.Damageable;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Base extends ActorEntity implements Collidable, Damageable
+public class Base extends ActorEntity implements Damageable, TerrainImprovement
 {
 	/**
 	 * Whether this Base is currently charging a Tank.
@@ -48,6 +46,8 @@ public class Base extends ActorEntity implements Collidable, Damageable
 	private static final int height = 30;
 
 	private final BoundingBox boundingBox = new BoundingBox();
+
+	private static final float speedModifier = 0.75f;
 
 	/**
 	 * Construct a new Base.
@@ -273,12 +273,7 @@ public class Base extends ActorEntity implements Collidable, Damageable
 	}
 
 	@Override
-	public Polygon bounds() {
-		return boundingBox.bounds();
-	}
-
-	@Override
-	public void updateBounds() {
-		boundingBox.updateBounds(this);
+	public float speedModifier() {
+		return speedModifier;
 	}
 }

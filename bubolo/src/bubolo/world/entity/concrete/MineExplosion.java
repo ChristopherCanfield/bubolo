@@ -1,11 +1,9 @@
 package bubolo.world.entity.concrete;
 
-import java.util.UUID;
-
 import bubolo.util.TileUtil;
+import bubolo.world.ActorEntity;
 import bubolo.world.Damageable;
 import bubolo.world.World;
-import bubolo.world.entity.Effect;
 import bubolo.world.entity.OldEntity;
 
 /**
@@ -14,50 +12,29 @@ import bubolo.world.entity.OldEntity;
  *
  * @author BU CS673 - Clone Productions
  */
-public class MineExplosion extends Effect
+public class MineExplosion extends ActorEntity
 {
-	/**
-	 * Damage done on explosion
-	 */
 	private static final float DAMAGE_PER_TICK = 2;
 
-	/**
-	 * length of explosion in milliseconds
-	 */
+	/** Length of explosion in milliseconds */
 	private static final long EXPLOSION_LENGTH = 500;
 
-	/**
-	 * time the explosion started
-	 */
-	private long explosionStart;
+	/** The time the explosion started. */
+	private final long explosionStart;
+
+	private static final int width = 60;
+	private static final int height = 60;
 
 	/**
-	 * Construct a new MineExplosion with a random UUID.
+	 * Constructs a new MineExplosion.
 	 */
-	public MineExplosion()
-	{
-		this(UUID.randomUUID());
-	}
-
-	/**
-	 * Construct a new MineExplosion with the specified UUID.
-	 *
-	 * @param id
-	 *            is the existing UUID to be applied to the new Tank.
-	 */
-	public MineExplosion(UUID id)
-	{
-		super(id);
-		setWidth(60);
-		setHeight(60);
+	public MineExplosion(ConstructionArgs args) {
+		super(args, width, height);
 		explosionStart = System.currentTimeMillis();
 		updateBounds();
 	}
 	/**
-	 * returns the length of the explosion in millisends
-	 *
-	 * @return
-	 * 		returns true if the animation has completed
+	 * @return length of the explosion in milliseconds.
 	 */
 
 	public long getExplosionLength()
@@ -67,10 +44,9 @@ public class MineExplosion extends Effect
 
 
 	@Override
-	public void update(World world)
+	public void onUpdate(World world)
 	{
-		if((EXPLOSION_LENGTH + this.explosionStart) > System.currentTimeMillis())
-		{
+		if((EXPLOSION_LENGTH + explosionStart) > System.currentTimeMillis()) {
 			for(OldEntity collider:TileUtil.getLocalCollisions(this, world))
 			{
 				if (collider instanceof Damageable)
@@ -80,9 +56,12 @@ public class MineExplosion extends Effect
 				}
 			}
 		}
-		else
-		{
+		else {
 			world.removeEntity(this);
 		}
+	}
+	@Override
+	public boolean isSolid() {
+		return false;
 	}
 }
