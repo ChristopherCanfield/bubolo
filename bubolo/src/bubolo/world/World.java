@@ -156,11 +156,36 @@ public interface World
 
 	/**
 	 * Returns a Terrain from a world position.
+	 *
 	 * @param worldX the world x position.
 	 * @param worldY the world y position.
 	 * @return the tile.
 	 */
 	public Terrain getTerrainFromWorldPosition(float worldX, float worldY);
+
+	/**
+	 * Returns a list of collidables that are adjacent to or near a (column, row) position, possibly filtered by solidness and type.
+	 *
+	 * @param column the target tile's column.
+	 * @param row the target tile's row.
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
+	 * no type filter is applied.
+	 *
+	 * @return a list of nearby collidables.
+	 */
+	public List<Collidable> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
+
+	/**
+	 * Returns a list of collidables that are adjacent to or near a (column, row) position, possibly filter by solidness.
+	 *
+	 * @param column the target tile's column.
+	 * @param row the target tile's row.
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 *
+	 * @return a list of nearby collidables.
+	 */
+	public List<Collidable> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects);
 
 	/**
 	 * Adds a controller of the specified type to the world.

@@ -1,10 +1,9 @@
 package bubolo.world.entity.concrete;
 
-import bubolo.util.TileUtil;
 import bubolo.world.ActorEntity;
+import bubolo.world.Collidable;
 import bubolo.world.Damageable;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 
 /**
  * MineExplosions are created when mines blow up! They're large, and create Craters on top of
@@ -19,8 +18,8 @@ public class MineExplosion extends ActorEntity
 	/** Length of explosion in milliseconds */
 	private static final long EXPLOSION_LENGTH = 500;
 
-	/** The time the explosion started. */
-	private final long explosionStart;
+	/** The time the explosion will end. */
+	private final long explosionEndTime;
 
 	private static final int width = 60;
 	private static final int height = 60;
@@ -30,7 +29,7 @@ public class MineExplosion extends ActorEntity
 	 */
 	public MineExplosion(ConstructionArgs args) {
 		super(args, width, height);
-		explosionStart = System.currentTimeMillis();
+		explosionEndTime = System.currentTimeMillis() + EXPLOSION_LENGTH;
 		updateBounds();
 	}
 	/**
@@ -46,18 +45,15 @@ public class MineExplosion extends ActorEntity
 	@Override
 	public void onUpdate(World world)
 	{
-		if((EXPLOSION_LENGTH + explosionStart) > System.currentTimeMillis()) {
-			for(OldEntity collider:TileUtil.getLocalCollisions(this, world))
-			{
-				if (collider instanceof Damageable)
-				{
-					Damageable damageableCollider = (Damageable)collider;
-					damageableCollider.takeHit(DAMAGE_PER_TICK);
+		if (explosionEndTime < System.currentTimeMillis()) {
+			dispose();
+
+		} else {
+			for (Collidable collider : world.getNearbyCollidables(width, height, true, Damageable.class)) {
+				if (collider instanceof Damageable damageable) {
+					damageable.takeHit(DAMAGE_PER_TICK);
 				}
 			}
-		}
-		else {
-			world.removeEntity(this);
 		}
 	}
 	@Override

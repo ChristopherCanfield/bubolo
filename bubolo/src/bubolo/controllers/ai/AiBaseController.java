@@ -4,8 +4,7 @@ import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
-import bubolo.util.TileUtil;
-import bubolo.world.Entity;
+import bubolo.world.Collidable;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Tank;
@@ -64,12 +63,9 @@ public class AiBaseController implements Controller
 	public void update(World world)
 	{
 		base.setCharging(false);
-		for (Entity entity : TileUtil.getLocalCollisions(base, world))
-		{
-			if (entity instanceof Tank tank)
-			{
-				if (!base.hasOwner())
-				{
+		for (Collidable entity : world.getNearbyCollidables(base.tileColumn(), base.tileRow(), true, Tank.class)) {
+			if (entity instanceof Tank tank) {
+				if (!base.hasOwner()) {
 					base.setOwner(tank);
 					base.heal(100);
 

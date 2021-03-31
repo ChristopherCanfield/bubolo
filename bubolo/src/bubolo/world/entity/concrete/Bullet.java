@@ -1,20 +1,12 @@
 package bubolo.world.entity.concrete;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Polygon;
-
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
-import bubolo.util.TileUtil;
 import bubolo.world.ActorEntity;
-import bubolo.world.BoundingBox;
 import bubolo.world.Collidable;
 import bubolo.world.Damageable;
+import bubolo.world.Entity;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 
 /**
  * Bullets are shot by Tanks and Pillboxes, and can cause damage to StationaryElements and other
@@ -48,8 +40,6 @@ public class Bullet extends ActorEntity
 	private static final int width = 4;
 	private static final int height = 8;
 
-	private final BoundingBox boundingBox = new BoundingBox();
-
 	/**
 	 * Constructs a new Bullet.
 	 */
@@ -67,41 +57,7 @@ public class Bullet extends ActorEntity
 			initialize();
 		}
 
-		// TODO (cdc - 2014-03-21): This could be made into a controller. However, it's so
-		// simple, what's the point?
 		move(world);
-	}
-
-	/**
-	 * Moves the bullet. Calls dispose() on this entity if the distance travelled has exceeded the
-	 * MAX_DISTANCE value.
-	 */
-	private void move(World world)
-	{
-		if (distanceTraveled > maxDistance)
-		{
-			world.removeEntity(this);
-			return;
-		}
-
-		setX(x() + movementX);
-		setY(y() + movementY);
-
-		distanceTraveled += (Math.abs(movementX) + Math.abs(movementY));
-
-		for(OldEntity collider:getLookaheadEntities(world))
-		{
-			if (collider instanceof Damageable)
-			{
-				if (Intersector.overlapConvexPolygons(collider.getBounds(), bounds()))
-				{
-					Damageable damageableCollider = (Damageable)collider;
-					damageableCollider.takeHit(damage);
-					world.removeEntity(this);
-					return;
-				}
-			}
-		}
 	}
 
 	/**
@@ -117,33 +73,37 @@ public class Bullet extends ActorEntity
 	}
 
 	/**
-	 * Returns a list of all Entities that would overlap with this Tank if it was where it
-	 * will be in one game tick, along its current trajectory.
+	 * Moves the bullet. Calls dispose() on this entity if the distance travelled has exceeded the
+	 * MAX_DISTANCE value.
 	 */
-	private List<OldEntity> getLookaheadEntities(World w)
+	private void move(World world)
 	{
-		ArrayList<OldEntity> intersects = new ArrayList<OldEntity>();
-
-		for (OldEntity localEntity: TileUtil.getLocalEntities(x(),y(), w)) {
-			if ((localEntity != this && localEntity != owner()) && localEntity instanceof Collidable collidable) {
-				if (overlapsEntity(collidable) || Intersector.overlapConvexPolygons(lookAheadBounds(), collidable.bounds())) {
-					intersects.add(localEntity);
-				}
-			}
+		if (distanceTraveled > maxDistance)
+		{
+			dispose();
+			return;
 		}
 
-		return intersects;
+		setX(x() + movementX);
+		setY(y() + movementY);
+
+		distanceTraveled += Math.abs(movementX) + Math.abs(movementY);
+
+		processCollisions(world);
 	}
 
-	private Polygon lookAheadBounds()
+	private void processCollisions(World w)
 	{
-		Polygon lookAheadBounds = bounds();
-
-		float newX = (float) (x() + Math.cos(rotation()) * speed);
-		float newY = (float) (y() + Math.sin(rotation()) * speed);
-
-		lookAheadBounds.setPosition(newX, newY);
-		return lookAheadBounds;
+		for (Collidable collidable : w.getNearbyCollidables(tileColumn(), tileRow(), false, Damageable.class)) {
+			Entity e = (Entity) collidable;
+			if (e != this && e != owner() && overlapsEntity(collidable)) {
+				// We know the collision object is Damageable, because we filtered for that in the getNearbyCollidables method.
+				Damageable collisionObject = (Damageable) e;
+				collisionObject.takeHit(damage);
+				dispose();
+				break;
+			}
+		}
 	}
 
 	@Override

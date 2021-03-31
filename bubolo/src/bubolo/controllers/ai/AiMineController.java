@@ -1,9 +1,12 @@
 package bubolo.controllers.ai;
 
+import java.util.UUID;
+
 import com.badlogic.gdx.math.Intersector;
 
 import bubolo.controllers.Controller;
-import bubolo.util.TileUtil;
+import bubolo.world.Collidable;
+import bubolo.world.Entity;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Crater;
@@ -35,23 +38,24 @@ public class AiMineController implements Controller
 	@Override
 	public void update(World world)
 	{
-		for(Entity collider : TileUtil.getLocalEntities(mine.x(), mine.y(), world))
-		{
-			if (mine.isActive() &&
-					collider.isSolid() && collider != mine
-					&& Intersector.overlapConvexPolygons(collider.getBounds(), mine.bounds())) {
+		for(Collidable collider : world.getNearbyCollidables(mine.tileColumn(), mine.tileRow(), true)) {
+			if (mine.isActive()
+					&& collider != mine
+					&& Intersector.overlapConvexPolygons(collider.bounds(), mine.bounds())) {
 
-				MineExplosion mineExplosion = world.addEntity(MineExplosion.class);
-				mineExplosion.setTransform(mine.x(), mine.y(), 0);
+				{
+					var args = new Entity.ConstructionArgs(UUID.randomUUID(), mine.x(), mine.y(), 0);
+					MineExplosion mineExplosion = world.addEntity(MineExplosion.class, args);
+				}
+				{
+					var args = new Entity.ConstructionArgs(UUID.randomUUID(), mine.x(), mine.y(), 0);
+					Crater crater = world.addEntity(Crater.class, args);
+				}
 
 				Tile tile = mine.getTile();
 				tile.clearElement(world);
 
-				Crater crater = world.addEntity(Crater.class);
-				crater.setX(mine.x()).setY(mine.y());
-				tile.setElement(crater, world);
-
-				world.removeEntity(mine);
+				mine.dispose();
 				return;
 			}
 		}

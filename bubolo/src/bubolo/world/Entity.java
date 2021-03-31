@@ -64,11 +64,17 @@ public abstract class Entity {
 	 */
 	public abstract float rotation();
 
-	public int gridX() {
+	/**
+	 * @return the world column that the object is in.
+	 */
+	public int tileColumn() {
 		return (int) x() / Coords.TILE_TO_WORLD_SCALE;
 	}
 
-	public int gridY() {
+	/**
+	 * @return the world row that the object is in.
+	 */
+	public int tileRow() {
 		return (int) y() / Coords.TILE_TO_WORLD_SCALE;
 	}
 

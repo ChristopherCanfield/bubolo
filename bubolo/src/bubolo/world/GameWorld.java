@@ -249,8 +249,12 @@ public class GameWorld implements World
 			c.update(this);
 		}
 
-		// Update all actors.
-		actors.forEach(actor -> actor.update(this));
+		// Update all non-disposed actors.
+		for (var actor : actors) {
+			if (!actor.isDisposed()) {
+				actor.update(this);
+			}
+		}
 
 		// Check for disposed entities.
 		entitiesToRemove.addAll(entities.stream()
