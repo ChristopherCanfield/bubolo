@@ -1,6 +1,8 @@
 package bubolo.audio;
 
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +15,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import com.google.common.base.Preconditions;
 
 import bubolo.Config;
 import bubolo.util.GameLogicException;
@@ -182,8 +183,8 @@ public class Audio implements Music.OnCompletionListener
 
 	private static void setMusicFileIndex(int index)
 	{
-		Preconditions.checkArgument(index >= 0, "Song index must be greater than zero: %s", index);
-		Preconditions.checkArgument(index < music.size(), "song index exceeds music file count: %s", index);
+		checkArgument(index >= 0, "Song index must be greater than zero: %s", index);
+		checkArgument(index < music.size(), "song index exceeds music file count: %s", index);
 
 		currentMusicFile = index;
 	}
@@ -207,8 +208,8 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	public static void setSoundEffectVolume(float volume)
 	{
-		Preconditions.checkArgument(volume >= 0, "Sound effect volume was less than zero: %s", volume);
-		Preconditions.checkArgument(volume <= 1, "Sound effect volume was greater than one: %s", volume);
+		checkArgument(volume >= 0, "Sound effect volume was less than zero: %s", volume);
+		checkArgument(volume <= 1, "Sound effect volume was greater than one: %s", volume);
 
 		soundEffectVolume = volume;
 	}
@@ -229,8 +230,8 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	public static void setMusicVolume(float volume)
 	{
-		Preconditions.checkArgument(volume >= 0, "Music volume was less than zero: %s", volume);
-		Preconditions.checkArgument(volume <= 1, "Music volume was greater than one: %s", volume);
+		checkArgument(volume >= 0, "Music volume was less than zero: %s", volume);
+		checkArgument(volume <= 1, "Music volume was greater than one: %s", volume);
 
 		musicVolume = volume;
 	}
