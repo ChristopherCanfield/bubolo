@@ -1,1 +1,29 @@
-The world classes describe our game's model. In other words, they describe the state of our game. No Controllers should be included in the world package. 
+The classes and interfaces within the world package describe the game world state and behavior.
+
+
+Class Overview:
+
+GameWorld: Creates, stores, updates, and removes game objects, which are referred to as Entities.
+
+Entity: Base class for all objects that live in the game world.
+
+StaticEntity: Immovable game object that lacks intelligence.
+
+Terrain: A static entity that represents a terrain type.
+
+ActorEntity: Game object that may be movable, and that may update itself in its update method or through the use of attached controllers.
+
+
+Interface Overview:
+
+Collidable: Indicates that the entity participates in collision detection. A collidable object may be solid, in which case it blocks
+other collidable objects, or not solid.
+
+TerrainImprovement: An entity that sits on top of a terrain. Each terrain can only have at most one attached terrain improvement.
+
+Damageable: An entity that can receive damage.
+
+WaterType: Marker interface indicating that this is a water type.
+
+Adaptable: A game entity that has tiling logic to improve the appearance of its image. This is a visual-only system, and should
+not be located in the world package. It will be transfered to the Graphics system in the future.
