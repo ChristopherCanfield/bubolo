@@ -7,7 +7,7 @@ import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.net.command.UpdateOwnable;
+import bubolo.net.command.ChangeOwner;
 import bubolo.world.ActorEntity;
 import bubolo.world.Damageable;
 import bubolo.world.Entity;
@@ -187,7 +187,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 				setOwner(null);
 
 				Network net = NetworkSystem.getInstance();
-				net.send(new UpdateOwnable(this));
+				net.send(new ChangeOwner(this));
 			}
 		}
 	}

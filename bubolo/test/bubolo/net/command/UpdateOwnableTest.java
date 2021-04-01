@@ -33,7 +33,7 @@ public class UpdateOwnableTest
 		OldEntity tank = new Tank();
 		world.add(tank);
 		
-		NetworkCommand command = new UpdateOwnable(pillbox);
+		NetworkCommand command = new ChangeOwner(pillbox);
 		command.execute(world);
 	}
 }

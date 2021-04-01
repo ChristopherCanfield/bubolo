@@ -2,7 +2,7 @@ package bubolo.world.entity.concrete;
 
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.net.command.UpdateOwnable;
+import bubolo.net.command.ChangeOwner;
 import bubolo.world.ActorEntity;
 import bubolo.world.BoundingBox;
 import bubolo.world.Damageable;
@@ -122,7 +122,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 				setOwner(null);
 
 				Network net = NetworkSystem.getInstance();
-				net.send(new UpdateOwnable(this));
+				net.send(new ChangeOwner(this));
 			}
 		}
 	}

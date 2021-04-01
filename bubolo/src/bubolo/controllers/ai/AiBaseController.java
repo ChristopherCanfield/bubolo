@@ -3,7 +3,7 @@ package bubolo.controllers.ai;
 import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.net.command.UpdateOwnable;
+import bubolo.net.command.ChangeOwner;
 import bubolo.world.Collidable;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Base;
@@ -74,7 +74,7 @@ public class AiBaseController implements Controller
 						base.setOwner(tank);
 
 						Network net = NetworkSystem.getInstance();
-						net.send(new UpdateOwnable(base));
+						net.send(new ChangeOwner(base));
 					}
 				}
 				else

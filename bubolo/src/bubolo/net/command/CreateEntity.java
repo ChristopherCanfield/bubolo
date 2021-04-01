@@ -14,8 +14,8 @@ import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
 import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
+import bubolo.world.ActorEntity;
 import bubolo.world.Entity;
-import bubolo.world.Ownable;
 import bubolo.world.Terrain;
 import bubolo.world.Tile;
 import bubolo.world.World;
@@ -108,9 +108,9 @@ public class CreateEntity implements NetworkCommand
 				tile.setElement(stationaryElement, world);
 			}
 
-			if (entity instanceof Ownable)
+			if (entity instanceof ActorEntity actor)
 			{
-				((Ownable)entity).setLocalPlayer(false);
+				actor.setOwnedByLocalPlayer(false);
 			}
 		}
 		catch (GameLogicException e)

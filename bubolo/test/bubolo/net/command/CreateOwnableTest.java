@@ -33,7 +33,7 @@ public class CreateOwnableTest
 		OldEntity tank = new Tank();
 		world.add(tank);
 		
-		NetworkCommand command = new CreateOwnable(pillbox.getClass(), pillbox.getId(), pillbox.getX(), pillbox.getY(), pillbox.getRotation(), pillbox.getOwnerId());
+		NetworkCommand command = new CreateActor(pillbox.getClass(), pillbox.getId(), pillbox.getX(), pillbox.getY(), pillbox.getRotation(), pillbox.getOwnerId());
 		command.execute(world);
 	}
 }

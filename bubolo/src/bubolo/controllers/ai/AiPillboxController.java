@@ -3,7 +3,7 @@ package bubolo.controllers.ai;
 import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.net.command.UpdateOwnable;
+import bubolo.net.command.ChangeOwner;
 import bubolo.util.TileUtil;
 import bubolo.world.Entity;
 import bubolo.world.World;
@@ -142,6 +142,6 @@ public class AiPillboxController implements Controller
 	private static void sendNetUpdate(Pillbox pillbox)
 	{
 		Network net = NetworkSystem.getInstance();
-		net.send(new UpdateOwnable(pillbox));
+		net.send(new ChangeOwner(pillbox));
 	}
 }
