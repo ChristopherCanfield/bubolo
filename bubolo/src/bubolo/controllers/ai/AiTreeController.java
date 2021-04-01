@@ -81,14 +81,14 @@ public class AiTreeController implements Controller
 					tile.setElement(tree, world);
 
 					Network net = NetworkSystem.getInstance();
-					net.send(new CreateEntity(tree.getClass(), tree.getId(),
+					net.send(new CreateEntity(Tree.class, tree.getId(),
 							tree.getX(), tree.getY(), tree.getRotation()));
 
 					if (!(tile.getTerrain() instanceof Grass))
 					{
 						Grass grass = world.addEntity(Grass.class);
 						tile.setTerrain(grass, world);
-						net.send(new CreateEntity(grass.getClass(), grass.getId(),
+						net.send(new CreateEntity(Grass.class, grass.getId(),
 								grass.getX(), grass.getY(), grass.getRotation()));
 					}
 
@@ -149,7 +149,7 @@ public class AiTreeController implements Controller
 			OldTerrain terrain = tile.getTerrain();
 
 			// Trees will grow on grass.
-			if (!tile.hasElement() && terrain.getClass() == Grass.class)
+			if (!tile.hasElement() && terrain instanceof Grass)
 			{
 				tempScore = grassScore;
 			}
@@ -192,13 +192,13 @@ public class AiTreeController implements Controller
 		if (!tile.hasElement())
 		{
 			OldTerrain terrain = tile.getTerrain();
-			if (terrain.getClass() == Grass.class)
+			if (terrain instanceof Grass)
 			{
 				score = grassScore/8;
 			}
 		}
 		//tree is most valuable however any other stationary element is a 0
-		else if (tile.getElement().getClass() == Tree.class)
+		else if (tile instanceof Tree)
 		{
 			score = treeScore;
 		}
