@@ -17,6 +17,7 @@ import bubolo.controllers.Controllers;
 import bubolo.controllers.ai.AiTreeController;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
+import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
 
@@ -28,6 +29,19 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class GameWorld implements World
 {
+	 /**
+	 * A tile address on the game map.
+	 *
+	 * @author Christopher D. Canfield
+	 * @since 0.4.0
+	 */
+	private static record Tile(int column, int row) {
+		Tile {
+			assert column >= 0;
+			assert row >= 0;
+		}
+	}
+
 	private EntityCreationObserver entityCreationObserver;
 
 	private final List<Entity> entities = new ArrayList<>();
@@ -39,6 +53,8 @@ public class GameWorld implements World
 
 	// first: column; second: row.
 	private Terrain[][] terrain;
+	private Map<Tile, TerrainImprovement> terrainImprovements = new HashMap<>();
+	private Map<Tile, Mine> mines = new HashMap<>();
 
 	// The entities to remove.
 	private final Set<Entity> entitiesToRemove = new HashSet<>();
@@ -136,7 +152,6 @@ public class GameWorld implements World
 
 		if (entity instanceof ActorEntity actor) {
 			actors.add(actor);
-
 			Controllers.getInstance().createController(actor, controllerFactory);
 		}
 
@@ -149,6 +164,22 @@ public class GameWorld implements World
 			adaptableAddedThisTick = true;
 		}
 
+		if (entity instanceof Terrain t) {
+			// TODO (cdc - 2021-04-01): Add this to the terrain array. If a terrain already exists in this location, dispose and replace it in the array.
+			// If a TerrainImprovement or Mine was associated with the previous terrain
+		}
+
+		if (entity instanceof TerrainImprovement terrainImprovement) {
+			// Check for mutually exclusive combinations.
+			assert !(terrainImprovement instanceof Terrain);
+			assert !(terrainImprovement instanceof Mine);
+			// TODO (cdc - 2021-04-01): Add this to the terrain improvements map.
+		}
+
+		if (entity instanceof Mine mine) {
+			// TODO (cdc - 2021-04-01): Add this to the mines map.
+		}
+
 		entitiesToAdd.add(entity);
 		entityMap.put(entity.id(), entity);
 
@@ -157,12 +188,6 @@ public class GameWorld implements World
 		}
 
 		return entity;
-	}
-
-	@Override
-	public List<ActorEntity> getActors()
-	{
-		return actors;
 	}
 
 	@Override
@@ -271,8 +296,13 @@ public class GameWorld implements World
 		}
 		adaptableRemovedThisTick = false;
 
-		entities.addAll(entitiesToAdd);
-		entitiesToAdd.clear();
+		if (!entitiesToAdd.isEmpty()) {
+			entities.addAll(entitiesToAdd);
+			// Sort by type.
+			entities.sort((leftEntity, rightEntity) -> leftEntity.getClass().getName().compareTo(rightEntity.getClass().getName()));
+			entitiesToAdd.clear();
+		}
+
 		if (adaptableAddedThisTick) {
 			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
 		}
@@ -305,15 +335,19 @@ public class GameWorld implements World
 	@Override
 	public List<Tank> getTanks()
 	{
-		List<Tank> copyOfTanks = Collections.unmodifiableList(tanks);
-		return copyOfTanks;
+		return Collections.unmodifiableList(tanks);
+	}
+
+	@Override
+	public List<ActorEntity> getActors()
+	{
+		return Collections.unmodifiableList(actors);
 	}
 
 	@Override
 	public List<Spawn> getSpawns()
 	{
-		List<Spawn> copyOfSpawns = Collections.unmodifiableList(spawns);
-		return copyOfSpawns;
+		return Collections.unmodifiableList(spawns);
 	}
 
 	@Override
