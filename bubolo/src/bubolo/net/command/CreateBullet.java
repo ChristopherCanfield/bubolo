@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import bubolo.Config;
+import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
 import bubolo.world.World;
@@ -47,12 +48,13 @@ public class CreateBullet extends CreateEntity
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
-		super.execute(world);
+		super.execute(worldOwner);
 
 		try
 		{
+			World world = worldOwner.world();
 			Bullet bullet = (Bullet) world.getEntity(getId());
 			ActorEntity parent = (ActorEntity) world.getEntity(parentId);
 			bullet.setOwner(parent);

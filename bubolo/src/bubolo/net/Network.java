@@ -12,7 +12,7 @@ import bubolo.world.World;
 
 /**
  * The interface for the Network system.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public interface Network
@@ -22,17 +22,17 @@ public interface Network
 	 * @return true if this the game server, or false otherwise.
 	 */
 	boolean isServer();
-	
+
 	/**
 	 * Returns the name of the player.
 	 * @return the name of the player.
 	 */
 	String getPlayerName();
-	
+
 	/**
 	 * Identifies this player as the game server, and begins accepting connections from other
 	 * players. There should only be one game server per game.
-	 * 
+	 *
 	 * @param serverName
 	 *            the name of this server.
 	 * @throws NetworkException
@@ -44,7 +44,7 @@ public interface Network
 
 	/**
 	 * Attempts to connect to the specified IP address.
-	 * 
+	 *
 	 * @param serverIpAddress
 	 *            the IP address of a server.
 	 * @param clientName
@@ -65,7 +65,7 @@ public interface Network
 
 	/**
 	 * Queues a network command to be sent to the other players.
-	 * 
+	 *
 	 * @param command
 	 *            the network command to send.
 	 */
@@ -73,22 +73,21 @@ public interface Network
 
 	/**
 	 * Performs all network system updates. This should be called once per game tick.
-	 * 
-	 * @param world
-	 *            reference to the game world.
+	 *
+	 * @param worldOwner a game world owner.
 	 */
-	void update(World world);
+	void update(WorldOwner worldOwner);
 
 	/**
 	 * Runs a NetworkCommand in the game logic thread.
-	 * 
+	 *
 	 * @param command
 	 */
 	void postToGameThread(NetworkCommand command);
 
 	/**
 	 * Notifies the clients that the game should start. This method is not needed by clients.
-	 * 
+	 *
 	 * @param world
 	 *            reference to the game world.
 	 */
@@ -96,7 +95,7 @@ public interface Network
 
 	/**
 	 * Adds an observer to the network observer list.
-	 * 
+	 *
 	 * @param observer
 	 *            the observer to add.
 	 */
@@ -104,7 +103,7 @@ public interface Network
 
 	/**
 	 * Removes an observer from the network observer list.
-	 * 
+	 *
 	 * @param observer
 	 *            the observer to remove.
 	 */
@@ -112,7 +111,7 @@ public interface Network
 
 	/**
 	 * Returns a reference to the observer notifier.
-	 * 
+	 *
 	 * @return reference to the observer notifier.
 	 */
 	NetworkObserverNotifier getNotifier();

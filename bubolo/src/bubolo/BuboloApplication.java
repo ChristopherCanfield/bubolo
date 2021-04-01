@@ -25,7 +25,6 @@ import bubolo.ui.PlayerInfoScreen;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
 import bubolo.world.Entity;
-import bubolo.world.GameWorld;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
@@ -80,6 +79,12 @@ public class BuboloApplication extends AbstractGameApplication
 		}
 	}
 
+	@Override
+	public void setWorld(World world) {
+		super.setWorld(world);
+		world.setEntityCreationObserver(graphics);
+	}
+
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
 	 *
@@ -96,32 +101,23 @@ public class BuboloApplication extends AbstractGameApplication
 		network = NetworkSystem.getInstance();
 
 		// Server or single-player
-		if (!isClient)
-		{
-			try
-			{
+		if (!isClient) {
+			try {
 				MapImporter importer = new MapImporter();
-				world = importer.importJsonMap(mapPath, graphics);
-			}
-			catch (IOException e)
-			{
+				// Import the map.
+				setWorld(importer.importJsonMap(mapPath, graphics));
+			} catch (IOException e) {
 				e.printStackTrace();
 				throw new GameRuntimeException(e);
 			}
 		}
-		// Client in net game
-		else
-		{
-			world = new GameWorld();
-		}
 
-		world.setEntityCreationObserver(graphics);
 		setState(initialState);
 	}
 
 	private static void initializeLogger() {
 		try {
-			// TODO (cdc - 2021-03-16): This file probably belongs in appdata and equivalent on other systems, rather than temp.
+			// TODO (cdc - 2021-03-16): This log file probably belongs in appdata and equivalent on other systems, rather than temp.
 			FileHandler fileHandler = new FileHandler("%t" + Config.AppTitle + ".log");
 			fileHandler.setFormatter(new SimpleFormatter());
 			logger.addHandler(fileHandler);
@@ -142,11 +138,12 @@ public class BuboloApplication extends AbstractGameApplication
 	public void render()
 	{
 		final State state = getState();
+		World world = world();
 		if (state == State.NET_GAME)
 		{
 			graphics.draw(world);
 			world.update();
-			network.update(world);
+			network.update(this);
 		}
 		else if (state == State.LOCAL_GAME)
 		{
@@ -157,7 +154,7 @@ public class BuboloApplication extends AbstractGameApplication
 				state == State.GAME_STARTING)
 		{
 			graphics.draw(screen);
-			network.update(world);
+			network.update(this);
 		}
 		else if (state == State.PLAYER_INFO)
 		{
@@ -168,6 +165,8 @@ public class BuboloApplication extends AbstractGameApplication
 	@Override
 	public void onStateChanged()
 	{
+		World world = world();
+
 		var state = getState();
 		switch (state) {
 		case NET_GAME: {

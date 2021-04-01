@@ -14,12 +14,15 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.MoveTank;
 import bubolo.net.command.NetTankSpeed;
+import bubolo.util.Coords;
 import bubolo.util.TileUtil;
 import bubolo.world.ActorEntity;
 import bubolo.world.Collidable;
 import bubolo.world.Damageable;
 import bubolo.world.Entity;
+import bubolo.world.Terrain;
 import bubolo.world.Tile;
+import bubolo.world.WaterType;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.StationaryElement;
@@ -78,8 +81,8 @@ public class Tank extends ActorEntity implements Damageable
 	// System.currentTimeMillis().
 	private long cannonFireTime = 0;
 
-	// The last time a mine was laid. Used to prevent multiple mines from being dropped.
-	private long mineLayingTime = 0;
+	// The next time a mine will be ready to be laid.
+	private long mineAvailableTime = 0;
 
 	private Polygon leftBumper = new Polygon();
 	private Polygon rightBumper = new Polygon();
@@ -419,15 +422,13 @@ public class Tank extends ActorEntity implements Damageable
 
 	private void checkTrees(World world)
 	{
-		int gridX = TileUtil.getClosestTileX(x());
-		int gridY = TileUtil.getClosestTileY(y());
 		Tile[][] allTiles = world.getTiles();
-		if (allTiles == null || TileUtil.isValidTile(gridX, gridY, world) == false)
+		if (allTiles == null || TileUtil.isValidTile(tileColumn(), tileRow(), world) == false)
 		{
 			hidden = false;
 			return;
 		}
-		Tile closeTile = allTiles[gridX][gridY];
+		Tile closeTile = allTiles[tileColumn()][tileRow()];
 		StationaryElement closeElement;
 
 		if (!closeTile.hasElement())
@@ -758,38 +759,25 @@ public class Tank extends ActorEntity implements Damageable
 	}
 
 	/**
-	 * This method creates the mine in world and passes it back to the caller
+	 * Creates the mine in world and passes it back to the caller. Returns null if a mine can't be created.
 	 *
-	 * @param world
-	 *            - the world to create the mine in
-	 * @param startX
-	 *            - The integer X position of the mine in world coordinates
-	 * @param startY
-	 *            - The integer Y position of the mine in world coordinates
-	 * @return - the mine that is created is returned or null if there are none to place
-	 *         or invalid placement location
+	 * @param world reference to the game world.
+	 * @return The mine, or null if a mine is unable to be placed.
 	 */
-	public Mine dropMine(World world, float startX, float startY)
+	public Mine dropMine(World world)
 	{
-		if ((System.currentTimeMillis() - mineLayingTime < MINE_RELOAD_SPEED_MILLIS && mineLayingTime != 0)
-				||startX < 0 || startX > world.getWidth() || startY < 0 || startY > world.getHeight())
-		{
-			return null;
-		}
+		if (mineAvailableTime < System.currentTimeMillis() && mineCount > 0) {
 
-		int xTileCoord = (int) startX / 32;
-		int yTileCoord = (int) startY / 32;
+			Terrain terrain = world.getTerrain(tileColumn(), tileRow());
+			if (!(terrain instanceof WaterType)) {
+				mineAvailableTime = System.currentTimeMillis() + MINE_RELOAD_SPEED_MILLIS;
 
-		if (world.getTiles()[xTileCoord][yTileCoord].getTerrain().getClass() != Water.class
-				&& world.getTiles()[xTileCoord][yTileCoord].getTerrain().getClass() != DeepWater.class)
-		{
-			if ((!world.getTiles()[xTileCoord][yTileCoord].hasElement()) && (mineCount > 0))
-			{
-				mineLayingTime = System.currentTimeMillis();
-				Mine mine = world.addEntity(Mine.class);
-				world.getTiles()[xTileCoord][yTileCoord].setElement(mine, world);
-				mine.setX(startX).setY(startY);
-				mine.setRotation(rotation());
+				int mineX = tileColumn() * Coords.TILE_TO_WORLD_SCALE;
+				int mineY = tileRow() * Coords.TILE_TO_WORLD_SCALE;
+
+				var args = new Entity.ConstructionArgs(UUID.randomUUID(), mineX, mineY, 0);
+				Mine mine = world.addEntity(Mine.class, args);
+
 				mineCount--;
 				return mine;
 			}

@@ -7,7 +7,7 @@ package bubolo.net.command;
 import java.util.UUID;
 
 import bubolo.net.NetworkCommand;
-import bubolo.world.World;
+import bubolo.net.WorldOwner;
 import bubolo.world.entity.concrete.Tank;
 
 /**
@@ -39,9 +39,9 @@ public class MoveTank implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
-		Tank tank = (Tank) world.getEntity(id);
+		Tank tank = (Tank) worldOwner.world().getEntity(id);
 		tank.setSpeed(new NetTankSpeed(speed));
 		tank.setX(x);
 		tank.setY(y);

@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
+import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
 import bubolo.world.Entity;
 import bubolo.world.Ownable;
@@ -90,8 +91,9 @@ public class CreateEntity implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
+		World world = worldOwner.world();
 		try
 		{
 			var args = new Entity.ConstructionArgs(id, x, y, rotation);

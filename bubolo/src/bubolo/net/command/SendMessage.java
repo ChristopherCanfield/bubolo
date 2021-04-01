@@ -7,7 +7,7 @@ package bubolo.net.command;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
-import bubolo.world.World;
+import bubolo.net.WorldOwner;
 
 /**
  * Used to send a message across the network.
@@ -53,7 +53,7 @@ public class SendMessage implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner world)
 	{
 		Network net = NetworkSystem.getInstance();
 		net.getNotifier().notifyMessageReceived(messageType, message);

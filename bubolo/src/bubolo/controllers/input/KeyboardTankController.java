@@ -99,14 +99,13 @@ public class KeyboardTankController implements Controller
 	 {
 		 if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT) && (tank.getMineCount() > 0))
 		 {
-				float tankCenterX = tank.x();
-				float tankCenterY = tank.y();
+//				float tankCenterX = tank.x();
+//				float tankCenterY = tank.y();
 
-				Mine mine = tank.dropMine(world,
-						tankCenterX + 18 * (float)Math.cos(tank.rotation()),
-						tankCenterY + 18 * (float)Math.sin(tank.rotation()));
-				if(mine != null)
-				{
+				Mine mine = tank.dropMine(world);
+//						tankCenterX + 18 * (float)Math.cos(tank.rotation()),
+//						tankCenterY + 18 * (float)Math.sin(tank.rotation()));
+				if(mine != null) {
 					Network net = NetworkSystem.getInstance();
 					net.send(new CreateEntity(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation()));
 				}

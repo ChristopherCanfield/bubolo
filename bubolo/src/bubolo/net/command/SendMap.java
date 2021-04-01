@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.UUID;
 
 import bubolo.net.NetworkCommand;
+import bubolo.net.WorldOwner;
+import bubolo.world.GameWorld;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.OldTerrain;
+import bubolo.world.entity.StationaryElement;
 
 /**
  * Command that is used to send the game map to a client.
@@ -24,11 +26,9 @@ public class SendMap implements NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
-	private final List<TileInfo> tiles;
+	private final List<TileInfo> tiles = new ArrayList<TileInfo>();
 	private final int rows;
 	private final int columns;
-	private final int worldWidth;
-	private final int worldHeight;
 
 	/**
 	 * Constructs a Send Map network command.
@@ -38,14 +38,8 @@ public class SendMap implements NetworkCommand
 	 */
 	public SendMap(World world)
 	{
-		this.worldWidth = world.getWidth();
-		this.worldHeight = world.getHeight();
-
-		this.tiles = new ArrayList<TileInfo>();
-
-		Tile[][] map = world.getTiles();
-		this.rows = map.length;
-		this.columns = map[0].length;
+		this.rows = world.getTileRows();
+		this.columns = world.getTileColumns();
 
 		for (int row = 0; row < map.length; ++row)
 		{
@@ -64,10 +58,10 @@ public class SendMap implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
-		world.setWidth(worldWidth);
-		world.setHeight(worldHeight);
+		World world = new GameWorld(columns, rows);
+
 
 		Tile[][] mapTiles = new Tile[rows][columns];
 
@@ -89,7 +83,7 @@ public class SendMap implements NetworkCommand
 			}
 		}
 
-		world.setTiles(mapTiles);
+		worldOwner.setWorld(world);
 	}
 
 	/**

@@ -2,6 +2,7 @@ package bubolo.world.entity.concrete;
 
 import bubolo.world.Adaptable;
 import bubolo.world.Terrain;
+import bubolo.world.WaterType;
 import bubolo.world.World;
 
 /**
@@ -9,7 +10,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Water extends Terrain implements Adaptable
+public class Water extends Terrain implements Adaptable, WaterType
 {
 	private int tilingState = 0;
 

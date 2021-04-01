@@ -10,10 +10,10 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import bubolo.Config;
+import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
 import bubolo.world.Entity;
 import bubolo.world.Ownable;
-import bubolo.world.World;
 
 /**
  * Creates an ownable entity on remote computers.
@@ -49,13 +49,13 @@ public class CreateOwnable extends CreateEntity
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
-		super.execute(world);
+		super.execute(worldOwner);
 
 		try
 		{
-			Ownable ownable = (Ownable)world.getEntity(getId());
+			Ownable ownable = (Ownable) worldOwner.world().getEntity(getId());
 			ownable.setOwnerId(ownerId);
 		}
 		catch (GameLogicException e)

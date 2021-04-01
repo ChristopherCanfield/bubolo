@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 
 import bubolo.Config;
 import bubolo.net.NetworkCommand;
+import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
-import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
+import bubolo.world.ActorEntity;
 
 /**
  * Moves an entity in the world.
@@ -27,8 +27,8 @@ public class MoveEntity implements NetworkCommand
 
 	private final UUID id;
 
-	private final int x;
-	private final int y;
+	private final float x;
+	private final float y;
 
 	private final float rotation;
 
@@ -38,20 +38,20 @@ public class MoveEntity implements NetworkCommand
 	 * @param entity
 	 *            the entity to move.
 	 */
-	public MoveEntity(OldEntity entity)
+	public MoveEntity(ActorEntity entity)
 	{
-		this.id = entity.getId();
-		this.x = (int)entity.getX();
-		this.y = (int)entity.getY();
-		this.rotation = entity.getRotation();
+		this.id = entity.id();
+		this.x = entity.x();
+		this.y = entity.y();
+		this.rotation = entity.rotation();
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
 		try
 		{
-			OldEntity entity = world.getEntity(id);
+			ActorEntity entity = (ActorEntity) worldOwner.world().getEntity(id);
 			entity.setX(x).setY(y).setRotation(rotation);
 		}
 		catch (GameLogicException e)

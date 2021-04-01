@@ -6,16 +6,17 @@
 
 package bubolo.net;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.net.InetAddress;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import bubolo.world.World;
-import static com.google.common.base.Preconditions.*;
 
 /**
  * The network system implementation.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public class NetworkSystem implements Network
@@ -24,15 +25,15 @@ public class NetworkSystem implements Network
 
 	// Queue of commands that should be run in the game logic thread.
 	private final Queue<NetworkCommand> postedCommands;
-	
+
 	private final NetworkObserverNotifier observerNotifier;
 
 	// Specifies whether the network system is running in debug mode.
 	private boolean debug = false;
-	
+
 	// The name of the player, which is used when sending messages.
 	private String name;
-	
+
 	// Specifies whether this is a server player.
 	private boolean isServer;
 
@@ -40,7 +41,7 @@ public class NetworkSystem implements Network
 
 	/**
 	 * Returns the network system instance.
-	 * 
+	 *
 	 * @return the network system instance.
 	 */
 	public static Network getInstance()
@@ -57,7 +58,7 @@ public class NetworkSystem implements Network
 		this.postedCommands = new ConcurrentLinkedQueue<NetworkCommand>();
 		this.observerNotifier = new NetworkObserverNotifier();
 	}
-	
+
 	@Override
 	public boolean isServer()
 	{
@@ -69,7 +70,7 @@ public class NetworkSystem implements Network
 	{
 		return name;
 	}
-	
+
 	@Override
 	public void startServer(String serverName) throws NetworkException, IllegalStateException
 	{
@@ -78,7 +79,7 @@ public class NetworkSystem implements Network
 
 		name = serverName;
 		isServer = true;
-		
+
 		// Don't allow the server to run in debug mode, since it requires external resources.
 		// Instead, test this properly in an integration test.
 		if (debug)
@@ -92,7 +93,7 @@ public class NetworkSystem implements Network
 	}
 
 	@Override
-	public void connect(InetAddress serverIpAddress, String clientName) 
+	public void connect(InetAddress serverIpAddress, String clientName)
 			throws NetworkException, IllegalStateException
 	{
 		checkState(subsystem == null, "The network system has already been started. " +
@@ -100,7 +101,7 @@ public class NetworkSystem implements Network
 
 		name = clientName;
 		isServer = false;
-		
+
 		// Don't allow the client to run in debug mode, since it requires external resources.
 		// Instead, test this properly in an integration test.
 		if (debug)
@@ -118,13 +119,12 @@ public class NetworkSystem implements Network
 	{
 		debug = true;
 	}
-	
+
 	@Override
 	public void startGame(World world)
 	{
-		if (subsystem instanceof Server)
-		{
-			((Server)subsystem).startGame(world);
+		if (subsystem instanceof Server server) {
+			server.startGame(world);
 		}
 	}
 
@@ -148,13 +148,13 @@ public class NetworkSystem implements Network
 	}
 
 	@Override
-	public void update(World world)
+	public void update(WorldOwner worldOwner)
 	{
 		// Execute all posted commands in the game logic thread.
 		NetworkCommand c = null;
 		while ((c = postedCommands.poll()) != null)
 		{
-			c.execute(world);
+			c.execute(worldOwner);
 		}
 	}
 
@@ -169,14 +169,14 @@ public class NetworkSystem implements Network
 	{
 		observerNotifier.removeObserver(o);
 	}
-	
+
 
 	@Override
 	public NetworkObserverNotifier getNotifier()
 	{
 		return observerNotifier;
 	}
-	
+
 	@Override
 	public void postToGameThread(NetworkCommand command)
 	{

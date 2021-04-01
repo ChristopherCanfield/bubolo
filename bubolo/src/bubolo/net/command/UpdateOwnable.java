@@ -11,10 +11,10 @@ import java.util.logging.Logger;
 
 import bubolo.Config;
 import bubolo.net.NetworkCommand;
+import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
+import bubolo.world.Entity;
 import bubolo.world.Ownable;
-import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 
 /**
  * Moves an entity in the world.
@@ -42,11 +42,11 @@ public class UpdateOwnable implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
 		try
 		{
-			OldEntity entity = world.getEntity(id);
+			Entity entity = worldOwner.world().getEntity(id);
 			Ownable ownable = (Ownable)entity;
 			ownable.setOwnerId(this.ownerId);
 		}

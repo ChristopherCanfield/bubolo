@@ -1,5 +1,7 @@
 package bubolo.world.entity.concrete;
 
+import java.util.UUID;
+
 import bubolo.Config;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
@@ -8,6 +10,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.UpdateOwnable;
 import bubolo.world.ActorEntity;
 import bubolo.world.Damageable;
+import bubolo.world.Entity;
 import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
 
@@ -19,34 +22,22 @@ import bubolo.world.World;
  */
 public class Pillbox extends ActorEntity implements Damageable, TerrainImprovement
 {
-	/*
-	 * time at witch cannon was last fired
-	 */
-	private long cannonFireTime = 0;
+	/* When the cannon will be ready to fire. */
+	private long cannonReadyTime = 0;
 
-	/*
-	 * time required to reload cannon
-	 */
+	/* Time required to reload cannon. */
 	private static final long cannonReloadSpeed = 500;
 
-	/*
-	 * current direction pillbox is going to fire
-	 */
+	/* The direction the pillbox will fire. */
 	private float cannonRotation = 0;
 
-	/*
-	 * Max range to locate a target. Pillbox will not fire unless there is a tank within this range
-	 */
+	/* Max range to locate a target. Pillbox will not fire unless there is a tank within this range. */
 	private double range = 300;
 
-	/**
-	 * The health of the pillbox
-	 */
+	/* The pillbox's health. */
 	private float hitPoints = MAX_HIT_POINTS;
 
-	/**
-	 * The maximum amount of hit points of the pillbox
-	 */
+	/* The pillbox's maximum health. */
 	public static final int MAX_HIT_POINTS = 100;
 
 	// 0.5f / FPS = heals ~0.5 health per second.
@@ -86,7 +77,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	public boolean isCannonReady()
 	{
-		return (System.currentTimeMillis() - this.cannonFireTime > Pillbox.cannonReloadSpeed);
+		return System.currentTimeMillis() > cannonReadyTime;
 	}
 
 	/**
@@ -118,14 +109,11 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	public void fireCannon(World world)
 	{
-		cannonFireTime = System.currentTimeMillis();
+		cannonReadyTime = System.currentTimeMillis() + cannonReloadSpeed;
 
-		// TODO (cdc - 2021-03-30): Update this once world.addEntity has been updated.
-		Bullet bullet = world.addEntity(Bullet.class);
+		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), getCannonRotation());
+		Bullet bullet = world.addEntity(Bullet.class, args);
 		bullet.setOwner(this);
-
-		bullet.setX(x()).setY(y());
-		bullet.setRotation(getCannonRotation());
 	}
 
 	/**
