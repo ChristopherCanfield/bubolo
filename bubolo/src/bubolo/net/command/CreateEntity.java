@@ -12,21 +12,17 @@ import java.util.logging.Logger;
 import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
-import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
 import bubolo.world.Entity;
-import bubolo.world.Terrain;
-import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.StationaryElement;
 
 /**
  * Generic entity creator for the network.
  *
  * @author BU CS673 - Clone Productions
  */
-public class CreateEntity implements NetworkCommand
+public class CreateEntity extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -91,22 +87,14 @@ public class CreateEntity implements NetworkCommand
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
+	protected void execute(World world)
 	{
-		World world = worldOwner.world();
 		try
 		{
 			var args = new Entity.ConstructionArgs(id, x, y, rotation);
 
 			Entity entity;
 			entity = world.addEntity(type, args, factory);
-
-			Tile tile = world.getTileFromWorldPosition(x, y);
-			if (entity instanceof Terrain terrain) {
-				tile.setTerrain(terrain, world);
-			} else if (entity instanceof StationaryElement stationaryElement) {
-				tile.setElement(stationaryElement, world);
-			}
 
 			if (entity instanceof ActorEntity actor)
 			{

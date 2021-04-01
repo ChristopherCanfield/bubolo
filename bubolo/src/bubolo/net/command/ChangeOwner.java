@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import bubolo.Config;
 import bubolo.net.NetworkCommand;
-import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
 import bubolo.world.World;
@@ -21,7 +20,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public class ChangeOwner implements NetworkCommand
+public class ChangeOwner extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -42,10 +41,9 @@ public class ChangeOwner implements NetworkCommand
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
+	protected void execute(World world)
 	{
 		try {
-			World world = worldOwner.world();
 			ActorEntity ownable = (ActorEntity) world.getEntity(id);
 			ActorEntity owner = (ActorEntity) world.getEntity(ownerId);
 

@@ -11,14 +11,13 @@ import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
 import bubolo.net.WorldOwner;
-import bubolo.world.World;
 
 /**
  * Command that is used to notify the clients to start the game.
  *
  * @author BU CS673 - Clone Productions
  */
-public class StartGame implements NetworkCommand
+public class StartGame extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -42,13 +41,11 @@ public class StartGame implements NetworkCommand
 	@Override
 	public void execute(WorldOwner worldOwner)
 	{
-		World world = worldOwner.world();
-
 		// Only the server has a Tree controller, to eliminate the risk of synchronization issues.
-		world.removeController(AiTreeController.class);
+		worldOwner.world().removeController(AiTreeController.class);
 
 		// Build the map on the client.
-		sendMapCommand.execute(world);
+		sendMapCommand.execute(worldOwner);
 
 		// Notify NetworkObservers about the game start time.
 		Network net = NetworkSystem.getInstance();

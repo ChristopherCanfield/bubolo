@@ -9,14 +9,13 @@ package bubolo.net.command;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
-import bubolo.net.WorldOwner;
 
 /**
  * Notifies a client that it has connected to the server.
  *
  * @author BU CS673 - Clone Productions
  */
-public class ConnectedToServer implements NetworkCommand
+public class ConnectedToServer extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -38,7 +37,7 @@ public class ConnectedToServer implements NetworkCommand
 	}
 
 	@Override
-	public void execute(WorldOwner world)
+	protected void execute()
 	{
 		Network net = NetworkSystem.getInstance();
 		net.getNotifier().notifyConnect(clientName, serverName);

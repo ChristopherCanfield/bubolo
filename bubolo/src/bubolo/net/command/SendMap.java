@@ -22,7 +22,7 @@ import bubolo.world.entity.StationaryElement;
  *
  * @author BU CS673 - Clone Productions
  */
-public class SendMap implements NetworkCommand
+public class SendMap extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -58,7 +58,7 @@ public class SendMap implements NetworkCommand
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
+	protected void execute(WorldOwner worldOwner)
 	{
 		World world = new GameWorld(columns, rows);
 

@@ -12,16 +12,16 @@ import java.util.logging.Logger;
 
 import bubolo.Config;
 import bubolo.net.NetworkCommand;
-import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
+import bubolo.world.World;
 
 /**
  * Moves an entity in the world.
  *
  * @author BU CS673 - Clone Productions
  */
-public class MoveEntity implements NetworkCommand
+public class MoveEntity extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -47,11 +47,11 @@ public class MoveEntity implements NetworkCommand
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
+	protected void execute(World world)
 	{
 		try
 		{
-			ActorEntity entity = (ActorEntity) worldOwner.world().getEntity(id);
+			ActorEntity entity = (ActorEntity) world.getEntity(id);
 			entity.setX(x).setY(y).setRotation(rotation);
 		}
 		catch (GameLogicException e)

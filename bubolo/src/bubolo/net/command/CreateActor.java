@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import bubolo.Config;
-import bubolo.net.WorldOwner;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
 import bubolo.world.Entity;
@@ -50,13 +49,12 @@ public class CreateActor extends CreateEntity
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
+	protected void execute(World world)
 	{
-		super.execute(worldOwner);
+		super.execute(world);
 
 		try
 		{
-			World world = worldOwner.world();
 			ActorEntity ownable = (ActorEntity) world.getEntity(getId());
 			ActorEntity owner = (ActorEntity) world.getEntity(ownerId);
 			ownable.setOwner(owner);

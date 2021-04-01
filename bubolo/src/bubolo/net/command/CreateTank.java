@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.net.NetworkTankController;
-import bubolo.net.WorldOwner;
 import bubolo.world.ActorEntity;
+import bubolo.world.World;
 import bubolo.world.entity.concrete.Tank;
 
 /**
@@ -48,13 +48,13 @@ public class CreateTank extends CreateEntity
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
+	public void execute(World world)
 	{
-		super.execute(worldOwner);
+		super.execute(world);
 
 		try
 		{
-			Tank tank = (Tank) worldOwner.world().getEntity(getId());
+			Tank tank = (Tank) world.getEntity(getId());
 			tank.setPlayerName(playerName);
 			tank.setOwnedByLocalPlayer(false);
 		}
