@@ -17,6 +17,7 @@ import bubolo.controllers.Controllers;
 import bubolo.controllers.ai.AiTreeController;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
+import bubolo.util.Nullable;
 import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
@@ -363,6 +364,16 @@ public class GameWorld implements World
 	public List<Spawn> getSpawns()
 	{
 		return spawnsUnmodifiableView;
+	}
+
+	@Override
+	public <T extends Collidable> List<T> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter) {
+		return null;
+	}
+
+	@Override
+	public List<Collidable> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects) {
+		return null;
 	}
 
 	@Override

@@ -4,7 +4,6 @@ import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
-import bubolo.util.TileUtil;
 import bubolo.world.Entity;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Pillbox;
@@ -44,17 +43,14 @@ public class AiPillboxController implements Controller
 
 		if(!pillbox.hasOwner() && pillbox.getHitPoints() <= 0)
 		{
-			for(Entity entity : TileUtil.getLocalCollisions(pillbox, world))
+			for(Tank entity : world.getNearbyCollidables(pillbox.tileColumn(), pillbox.tileRow(), true, Tank.class))
 			{
-				if (entity instanceof Tank)
+				Tank tank = entity;
+				pillbox.setOwner(tank);
+				if(tank.isOwnedByLocalPlayer() && !pillbox.isOwnedByLocalPlayer())
 				{
-					Tank tank = (Tank) entity;
-					pillbox.setOwner(tank);
-					if(tank.isOwnedByLocalPlayer() && !pillbox.isOwnedByLocalPlayer())
-					{
-						pillbox.setOwnedByLocalPlayer(true);
-						sendNetUpdate(pillbox);
-					}
+					pillbox.setOwnedByLocalPlayer(true);
+					sendNetUpdate(pillbox);
 				}
 			}
 		}

@@ -188,7 +188,7 @@ public interface World
 	 *
 	 * @return a list of nearby collidables.
 	 */
-	public List<Collidable> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
+	public <T extends Collidable> List<T> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter);
 
 	/**
 	 * Returns a list of collidables that are adjacent to or near a (column, row) position, possibly filter by solidness.
