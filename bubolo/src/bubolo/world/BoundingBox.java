@@ -5,12 +5,15 @@ import com.badlogic.gdx.math.Polygon;
 public class BoundingBox {
 	private Polygon bounds;
 
-	public void updateBounds(Entity entity)
-	{
+	public void updateBounds(Entity entity) {
+		updateBounds(entity, entity.height(), entity.width());
+	}
+
+	public void updateBounds(Entity entity, int width, int height) {
 		float x = entity.x();
 		float y = entity.y();
-		float w = entity.width();
-		float h = entity.height();
+		float w = width;
+		float h = height;
 
 		float[] corners = new float[] {
 				w / 2f, h / 2f,

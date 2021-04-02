@@ -2,6 +2,8 @@ package bubolo.world.entity.concrete;
 
 import java.util.UUID;
 
+import com.badlogic.gdx.math.Polygon;
+
 import bubolo.Config;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
@@ -9,6 +11,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
 import bubolo.world.ActorEntity;
+import bubolo.world.BoundingBox;
 import bubolo.world.Damageable;
 import bubolo.world.Entity;
 import bubolo.world.TerrainImprovement;
@@ -46,6 +49,12 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private static final int width = 27;
 	private static final int height = 27;
 
+	// Gives the appearance of capturing the pillbox by touching it.
+	private static final int captureWidth = width + 10;
+	private static final int captureHeight = height + 10;
+
+	private final BoundingBox captureBounds = new BoundingBox();
+
 	/**
 	 * Constructs a new Pillbox.
 	 */
@@ -53,6 +62,19 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	{
 		super(args, width, height);
 		updateBounds();
+	}
+
+	/**
+	 * @return The area within which a tank can capture a pillbox.
+	 */
+	public Polygon captureBounds() {
+		return captureBounds.bounds();
+	}
+
+	@Override
+	public void updateBounds() {
+		super.updateBounds();
+		captureBounds.updateBounds(this, captureWidth, captureHeight);
 	}
 
 	@Override

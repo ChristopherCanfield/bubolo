@@ -4,7 +4,6 @@ import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
-import bubolo.world.Collidable;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Tank;
@@ -31,7 +30,7 @@ public class AiBaseController implements Controller
 	/**
 	 * Time since last supply order
 	 */
-	private long lastSupplyTime = 0;
+	private long nextSupplyTime = 0;
 
 	/**
 	 * Time allowed for base to gain supplies
@@ -63,43 +62,37 @@ public class AiBaseController implements Controller
 	public void update(World world)
 	{
 		base.setCharging(false);
-		for (Collidable entity : world.getNearbyCollidables(base.tileColumn(), base.tileRow(), true, Tank.class)) {
-			if (entity instanceof Tank tank) {
-				if (!base.hasOwner()) {
-					base.setOwner(tank);
-					base.heal(100);
+		for (Tank tank : world.getTanks()) {
+			// Base has an owner.
+			if (base.hasOwner()) {
+				if(tank.equals(base.owner()) && !isTankRecharged(tank)) {
+					base.setCharging(true);
 
-					if (tank.isOwnedByLocalPlayer() && !base.isOwnedByLocalPlayer()) {
-						base.setOwnedByLocalPlayer(true);
-						base.setOwner(tank);
-
-						Network net = NetworkSystem.getInstance();
-						net.send(new ChangeOwner(base));
-					}
-				}
-				else
-				{
-					if(tank.id().equals(base.owner().id()) && !isTankRecharged(tank))
-					{
-						base.setCharging(true);
-
-						if((System.currentTimeMillis() - lastSupplyTime > resupplyDelayTime))
-						{
-							lastSupplyTime = System.currentTimeMillis();
-							if (tank.getHitPoints() < tank.getMaxHitPoints())
-							{
-								tank.heal(base.giveHitPoints());
-							}
-							if(tank.getAmmoCount() < tank.getTankMaxAmmo())
-							{
-								tank.gatherAmmo(base.giveAmmo());
-							}
-							if(tank.getMineCount() < tank.getTankMaxMineCount())
-							{
-								tank.gatherMine(base.giveMine());
-							}
+					if(System.currentTimeMillis() > nextSupplyTime) {
+						nextSupplyTime = System.currentTimeMillis() + resupplyDelayTime;
+						if (tank.getHitPoints() < tank.getMaxHitPoints()) {
+							tank.heal(base.giveHitPoints());
+						}
+						if(tank.getAmmoCount() < tank.getTankMaxAmmo()) {
+							tank.gatherAmmo(base.giveAmmo());
+						}
+						if(tank.getMineCount() < tank.getTankMaxMineCount()) {
+							tank.gatherMine(base.giveMine());
 						}
 					}
+				}
+
+			// Base does not have an existing owner.
+			} else {
+				base.setOwner(tank);
+				base.heal(100);
+
+				if (tank.isOwnedByLocalPlayer() && !base.isOwnedByLocalPlayer()) {
+					base.setOwnedByLocalPlayer(true);
+					base.setOwner(tank);
+
+					Network net = NetworkSystem.getInstance();
+					net.send(new ChangeOwner(base));
 				}
 			}
 		}

@@ -366,13 +366,13 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public <T extends Collidable> List<T> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter) {
-		return null;
+	public <T> List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter) {
+		throw new GameLogicException("Not implemented");
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects) {
-		return null;
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects) {
+		throw new GameLogicException("Not implemented");
 	}
 
 	@Override

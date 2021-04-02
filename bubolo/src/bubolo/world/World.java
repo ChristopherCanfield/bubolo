@@ -178,28 +178,28 @@ public interface World
 	public Mine getMine(int column, int row);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near a (column, row) position, possibly filtered by solidness and type.
+	 * Returns a list of collidables that are adjacent to or near a an entity. The collidables may be filtered by solidness and type.
+	 * The entity that is passed in is not included in the returned list.
 	 *
-	 * @param column the target tile's column.
-	 * @param row the target tile's row.
+	 * @param entity
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
 	 * no type filter is applied.
 	 *
 	 * @return a list of nearby collidables.
 	 */
-	public <T extends Collidable> List<T> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter);
+	public <T> List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near a (column, row) position, possibly filter by solidness.
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness.
+	 * The entity that is passed in is not included in the returned list.
 	 *
-	 * @param column the target tile's column.
-	 * @param row the target tile's row.
+	 * @param entity
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 *
 	 * @return a list of nearby collidables.
 	 */
-	public List<Collidable> getNearbyCollidables(int column, int row, boolean onlyIncludeSolidObjects);
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects);
 
 	/**
 	 * Adds a controller of the specified type to the world.

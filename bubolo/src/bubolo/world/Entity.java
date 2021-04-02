@@ -104,6 +104,9 @@ public abstract class Entity {
 	protected void onDispose() {
 	}
 
+	/**
+	 * Two entity references are equal if the underlying entity points to the same ID.
+	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Entity otherEntity) {

@@ -4,7 +4,6 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
 import bubolo.world.ActorEntity;
-import bubolo.world.BoundingBox;
 import bubolo.world.Damageable;
 import bubolo.world.TerrainImprovement;
 
@@ -44,8 +43,6 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 
 	private static final int width = 26;
 	private static final int height = 30;
-
-	private final BoundingBox boundingBox = new BoundingBox();
 
 	private static final float speedModifier = 0.75f;
 

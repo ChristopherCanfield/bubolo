@@ -15,17 +15,15 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.MoveTank;
 import bubolo.net.command.NetTankSpeed;
 import bubolo.util.Coords;
-import bubolo.util.TileUtil;
 import bubolo.world.ActorEntity;
 import bubolo.world.Collidable;
 import bubolo.world.Damageable;
 import bubolo.world.Entity;
 import bubolo.world.Terrain;
-import bubolo.world.Tile;
+import bubolo.world.TerrainImprovement;
 import bubolo.world.WaterType;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.StationaryElement;
 
 /**
  * The tank, which may be controlled by a local player, a networked player, or an AI bot.
@@ -140,7 +138,8 @@ public class Tank extends ActorEntity implements Damageable
 		if (!isAlive()) {
 			respawn(world);
 		}
-		updateControllers(world);
+
+		updateSpeedForTerrain(world);
 		moveTank(world);
 		checkTrees(world);
 	}
@@ -183,11 +182,8 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	public void accelerate()
 	{
-		if (speed > modifiedMaxSpeed)
-		{
-			speed = modifiedMaxSpeed;
-		}
-		else if (speed < modifiedMaxSpeed && !accelerated)
+		clampSpeed();
+		if (speed < modifiedMaxSpeed && !accelerated)
 		{
 			speed += accelerationRate;
 			if (speed > modifiedMaxSpeed)
@@ -203,18 +199,19 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	public void decelerate()
 	{
-		if (speed > modifiedMaxSpeed)
-		{
-			speed = modifiedMaxSpeed;
-		}
+		clampSpeed();
 		if (speed > 0 && !decelerated)
 		{
 			speed -= decelerationRate;
-			if (speed < 0)
-			{
-				speed = 0;
-			}
 			decelerated = true;
+		}
+	}
+
+	private void clampSpeed() {
+		if (speed > modifiedMaxSpeed) {
+			speed = modifiedMaxSpeed;
+		} else if (speed < 0) {
+			speed = 0;
 		}
 	}
 
@@ -300,21 +297,19 @@ public class Tank extends ActorEntity implements Damageable
 	 * Returns a list of all Entities that would overlap with this Tank if it was where it
 	 * will be in one game tick, along its current trajectory.
 	 */
-	private List<Entity> getLookaheadEntities(World w)
+	private List<Collidable> getLookaheadEntities(World world)
 	{
-		var intersects = new ArrayList<Entity>();
-		var localEntities = TileUtil.getLocalEntities(x(), y(), w);
-		for (int ii = 0; ii < localEntities.size(); ii++) {
-			if (localEntities.get(ii) != this) {
-				if (overlapsEntity(localEntities.get(ii))
-						|| Intersector.overlapConvexPolygons(lookAheadBounds(),
-								localEntities.get(ii).bounds()))
-				{
-					intersects.add(localEntities.get(ii));
-				}
+		var nextTickBounds = lookAheadBounds();
+		var nextTickOverlappedEntities = new ArrayList<Collidable>();
+
+		var collidables = world.getNearbyCollidables(this, true);
+		for (Collidable collidable : collidables) {
+			if (overlapsEntity(collidable) || Intersector.overlapConvexPolygons(nextTickBounds, collidable.bounds())) {
+				nextTickOverlappedEntities.add(collidable);
 			}
 		}
-		return intersects;
+
+		return nextTickOverlappedEntities;
 	}
 
 	/**
@@ -332,8 +327,8 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	private void updateLeftBumper()
 	{
-		float newX = (float) (x() + Math.cos(rotation()) * (speed));
-		float newY = (float) (y() + Math.sin(rotation()) * (speed));
+		float newX = (float) (x() + Math.cos(rotation()) * speed);
+		float newY = (float) (y() + Math.sin(rotation()) * speed);
 		float w = width();
 		float h = height();
 
@@ -355,8 +350,8 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	private void updateRightBumper()
 	{
-		float newX = (float) (x() + Math.cos(rotation()) * (speed));
-		float newY = (float) (y() + Math.sin(rotation()) * (speed));
+		float newX = (float) (x() + Math.cos(rotation()) * speed);
+		float newY = (float) (y() + Math.sin(rotation()) * speed);
 		float w = width();
 		float h = height();
 
@@ -422,59 +417,48 @@ public class Tank extends ActorEntity implements Damageable
 
 	private void checkTrees(World world)
 	{
-		Tile[][] allTiles = world.getTiles();
-		if (allTiles == null || TileUtil.isValidTile(tileColumn(), tileRow(), world) == false)
-		{
-			hidden = false;
-			return;
-		}
-		Tile closeTile = allTiles[tileColumn()][tileRow()];
-		StationaryElement closeElement;
+		TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
+		hidden = terrainImprovement instanceof Tree;
 
-		if (!closeTile.hasElement())
-		{
-			hidden = false;
-			return;
-		}
+		// TODO (cdc - 2021-04-02): Is this needed?
+//		boolean[] corners = TileUtil.getCornerMatches(closeTile, world, new Class[] { Tree.class });
+//		boolean[] edges = TileUtil.getEdgeMatches(closeTile, world, new Class[] { Tree.class });
+//		for (int i = 0; i < 4; i++)
+//		{
+//			if (corners[i] == false || edges[i] == false)
+//			{
+//				hidden = false;
+//				return;
+//			}
+//		}
+//
+//		hidden = true;
+	}
 
-		closeElement = closeTile.getElement();
-		if (!(closeElement instanceof Tree))
-		{
-			hidden = false;
-			return;
+	/**
+	 * Updates the tank's speed for the underlying terrain.
+	 *
+	 * @param world reference to the game world.
+	 */
+	private void updateSpeedForTerrain(World world) {
+		var terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
+		if (terrainImprovement != null && terrainImprovement.speedModifier() > 0) {
+			modifiedMaxSpeed = maxSpeed * terrainImprovement.speedModifier();
+		} else {
+			var terrain = world.getTerrain(tileColumn(), tileRow());
+			modifiedMaxSpeed = maxSpeed * terrain.speedModifier();
 		}
-		boolean[] corners = TileUtil.getCornerMatches(closeTile, world, new Class[] { Tree.class });
-		boolean[] edges = TileUtil.getEdgeMatches(closeTile, world, new Class[] { Tree.class });
-		for (int i = 0; i < 4; i++)
-		{
-			if (corners[i] == false || edges[i] == false)
-			{
-				hidden = false;
-				return;
-			}
-		}
-
-		hidden = true;
+		clampSpeed();
 	}
 
 	/**
 	 * Updates the Tank's world position according to its speed, acceleration/deceleration
 	 * state, and collision information.
 	 *
-	 * @param world
-	 *            is a reference to the world that this Tank belongs to.
+	 * @param world reference to the game world.
 	 */
 	private void moveTank(World world)
 	{
-		var currentTerrain = TileUtil.getTileTerrain(x(), y(), world);
-		if (currentTerrain != null)
-		{
-			modifiedMaxSpeed = maxSpeed * currentTerrain.getMaxSpeedModifier();
-		}
-
-		/*
-		 * Store the Tank's current positioning and speed data, for use in calculations.
-		 */
 		float xPos = x();
 		float yPos = y();
 		float rotation = rotation();
@@ -491,20 +475,13 @@ public class Tank extends ActorEntity implements Damageable
 			return;
 		}
 
-		/*
-		 * Update (replace) the right and left bumper polygons to make sure collisions are
-		 * accurate.
-		 */
+		// Update (replace) the right and left bumper polygons to make sure collisions are accurate.
 		updateBumpers();
 
-		/*
-		 * Booleans used to record which, if any, bumpers were hit.
-		 */
+		// Record which, if any, bumpers were hit.
 		boolean collidingLeft = false;
 		boolean collidingRight = false;
 
-		// Currently checks against all Entities in the world, then checks each of the
-		// ones that overlap to see if they overlap the bumpers.
 		var possibleCollisions = getLookaheadEntities(world);
 		for (int i = 0; i < possibleCollisions.size(); i++) {
 			OldEntity collider = possibleCollisions.get(i);

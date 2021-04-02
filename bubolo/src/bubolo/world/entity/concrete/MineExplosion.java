@@ -49,10 +49,10 @@ public class MineExplosion extends ActorEntity
 			dispose();
 
 		} else {
-			for (Collidable collider : world.getNearbyCollidables(width, height, true, Damageable.class)) {
-				if (collider instanceof Damageable damageable) {
-					damageable.takeHit(DAMAGE_PER_TICK);
-				}
+			for (Collidable collider : world.getNearbyCollidables(this, true, Damageable.class)) {
+				// We know the collider is a damageable, since we filtered to include only Damageables.
+				Damageable damageable = (Damageable) collider;
+				damageable.takeHit(DAMAGE_PER_TICK);
 			}
 		}
 	}

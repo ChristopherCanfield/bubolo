@@ -1,5 +1,7 @@
 package bubolo.controllers.ai;
 
+import com.badlogic.gdx.math.Intersector;
+
 import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
@@ -41,20 +43,25 @@ public class AiPillboxController implements Controller
 			}
 		}
 
-		if(!pillbox.hasOwner() && pillbox.getHitPoints() <= 0)
-		{
-			for(Tank entity : world.getNearbyCollidables(pillbox.tileColumn(), pillbox.tileRow(), true, Tank.class))
-			{
-				Tank tank = entity;
-				pillbox.setOwner(tank);
-				if(tank.isOwnedByLocalPlayer() && !pillbox.isOwnedByLocalPlayer())
-				{
-					pillbox.setOwnedByLocalPlayer(true);
-					sendNetUpdate(pillbox);
+		processTankCapture(world);
+	}
+
+	private void processTankCapture(World world) {
+		if (pillbox.getHitPoints() <= 0) {
+			pillbox.updateBounds();
+
+			for (Tank tank : world.getTanks()) {
+				tank.updateBounds();
+
+				if (Intersector.overlapConvexPolygons(pillbox.captureBounds(), tank.bounds())) {
+					pillbox.setOwner(tank);
+					if(tank.isOwnedByLocalPlayer() && !pillbox.isOwnedByLocalPlayer()) {
+						pillbox.setOwnedByLocalPlayer(true);
+						sendNetUpdate(pillbox);
+					}
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -71,7 +78,7 @@ public class AiPillboxController implements Controller
 
 		for (Tank tank : world.getTanks()) {
 			// Don't attack the owner's tank, or hidden tanks.
-			if(!tank.equals(pillbox.owner()) && !tank.isHidden()) {
+			if (!tank.equals(pillbox.owner()) && !tank.isHidden()) {
 				if (targetInRange(tank)) {
 					double xdistance = Math.abs(pillbox.x() - tank.x());
 					double ydistance = Math.abs(pillbox.y() - tank.y());
@@ -135,6 +142,7 @@ public class AiPillboxController implements Controller
 		pillbox.aimCannon(rotation);
 		pillbox.fireCannon(world);
 	}
+
 	private static void sendNetUpdate(Pillbox pillbox)
 	{
 		Network net = NetworkSystem.getInstance();
