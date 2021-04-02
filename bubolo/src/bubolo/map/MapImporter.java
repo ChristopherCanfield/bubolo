@@ -26,10 +26,7 @@ import bubolo.util.Nullable;
 import bubolo.world.Entity;
 import bubolo.world.EntityCreationObserver;
 import bubolo.world.GameWorld;
-import bubolo.world.Terrain;
-import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.StationaryElement;
 import bubolo.world.entity.concrete.Base;
 import bubolo.world.entity.concrete.Crater;
 import bubolo.world.entity.concrete.DeepWater;
@@ -246,11 +243,10 @@ public class MapImporter {
 			setTilesetFirstGids(jsonTiledMap, diagnostics);
 
 			// Get the map height and width, in tiles.
-			int mapHeightTiles = diagnostics.tileHeight = jsonTiledMap.getInteger(Key.MapHeight);
-			int mapWidthTiles = diagnostics.tileWidth = jsonTiledMap.getInteger(Key.MapWidth);
-			Tile[][] mapTiles = new Tile[mapWidthTiles][mapHeightTiles];
+			final int tileColumns = diagnostics.tileWidth = jsonTiledMap.getInteger(Key.MapWidth);
+			final int tileRows = diagnostics.tileHeight = jsonTiledMap.getInteger(Key.MapHeight);
 
-			GameWorld world = new GameWorld(Coords.TILE_TO_WORLD_SCALE * mapWidthTiles, Coords.TILE_TO_WORLD_SCALE * mapHeightTiles);
+			GameWorld world = new GameWorld(tileColumns, tileRows);
 			world.setEntityCreationObserver(entityCreationObserver);
 
 			JsonArray layers = (JsonArray) jsonTiledMap.get(Key.Layers.getKey());
@@ -261,15 +257,14 @@ public class MapImporter {
 				JsonArray layerTiles = (JsonArray) layer.get(Key.Data.getKey());
 
 				// Iterate through each tile GID in the map layer.
-				for (int row = 0; row < mapHeightTiles; row++) {
-					for (int col = 0; col < mapWidthTiles; col++) {
-						int tileGid = layerTiles.getInteger(row * mapWidthTiles + col);
-						addEntityIfGidRecognized(tileGid, world, mapTiles, mapHeightTiles, row, col, diagnostics);
+				for (int row = 0; row < tileRows; row++) {
+					for (int col = 0; col < tileColumns; col++) {
+						int tileGid = layerTiles.getInteger(row * tileColumns + col);
+						addEntityIfGidRecognized(tileGid, world, row, col, diagnostics);
 					}
 				}
 			}
 
-			world.setTiles(mapTiles);
 			return new Result(world, diagnostics);
 		} catch (JsonException e) {
 			throw new InvalidMapException(DefaultExceptionMessage, e);
@@ -301,7 +296,7 @@ public class MapImporter {
 		}
 	}
 
-	void addEntityIfGidRecognized(int tileGid, World world, Tile[][] mapTiles, int mapHeightTiles, int row, int col, Diagnostics diagnostics) {
+	void addEntityIfGidRecognized(int tileGid, World world, int row, int col, Diagnostics diagnostics) {
 		// Zero represents an empty space in the layer, so skip it if encountered.
 		if (tileGid > 0) {
 			// Check the tile GID against the known GIDs in each tileset.
@@ -309,41 +304,16 @@ public class MapImporter {
 				// Add the entity if it is known to this tileset.
 				if (ts.isGidInThisTileset(tileGid)) {
 					// The game world is flipped from json map indexes.
-					int gridY = mapHeightTiles - row - 1;
-					int gridX = col;
-					int posY = gridY * Coords.TILE_TO_WORLD_SCALE;
-					int posX = gridX * Coords.TILE_TO_WORLD_SCALE;
+					int posY = row * Coords.TILE_TO_WORLD_SCALE;
+					int posX = col * Coords.TILE_TO_WORLD_SCALE;
 					double rotation = Math.PI / 2.0;
 
 					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, (float) rotation);
 					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world, args);
 
-					if (entity instanceof Terrain terrain) {
-						addTerrain(terrain, world, mapTiles, gridX, gridY);
-					} else if (entity instanceof StationaryElement stationaryElement) {
-						addStationaryElement(stationaryElement, world, mapTiles, gridX, gridY);
-					}
-
 					diagnostics.typesImported.add(entity.getClass().getSimpleName());
 				}
 			}
 		}
-	}
-
-	private static void addTerrain(Terrain terrain, World world, Tile[][] mapTiles, int gridX, int gridY) {
-		if (mapTiles[gridX][gridY] != null) {
-			mapTiles[gridX][gridY].setTerrain(terrain, world);
-		} else {
-			mapTiles[gridX][gridY] = new Tile(gridX, gridY, terrain);
-		}
-	}
-
-	private static void addStationaryElement(StationaryElement e, World world, Tile[][] mapTiles, int gridX, int gridY) {
-		// If the tile under the stationary element is empty, create a grass terrain there.
-		if (mapTiles[gridX][gridY] == null) {
-			Grass grass = world.addEntity(Grass.class);
-			mapTiles[gridX][gridY] = new Tile(gridX, gridY, grass);
-		}
-		mapTiles[gridX][gridY].setElement(e, world);
 	}
 }
