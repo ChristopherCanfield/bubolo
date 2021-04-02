@@ -7,6 +7,7 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
+import bubolo.world.entity.concrete.Mine;
 import bubolo.world.entity.concrete.Spawn;
 import bubolo.world.entity.concrete.Tank;
 
@@ -29,7 +30,7 @@ public interface World
 	public Entity getEntity(UUID id) throws GameLogicException;
 
 	/**
-	 * Returns the list of all entities in the world. Ordering should not be assumed, and may change
+	 * Returns an unmodifiable view of all entities in the world. Ordering should not be assumed, and may change
 	 * between calls.
 	 *
 	 * @return the list of entities.
@@ -37,7 +38,7 @@ public interface World
 	public List<Entity> getEntities();
 
 	/**
-	 * Returns the list of all tanks in the world. Ordering should not be assumed, and may change
+	 * Returns an unmodifiable view of all tanks in the world. Ordering should not be assumed, and may change
 	 * between calls.
 	 *
 	 * @return the list of tanks.
@@ -45,7 +46,7 @@ public interface World
 	public List<Tank> getTanks();
 
 	/**
-	 * Returns the list of all Spawn Locations in the world. Ordering should not be assumed, and may
+	 * Returns an unmodifiable view of all Spawn Locations in the world. Ordering should not be assumed, and may
 	 * change between calls.
 	 *
 	 * @return the list of Spawns.
@@ -53,7 +54,7 @@ public interface World
 	public List<Spawn> getSpawns();
 
 	/**
-	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
+	 * Returns an unmodifiable view of all actors in the world. Ordering should not be assumed, and may change
 	 * between calls.
 	 *
 	 * @return the list of actors.
@@ -104,14 +105,14 @@ public interface World
 	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory) throws GameLogicException;
 
 	/**
-	 * Returns the width of the world.
+	 * Returns the width of the world in world units.
 	 *
 	 * @return the width of the world.
 	 */
 	public int getWidth();
 
 	/**
-	 * Returns the height of the world.
+	 * Returns the height of the world in world units.
 	 *
 	 * @return the height of the world.
 	 */
@@ -120,8 +121,9 @@ public interface World
 	/**
 	 * True if the point is within the world, or false otherwise.
 	 *
-	 * @param x x position of the point.
-	 * @param y y position of the point.
+	 * @param x x position of the point, in world units.
+	 * @param y y position of the point, in world units.
+	 *
 	 * @return true if the point is within the world.
 	 */
 	default public boolean containsPoint(float x, float y) {
@@ -146,22 +148,34 @@ public interface World
 	public void update();
 
 	/**
-	 * Returns the terrain in the specified (column, row) tile position.
+	 * Returns the terrain located in the specified (column, row) tile position.
 	 *
 	 * @param column >= 0 and < getTileColumns().
 	 * @param row >= 0 and < getTileRows().
+	 *
 	 * @return the terrain in the specified tile position.
 	 */
 	public Terrain getTerrain(int column, int row);
 
 	/**
-	 * Returns a Terrain from a world position.
+	 * Returns the terrain improvement located in the specified (column, row) tile position, or null if none is.
 	 *
-	 * @param worldX the world x position.
-	 * @param worldY the world y position.
-	 * @return the tile.
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 *
+	 * @return the terrain improvement in the specified tile position, or false otherwise.
 	 */
-	public Terrain getTerrainFromWorldPosition(float worldX, float worldY);
+	public TerrainImprovement getTerrainImprovement(int column, int row);
+
+	/**
+	 *Returns the mine located in specified (column, row) tile position, or null if none is.
+	 *
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 *
+	 * @return the mine in the specified tile position, or false otherwise.
+	 */
+	public Mine getMine(int column, int row);
 
 	/**
 	 * Returns a list of collidables that are adjacent to or near a (column, row) position, possibly filtered by solidness and type.

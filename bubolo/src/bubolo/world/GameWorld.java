@@ -45,11 +45,17 @@ public class GameWorld implements World
 	private EntityCreationObserver entityCreationObserver;
 
 	private final List<Entity> entities = new ArrayList<>();
+	private final List<Entity> entitiesUnmodifiableView = Collections.unmodifiableList(entities);
 	private final Map<UUID, Entity> entityMap = new HashMap<>();
 
 	private final List<Tank> tanks = new ArrayList<>();
+	private final List<Tank> tanksUnmodifiableView = Collections.unmodifiableList(tanks);
+
 	private final List<ActorEntity> actors = new ArrayList<>();
+	private final List<ActorEntity> actorsUnmodifiableView = Collections.unmodifiableList(actors);
+
 	private final List<Spawn> spawns = new ArrayList<>();
+	private final List<Spawn> spawnsUnmodifiableView = Collections.unmodifiableList(spawns);
 
 	// first: column; second: row.
 	private Terrain[][] terrain;
@@ -103,25 +109,6 @@ public class GameWorld implements World
 	@Override
 	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver) {
 		this.entityCreationObserver = entityCreationObserver;
-	}
-
-	@Override
-	public Entity getEntity(UUID id) throws GameLogicException
-	{
-		Entity entity = entityMap.get(id);
-		if (entity == null)
-		{
-			throw new GameLogicException(
-					"The specified entity does not exist in the game world. Entity id: " + id);
-		}
-		return entity;
-	}
-
-	@Override
-	public List<Entity> getEntities()
-	{
-		List<Entity> copyOfEntities = Collections.unmodifiableList(entities);
-		return copyOfEntities;
 	}
 
 	@Override
@@ -196,14 +183,24 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public Terrain getTerrainFromWorldPosition(float worldX, float worldY) {
-		int column = (int) worldX / Coords.TILE_TO_WORLD_SCALE;
-		int row = (int) worldY / Coords.TILE_TO_WORLD_SCALE;
-
-		var t = terrain[column][row];
-		assert t != null;
-		return t;
+	public TerrainImprovement getTerrainImprovement(int column, int row) {
+		return terrainImprovements.get(new Tile(column, row));
 	}
+
+	@Override
+	public Mine getMine(int column, int row) {
+		return mines.get(new Tile(column, row));
+	}
+
+//	@Override
+//	public Terrain getTerrainFromWorldPosition(float worldX, float worldY) {
+//		int column = (int) worldX / Coords.TILE_TO_WORLD_SCALE;
+//		int row = (int) worldY / Coords.TILE_TO_WORLD_SCALE;
+//
+//		var t = terrain[column][row];
+//		assert t != null;
+//		return t;
+//	}
 
 //	@Override
 //	public void setTiles(Tile[][] mapTiles)
@@ -333,21 +330,39 @@ public class GameWorld implements World
 	}
 
 	@Override
+	public Entity getEntity(UUID id) throws GameLogicException
+	{
+		Entity entity = entityMap.get(id);
+		if (entity == null)
+		{
+			throw new GameLogicException(
+					"The specified entity does not exist in the game world. Entity id: " + id);
+		}
+		return entity;
+	}
+
+	@Override
+	public List<Entity> getEntities()
+	{
+		return entitiesUnmodifiableView;
+	}
+
+	@Override
 	public List<Tank> getTanks()
 	{
-		return Collections.unmodifiableList(tanks);
+		return tanksUnmodifiableView;
 	}
 
 	@Override
 	public List<ActorEntity> getActors()
 	{
-		return Collections.unmodifiableList(actors);
+		return actorsUnmodifiableView;
 	}
 
 	@Override
 	public List<Spawn> getSpawns()
 	{
-		return Collections.unmodifiableList(spawns);
+		return spawnsUnmodifiableView;
 	}
 
 	@Override

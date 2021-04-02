@@ -26,18 +26,6 @@ public abstract class TileUtil
 {
 	private static final int LOCAL_TILE_DISTANCE = 2;
 
-	/**
-	 * Checks to see whether the tile coordinates given point to a valid tile in the given World.
-	 * @param gridX is the X component of the target tile position, in grid units.
-	 * @param gridY is the Y component of the target tile position, in grid units.
-	 * @param world is a reference to the world which should be checked for the desired Tile.
-	 * @return true if the coordinates refer to a valid Tile that exists in the given World, false otherwise.
-	 */
-	public static boolean isValidTile(int gridX, int gridY, World world)
-	{
-		Tile[][] mapTiles = world.getTiles();
-		return (mapTiles != null && gridX < mapTiles.length && gridX > 0 &&  gridY < mapTiles[gridX].length && gridY > 0);
-	}
 
 	/**
 	 * Returns the x index of the closest Tile to the given world x value.
@@ -158,12 +146,12 @@ public abstract class TileUtil
 	 *            is the World in which the Entities reside.
 	 * @return a List of all Entities which could be near the target location.
 	 */
-	public static List<Entity> getLocalEntities(float x, float y, World w)
-	{
-		int gridX = getClosestTileX(x);
-		int gridY = getClosestTileY(y);
-		return getLocalEntities(gridX, gridY, w);
-	}
+//	public static List<Entity> getLocalEntities(float x, float y, World w)
+//	{
+//		int gridX = getClosestTileX(x);
+//		int gridY = getClosestTileY(y);
+//		return getLocalEntities(gridX, gridY, w);
+//	}
 
 	private static boolean containsTargetElement(Tile targetTile, Class<?>[] targetClasses)
 	{
