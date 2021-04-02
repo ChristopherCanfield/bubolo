@@ -14,7 +14,6 @@ import java.util.UUID;
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
-import bubolo.controllers.ai.AiTreeController;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
@@ -104,7 +103,7 @@ public class GameWorld implements World
 		width = worldTileColumns * Coords.TILE_TO_WORLD_SCALE;
 		height = worldTileRows * Coords.TILE_TO_WORLD_SCALE;
 
-		addController(AiTreeController.class);
+		//addController(AiTreeController.class);
 	}
 
 	@Override

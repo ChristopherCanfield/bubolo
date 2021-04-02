@@ -6,7 +6,6 @@ package bubolo.net.command;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import bubolo.controllers.ai.AiTreeController;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
@@ -42,7 +41,7 @@ public class StartGame extends NetworkCommand
 	public void execute(WorldOwner worldOwner)
 	{
 		// Only the server has a Tree controller, to eliminate the risk of synchronization issues.
-		worldOwner.world().removeController(AiTreeController.class);
+		//worldOwner.world().removeController(AiTreeController.class);
 
 		// Build the map on the client.
 		sendMapCommand.execute(worldOwner);
