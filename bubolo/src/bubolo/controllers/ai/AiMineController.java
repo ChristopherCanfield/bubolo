@@ -38,7 +38,7 @@ public class AiMineController implements Controller
 	public void update(World world)
 	{
 		if (mine.isActive()) {
-			for(Collidable collider : world.getNearbyCollidables(mine.tileColumn(), mine.tileRow(), true)) {
+			for(Collidable collider : world.getNearbyCollidables(mine, true)) {
 				if (Intersector.overlapConvexPolygons(collider.bounds(), mine.bounds())) {
 					{
 						var args = new Entity.ConstructionArgs(UUID.randomUUID(), mine.x(), mine.y(), 0);
