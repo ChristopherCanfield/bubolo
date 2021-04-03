@@ -15,7 +15,9 @@ public class Rubble extends StaticEntity implements TerrainImprovement
 	private static final int height = 32;
 
 	/**
-	 * Construct a new Rubble with a random UUID.
+	 * Constructs a new Rubble.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public Rubble(ConstructionArgs args)
 	{

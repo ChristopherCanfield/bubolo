@@ -286,8 +286,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	 * Initializes the tank. This is needed because the Tank entity may not know whether it is local
 	 * or not at construction time.
 	 *
-	 * @param camera
-	 *            reference to the camera.
+	 * @param graphics reference to the graphics system.
 	 */
 	private void initialize(Graphics graphics)
 	{

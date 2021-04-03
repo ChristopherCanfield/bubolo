@@ -42,6 +42,8 @@ public class Bullet extends ActorEntity
 
 	/**
 	 * Constructs a new Bullet.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public Bullet(ConstructionArgs args)
 	{

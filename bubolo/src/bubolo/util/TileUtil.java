@@ -13,16 +13,16 @@ import bubolo.world.World;
 
 public abstract class TileUtil
 {
-	/**
-	 * get a list of entities that are currently colliding with a given entity
-	 *
-	 * @param entity
-	 * 			the entity to check for collisions
-	 * @param world
-	 * 			reference to the game world
-	 * @return
-	 * 			the list of entities that are colliding with the given entity
-	 */
+//	/**
+//	 * get a list of entities that are currently colliding with a given entity
+//	 *
+//	 * @param entity
+//	 * 			the entity to check for collisions
+//	 * @param world
+//	 * 			reference to the game world
+//	 * @return
+//	 * 			the list of entities that are colliding with the given entity
+//	 */
 //	public static List<OldEntity> getLocalCollisions(OldEntity entity, World world)
 //	{
 //		ArrayList<OldEntity> localCollisions = new ArrayList<OldEntity>();
@@ -160,27 +160,23 @@ public abstract class TileUtil
 	}
 
 	/**
-	 * Returns an array of booleans, representing whether the Tiles immediately
+	 * Populates an array of booleans, representing whether the Tiles immediately
 	 * above, below, to the left, and to the right of the target Tile contain objects of a
 	 * Class matching those specified in the targetClasses array.
 	 *
-	 * @param t
-	 *            is the Tile where the object to be checked is contained.
-	 * @param w
-	 *            is the World object where the object, and any objects to be checked
-	 *            against, reside.
-	 * @param targetClasses
-	 *            is an Array of any class which should be considered a 'match' -- that
-	 *            is, tiles that contain any of the Class types listed in this array will
-	 *            be considered a match for the purposes of determining the adaptive
-	 *            tiling state of the specified Tile.
+	 * @param destinationArray a preallocated boolean array of size 4. The results will be placed into this array.
+	 * @param entity the entity to check.
+	 * @param w reference to the game world.
+	 * @param targetClasses an Array of class that will be checked against. That is, tiles that contain any of the
+	 * 			Class types listed in this array will be considered a match for the purposes of determining the adaptive
+	 *          tiling state of the specified entity.
 	 */
-	public static void getEdgeMatches(boolean[] destinationArray, Entity e, World w, Class<?>[] targetClasses)
+	public static void getEdgeMatches(boolean[] destinationArray, Entity entity, World w, Class<?>[] targetClasses)
 	{
 		assert destinationArray.length == 4;
 
-		int col = e.tileColumn();
-		int row = e.tileRow();
+		int col = entity.tileColumn();
+		int row = entity.tileRow();
 
 		destinationArray[0] = matchesType(col, row + 1, w, targetClasses);
 		destinationArray[1] = matchesType(col, row - 1, w, targetClasses);
@@ -189,27 +185,23 @@ public abstract class TileUtil
 	}
 
 	/**
-	 * Returns an array of Boolean objects, representing whether the Tiles to the top
+	 * Populates an array of booleans, representing whether the Tiles to the top
 	 * left, top right, bottom left, and bottom right of the specified tile contain
 	 * objects of a Class matching those specified in the targetClasses array.
 	 *
-	 * @param t
-	 *            is the Tile where the object to be checked is contained.
-	 * @param w
-	 *            is the World object where the object, and any objects to be checked
-	 *            against, reside.
-	 * @param targetClasses
-	 *            is an Array of any class which should be considered a 'match' -- that
-	 *            is, tiles that contain any of the Class types listed in this array will
-	 *            be considered a match for the purposes of determining the adaptive
-	 *            tiling state of the specified Tile.
+	 * @param destinationArray a preallocated boolean array of size 4. The results will be placed into this array.
+	 * @param entity the entity to check.
+	 * @param w reference to the game world.
+	 * @param targetClasses an Array of class that will be checked against. That is, tiles that contain any of the
+	 * 			Class types listed in this array will be considered a match for the purposes of determining the adaptive
+	 *          tiling state of the specified entity.
 	 */
-	public static void getCornerMatches(boolean[] destinationArray, Entity e, World w, Class<?>[] targetClasses)
+	public static void getCornerMatches(boolean[] destinationArray, Entity entity, World w, Class<?>[] targetClasses)
 	{
 		assert destinationArray.length == 4;
 
-		int col = e.tileColumn();
-		int row = e.tileRow();
+		int col = entity.tileColumn();
+		int row = entity.tileRow();
 
 		destinationArray[0] = matchesType(col - 1, row + 1, w, targetClasses);
 		destinationArray[1] = matchesType(col + 1, row + 1, w, targetClasses);

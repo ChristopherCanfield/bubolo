@@ -262,8 +262,7 @@ public class Graphics implements EntityCreationObserver
 	/**
 	 * Draw all sprites, ordered by draw layer.
 	 *
-	 * @param entities
-	 *            the list of entities.
+	 * @param sprites the list of sprites that will be drawn.
 	 */
 	private void drawSpritesByLayer(List<Sprite> sprites)
 	{

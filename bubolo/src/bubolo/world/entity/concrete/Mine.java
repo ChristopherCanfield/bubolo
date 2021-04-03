@@ -32,6 +32,8 @@ public class Mine extends ActorEntity
 
 	/**
 	 * Constructs a new Mine.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public Mine(ConstructionArgs args)
 	{

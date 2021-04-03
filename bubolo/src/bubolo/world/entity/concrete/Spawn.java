@@ -13,7 +13,9 @@ public class Spawn extends StaticEntity
 	private static final int height = 32;
 
 	/**
-	 * Construct a new Spawn with a random UUID.
+	 * Constructs a new Spawn.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public Spawn(ConstructionArgs args)
 	{

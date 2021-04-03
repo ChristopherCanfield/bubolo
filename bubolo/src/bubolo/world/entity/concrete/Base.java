@@ -48,7 +48,9 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 	private static final float speedModifier = 0.75f;
 
 	/**
-	 * Construct a new Base.
+	 * Constructs a new Base.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public Base(ConstructionArgs args)
 	{

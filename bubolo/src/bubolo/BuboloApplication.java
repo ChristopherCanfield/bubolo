@@ -63,6 +63,7 @@ public class BuboloApplication extends AbstractGameApplication
 	 *            specifies whether this is a client player.
 	 * @param initialState
 	 *            the initial application state.
+	 * @param commandLineArgs the arguments passed to the application through the command line.
 	 */
 	public BuboloApplication(int windowWidth, int windowHeight, boolean isClient, State initialState, String[] commandLineArgs)
 	{

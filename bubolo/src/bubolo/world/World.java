@@ -69,7 +69,9 @@ public interface World
 	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
 
 	/**
-	 * Performs the following actions:
+	 * Constructs and adds an entity to the world, and returns a reference to the newly constructed entity.
+	 *
+	 * The following actions are performed:
 	 * <ol>
 	 * <li>A new Entity of the specified type is created.</li>
 	 * <li>The new Entity is added to the World</li>
@@ -77,9 +79,9 @@ public interface World
 	 * <li>One or more Controllers are created and added to the Controllers list.</li>
 	 * </ol>
 	 *
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
+	 * @param c the entity's class object. For example, to create a new Tank, call this method
+	 *          using the following form: <code>World.addEntity(Tank.class, args).</code>
+	 * @param args the entity's construction arguments.
 	 * @return reference to the new entity.
 	 * @throws GameLogicException
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
@@ -88,10 +90,10 @@ public interface World
 	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException;
 
 	/**
-	 * @see World#addEntity(Class)
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
+	 * @see World#addEntity(Class, Entity.ConstructionArgs)
+	 * @param c the entity's class object. For example, to create a new Tank, call this method
+	 *          using the following form: <code>World.addEntity(Tank.class, args).</code>
+	 * @param args the entity's construction arguments.
 	 * @param controllerFactory
 	 *            an object that implements the ControllerFactory interface. This should be used to
 	 *            override the default controller settings. In other words, use a controller factory

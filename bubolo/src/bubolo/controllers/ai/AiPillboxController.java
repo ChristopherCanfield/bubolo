@@ -6,14 +6,13 @@ import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
-import bubolo.world.Entity;
 import bubolo.world.World;
 import bubolo.world.entity.concrete.Pillbox;
 import bubolo.world.entity.concrete.Tank;
 
 /**
- * A controller for pillboxes. This controller automatically finds a target within range
- * of the pillbox and fires based on the set reload speed.
+ * A controller for pillboxes. This controller searches for a target, and fires when the pillbox
+ * is ready.
  *
  * @author BU CS673 - Clone Productions
  */
@@ -22,10 +21,9 @@ public class AiPillboxController implements Controller
 	private final Pillbox pillbox;
 
 	/**
-	 * constructs an AI Pillbox controller
+	 * Constructs an AI Pillbox controller.
 	 *
-	 * @param pillbox
-	 *            the pillbox this controller will correspond to.
+	 * @param pillbox the pillbox this controller will control.
 	 */
 	public AiPillboxController(Pillbox pillbox)
 	{
@@ -107,7 +105,7 @@ public class AiPillboxController implements Controller
 	 *            the tank the pillbox is targeting
 	 * @return targetInRange returns true if the target is within range of this pillbox
 	 */
-	private boolean targetInRange(Entity target)
+	private boolean targetInRange(Tank target)
 	{
 		double xdistance = Math.abs(pillbox.x() - target.x());
 		double ydistance = Math.abs(pillbox.y() - target.y());
@@ -119,11 +117,10 @@ public class AiPillboxController implements Controller
 	/**
 	 * returns the angle to the closest target for the pillbox
 	 *
-	 * @param Target
-	 *            the Tank for the pillbox to target
-	 * @return the angle toward the closest tank. returns -1 if no tanks in range
+	 * @param target the Tank that the pillbox will target.
+	 * @return the angle between this pillbox and the target.
 	 */
-	private float getTargetDirection(Entity target)
+	private float getTargetDirection(Tank target)
 	{
 		double xvector = target.x() - pillbox.x();
 		double yvector = target.y() - pillbox.y();

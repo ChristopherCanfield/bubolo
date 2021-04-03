@@ -52,7 +52,7 @@ public abstract class NetworkCommand implements Serializable
 	 * This method is called on the main game thread.
 	 * </p>
 	 *
-	 * @param worldOwner reference to a world owner. You can safely use this directly.
+	 * @param world reference to a world. You can safely use this directly.
 	 */
 	protected void execute(World world) {
 		execute();

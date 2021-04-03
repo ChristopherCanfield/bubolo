@@ -119,6 +119,8 @@ public class Tank extends ActorEntity implements Damageable
 
 	/**
 	 * Constructs a Tank.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public Tank(ConstructionArgs args)
 	{
@@ -161,10 +163,9 @@ public class Tank extends ActorEntity implements Damageable
 	}
 
 	/**
-	 * Sets the tank's speed. Intended for use with the network system.
+	 * Sets the tank's speed. For use with the network system.
 	 *
-	 * @param newSpeed
-	 *            a NetTankSpeed object that contains the tank's new speed.
+	 * @param netTankSpeed a NetTankSpeed object that contains the tank's new speed.
 	 */
 	public void setSpeed(NetTankSpeed netTankSpeed)
 	{

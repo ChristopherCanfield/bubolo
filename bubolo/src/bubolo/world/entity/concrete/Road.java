@@ -29,7 +29,9 @@ public class Road extends Terrain implements Adaptable
 	private static final int height = 32;
 
 	/**
-	 * Construct a new Road with a random UUID.
+	 * Constructs a new Road.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public Road(ConstructionArgs args)
 	{

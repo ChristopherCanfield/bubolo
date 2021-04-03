@@ -32,7 +32,7 @@ public interface Damageable
 	 * @param damage the amount of damage done.
 	 * @param world reference to the game world.
 	 */
-	public void takeHit(float damagePoints, World world);
+	public void takeHit(float damage, World world);
 
 	/**
 	 * Increments the tanks health by a given amount

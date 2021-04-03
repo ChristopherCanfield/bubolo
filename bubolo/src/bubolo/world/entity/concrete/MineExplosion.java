@@ -26,16 +26,18 @@ public class MineExplosion extends ActorEntity
 
 	/**
 	 * Constructs a new MineExplosion.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
 	public MineExplosion(ConstructionArgs args) {
 		super(args, width, height);
 		explosionEndTime = System.currentTimeMillis() + EXPLOSION_LENGTH;
 		updateBounds();
 	}
+
 	/**
 	 * @return length of the explosion in milliseconds.
 	 */
-
 	public long getExplosionLength()
 	{
 		return EXPLOSION_LENGTH;

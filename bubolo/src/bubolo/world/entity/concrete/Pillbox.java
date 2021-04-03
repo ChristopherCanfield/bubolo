@@ -18,13 +18,13 @@ import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
 
 /**
- * Pillboxes are stationary defensive structures that can be placed by a Tank. They shoot at an
- * enemy Tank until destroyed, at which point they can be retrieved and used again.
+ * Pillboxes are stationary defensive structures that can be placed by a Tank.
+ * They shoot at an enemy Tank until destroyed, at which point they can be
+ * retrieved and used again.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Pillbox extends ActorEntity implements Damageable, TerrainImprovement
-{
+public class Pillbox extends ActorEntity implements Damageable, TerrainImprovement {
 	/* When the cannon will be ready to fire. */
 	private long cannonReadyTime = 0;
 
@@ -34,7 +34,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/* The direction the pillbox will fire. */
 	private float cannonRotation = 0;
 
-	/* Max range to locate a target. Pillbox will not fire unless there is a tank within this range. */
+	/* Max range to locate a target. Pillbox will not fire unless there is a tank
+	 * within this range. */
 	private double range = 300;
 
 	/* The pillbox's health. */
@@ -57,9 +58,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	/**
 	 * Constructs a new Pillbox.
+	 *
+	 * @param args the entity's construction arguments.
 	 */
-	public Pillbox(ConstructionArgs args)
-	{
+	public Pillbox(ConstructionArgs args) {
 		super(args, width, height);
 		updateBounds();
 	}
@@ -83,9 +85,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	}
 
 	@Override
-	protected void onOwnerChanged(ActorEntity newOwner)
-	{
-		// If the Pillbox gained a new owner, set its health to a small positive value, so another player
+	protected void onOwnerChanged(ActorEntity newOwner) {
+		// If the Pillbox gained a new owner, set its health to a small positive value,
+		// so another player
 		// can't instantly grab it without needing to reduce its health.
 		if (newOwner != null) {
 			hitPoints = 10;
@@ -97,19 +99,16 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *
 	 * @return true if the cannon is ready to fire.
 	 */
-	public boolean isCannonReady()
-	{
-		return System.currentTimeMillis() > cannonReadyTime &&  getHitPoints() > 0;
+	public boolean isCannonReady() {
+		return System.currentTimeMillis() > cannonReadyTime && getHitPoints() > 0;
 	}
 
 	/**
 	 * Aim the Cannon
 	 *
-	 * @param rotation
-	 *            direction to aim the cannon
+	 * @param rotation direction to aim the cannon
 	 */
-	public void aimCannon(float rotation)
-	{
+	public void aimCannon(float rotation) {
 		cannonRotation = rotation;
 	}
 
@@ -118,19 +117,16 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *
 	 * @return cannonRotation the direction the pillbox is set to fire
 	 */
-	public float getCannonRotation()
-	{
+	public float getCannonRotation() {
 		return cannonRotation;
 	}
 
 	/**
 	 * Fire the pillbox
 	 *
-	 * @param world
-	 *            reference to world.
+	 * @param world reference to world.
 	 */
-	public void fireCannon(World world)
-	{
+	public void fireCannon(World world) {
 		cannonReadyTime = System.currentTimeMillis() + cannonReloadSpeed;
 
 		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), getCannonRotation());
@@ -143,19 +139,16 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *
 	 * @return range distance at which the pillbox will attempt to fire at an enemy
 	 */
-	public double getRange()
-	{
+	public double getRange() {
 		return this.range;
 	}
 
 	/**
 	 * sets the static range of this pillbox
 	 *
-	 * @param range
-	 *            distance at which the pillbox will attempt to fire at an enemy
+	 * @param range distance at which the pillbox will attempt to fire at an enemy
 	 */
-	public void setRange(double range)
-	{
+	public void setRange(double range) {
 		this.range = range;
 	}
 
@@ -165,18 +158,17 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return current hit point count
 	 */
 	@Override
-	public float getHitPoints()
-	{
+	public float getHitPoints() {
 		return hitPoints;
 	}
 
 	/**
 	 * Method that returns the maximum number of hit points the entity can have.
+	 *
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints()
-	{
+	public int getMaxHitPoints() {
 		return MAX_HIT_POINTS;
 	}
 
@@ -188,12 +180,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/**
 	 * Changes the hit point count after taking damage
 	 *
-	 * @param damagePoints
-	 *            how much damage the pillbox has taken
+	 * @param damagePoints how much damage the pillbox has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints, World world)
-	{
+	public void takeHit(float damagePoints, World world) {
 		assert damagePoints >= 0;
 
 		Audio.play(Sfx.PILLBOX_HIT);
@@ -220,8 +210,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param healPoints - how many points the pillbox is given
 	 */
 	@Override
-	public void heal(float healPoints)
-	{
+	public void heal(float healPoints) {
 		assert healPoints >= 0;
 
 		hitPoints += healPoints;
