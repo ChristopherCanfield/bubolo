@@ -30,43 +30,32 @@ public interface World
 	public Entity getEntity(UUID id) throws GameLogicException;
 
 	/**
-	 * Returns an unmodifiable view of all entities in the world. Ordering should not be assumed, and may change
-	 * between calls.
+	 * Returns an unmodifiable view of all entities in the world.
 	 *
 	 * @return the list of entities.
 	 */
 	public List<Entity> getEntities();
 
 	/**
-	 * Returns an unmodifiable view of all tanks in the world. Ordering should not be assumed, and may change
-	 * between calls.
+	 * Returns an unmodifiable view of all tanks in the world.
 	 *
 	 * @return the list of tanks.
 	 */
 	public List<Tank> getTanks();
 
 	/**
-	 * Returns an unmodifiable view of all Spawn Locations in the world. Ordering should not be assumed, and may
-	 * change between calls.
+	 * Returns an unmodifiable view of all Spawn Locations in the world.
 	 *
-	 * @return the list of Spawns.
+	 * @return the list of spawns.
 	 */
 	public List<Spawn> getSpawns();
 
 	/**
-	 * Returns an unmodifiable view of all actors in the world. Ordering should not be assumed, and may change
-	 * between calls.
+	 * Returns an unmodifiable view of all actors in the world.
 	 *
 	 * @return the list of actors.
 	 */
 	public List<ActorEntity> getActors();
-
-	/**
-	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
-	 * is added to the world. Only one observer can be attached to the world at a time.
-	 * @param entityCreationObserver
-	 */
-	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
 
 	/**
 	 * Constructs and adds an entity to the world, and returns a reference to the newly constructed entity.
@@ -105,6 +94,14 @@ public interface World
 	 *             entity.
 	 */
 	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory) throws GameLogicException;
+
+	/**
+	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
+	 * is added to the world. Only one observer can be attached to the world at a time.
+	 *
+	 * @param entityCreationObserver
+	 */
+	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
 
 	/**
 	 * Returns the width of the world in world units.
@@ -223,6 +220,7 @@ public interface World
 
 	/**
 	 * Returns the world controller count.
+	 *
 	 * @return the world controller count.
 	 */
 	public int getControllerCount();
