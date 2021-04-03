@@ -59,8 +59,8 @@ public class GameWorld implements World
 
 	// first: column; second: row.
 	private Terrain[][] terrain;
-	private Map<Tile, TerrainImprovement> terrainImprovements = new HashMap<>();
-	private Map<Tile, Mine> mines = new HashMap<>();
+	private final Map<Tile, TerrainImprovement> terrainImprovements = new HashMap<>();
+	private final Map<Tile, Mine> mines = new HashMap<>();
 
 	// The entities to remove.
 	private final Set<Entity> entitiesToRemove = new HashSet<>();
@@ -366,13 +366,60 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public <T> List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter) {
-		throw new GameLogicException("Not implemented");
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects) {
+		return getNearbyCollidables(entity, onlyIncludeSolidObjects, null);
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects) {
-		throw new GameLogicException("Not implemented");
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
+		final int tileRadius = 5;
+
+		final int startTileColumn = entity.tileColumn() - tileRadius;
+		final int startTileRow = entity.tileRow() - tileRadius;
+
+		final int endTileColumn = entity.tileColumn() + tileRadius;
+		final int endTileRow = entity.tileRow() + tileRadius;
+
+		List<Collidable> nearbyCollidables = new ArrayList<>();
+		for (int column = startTileColumn; column <= endTileColumn; column++) {
+			for (int row = startTileRow; row <= endTileRow; row++) {
+				if (isValidTile(column, row)) {
+					TerrainImprovement ti = terrainImprovements.get(new Tile(column, row));
+					if (includeInNearbyCollidablesList((Entity) ti, onlyIncludeSolidObjects, typeFilter)) {
+						nearbyCollidables.add((Collidable) ti);
+					}
+				}
+			}
+		}
+
+		// Iterate through every actor to determine which ones are nearby. There's really no better way to do this
+		// currently; if it becomes a bottleneck, I'll look into optimizing it.
+		for (ActorEntity actor : actors) {
+			if (isEntityWithinTileRange(entity, startTileColumn, endTileColumn, startTileRow, endTileRow)
+					&& includeInNearbyCollidablesList(entity, onlyIncludeSolidObjects, typeFilter)) {
+				nearbyCollidables.add(actor);
+			}
+		}
+
+		return nearbyCollidables;
+	}
+
+	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
+		if (e instanceof Collidable c) {
+			return (!onlyIncludeSolidObjects || c.isSolid())
+					&& (typeFilter == null || typeFilter.isInstance(c));
+		}
+		return false;
+	}
+
+	private static boolean isEntityWithinTileRange(Entity e, int minColumn, int maxColumn, int minRow, int maxRow) {
+		int col = e.tileColumn();
+		int row = e.tileRow();
+		return col >= minColumn && col <= maxColumn && row >= minRow && row <= maxRow;
+	}
+
+	private boolean isValidTile(int column, int row) {
+		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
 	}
 
 	@Override

@@ -4,29 +4,11 @@
 
 package bubolo.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.badlogic.gdx.math.Intersector;
-
 import bubolo.world.Entity;
-import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.OldTerrain;
-import bubolo.world.entity.StationaryElement;
 
-/**
- * This utility provides various functions for working with Tile objects based on their
- * position relative to other objects in the world.
- *
- * @author BU CS673 - Clone Productions
- */
 public abstract class TileUtil
 {
-	private static final int LOCAL_TILE_DISTANCE = 2;
-
-
 	/**
 	 * Returns the x index of the closest Tile to the given world x value.
 	 *
@@ -35,24 +17,25 @@ public abstract class TileUtil
 	 * @return The x component of the grid index of the tile closest to the x coordinate
 	 *         given.
 	 */
-//	public static int getClosestTileX(float x)
-//	{
-//		return (int) (x / 32);
-//	}
-//
-//	/**
-//	 * Returns the x index of the closest Tile to the given world y value.
-//	 *
-//	 * @param y
-//	 *            The y component of the target position in world coordinates.
-//	 * @return The y component of the grid index of the tile closest to the y coordinate
-//	 *         given.
-//	 */
-//
-//	public static int getClosestTileY(float y)
-//	{
-//		return (int) (y / 32);
-//	}
+	@Deprecated
+	private static int getClosestTileX(float x)
+	{
+		return (int) (x / Coords.TILE_TO_WORLD_SCALE);
+	}
+
+	/**
+	 * Returns the x index of the closest Tile to the given world y value.
+	 *
+	 * @param y
+	 *            The y component of the target position in world coordinates.
+	 * @return The y component of the grid index of the tile closest to the y coordinate
+	 *         given.
+	 */
+	@Deprecated
+	private static int getClosestTileY(float y)
+	{
+		return (int) (y / Coords.TILE_TO_WORLD_SCALE);
+	}
 
 	/**
 	 * get a list of entities that are currently colliding with a given entity
@@ -64,75 +47,75 @@ public abstract class TileUtil
 	 * @return
 	 * 			the list of entities that are colliding with the given entity
 	 */
-	public static List<OldEntity> getLocalCollisions(OldEntity entity, World world)
-	{
-		ArrayList<OldEntity> localCollisions = new ArrayList<OldEntity>();
-		getLocalEntities(entity.getX(),entity.getY(),world);
-
-		for(OldEntity collider:TileUtil.getLocalEntities(entity.getX(),entity.getY(), world))
-		{
-			if (collider.isSolid() && collider != entity)
-			{
-				if (Intersector.overlapConvexPolygons(collider.getBounds(), entity.getBounds()))
-				{
-					localCollisions.add(collider);
-				}
-			}
-		}
-
-		return localCollisions;
-	}
-
-	/**
-	 * Get all entities are likely to overlap with Entities within the given grid
-	 * location.
-	 *
-	 * @param gridX
-	 *            is the X index of the target grid location.
-	 * @param gridY
-	 *            is the Y index of the target grid location.
-	 * @param w
-	 *            is the World in which the Entities reside.
-	 * @return a List of all Entities which could be near the target location.
-	 */
-	public static List<OldEntity> getLocalEntities(int gridX, int gridY, World w)
-	{
-		ArrayList<OldEntity> localEnts = new ArrayList<OldEntity>();
-		Tile[][] worldTiles = w.getTiles();
-		if (worldTiles == null)
-		{
-			localEnts.addAll(w.getEntities());
-		}
-		else
-		{
-			int startX = gridX - LOCAL_TILE_DISTANCE;
-			int startY = gridY - LOCAL_TILE_DISTANCE;
-			for (int i = 0; i < 5; i++)
-			{
-				for (int j = 0; j < 5; j++)
-				{
-					if (isValidTile(startX + i, startY + j, w))
-					{
-						Tile targetTile = worldTiles[startX + i][startY + j];
-						localEnts.add(targetTile.getTerrain());
-						if (targetTile.hasElement())
-						{
-							localEnts.add(targetTile.getElement());
-						}
-					}
-				}
-			}
-			if (w.getActors() != null)
-			{
-				localEnts.addAll(w.getActors());
-			}
-			if (w.getEffects() != null)
-			{
-				localEnts.addAll(w.getEffects());
-			}
-		}
-		return localEnts;
-	}
+//	public static List<OldEntity> getLocalCollisions(OldEntity entity, World world)
+//	{
+//		ArrayList<OldEntity> localCollisions = new ArrayList<OldEntity>();
+//		getLocalEntities(entity.getX(),entity.getY(),world);
+//
+//		for(OldEntity collider:TileUtil.getLocalEntities(entity.getX(),entity.getY(), world))
+//		{
+//			if (collider.isSolid() && collider != entity)
+//			{
+//				if (Intersector.overlapConvexPolygons(collider.getBounds(), entity.getBounds()))
+//				{
+//					localCollisions.add(collider);
+//				}
+//			}
+//		}
+//
+//		return localCollisions;
+//	}
+//
+//	/**
+//	 * Get all entities are likely to overlap with Entities within the given grid
+//	 * location.
+//	 *
+//	 * @param gridX
+//	 *            is the X index of the target grid location.
+//	 * @param gridY
+//	 *            is the Y index of the target grid location.
+//	 * @param w
+//	 *            is the World in which the Entities reside.
+//	 * @return a List of all Entities which could be near the target location.
+//	 */
+//	public static List<OldEntity> getLocalEntities(int gridX, int gridY, World w)
+//	{
+//		ArrayList<OldEntity> localEnts = new ArrayList<OldEntity>();
+//		Tile[][] worldTiles = w.getTiles();
+//		if (worldTiles == null)
+//		{
+//			localEnts.addAll(w.getEntities());
+//		}
+//		else
+//		{
+//			int startX = gridX - LOCAL_TILE_DISTANCE;
+//			int startY = gridY - LOCAL_TILE_DISTANCE;
+//			for (int i = 0; i < 5; i++)
+//			{
+//				for (int j = 0; j < 5; j++)
+//				{
+//					if (isValidTile(startX + i, startY + j, w))
+//					{
+//						Tile targetTile = worldTiles[startX + i][startY + j];
+//						localEnts.add(targetTile.getTerrain());
+//						if (targetTile.hasElement())
+//						{
+//							localEnts.add(targetTile.getElement());
+//						}
+//					}
+//				}
+//			}
+//			if (w.getActors() != null)
+//			{
+//				localEnts.addAll(w.getActors());
+//			}
+//			if (w.getEffects() != null)
+//			{
+//				localEnts.addAll(w.getEffects());
+//			}
+//		}
+//		return localEnts;
+//	}
 
 	/**
 	 * Get all entities are likely to overlap with an Entity at the given x and y World
@@ -146,7 +129,7 @@ public abstract class TileUtil
 	 *            is the World in which the Entities reside.
 	 * @return a List of all Entities which could be near the target location.
 	 */
-//	public static List<Entity> getLocalEntities(float x, float y, World w)
+//	private static List<Entity> getLocalEntities(float x, float y, World w)
 //	{
 //		int gridX = getClosestTileX(x);
 //		int gridY = getClosestTileY(y);
@@ -211,10 +194,9 @@ public abstract class TileUtil
 	 *            be considered a match for the purposes of determining the adaptive
 	 *            tiling state of the specified Tile.
 	 * @return an integer representing the correct adaptive tiling state for the specified
-	 *         tile, according to the adaptive tiling mechanism outlined on the project
-	 *         wiki.
+	 *         tile, according to the adaptive tiling mechanism outlined on the project wiki.
 	 */
-	public static int getTilingState(Tile t, World w, Class<?>[] targetClasses)
+	public static int getTilingState(Entity t, World w, Class<?>[] targetClasses)
 	{
 		int stateSum = 0;
 

@@ -35,18 +35,23 @@ public class AiPillboxController implements Controller
 	@Override
 	public void update(World world)
 	{
-		// Only fire if cannon is ready and the pillbox has more than 0 health.
-		if (pillbox.isCannonReady() && pillbox.getHitPoints() > 0) {
+		// Only fire if cannon is ready.
+		if (pillbox.isCannonReady()) {
 			Tank target = getTarget(world);
 			if (target != null) {
 				fire(getTargetDirection(target), world);
 			}
 		}
 
-		processTankCapture(world);
+		handleTankCapture(world);
 	}
 
-	private void processTankCapture(World world) {
+	/**
+	 * Handles tank capturing of pillboxes.
+	 *
+	 * @param world the game world.
+	 */
+	private void handleTankCapture(World world) {
 		if (pillbox.getHitPoints() <= 0) {
 			pillbox.updateBounds();
 
@@ -120,13 +125,9 @@ public class AiPillboxController implements Controller
 	 */
 	private float getTargetDirection(Entity target)
 	{
-		double xvector = 0;
-		double yvector = 0;
-		float direction = -1;
-
-		xvector = target.x() - pillbox.x();
-		yvector = target.y() - pillbox.y();
-		direction = (float) Math.atan2(yvector, xvector);
+		double xvector = target.x() - pillbox.x();
+		double yvector = target.y() - pillbox.y();
+		float direction = (float) Math.atan2(yvector, xvector);
 
 		return direction;
 	}

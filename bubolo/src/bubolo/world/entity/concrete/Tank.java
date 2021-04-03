@@ -23,7 +23,6 @@ import bubolo.world.Terrain;
 import bubolo.world.TerrainImprovement;
 import bubolo.world.WaterType;
 import bubolo.world.World;
-import bubolo.world.entity.OldEntity;
 
 /**
  * The tank, which may be controlled by a local player, a networked player, or an AI bot.
@@ -800,5 +799,10 @@ public class Tank extends ActorEntity implements Damageable
 	public int getTankMaxMineCount()
 	{
 		return TANK_MAX_MINE;
+	}
+
+	@Override
+	public boolean isSolid() {
+		return true;
 	}
 }

@@ -93,13 +93,13 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	}
 
 	/**
-	 * Returns cannon status
+	 * Whether the pillbox is ready to fire. Pillboxes with no health won't fire.
 	 *
-	 * @return isCannonReady is the pillbox ready to fire.
+	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady()
 	{
-		return System.currentTimeMillis() > cannonReadyTime;
+		return System.currentTimeMillis() > cannonReadyTime &&  getHitPoints() > 0;
 	}
 
 	/**

@@ -188,7 +188,7 @@ public interface World
 	 *
 	 * @return a list of nearby collidables.
 	 */
-	public <T> List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<T> typeFilter);
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
 
 	/**
 	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness.
