@@ -1,8 +1,8 @@
 package bubolo.world.entity.concrete;
 
+import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
 import bubolo.world.Terrain;
-import bubolo.world.WaterType;
 import bubolo.world.World;
 
 /**
@@ -10,7 +10,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Water extends Terrain implements Adaptable, WaterType
+public class Water extends Terrain implements Adaptable
 {
 	private int tilingState = 0;
 
@@ -36,14 +36,15 @@ public class Water extends Terrain implements Adaptable, WaterType
 	}
 
 	@Override
+	public boolean isBuildable() {
+		return false;
+	}
+
+	@Override
 	public void updateTilingState(World w)
 	{
-//		if (getTile() != null) {
-//			tilingState = TileUtil.getTilingState(this.getTile(), w, matchingTypes);
-//			cornerMatches = TileUtil.getCornerMatches(this.getTile(), w, matchingTypes);
-//		} else {
-//			tilingState = 0;
-//		}
+		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
+		cornerMatches = TileUtil.getCornerMatches(this, w, matchingTypes);
 	}
 
 	/**

@@ -21,7 +21,6 @@ import bubolo.world.Damageable;
 import bubolo.world.Entity;
 import bubolo.world.Terrain;
 import bubolo.world.TerrainImprovement;
-import bubolo.world.WaterType;
 import bubolo.world.World;
 
 /**
@@ -743,7 +742,7 @@ public class Tank extends ActorEntity implements Damageable
 		if (mineAvailableTime < System.currentTimeMillis() && mineCount > 0) {
 
 			Terrain terrain = world.getTerrain(tileColumn(), tileRow());
-			if (!(terrain instanceof WaterType)) {
+			if (!terrain.isBuildable()) {
 				mineAvailableTime = System.currentTimeMillis() + MINE_RELOAD_SPEED_MILLIS;
 
 				int mineX = tileColumn() * Coords.TILE_TO_WORLD_SCALE;

@@ -27,4 +27,13 @@ public class Terrain extends StaticEntity {
 	public void setImprovement(TerrainImprovement improvement) {
 		this.improvement = improvement;
 	}
+
+	/**
+	 * Whether this terrain can be built on.
+	 *
+	 * @return true if this terrain can be built on.
+	 */
+	public boolean isBuildable() {
+		return true;
+	}
 }

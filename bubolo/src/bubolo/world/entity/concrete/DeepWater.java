@@ -3,7 +3,6 @@ package bubolo.world.entity.concrete;
 import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
 import bubolo.world.Terrain;
-import bubolo.world.WaterType;
 import bubolo.world.World;
 
 /**
@@ -11,7 +10,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public class DeepWater extends Terrain implements Adaptable, WaterType
+public class DeepWater extends Terrain implements Adaptable
 {
 	private int tilingState = 0;
 
@@ -34,6 +33,11 @@ public class DeepWater extends Terrain implements Adaptable, WaterType
 	public DeepWater(ConstructionArgs args)
 	{
 		super(args, width, height, speedModifier);
+	}
+
+	@Override
+	public boolean isBuildable() {
+		return false;
 	}
 
 	/**
