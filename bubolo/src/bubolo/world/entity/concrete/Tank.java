@@ -617,7 +617,7 @@ public class Tank extends ActorEntity implements Damageable
 	 * @return current hit point count
 	 */
 	@Override
-	public float getHitPoints()
+	public float hitPoints()
 	{
 		return hitPoints;
 	}
@@ -628,7 +628,7 @@ public class Tank extends ActorEntity implements Damageable
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints()
+	public int maxHitPoints()
 	{
 		return TANK_MAX_HIT_POINTS;
 	}
@@ -660,7 +660,7 @@ public class Tank extends ActorEntity implements Damageable
 	 *            how much damage the tank has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints, World world)
+	public void receiveDamage(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 

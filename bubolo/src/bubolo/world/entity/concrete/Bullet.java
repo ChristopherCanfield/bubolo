@@ -101,7 +101,7 @@ public class Bullet extends ActorEntity
 			if (e != owner() && overlapsEntity(collidable)) {
 				// We know the collision object is Damageable, because we filtered for that in the getNearbyCollidables method.
 				Damageable collisionObject = (Damageable) e;
-				collisionObject.takeHit(damage, w);
+				collisionObject.receiveDamage(damage, w);
 				dispose();
 				break;
 			}

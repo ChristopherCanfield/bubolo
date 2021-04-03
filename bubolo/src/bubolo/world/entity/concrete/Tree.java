@@ -45,7 +45,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 	 * @return current hit point count
 	 */
 	@Override
-	public float getHitPoints()
+	public float hitPoints()
 	{
 		return hitPoints;
 	}
@@ -55,7 +55,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints()
+	public int maxHitPoints()
 	{
 		return maxHitPoints;
 	}
@@ -67,7 +67,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 	 *            how much damage the tree has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints, World world)
+	public void receiveDamage(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 		hitPoints -= damagePoints;

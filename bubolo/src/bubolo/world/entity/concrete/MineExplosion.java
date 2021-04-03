@@ -54,7 +54,7 @@ public class MineExplosion extends ActorEntity
 			for (Collidable collider : world.getNearbyCollidables(this, true, Damageable.class)) {
 				// We know the collider is a damageable, since we filtered to include only Damageables.
 				Damageable damageable = (Damageable) collider;
-				damageable.takeHit(DAMAGE_PER_TICK, world);
+				damageable.receiveDamage(DAMAGE_PER_TICK, world);
 			}
 		}
 	}

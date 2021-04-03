@@ -25,10 +25,10 @@ final class StatusBarRenderer {
 	 * @param camera
 	 */
 	static void drawHealthBar(Damageable entity, ShapeRenderer shapeRenderer, Camera camera) {
-		if (entity.isAlive() && entity.getHitPoints() < entity.getMaxHitPoints()) {
+		if (entity.isAlive() && entity.hitPoints() < entity.maxHitPoints()) {
 			shapeRenderer.begin(ShapeType.Filled);
 
-			float healthPct = entity.getHitPoints() / entity.getMaxHitPoints();
+			float healthPct = entity.hitPoints() / entity.maxHitPoints();
 			float healthBarInteriorBackgroundWidth = entity.width() + 10;
 			float healthBarInteriorWidth = healthBarInteriorBackgroundWidth * healthPct;
 

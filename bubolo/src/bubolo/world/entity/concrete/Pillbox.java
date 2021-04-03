@@ -100,7 +100,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady() {
-		return System.currentTimeMillis() > cannonReadyTime && getHitPoints() > 0;
+		return System.currentTimeMillis() > cannonReadyTime && hitPoints() > 0;
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return current hit point count
 	 */
 	@Override
-	public float getHitPoints() {
+	public float hitPoints() {
 		return hitPoints;
 	}
 
@@ -168,7 +168,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints() {
+	public int maxHitPoints() {
 		return MAX_HIT_POINTS;
 	}
 
@@ -183,7 +183,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param damagePoints how much damage the pillbox has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints, World world) {
+	public void receiveDamage(float damagePoints, World world) {
 		assert damagePoints >= 0;
 
 		Audio.play(Sfx.PILLBOX_HIT);

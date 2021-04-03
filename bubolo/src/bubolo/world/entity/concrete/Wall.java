@@ -66,7 +66,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 * @return current hit point count
 	 */
 	@Override
-	public float getHitPoints()
+	public float hitPoints()
 	{
 		return hitPoints;
 	}
@@ -76,7 +76,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints()
+	public int maxHitPoints()
 	{
 		return maxHitPoints;
 	}
@@ -88,7 +88,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 *            how much damage the wall has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints, World world)
+	public void receiveDamage(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 		hitPoints -= damagePoints;

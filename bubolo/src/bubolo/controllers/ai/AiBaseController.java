@@ -70,7 +70,7 @@ public class AiBaseController implements Controller
 
 					if(System.currentTimeMillis() > nextSupplyTime) {
 						nextSupplyTime = System.currentTimeMillis() + resupplyDelayTime;
-						if (tank.getHitPoints() < tank.getMaxHitPoints()) {
+						if (tank.hitPoints() < tank.maxHitPoints()) {
 							tank.heal(base.giveHitPoints());
 						}
 						if(tank.getAmmoCount() < tank.getTankMaxAmmo()) {
@@ -106,7 +106,7 @@ public class AiBaseController implements Controller
 	}
 
 	private static boolean isTankRecharged(Tank tank) {
-		return tank.getHitPoints() >= tank.getMaxHitPoints()
+		return tank.hitPoints() >= tank.maxHitPoints()
 				&& tank.getAmmoCount() >= tank.getTankMaxAmmo()
 				&& tank.getMineCount() >= tank.getTankMaxMineCount();
 	}

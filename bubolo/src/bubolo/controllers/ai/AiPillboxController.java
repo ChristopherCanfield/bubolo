@@ -50,7 +50,7 @@ public class AiPillboxController implements Controller
 	 * @param world the game world.
 	 */
 	private void handleTankCapture(World world) {
-		if (pillbox.getHitPoints() <= 0) {
+		if (pillbox.hitPoints() <= 0) {
 			pillbox.updateBounds();
 
 			for (Tank tank : world.getTanks()) {

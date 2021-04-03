@@ -48,22 +48,22 @@ public class BaseTest
 	@Test
 	public void  getHitPoints()
 	{
-		assertEquals(100, base.getHitPoints(), 0);
+		assertEquals(100, base.hitPoints(), 0);
 	}
 
 	@Test
 	public void getMaxHitPoints()
 	{
-		assertEquals(100, base.getMaxHitPoints(), 0);
+		assertEquals(100, base.maxHitPoints(), 0);
 	}
 
 	@Test
 	public void healDamageTest()
 	{
 		base.takeHit(1);
-		assertEquals(99, base.getHitPoints(), 0);
+		assertEquals(99, base.hitPoints(), 0);
 		base.heal(1);
-		assertEquals(100, base.getHitPoints(), 0);
+		assertEquals(100, base.hitPoints(), 0);
 	}
 
 	@Test

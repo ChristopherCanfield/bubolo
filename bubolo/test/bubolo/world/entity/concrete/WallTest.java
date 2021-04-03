@@ -44,21 +44,21 @@ public class WallTest
 	@Test
 	public void  getHitPoints()
 	{
-		assertEquals(100, wall.getHitPoints(), 0);
+		assertEquals(100, wall.hitPoints(), 0);
 	}
 	
 	@Test
 	public void getMaxHitPoints()
 	{
-		assertEquals(100, wall.getMaxHitPoints(), 0);
+		assertEquals(100, wall.maxHitPoints(), 0);
 	}
 	
 	@Test
 	public void healDamageTest()
 	{
 		wall.takeHit(1);
-		assertEquals(99, wall.getHitPoints(), 0);
+		assertEquals(99, wall.hitPoints(), 0);
 		wall.heal(1);
-		assertEquals(100, wall.getHitPoints(), 0);
+		assertEquals(100, wall.hitPoints(), 0);
 	}
 }

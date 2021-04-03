@@ -106,13 +106,13 @@ public class TankTest
 	@Test
 	public void  getHitPoints()
 	{
-		assertEquals(100, tank.getHitPoints(), 0);
+		assertEquals(100, tank.hitPoints(), 0);
 	}
 
 	@Test
 	public void getMaxHitPoints()
 	{
-		assertEquals(100, tank.getMaxHitPoints(), 0);
+		assertEquals(100, tank.maxHitPoints(), 0);
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class TankTest
 	public void takeHit()
 	{
 		tank.takeHit(20);
-		assertEquals(80, tank.getHitPoints(), 0);
+		assertEquals(80, tank.hitPoints(), 0);
 	}
 
 	@Test
@@ -147,7 +147,7 @@ public class TankTest
 	{
 		tank.takeHit(20);
 		tank.heal(5);
-		assertEquals(85, tank.getHitPoints(), 0);
+		assertEquals(85, tank.hitPoints(), 0);
 	}
 
 	@Test
@@ -190,7 +190,7 @@ public class TankTest
 	@Test
 	public void getMax()
 	{
-		assertEquals(100, tank.getMaxHitPoints(), 0);
+		assertEquals(100, tank.maxHitPoints(), 0);
 		assertEquals(100, tank.getTankMaxAmmo(), 0);
 		assertEquals(10, tank.getTankMaxMineCount(), 0);
 	}

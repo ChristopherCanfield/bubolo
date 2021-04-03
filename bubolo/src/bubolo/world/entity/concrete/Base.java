@@ -86,7 +86,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 	 * @return current hit point count
 	 */
 	@Override
-	public float getHitPoints()
+	public float hitPoints()
 	{
 		return hitPoints;
 	}
@@ -96,7 +96,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int getMaxHitPoints()
+	public int maxHitPoints()
 	{
 		return maxHitPoints;
 	}
@@ -108,7 +108,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 	 *            how much damage the base has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints, World world)
+	public void receiveDamage(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 

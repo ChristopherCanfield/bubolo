@@ -14,31 +14,31 @@ public interface Damageable
 	public float y();
 
 	/**
-	 * Returns the current health of the tank
+	 * Returns the current health of the entity.
 	 *
-	 * @return current hit point count
+	 * @return the entity's hit points.
 	 */
-	public float getHitPoints();
+	public float hitPoints();
 
 	/**
-	 * Method that returns the maximum number of hit points the entity can have.
-	 * @return - Max Hit points for the entity
+	 * Returns the entity's maximum number of hit points.
+	 *
+	 * @return the entity's max hit points.
 	 */
-	public int getMaxHitPoints();
+	public int maxHitPoints();
 
 	/**
-	 * Changes the hit point count after taking damage
+	 * Gives damage to the entity.
 	 *
-	 * @param damage the amount of damage done.
+	 * @param damage the amount of damage done. Must be <= 0.
 	 * @param world reference to the game world.
 	 */
-	public void takeHit(float damage, World world);
+	public void receiveDamage(float damage, World world);
 
 	/**
-	 * Increments the tanks health by a given amount
+	 * Increases the entity's current health.
 	 *
-	 * @param healPoints
-	 *            - how many points the tank is given
+	 * @param healPoints the amount of health that is restored. Must be >= 0.
 	 */
 	public void heal(float healPoints);
 
@@ -48,6 +48,6 @@ public interface Damageable
 	 * @return true if the entity is alive.
 	 */
 	default public boolean isAlive() {
-		return getHitPoints() > 0;
+		return hitPoints() > 0;
 	}
 }
