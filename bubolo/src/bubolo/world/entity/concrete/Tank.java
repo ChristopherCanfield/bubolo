@@ -746,8 +746,8 @@ public class Tank extends ActorEntity implements Damageable
 			if (!terrain.isBuildable()) {
 				mineAvailableTime = System.currentTimeMillis() + MINE_RELOAD_SPEED_MILLIS;
 
-				int mineX = tileColumn() * Coords.TILE_TO_WORLD_SCALE;
-				int mineY = tileRow() * Coords.TILE_TO_WORLD_SCALE;
+				int mineX = tileColumn() * Coords.TileToWorldScale;
+				int mineY = tileRow() * Coords.TileToWorldScale;
 
 				var args = new Entity.ConstructionArgs(UUID.randomUUID(), mineX, mineY, 0);
 				Mine mine = world.addEntity(Mine.class, args);

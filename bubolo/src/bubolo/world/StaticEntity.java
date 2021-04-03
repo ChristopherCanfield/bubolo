@@ -43,7 +43,7 @@ public abstract class StaticEntity extends Entity {
 	 */
 	@Override
 	public int tileColumn() {
-		return (int) x() / Coords.TILE_TO_WORLD_SCALE;
+		return (int) x() / Coords.TileToWorldScale;
 	}
 
 	/**
@@ -51,6 +51,6 @@ public abstract class StaticEntity extends Entity {
 	 */
 	@Override
 	public int tileRow() {
-		return (int) y() / Coords.TILE_TO_WORLD_SCALE;
+		return (int) y() / Coords.TileToWorldScale;
 	}
 }

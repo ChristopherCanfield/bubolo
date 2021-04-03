@@ -308,8 +308,8 @@ public class MapImporter {
 				// Add the entity if it is known to this tileset.
 				if (ts.isGidInThisTileset(tileGid)) {
 					// The game world is flipped from json map indexes.
-					int posY = row * Coords.TILE_TO_WORLD_SCALE;
-					int posX = col * Coords.TILE_TO_WORLD_SCALE;
+					int posY = row * Coords.TileToWorldScale;
+					int posX = col * Coords.TileToWorldScale;
 					double rotation = Math.PI / 2.0;
 
 					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, (float) rotation);

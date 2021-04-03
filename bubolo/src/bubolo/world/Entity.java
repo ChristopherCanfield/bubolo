@@ -68,14 +68,14 @@ public abstract class Entity {
 	 * @return the world column that the object is in.
 	 */
 	public int tileColumn() {
-		return (int) x() / Coords.TILE_TO_WORLD_SCALE;
+		return (int) x() / Coords.TileToWorldScale;
 	}
 
 	/**
 	 * @return the world row that the object is in.
 	 */
 	public int tileRow() {
-		return (int) y() / Coords.TILE_TO_WORLD_SCALE;
+		return (int) y() / Coords.TileToWorldScale;
 	}
 
 	/**

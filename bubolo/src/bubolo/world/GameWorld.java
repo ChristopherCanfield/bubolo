@@ -100,8 +100,8 @@ public class GameWorld implements World
 
 		terrain = new Terrain[worldTileColumns][worldTileRows];
 
-		width = worldTileColumns * Coords.TILE_TO_WORLD_SCALE;
-		height = worldTileRows * Coords.TILE_TO_WORLD_SCALE;
+		width = worldTileColumns * Coords.TileToWorldScale;
+		height = worldTileRows * Coords.TileToWorldScale;
 
 		//addController(AiTreeController.class);
 	}
@@ -227,8 +227,8 @@ public class GameWorld implements World
 		for (int column = 0; column < getTileColumns(); column++) {
 			for (int row = 0; row < getTileRows(); row++) {
 				if (terrain[column][row] == null) {
-					float x = column * Coords.TILE_TO_WORLD_SCALE;
-					float y = column * Coords.TILE_TO_WORLD_SCALE;
+					float x = column * Coords.TileToWorldScale;
+					float y = column * Coords.TileToWorldScale;
 					var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
 					addEntity(terrainType, args);
 				}
