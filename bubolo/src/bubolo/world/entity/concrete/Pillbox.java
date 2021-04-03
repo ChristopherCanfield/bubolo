@@ -192,7 +192,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *            how much damage the pillbox has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints)
+	public void takeHit(float damagePoints, World world)
 	{
 		assert damagePoints >= 0;
 

@@ -6,6 +6,7 @@ import bubolo.net.command.ChangeOwner;
 import bubolo.world.ActorEntity;
 import bubolo.world.Damageable;
 import bubolo.world.TerrainImprovement;
+import bubolo.world.World;
 
 /**
  * Bases allow Tanks to heal and recover their mines, and capturing them is the primary
@@ -105,7 +106,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 	 *            how much damage the base has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints)
+	public void takeHit(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 

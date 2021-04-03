@@ -29,10 +29,10 @@ public interface Damageable
 	/**
 	 * Changes the hit point count after taking damage
 	 *
-	 * @param damagePoints
-	 *            how much damage the tank has taken
+	 * @param damage the amount of damage done.
+	 * @param world reference to the game world.
 	 */
-	public void takeHit(float damagePoints);
+	public void takeHit(float damagePoints, World world);
 
 	/**
 	 * Increments the tanks health by a given amount

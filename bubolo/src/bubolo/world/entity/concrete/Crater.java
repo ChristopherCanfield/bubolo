@@ -1,5 +1,6 @@
 package bubolo.world.entity.concrete;
 
+import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
 import bubolo.world.StaticEntity;
 import bubolo.world.TerrainImprovement;
@@ -39,8 +40,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, Adaptabl
 	@Override
 	public void updateTilingState(World w)
 	{
-		//var tile = getTile();
-		//tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
+		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
 	}
 
 	@Override

@@ -481,9 +481,7 @@ public class Tank extends ActorEntity implements Damageable
 		boolean collidingLeft = false;
 		boolean collidingRight = false;
 
-		var possibleCollisions = getLookaheadEntities(world);
-		for (int i = 0; i < possibleCollisions.size(); i++) {
-			OldEntity collider = possibleCollisions.get(i);
+		for (var collider : getLookaheadEntities(world)) {
 			if (collider.isSolid()) {
 				if (!collidingLeft) {
 					collidingLeft = hitLeftBumper(collider);
@@ -662,7 +660,7 @@ public class Tank extends ActorEntity implements Damageable
 	 *            how much damage the tank has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints)
+	public void takeHit(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 

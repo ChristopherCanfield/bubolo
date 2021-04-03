@@ -1,5 +1,6 @@
 package bubolo.world.entity.concrete;
 
+import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
 import bubolo.world.Terrain;
 import bubolo.world.WaterType;
@@ -51,15 +52,8 @@ public class DeepWater extends Terrain implements Adaptable, WaterType
 	@Override
 	public void updateTilingState(World w)
 	{
-//		if (getTile() != null)
-//		{
-//			tilingState = TileUtil.getTilingState(getTile(), w, matchingTypes);
-//			cornerMatches = TileUtil.getCornerMatches(getTile(), w, matchingTypes);
-//		}
-//		else
-//		{
-//			tilingState = 0;
-//		}
+		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
+		cornerMatches = TileUtil.getCornerMatches(this, w, matchingTypes);
 	}
 
 	@Override

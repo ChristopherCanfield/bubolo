@@ -9,6 +9,7 @@ import bubolo.util.Coords;
  * one type of terrain improvement may exist on a terrain at a time.
  *
  * @author Christopher D. Canfield
+ * @since 0.4.0
  */
 public interface TerrainImprovement {
 

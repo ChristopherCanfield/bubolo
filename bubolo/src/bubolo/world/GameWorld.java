@@ -418,7 +418,8 @@ public class GameWorld implements World
 		return col >= minColumn && col <= maxColumn && row >= minRow && row <= maxRow;
 	}
 
-	private boolean isValidTile(int column, int row) {
+	@Override
+	public boolean isValidTile(int column, int row) {
 		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
 	}
 

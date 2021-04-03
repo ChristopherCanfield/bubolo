@@ -1,5 +1,6 @@
 package bubolo.world.entity.concrete;
 
+import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
 import bubolo.world.Terrain;
 import bubolo.world.World;
@@ -38,8 +39,7 @@ public class Road extends Terrain implements Adaptable
 	@Override
 	public void updateTilingState(World w)
 	{
-//		var tile = getTile();
-//		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
+		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
 	}
 
 	@Override

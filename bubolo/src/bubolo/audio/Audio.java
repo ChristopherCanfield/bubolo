@@ -130,7 +130,6 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	private static void loadMusic()
 	{
-		// TODO: update this with the correct file names.
 		music = new ArrayList<Music>();
 
 		try

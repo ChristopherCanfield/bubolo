@@ -6,6 +6,7 @@ import bubolo.util.GameLogicException;
 import bubolo.world.Damageable;
 import bubolo.world.StaticEntity;
 import bubolo.world.TerrainImprovement;
+import bubolo.world.World;
 
 /**
  * Trees are StationaryElements that can spread over time, and hide Tanks that drive over them.
@@ -66,7 +67,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 	 *            how much damage the tree has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints)
+	public void takeHit(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 		hitPoints -= damagePoints;

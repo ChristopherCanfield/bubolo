@@ -142,6 +142,8 @@ public interface World
 	 */
 	public int getTileRows();
 
+	public boolean isValidTile(int column, int row);
+
 	/**
 	 * Updates the game world. Must be called once per game tick.
 	 */

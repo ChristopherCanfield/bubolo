@@ -1,13 +1,17 @@
 package bubolo.world.entity.concrete;
 
+import java.util.UUID;
+
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
+import bubolo.util.TileUtil;
 import bubolo.world.Adaptable;
 import bubolo.world.BoundingBox;
 import bubolo.world.Collidable;
 import bubolo.world.Damageable;
+import bubolo.world.Entity;
 import bubolo.world.StaticEntity;
 import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
@@ -47,28 +51,8 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	@Override
 	public void updateTilingState(World w)
 	{
-//		var tile = getTile();
-//		tilingState = (tile != null) ? TileUtil.getTilingState(tile, w, matchingTypes) : 0;
+		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
 	}
-
-//	@Override
-//	public void update(World world)
-//	{
-//		super.update(world);
-//
-//		if(hitPoints <= 0)
-//		{
-//			Tile tile = getTile();
-//			tile.clearElement(world);
-//
-//			// When the wall is destroyed, replace it with rubble.
-//			Rubble rubble = world.addEntity(Rubble.class);
-//			rubble.setX(getX()).setY(getY());
-//			tile.setElement(rubble, world);
-//
-//			world.removeEntity(this);
-//		}
-//	}
 
 	@Override
 	public int getTilingState()
@@ -104,11 +88,19 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 *            how much damage the wall has taken
 	 */
 	@Override
-	public void takeHit(float damagePoints)
+	public void takeHit(float damagePoints, World world)
 	{
 		assert(damagePoints >= 0);
 		hitPoints -= damagePoints;
 		Audio.play(Sfx.WALL_HIT);
+
+		if (hitPoints <= 0) {
+			// When the wall is destroyed, replace it with rubble.
+			var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), 0);
+			world.addEntity(Rubble.class, args);
+
+			dispose();
+		}
 	}
 
 	/**

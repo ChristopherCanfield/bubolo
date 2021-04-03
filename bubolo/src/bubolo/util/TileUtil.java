@@ -4,7 +4,11 @@
 
 package bubolo.util;
 
+import java.util.Arrays;
+
 import bubolo.world.Entity;
+import bubolo.world.Terrain;
+import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
 
 public abstract class TileUtil
@@ -117,66 +121,21 @@ public abstract class TileUtil
 //		return localEnts;
 //	}
 
-	/**
-	 * Get all entities are likely to overlap with an Entity at the given x and y World
-	 * coordinates.
-	 *
-	 * @param x
-	 *            is the x component of the target Entity's position in World coordinates.
-	 * @param y
-	 *            is the y component of the target Entity's position in World coordinates.
-	 * @param w
-	 *            is the World in which the Entities reside.
-	 * @return a List of all Entities which could be near the target location.
-	 */
-//	private static List<Entity> getLocalEntities(float x, float y, World w)
-//	{
-//		int gridX = getClosestTileX(x);
-//		int gridY = getClosestTileY(y);
-//		return getLocalEntities(gridX, gridY, w);
-//	}
-
-	private static boolean containsTargetElement(Tile targetTile, Class<?>[] targetClasses)
+	private static boolean matchesType(int column, int row, World world, Class<?>[] targetTypes)
 	{
-		if (targetTile.hasElement())
-		{
-			Class<? extends StationaryElement> tileClass = targetTile.getElement().getClass();
-			for (int i = 0; i < targetClasses.length; i++)
-			{
-				if (targetClasses[i].equals(tileClass))
-				{
-					return true;
+		if (world.isValidTile(column, row)) {
+			Terrain terrain = world.getTerrain(column, row);
+			boolean containsTarget = Arrays.stream(targetTypes).anyMatch(type -> type.equals(terrain.getClass()));
+			if (!containsTarget) {
+				TerrainImprovement ti = world.getTerrainImprovement(column, row);
+				if (ti != null) {
+					containsTarget = Arrays.stream(targetTypes).anyMatch(type -> type.equals(ti.getClass()));
 				}
 			}
+
+			return containsTarget;
 		}
 		return false;
-	}
-
-	private static boolean containsTargetTerrain(Tile targetTile, Class<?>[] targetClasses)
-	{
-		Class<? extends OldTerrain> tileClass = targetTile.getTerrain().getClass();
-		for (int i = 0; i < targetClasses.length; i++)
-		{
-			if (targetClasses[i].equals(tileClass))
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private static boolean matchesType(int gridX, int gridY, World w, Class<?>[] targetClasses)
-	{
-		if (!isValidTile(gridX, gridY, w))
-		{
-			return false;
-		}
-
-		Tile targetTile = w.getTiles()[gridX][gridY];
-
-		return (containsTargetTerrain(targetTile, targetClasses)
-				|| containsTargetElement(targetTile, targetClasses));
 	}
 
 	/**
@@ -247,16 +206,16 @@ public abstract class TileUtil
 	 * @return an array of booleans, representing whether or not the tiles above, below,
 	 *         to the left, and to the right of the specified tile match.
 	 */
-	public static boolean[] getEdgeMatches(Tile t, World w, Class<?>[] targetClasses)
+	public static boolean[] getEdgeMatches(Entity e, World w, Class<?>[] targetClasses)
 	{
-		int x = t.getGridX();
-		int y = t.getGridY();
+		int col = e.tileColumn();
+		int row = e.tileRow();
 		boolean[] edges = new boolean[4];
 
-		edges[0] = matchesType(x, y + 1, w, targetClasses);
-		edges[1] = matchesType(x, y - 1, w, targetClasses);
-		edges[2] = matchesType(x - 1, y, w, targetClasses);
-		edges[3] = matchesType(x + 1, y, w, targetClasses);
+		edges[0] = matchesType(col, row + 1, w, targetClasses);
+		edges[1] = matchesType(col, row - 1, w, targetClasses);
+		edges[2] = matchesType(col - 1, row, w, targetClasses);
+		edges[3] = matchesType(col + 1, row, w, targetClasses);
 
 		return edges;
 	}
@@ -279,65 +238,17 @@ public abstract class TileUtil
 	 * @return an array of booleans, representing whether or not the tiles to the top
 	 *         left, top right, bottom left, and bottom right of the specified tile match.
 	 */
-	public static boolean[] getCornerMatches(Tile t, World w, Class<?>[] targetClasses)
+	public static boolean[] getCornerMatches(Entity e, World w, Class<?>[] targetClasses)
 	{
-		int x = t.getGridX();
-		int y = t.getGridY();
+		int col = e.tileColumn();
+		int row = e.tileRow();
 		boolean[] corners = new boolean[4];
 
-		corners[0] = matchesType(x - 1, y + 1, w, targetClasses);
-		corners[1] = matchesType(x + 1, y + 1, w, targetClasses);
-		corners[2] = matchesType(x - 1, y - 1, w, targetClasses);
-		corners[3] = matchesType(x + 1, y - 1, w, targetClasses);
+		corners[0] = matchesType(col - 1, row + 1, w, targetClasses);
+		corners[1] = matchesType(col + 1, row + 1, w, targetClasses);
+		corners[2] = matchesType(col - 1, row - 1, w, targetClasses);
+		corners[3] = matchesType(col + 1, row - 1, w, targetClasses);
 
 		return corners;
-	}
-
-	/**
-	 * This function is intended to return a single tile to the requester
-	 *
-	 * @param x the x of the requested tile in world coordinates
-	 * @param y the y of the requested tile in world coordinates
-	 * @param w the world that the entity wants the tile from
-	 * @return a tile from the world
-	 */
-	public static OldTerrain getTileTerrain(float x, float y, World w)
-	{
-		Tile[][] mapTiles = w.getTiles();
-		if(mapTiles == null)
-		{
-			return null;
-		}
-		else if(getClosestTileX(x) > mapTiles.length - 1 || x < 0)
-		{
-			return null;
-		}
-		else if (getClosestTileY(y) > mapTiles[0].length - 1 || y < 0)
-		{
-			return null;
-		}
-		else
-		{
-			return mapTiles[getClosestTileX(x)][getClosestTileY(y)].getTerrain();
-		}
-	}
-
-	/**
-	 * returns the closest tile to an entity
-	 *
-	 * @param entity
-	 * 		the entity to check for tile
-	 * @param world
-	 * 		reference to the game world
-	 * @return Tile
-	 * 		the tile that is closest to given entity
-	 *
-	 */
-	public static Tile getEntityTile(Entity entity, World world)
-	{
-		Tile[][] tiles = world.getTiles();
-		int tileX = TileUtil.getClosestTileX(entity.x());
-		int tileY = TileUtil.getClosestTileY(entity.y());
-		return tiles[tileX][tileY];
 	}
 }

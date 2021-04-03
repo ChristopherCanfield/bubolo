@@ -8,10 +8,13 @@ package bubolo.net;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.logging.Logger;
+
+import bubolo.Config;
 
 /**
  * Sends NetworkCommands across the network.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 class NetworkSender implements Runnable
@@ -21,7 +24,7 @@ class NetworkSender implements Runnable
 
 	/**
 	 * Constructs a NetworkSender.
-	 * 
+	 *
 	 * @param stream
 	 *            the object output stream to the client.
 	 * @param command
@@ -45,7 +48,7 @@ class NetworkSender implements Runnable
 		}
 		catch (IOException e)
 		{
-			// TODO: log this exception properly.
+			Logger.getLogger(Config.AppProgramaticTitle).severe("Exception in " + NetworkSender.class.getName() + ": " + e.toString());
 			e.printStackTrace();
 			throw new NetworkException(e);
 		}
