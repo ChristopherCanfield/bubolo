@@ -96,6 +96,13 @@ public interface World
 	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory) throws GameLogicException;
 
 	/**
+	 * Populates all empty tiles with the specified terrain type.
+	 *
+	 * @param terrainType the terrain type to populate all empty tiles with.
+	 */
+	public <T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType);
+
+	/**
 	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
 	 * is added to the world. Only one observer can be attached to the world at a time.
 	 *

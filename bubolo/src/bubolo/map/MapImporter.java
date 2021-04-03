@@ -265,6 +265,10 @@ public class MapImporter {
 				}
 			}
 
+			// Populate any empty terrain tiles with grass. This allows slightly malformed maps, such as the Everard Island map,
+			// to work properly.
+			world.populateEmptyTilesWith(Grass.class);
+
 			return new Result(world, diagnostics);
 		} catch (JsonException e) {
 			throw new InvalidMapException(DefaultExceptionMessage, e);

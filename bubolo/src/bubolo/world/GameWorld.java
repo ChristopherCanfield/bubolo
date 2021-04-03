@@ -201,6 +201,21 @@ public class GameWorld implements World
 	}
 
 	@Override
+	public <T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType) {
+		for (int column = 0; column < getTileColumns(); column++) {
+			for (int row = 0; row < getTileRows(); row++) {
+				if (terrain[column][row] == null) {
+					float x = column * Coords.TILE_TO_WORLD_SCALE;
+					float y = column * Coords.TILE_TO_WORLD_SCALE;
+					var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
+					addEntity(terrainType, args);
+				}
+			}
+		}
+	}
+
+
+	@Override
 	public Terrain getTerrain(int column, int row) {
 		return terrain[column][row];
 	}
