@@ -152,8 +152,6 @@ public class GameWorld implements World
 		}
 
 		if (entity instanceof Terrain t) {
-			// TODO (cdc - 2021-04-01): Add this to the terrain array. If a terrain already exists in this location, dispose and replace it in the array.
-			// If a TerrainImprovement or Mine was associated with the previous terrain
 			Terrain existingTerrain = terrain[t.tileColumn()][t.tileRow()];
 			if (existingTerrain != null) {
 				assert existingTerrain.isDisposed()
