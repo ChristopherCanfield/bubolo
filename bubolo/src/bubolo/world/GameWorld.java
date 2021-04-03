@@ -154,17 +154,42 @@ public class GameWorld implements World
 		if (entity instanceof Terrain t) {
 			// TODO (cdc - 2021-04-01): Add this to the terrain array. If a terrain already exists in this location, dispose and replace it in the array.
 			// If a TerrainImprovement or Mine was associated with the previous terrain
+			Terrain existingTerrain = terrain[t.tileColumn()][t.tileRow()];
+			if (existingTerrain != null) {
+				assert existingTerrain.isDisposed()
+					: String.format("Terrain % added to tile (%i,%i), which already has a terrain: %",
+							t.getClass().getName(),
+							t.tileColumn(), t.tileRow(),
+							existingTerrain.getClass().getName());
+			}
 		}
 
 		if (entity instanceof TerrainImprovement terrainImprovement) {
 			// Check for mutually exclusive combinations.
 			assert !(terrainImprovement instanceof Terrain);
 			assert !(terrainImprovement instanceof Mine);
-			// TODO (cdc - 2021-04-01): Add this to the terrain improvements map.
+
+			// Add the terrain improvement. If one already exists, ensure that it has been disposed.
+			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
+			TerrainImprovement existingTerrainImprovement = terrainImprovements.get(tile);
+			if (existingTerrainImprovement != null) {
+				assert ((Entity) existingTerrainImprovement).isDisposed()
+					: String.format("TerrainImprovement % added to tile (%i,%i), which already has an improvement: %",
+							terrainImprovement.getClass().getName(),
+							entity.tileColumn(), entity.tileRow(),
+							existingTerrainImprovement.getClass().getName());
+			}
+			terrainImprovements.put(tile, terrainImprovement);
 		}
 
 		if (entity instanceof Mine mine) {
-			// TODO (cdc - 2021-04-01): Add this to the mines map.
+			// Add the terrain improvement. If one already exists, ensure that it has been disposed.
+			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
+			Mine existingMine = mines.get(tile);
+			if (existingMine != null) {
+				assert mine.isDisposed() : String.format("Mine added to tile (%i,%i), which already has a mine.", mine.tileColumn(), mine.tileRow());
+			}
+			mines.put(tile, mine);
 		}
 
 		entitiesToAdd.add(entity);
@@ -191,16 +216,6 @@ public class GameWorld implements World
 	public Mine getMine(int column, int row) {
 		return mines.get(new Tile(column, row));
 	}
-
-//	@Override
-//	public Terrain getTerrainFromWorldPosition(float worldX, float worldY) {
-//		int column = (int) worldX / Coords.TILE_TO_WORLD_SCALE;
-//		int row = (int) worldY / Coords.TILE_TO_WORLD_SCALE;
-//
-//		var t = terrain[column][row];
-//		assert t != null;
-//		return t;
-//	}
 
 //	@Override
 //	public void setTiles(Tile[][] mapTiles)
