@@ -14,34 +14,6 @@ import bubolo.world.World;
 public abstract class TileUtil
 {
 	/**
-	 * Returns the x index of the closest Tile to the given world x value.
-	 *
-	 * @param x
-	 *            The x component of the target position in world coordinates.
-	 * @return The x component of the grid index of the tile closest to the x coordinate
-	 *         given.
-	 */
-	@Deprecated
-	private static int getClosestTileX(float x)
-	{
-		return (int) (x / Coords.TILE_TO_WORLD_SCALE);
-	}
-
-	/**
-	 * Returns the x index of the closest Tile to the given world y value.
-	 *
-	 * @param y
-	 *            The y component of the target position in world coordinates.
-	 * @return The y component of the grid index of the tile closest to the y coordinate
-	 *         given.
-	 */
-	@Deprecated
-	private static int getClosestTileY(float y)
-	{
-		return (int) (y / Coords.TILE_TO_WORLD_SCALE);
-	}
-
-	/**
 	 * get a list of entities that are currently colliding with a given entity
 	 *
 	 * @param entity

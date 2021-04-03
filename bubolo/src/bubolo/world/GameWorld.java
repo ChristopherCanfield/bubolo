@@ -248,12 +248,6 @@ public class GameWorld implements World
 //		}
 //	}
 
-	private static void updateTilingStateIfAdaptable(World world, Entity e) {
-		if (e instanceof Adaptable adaptable) {
-			adaptable.updateTilingState(world);
-		}
-	}
-
 	@Override
 	public int getWidth()
 	{
