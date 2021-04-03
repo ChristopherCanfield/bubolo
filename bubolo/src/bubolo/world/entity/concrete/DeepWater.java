@@ -14,7 +14,7 @@ public class DeepWater extends Terrain implements Adaptable
 {
 	private int tilingState = 0;
 
-	private boolean[] cornerMatches = new boolean[4];
+	private final boolean[] cornerMatches = new boolean[4];
 
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
@@ -45,7 +45,7 @@ public class DeepWater extends Terrain implements Adaptable
 	 * tile contain a matching object for the adaptive tiling procedure.
 	 *
 	 * @return an array of booleans, where the elements represent whether a matching object was
-	 *         found to the top left, top right, bottom left, and bottom right of this obect, in
+	 *         found to the top left, top right, bottom left, and bottom right of this object, in
 	 *         order.
 	 */
 	public boolean[] getCornerMatches()
@@ -57,7 +57,7 @@ public class DeepWater extends Terrain implements Adaptable
 	public void updateTilingState(World w)
 	{
 		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
-		cornerMatches = TileUtil.getCornerMatches(this, w, matchingTypes);
+		TileUtil.getCornerMatches(cornerMatches, this, w, matchingTypes);
 	}
 
 	@Override

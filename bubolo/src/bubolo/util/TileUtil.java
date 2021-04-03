@@ -138,6 +138,8 @@ public abstract class TileUtil
 		return false;
 	}
 
+	private static final boolean[] tilingStateArray = new boolean[4];
+
 	/**
 	 * Returns the adaptive tiling state of an object located at the specified tile, given
 	 * the list of Classes that the algorithm should consider 'matches'.
@@ -159,29 +161,26 @@ public abstract class TileUtil
 	{
 		int stateSum = 0;
 
-		boolean[] edges = getEdgeMatches(t, w, targetClasses);
+		getEdgeMatches(tilingStateArray, t, w, targetClasses);
+		boolean[] edges = tilingStateArray;
 
 		// Match above
-		if (edges[0])
-		{
+		if (edges[0]) {
 			stateSum += 1;
 		}
 
 		// Match below
-		if (edges[1])
-		{
+		if (edges[1]) {
 			stateSum += 2;
 		}
 
 		// Match left
-		if (edges[2])
-		{
+		if (edges[2]) {
 			stateSum += 4;
 		}
 
 		// Match right
-		if (edges[3])
-		{
+		if (edges[3]) {
 			stateSum += 8;
 		}
 
@@ -189,7 +188,7 @@ public abstract class TileUtil
 	}
 
 	/**
-	 * Returns an array of Boolean objects, representing whether the Tiles immediately
+	 * Returns an array of booleans, representing whether the Tiles immediately
 	 * above, below, to the left, and to the right of the target Tile contain objects of a
 	 * Class matching those specified in the targetClasses array.
 	 *
@@ -203,21 +202,18 @@ public abstract class TileUtil
 	 *            is, tiles that contain any of the Class types listed in this array will
 	 *            be considered a match for the purposes of determining the adaptive
 	 *            tiling state of the specified Tile.
-	 * @return an array of booleans, representing whether or not the tiles above, below,
-	 *         to the left, and to the right of the specified tile match.
 	 */
-	public static boolean[] getEdgeMatches(Entity e, World w, Class<?>[] targetClasses)
+	public static void getEdgeMatches(boolean[] destinationArray, Entity e, World w, Class<?>[] targetClasses)
 	{
+		assert destinationArray.length == 4;
+
 		int col = e.tileColumn();
 		int row = e.tileRow();
-		boolean[] edges = new boolean[4];
 
-		edges[0] = matchesType(col, row + 1, w, targetClasses);
-		edges[1] = matchesType(col, row - 1, w, targetClasses);
-		edges[2] = matchesType(col - 1, row, w, targetClasses);
-		edges[3] = matchesType(col + 1, row, w, targetClasses);
-
-		return edges;
+		destinationArray[0] = matchesType(col, row + 1, w, targetClasses);
+		destinationArray[1] = matchesType(col, row - 1, w, targetClasses);
+		destinationArray[2] = matchesType(col - 1, row, w, targetClasses);
+		destinationArray[3] = matchesType(col + 1, row, w, targetClasses);
 	}
 
 	/**
@@ -235,20 +231,17 @@ public abstract class TileUtil
 	 *            is, tiles that contain any of the Class types listed in this array will
 	 *            be considered a match for the purposes of determining the adaptive
 	 *            tiling state of the specified Tile.
-	 * @return an array of booleans, representing whether or not the tiles to the top
-	 *         left, top right, bottom left, and bottom right of the specified tile match.
 	 */
-	public static boolean[] getCornerMatches(Entity e, World w, Class<?>[] targetClasses)
+	public static void getCornerMatches(boolean[] destinationArray, Entity e, World w, Class<?>[] targetClasses)
 	{
+		assert destinationArray.length == 4;
+
 		int col = e.tileColumn();
 		int row = e.tileRow();
-		boolean[] corners = new boolean[4];
 
-		corners[0] = matchesType(col - 1, row + 1, w, targetClasses);
-		corners[1] = matchesType(col + 1, row + 1, w, targetClasses);
-		corners[2] = matchesType(col - 1, row - 1, w, targetClasses);
-		corners[3] = matchesType(col + 1, row - 1, w, targetClasses);
-
-		return corners;
+		destinationArray[0] = matchesType(col - 1, row + 1, w, targetClasses);
+		destinationArray[1] = matchesType(col + 1, row + 1, w, targetClasses);
+		destinationArray[2] = matchesType(col - 1, row - 1, w, targetClasses);
+		destinationArray[3] = matchesType(col + 1, row - 1, w, targetClasses);
 	}
 }

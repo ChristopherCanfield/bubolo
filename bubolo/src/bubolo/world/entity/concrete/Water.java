@@ -14,7 +14,7 @@ public class Water extends Terrain implements Adaptable
 {
 	private int tilingState = 0;
 
-	private boolean[] cornerMatches = new boolean[4];
+	private final boolean[] cornerMatches = new boolean[4];
 
 	/**
 	 * Intended to be generic -- this is a list of all of the StationaryEntities classes that should
@@ -44,7 +44,7 @@ public class Water extends Terrain implements Adaptable
 	public void updateTilingState(World w)
 	{
 		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
-		cornerMatches = TileUtil.getCornerMatches(this, w, matchingTypes);
+		TileUtil.getCornerMatches(cornerMatches, this, w, matchingTypes);
 	}
 
 	/**
