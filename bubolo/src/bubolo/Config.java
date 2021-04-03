@@ -2,7 +2,9 @@ package bubolo;
 
 /**
  * Configuration constants.
+ *
  * @author Christopher D. Canfield
+ * @since 0.4.0
  */
 public class Config {
 	public static final String AppTitle = "Bubolo";

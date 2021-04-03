@@ -27,3 +27,23 @@ WaterType: Marker interface indicating that this is a water type.
 
 Adaptable: A game entity that has tiling logic to improve the appearance of its image. This is a visual-only system, and should
 not be located in the world package. It will be transfered to the Graphics system in the future.
+
+
+Concrete Entity Classes:
+
+* Base
+* Bullet
+* Crater
+* DeepWater
+* Grass
+* Mine
+* MineExplosion
+* Pillbox
+* Road
+* Rubble
+* Spawn
+* Swamp
+* Tank
+* Tree
+* Wall
+* Water

@@ -2,6 +2,12 @@ package bubolo.world;
 
 import com.badlogic.gdx.math.Polygon;
 
+/**
+ * Contains bounds updating functionality, and an underlying Polygon for collision detection.
+ *
+ * @author Christopher D. Canfield
+ * @since 0.4.0
+ */
 public class BoundingBox {
 	private Polygon bounds;
 
