@@ -133,24 +133,51 @@ public class GameWorld implements World
 			throw new GameLogicException(e.getMessage());
 		}
 
+		processNewTank(entity);
+		processNewActorEntity(entity, controllerFactory);
+		processNewSpawn(entity);
+		processNewAdaptable(entity);
+		processNewTerrain(entity);
+		processNewTerrainImprovement(entity);
+		processNewMine(entity);
+
+		entitiesToAdd.add(entity);
+		entityMap.put(entity.id(), entity);
+
+		if (entityCreationObserver != null) {
+			entityCreationObserver.onEntityCreated(entity);
+		}
+
+		return entity;
+	}
+
+	private void processNewTank(Entity entity) {
 		if (entity instanceof Tank tank) {
 			tanks.add(tank);
 		}
+	}
 
+	private void processNewActorEntity(Entity entity, ControllerFactory controllerFactory) {
 		if (entity instanceof ActorEntity actor) {
 			actors.add(actor);
 			Controllers.getInstance().createController(actor, controllerFactory);
 		}
+	}
 
+	private void processNewSpawn(Entity entity) {
 		if (entity instanceof Spawn spawn) {
 			spawns.add(spawn);
 		}
+	}
 
+	private void processNewAdaptable(Entity entity) {
 		if (entity instanceof Adaptable adaptable) {
 			adaptables.add(adaptable);
 			adaptableAddedThisTick = true;
 		}
+	}
 
+	private void processNewTerrain(Entity entity) {
 		if (entity instanceof Terrain t) {
 			Terrain existingTerrain = terrain[t.tileColumn()][t.tileRow()];
 			if (existingTerrain != null) {
@@ -161,7 +188,9 @@ public class GameWorld implements World
 							existingTerrain.getClass().getName());
 			}
 		}
+	}
 
+	private void processNewTerrainImprovement(Entity entity) {
 		if (entity instanceof TerrainImprovement terrainImprovement) {
 			// Check for mutually exclusive combinations.
 			assert !(terrainImprovement instanceof Terrain);
@@ -179,7 +208,9 @@ public class GameWorld implements World
 			}
 			terrainImprovements.put(tile, terrainImprovement);
 		}
+	}
 
+	private void processNewMine(Entity entity) {
 		if (entity instanceof Mine mine) {
 			// Add the terrain improvement. If one already exists, ensure that it has been disposed.
 			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
@@ -189,15 +220,6 @@ public class GameWorld implements World
 			}
 			mines.put(tile, mine);
 		}
-
-		entitiesToAdd.add(entity);
-		entityMap.put(entity.id(), entity);
-
-		if (entityCreationObserver != null) {
-			entityCreationObserver.onEntityCreated(entity);
-		}
-
-		return entity;
 	}
 
 	@Override
@@ -214,7 +236,6 @@ public class GameWorld implements World
 		}
 	}
 
-
 	@Override
 	public Terrain getTerrain(int column, int row) {
 		return terrain[column][row];
@@ -229,39 +250,6 @@ public class GameWorld implements World
 	public Mine getMine(int column, int row) {
 		return mines.get(new Tile(column, row));
 	}
-
-//	@Override
-//	public void setTiles(Tile[][] mapTiles)
-//	{
-//		this.mapTiles = mapTiles;
-//		setWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
-//		setHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
-//
-//		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
-//		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.
-//		// These lines add a Grass tile to any tile that is missing an associated terrain.
-//		for (Tile[] tiles : mapTiles) {
-//			for (Tile tile : tiles) {
-//				if (!tile.hasTerrain()) {
-//					tile.setTerrain(addEntity(Grass.class), this);
-//				}
-//			}
-//		}
-//
-//		for (int i = 0; i < 2; i++) {
-//			for (Tile[] tiles : mapTiles) {
-//				for (Tile tile : tiles) {
-//					OldTerrain terrain = tile.getTerrain();
-//					updateTilingStateIfAdaptable(this, terrain);
-//
-//					if (tile.hasElement()) {
-//						StationaryElement element = tile.getElement();
-//						updateTilingStateIfAdaptable(this, element);
-//					}
-//				}
-//			}
-//		}
-//	}
 
 	@Override
 	public int getWidth()
