@@ -1,8 +1,5 @@
 package bubolo.world;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.controllers.Controller;
@@ -27,9 +24,11 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	private ActorEntity owner;
 	private boolean ownedByLocalPlayer;
 
-	private BoundingBox boundingBox = new BoundingBox();
+	private final BoundingBox boundingBox = new BoundingBox();
 
-	private List<Controller> controllers;
+	private static final Controller nullController = world -> {};
+
+	private Controller controller = nullController;
 
 	protected ActorEntity(ConstructionArgs args, int width, int height) {
 		super(args.id(), width, height);
@@ -140,16 +139,13 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	}
 
 	/**
-	 * Adds a controller to this actor.
+	 * This this actors controller.
 	 *
 	 * @param c the controller to add.
 	 */
-	public void addController(Controller c)
+	public void setController(Controller c)
 	{
-		if (controllers == null) {
-			controllers = new ArrayList<Controller>();
-		}
-		controllers.add(c);
+		controller = c;
 	}
 
 	/**
@@ -159,8 +155,6 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	 */
 	protected void updateControllers(World world)
 	{
-		if (controllers != null) {
-			controllers.forEach(c -> c.update(world));
-		}
+		controller.update(world);
 	}
 }

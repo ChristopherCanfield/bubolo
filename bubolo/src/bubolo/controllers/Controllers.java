@@ -88,7 +88,7 @@ public class Controllers
 			@Override
 			public void create(ActorEntity entity)
 			{
-				entity.addController(new KeyboardTankController((Tank) entity));
+				entity.setController(new KeyboardTankController((Tank) entity));
 			}
 		});
 
@@ -98,7 +98,7 @@ public class Controllers
 			@Override
 			public void create(ActorEntity entity)
 			{
-				entity.addController(new AiPillboxController((Pillbox) entity));
+				entity.setController(new AiPillboxController((Pillbox) entity));
 			}
 		});
 
@@ -108,7 +108,7 @@ public class Controllers
 			@Override
 			public void create(ActorEntity entity)
 			{
-				entity.addController(new AiMineController((Mine) entity));
+				entity.setController(new AiMineController((Mine) entity));
 			}
 		});
 
@@ -118,7 +118,7 @@ public class Controllers
 			@Override
 			public void create(ActorEntity entity)
 			{
-				entity.addController(new AiBaseController((Base) entity));
+				entity.setController(new AiBaseController((Base) entity));
 			}
 		});
 
