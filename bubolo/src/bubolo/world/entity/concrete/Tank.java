@@ -181,16 +181,14 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	public void accelerate()
 	{
-		clampSpeed();
-		if (speed < modifiedMaxSpeed && !accelerated)
-		{
+		if (speed < modifiedMaxSpeed && !accelerated) {
 			speed += accelerationRate;
-			if (speed > modifiedMaxSpeed)
-			{
+			if (speed > modifiedMaxSpeed) {
 				speed = modifiedMaxSpeed;
 			}
 			accelerated = true;
 		}
+		clampSpeed();
 	}
 
 	/**
@@ -198,12 +196,11 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	public void decelerate()
 	{
-		clampSpeed();
-		if (speed > 0 && !decelerated)
-		{
+		if (speed > 0 && !decelerated) {
 			speed -= decelerationRate;
 			decelerated = true;
 		}
+		clampSpeed();
 	}
 
 	private void clampSpeed() {
@@ -293,8 +290,7 @@ public class Tank extends ActorEntity implements Damageable
 	}
 
 	/**
-	 * Returns a list of all Entities that would overlap with this Tank if it was where it
-	 * will be in one game tick, along its current trajectory.
+	 * Returns a list of all solid Entities that will overlap with this Tank if continues on its current path.
 	 */
 	private List<Collidable> getLookaheadEntities(World world)
 	{
@@ -303,6 +299,7 @@ public class Tank extends ActorEntity implements Damageable
 
 		var collidables = world.getNearbyCollidables(this, true);
 		for (Collidable collidable : collidables) {
+			assert collidable.isSolid() : collidable.toString();
 			if (overlapsEntity(collidable) || Intersector.overlapConvexPolygons(nextTickBounds, collidable.bounds())) {
 				nextTickOverlappedEntities.add(collidable);
 			}
@@ -482,13 +479,11 @@ public class Tank extends ActorEntity implements Damageable
 		boolean collidingRight = false;
 
 		for (var collider : getLookaheadEntities(world)) {
-			if (collider.isSolid()) {
-				if (!collidingLeft) {
-					collidingLeft = hitLeftBumper(collider);
-				}
-				if (!collidingRight) {
-					collidingRight = hitRightBumper(collider);
-				}
+			if (!collidingLeft) {
+				collidingLeft = hitLeftBumper(collider);
+			}
+			if (!collidingRight) {
+				collidingRight = hitRightBumper(collider);
 			}
 
 			// If colliders were found on the left and right, there is no need to continue checking.
@@ -510,8 +505,7 @@ public class Tank extends ActorEntity implements Damageable
 		 * appropriate direction, and offset/rotate the Tank to 'slide' away from the
 		 * collision.
 		 */
-		if (collidingLeft)
-		{
+		if (collidingLeft) {
 			rotationOffset -= rotationOffsetAmount;
 			if (facingNE())
 			{
@@ -552,8 +546,7 @@ public class Tank extends ActorEntity implements Damageable
 		 * appropriate direction, and offset/rotate the Tank to 'slide' away from the
 		 * collision.
 		 */
-		if (collidingRight)
-		{
+		if (collidingRight) {
 			rotationOffset += rotationOffsetAmount;
 			if (facingNE())
 			{

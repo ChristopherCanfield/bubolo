@@ -265,6 +265,9 @@ public class MapImporter {
 				}
 			}
 
+			// Process a game tick, which finalizes the addition of the new entities to the world.
+			world.update();
+
 			// Populate any empty terrain tiles with grass. This allows slightly malformed maps, such as the Everard Island map,
 			// to work properly.
 			world.populateEmptyTilesWith(Grass.class);
@@ -307,16 +310,13 @@ public class MapImporter {
 			for (Tileset ts : tilesets.values()) {
 				// Add the entity if it is known to this tileset.
 				if (ts.isGidInThisTileset(tileGid)) {
-					// The game world is flipped from json map indexes.
-					int posY = row * Coords.TileToWorldScale;
+					// The game world is flipped from json map indexes (zero is the top in the map file, but the bottom in the world map).
+					int posY = (world.getTileRows() - row - 1) * Coords.TileToWorldScale;
 					int posX = col * Coords.TileToWorldScale;
 					double rotation = Math.PI / 2.0;
 
 					// The x and y coords are flipped in the map.
 					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, (float) rotation);
-
-					System.out.println("Adding " + args);
-
 					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world, args);
 
 					diagnostics.typesImported.add(entity.getClass().getSimpleName());

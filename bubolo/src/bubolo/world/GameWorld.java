@@ -139,13 +139,11 @@ public class GameWorld implements World
 		assert entity.tileRow() < getTileRows() : String.format("Invalid tile row: %d. Max rows: %d. Position (%d,%d). Type: %s",
 				entity.tileRow(), getTileRows(), entity.tileColumn(), entity.tileRow(), entity.getClass().getName());
 
-		processNewTank(entity);
-		processNewActorEntity(entity, controllerFactory);
+		if (entity instanceof ActorEntity actor) {
+			Controllers.getInstance().createController(actor, controllerFactory);
+		}
+
 		processNewSpawn(entity);
-		processNewAdaptable(entity);
-		processNewTerrain(entity);
-		processNewTerrainImprovement(entity);
-		processNewMine(entity);
 
 		entitiesToAdd.add(entity);
 		entityMap.put(entity.id(), entity);
@@ -163,10 +161,9 @@ public class GameWorld implements World
 		}
 	}
 
-	private void processNewActorEntity(Entity entity, ControllerFactory controllerFactory) {
+	private void processNewActorEntity(Entity entity) {
 		if (entity instanceof ActorEntity actor) {
 			actors.add(actor);
-			Controllers.getInstance().createController(actor, controllerFactory);
 		}
 	}
 
@@ -318,6 +315,16 @@ public class GameWorld implements World
 			entities.addAll(entitiesToAdd);
 			// Sort by type.
 			entities.sort((leftEntity, rightEntity) -> leftEntity.getClass().getName().compareTo(rightEntity.getClass().getName()));
+
+			for (Entity entity : entitiesToAdd) {
+				processNewTank(entity);
+				processNewActorEntity(entity);
+				processNewAdaptable(entity);
+				processNewTerrain(entity);
+				processNewTerrainImprovement(entity);
+				processNewMine(entity);
+			}
+
 			entitiesToAdd.clear();
 		}
 
@@ -392,14 +399,14 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
+	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
 		final int tileRadius = 5;
 
-		final int startTileColumn = entity.tileColumn() - tileRadius;
-		final int startTileRow = entity.tileRow() - tileRadius;
+		final int startTileColumn = targetEntity.tileColumn() - tileRadius;
+		final int startTileRow = targetEntity.tileRow() - tileRadius;
 
-		final int endTileColumn = entity.tileColumn() + tileRadius;
-		final int endTileRow = entity.tileRow() + tileRadius;
+		final int endTileColumn = targetEntity.tileColumn() + tileRadius;
+		final int endTileRow = targetEntity.tileRow() + tileRadius;
 
 		List<Collidable> nearbyCollidables = new ArrayList<>();
 		for (int column = startTileColumn; column <= endTileColumn; column++) {
@@ -416,8 +423,9 @@ public class GameWorld implements World
 		// Iterate through every actor to determine which ones are nearby. There's really no better way to do this
 		// currently; if it becomes a bottleneck, I'll look into optimizing it.
 		for (ActorEntity actor : actors) {
-			if (isEntityWithinTileRange(entity, startTileColumn, endTileColumn, startTileRow, endTileRow)
-					&& includeInNearbyCollidablesList(entity, onlyIncludeSolidObjects, typeFilter)) {
+			if (!actor.equals(targetEntity)
+					&& isEntityWithinTileRange(actor, startTileColumn, endTileColumn, startTileRow, endTileRow)
+					&& includeInNearbyCollidablesList(actor, onlyIncludeSolidObjects, typeFilter)) {
 				nearbyCollidables.add(actor);
 			}
 		}
@@ -427,8 +435,9 @@ public class GameWorld implements World
 
 	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
 		if (e instanceof Collidable c) {
-			return (!onlyIncludeSolidObjects || c.isSolid())
+			var result =  (c.isSolid() || !onlyIncludeSolidObjects)
 					&& (typeFilter == null || typeFilter.isInstance(c));
+			return result;
 		}
 		return false;
 	}
@@ -463,10 +472,8 @@ public class GameWorld implements World
 	@Override
 	public void removeController(Class<? extends Controller> controllerType)
 	{
-		for (Controller c : worldControllers)
-		{
-			if (c.getClass() == controllerType)
-			{
+		for (Controller c : worldControllers) {
+			if (c.getClass() == controllerType) {
 				worldControllers.remove(c);
 				return;
 			}

@@ -43,7 +43,7 @@ public class AiBaseController implements Controller
 	private static final int HIT_POINTS_PER_HEAL = 10;
 
 	/**
-	 * Time since the last replinishment
+	 * Time since the last replenishment
 	 */
 	private long lastReplinishment = 0;
 
@@ -63,36 +63,38 @@ public class AiBaseController implements Controller
 	{
 		base.setCharging(false);
 		for (Tank tank : world.getTanks()) {
-			// Base has an owner.
-			if (base.hasOwner()) {
-				if(tank.equals(base.owner()) && !isTankRecharged(tank)) {
-					base.setCharging(true);
+			if (tank.overlapsEntity(base)) {
+				// Base has an owner.
+				if (base.hasOwner()) {
+					if(tank.equals(base.owner()) && !isTankRecharged(tank)) {
+						base.setCharging(true);
 
-					if(System.currentTimeMillis() > nextSupplyTime) {
-						nextSupplyTime = System.currentTimeMillis() + resupplyDelayTime;
-						if (tank.hitPoints() < tank.maxHitPoints()) {
-							tank.heal(base.giveHitPoints());
-						}
-						if(tank.getAmmoCount() < tank.getTankMaxAmmo()) {
-							tank.gatherAmmo(base.giveAmmo());
-						}
-						if(tank.getMineCount() < tank.getTankMaxMineCount()) {
-							tank.gatherMine(base.giveMine());
+						if(System.currentTimeMillis() > nextSupplyTime) {
+							nextSupplyTime = System.currentTimeMillis() + resupplyDelayTime;
+							if (tank.hitPoints() < tank.maxHitPoints()) {
+								tank.heal(base.giveHitPoints());
+							}
+							if(tank.getAmmoCount() < tank.getTankMaxAmmo()) {
+								tank.gatherAmmo(base.giveAmmo());
+							}
+							if(tank.getMineCount() < tank.getTankMaxMineCount()) {
+								tank.gatherMine(base.giveMine());
+							}
 						}
 					}
-				}
 
-			// Base does not have an existing owner.
-			} else {
-				base.setOwner(tank);
-				base.heal(100);
-
-				if (tank.isOwnedByLocalPlayer() && !base.isOwnedByLocalPlayer()) {
-					base.setOwnedByLocalPlayer(true);
+				// Base does not have an existing owner.
+				} else {
 					base.setOwner(tank);
+					base.heal(100);
 
-					Network net = NetworkSystem.getInstance();
-					net.send(new ChangeOwner(base));
+					if (tank.isOwnedByLocalPlayer() && !base.isOwnedByLocalPlayer()) {
+						base.setOwnedByLocalPlayer(true);
+						base.setOwner(tank);
+
+						Network net = NetworkSystem.getInstance();
+						net.send(new ChangeOwner(base));
+					}
 				}
 			}
 		}

@@ -58,6 +58,9 @@ public class SendMap extends NetworkCommand
 			world.addEntity(entityData.type(), args);
 		}
 
+		// Process a game tick, which finalizes the addition of the new entities to the world.
+		world.update();
+
 		worldOwner.setWorld(world);
 	}
 

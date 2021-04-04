@@ -276,4 +276,9 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement
 	public float speedModifier() {
 		return speedModifier;
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " | isSolid: " + isSolid();
+	}
 }

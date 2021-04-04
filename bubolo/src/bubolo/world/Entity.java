@@ -119,4 +119,10 @@ public abstract class Entity {
 	public int hashCode() {
 		return id.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s {position=%f,%f | tile=%d,%d | width=%d | height=%d | isDisposed=%b ",
+				getClass().getName(), x(), y(), tileColumn(), tileRow(), width(), height(), isDisposed());
+	}
 }

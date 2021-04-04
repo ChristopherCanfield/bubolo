@@ -6,6 +6,8 @@
 
 package bubolo.net;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,19 +19,18 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.badlogic.gdx.Gdx;
+
 import bubolo.net.command.ClientConnected;
 import bubolo.net.command.ConnectedToServer;
 import bubolo.net.command.SendMap;
 import bubolo.net.command.StartGame;
 import bubolo.util.Nullable;
 import bubolo.world.World;
-import static com.google.common.base.Preconditions.checkState;
-
-import com.badlogic.gdx.Gdx;
 
 /**
  * The game server.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 class Server implements NetworkSubsystem
@@ -58,7 +59,7 @@ class Server implements NetworkSubsystem
 
 	/**
 	 * Constructs a Server object.
-	 * 
+	 *
 	 * @param network
 	 *            reference to the network system.
 	 */
@@ -68,7 +69,7 @@ class Server implements NetworkSubsystem
 		this.clients = new CopyOnWriteArrayList<ClientSocket>();
 		this.sender = Executors.newSingleThreadExecutor();
 	}
-	
+
 	private String getServerName()
 	{
 		return serverPlayerName;
@@ -78,7 +79,7 @@ class Server implements NetworkSubsystem
 	 * Identifies this player as the game server, and begins accepting connections from other
 	 * players. <code>startServer</code> must be called before calling <code>connect</code>. There
 	 * should only be one game server per game.
-	 * 
+	 *
 	 * @param serverName
 	 *            the name of this server.
 	 * @throws NetworkException
@@ -103,7 +104,7 @@ class Server implements NetworkSubsystem
 
 	/**
 	 * Notifies clients that the game is ready to start.
-	 * 
+	 *
 	 * @param world
 	 *            reference to the game world.
 	 */
@@ -117,7 +118,7 @@ class Server implements NetworkSubsystem
 		final int secondsUntilStart = 3;
 		StartGame startGameCommand = new StartGame(secondsUntilStart, new SendMap(world));
 		send(startGameCommand);
-		
+
 		network.getNotifier().notifyGameStart(secondsUntilStart);
 	}
 
@@ -135,7 +136,7 @@ class Server implements NetworkSubsystem
 
 	/**
 	 * Removes the client
-	 * 
+	 *
 	 * @param client
 	 */
 	private void removeClient(ClientSocket client)
@@ -146,7 +147,7 @@ class Server implements NetworkSubsystem
 
 	/**
 	 * Sends a network command to the other players.
-	 * 
+	 *
 	 * @param command
 	 *            the network command to send.
 	 * @param clientToIgnore
@@ -166,7 +167,7 @@ class Server implements NetworkSubsystem
 
 	/**
 	 * A client connection acceptor.
-	 * 
+	 *
 	 * @author BU CS673 - Clone Productions
 	 */
 	private static class ClientAcceptor implements Runnable
@@ -180,7 +181,7 @@ class Server implements NetworkSubsystem
 
 		/**
 		 * Constructs a client connection acceptor.
-		 * 
+		 *
 		 * @param shutdown
 		 *            reference to the shutdown atomic boolean.
 		 * @param gameStarted
@@ -244,7 +245,7 @@ class Server implements NetworkSubsystem
 
 	/**
 	 * Reads data from client connections.
-	 * 
+	 *
 	 * @author BU CS673 - Clone Productions
 	 */
 	private static class ClientReader implements Runnable
@@ -256,7 +257,7 @@ class Server implements NetworkSubsystem
 
 		/**
 		 * Constructs a new ClientReader.
-		 * 
+		 *
 		 * @param client
 		 *            the connected ClientSocket object.
 		 * @param server
@@ -290,7 +291,7 @@ class Server implements NetworkSubsystem
 				ClientConnected welcomeCommand = (ClientConnected)inputStream.readObject();
 				server.send(new ConnectedToServer(welcomeCommand.getClientName(), server.getServerName()));
 				network.postToGameThread(welcomeCommand);
-				
+
 				while (!shutdown.get())
 				{
 					NetworkCommand command = (NetworkCommand)inputStream.readObject();
@@ -332,7 +333,7 @@ class Server implements NetworkSubsystem
 
 	/**
 	 * Wraps a client Socket connection and a client stream.
-	 * 
+	 *
 	 * @author BU CS673 - Clone Productions
 	 */
 	private static class ClientSocket
@@ -342,7 +343,7 @@ class Server implements NetworkSubsystem
 
 		/**
 		 * Constructs a new ClientSocket.
-		 * 
+		 *
 		 * @param client
 		 *            the connected client Socket object.
 		 */
@@ -361,7 +362,7 @@ class Server implements NetworkSubsystem
 
 		/**
 		 * Returns a reference to the underlying client Socket.
-		 * 
+		 *
 		 * @return a reference to the underlying client Socket.
 		 */
 		private Socket getClient()
@@ -371,7 +372,7 @@ class Server implements NetworkSubsystem
 
 		/**
 		 * Returns the client's object output stream.
-		 * 
+		 *
 		 * @return the client's object output stream.
 		 */
 		private ObjectOutputStream getOutputStream()
