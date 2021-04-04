@@ -1,8 +1,12 @@
 package bubolo.world.entity.concrete;
 
+import com.badlogic.gdx.math.Polygon;
+
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.util.GameLogicException;
+import bubolo.world.BoundingBox;
+import bubolo.world.Collidable;
 import bubolo.world.Damageable;
 import bubolo.world.StaticEntity;
 import bubolo.world.TerrainImprovement;
@@ -13,7 +17,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Tree extends StaticEntity implements TerrainImprovement, Damageable
+public class Tree extends StaticEntity implements TerrainImprovement, Collidable, Damageable
 {
 	/**
 	 * The health of the tree
@@ -29,6 +33,8 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 
 	private static final int width = 32;
 	private static final int height = 32;
+
+	private final BoundingBox boundingBox = new BoundingBox();
 
 	public Tree(ConstructionArgs args) {
 		super(args, width, height);
@@ -90,5 +96,20 @@ public class Tree extends StaticEntity implements TerrainImprovement, Damageable
 	protected void onDispose()
 	{
 		Audio.play(Sfx.TREE_HIT);
+	}
+
+	@Override
+	public boolean isSolid() {
+		return false;
+	}
+
+	@Override
+	public Polygon bounds() {
+		return boundingBox.bounds();
+	}
+
+	@Override
+	public void updateBounds() {
+		boundingBox.updateBounds(this);
 	}
 }

@@ -340,14 +340,18 @@ public class GameWorld implements World
 	 *
 	 * @param markedForRemoval a collection of entities to remove.
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	private void removeEntities(Collection<Entity> markedForRemoval) {
 		if (!markedForRemoval.isEmpty()) {
 			entities.removeAll(markedForRemoval);
 			entityMap.values().removeAll(markedForRemoval);
 
+			terrainImprovements.values().removeAll(markedForRemoval);
+
 			tanks.removeAll(markedForRemoval);
 			actors.removeAll(markedForRemoval);
 			spawns.removeAll(markedForRemoval);
+			mines.values().removeAll(markedForRemoval);
 
 			var adaptablesToRemove = markedForRemoval.stream()
 					.filter(e -> e instanceof Adaptable)
@@ -435,7 +439,7 @@ public class GameWorld implements World
 
 	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
 		if (e instanceof Collidable c) {
-			var result =  (c.isSolid() || !onlyIncludeSolidObjects)
+			var result =  (!onlyIncludeSolidObjects || c.isSolid())
 					&& (typeFilter == null || typeFilter.isInstance(c));
 			return result;
 		}
