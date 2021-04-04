@@ -413,22 +413,9 @@ public class Tank extends ActorEntity implements Damageable
 
 	private void checkTrees(World world)
 	{
+		// TODO (cdc - 2021-04-04): Make this more resilient by checking all visually overlapping trees.
 		TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
 		hidden = terrainImprovement instanceof Tree;
-
-		// TODO (cdc - 2021-04-02): Is this needed?
-//		boolean[] corners = TileUtil.getCornerMatches(closeTile, world, new Class[] { Tree.class });
-//		boolean[] edges = TileUtil.getEdgeMatches(closeTile, world, new Class[] { Tree.class });
-//		for (int i = 0; i < 4; i++)
-//		{
-//			if (corners[i] == false || edges[i] == false)
-//			{
-//				hidden = false;
-//				return;
-//			}
-//		}
-//
-//		hidden = true;
 	}
 
 	/**

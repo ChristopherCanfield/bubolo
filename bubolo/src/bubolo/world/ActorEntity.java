@@ -115,8 +115,20 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	 * @param world reference to the game world.
 	 */
 	public final void update(World world) {
+		assert (!isDisposed());
+
+		checkOwner();
 		updateControllers(world);
 		onUpdate(world);
+	}
+
+	/**
+	 * Sets the owner to null if it becomes disposed.
+	 */
+	private void checkOwner() {
+		if (owner != null && owner.isDisposed()) {
+			setOwner(null);
+		}
 	}
 
 	/**
