@@ -404,7 +404,7 @@ public class GameWorld implements World
 
 	@Override
 	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
-		final int tileRadius = 5;
+		final int tileRadius = 3;
 
 		final int startTileColumn = targetEntity.tileColumn() - tileRadius;
 		final int startTileRow = targetEntity.tileRow() - tileRadius;
