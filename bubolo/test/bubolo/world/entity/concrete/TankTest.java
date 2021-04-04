@@ -154,7 +154,7 @@ public class TankTest
 	public void gatherMine()
 	{
 		tank.gatherMine(1);
-		assertEquals(Tank.TANK_MAX_MINE, tank.getMineCount(), 0);
+		assertEquals(Tank.maxMine, tank.getMineCount(), 0);
 	}
 
 	@Test

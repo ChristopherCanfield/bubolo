@@ -403,14 +403,20 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
-		final int tileRadius = 3;
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
+		final int tileMaxDistance = 3;
+		return getNearbyCollidables(entity, onlyIncludeSolidObjects, tileMaxDistance, typeFilter);
+	}
 
-		final int startTileColumn = targetEntity.tileColumn() - tileRadius;
-		final int startTileRow = targetEntity.tileRow() - tileRadius;
+	@Override
+	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, int tileMaxDistance, @Nullable Class<?> typeFilter) {
+		assert tileMaxDistance >= 0;
 
-		final int endTileColumn = targetEntity.tileColumn() + tileRadius;
-		final int endTileRow = targetEntity.tileRow() + tileRadius;
+		final int startTileColumn = targetEntity.tileColumn() - tileMaxDistance;
+		final int startTileRow = targetEntity.tileRow() - tileMaxDistance;
+
+		final int endTileColumn = targetEntity.tileColumn() + tileMaxDistance;
+		final int endTileRow = targetEntity.tileRow() + tileMaxDistance;
 
 		List<Collidable> nearbyCollidables = new ArrayList<>();
 		for (int column = startTileColumn; column <= endTileColumn; column++) {

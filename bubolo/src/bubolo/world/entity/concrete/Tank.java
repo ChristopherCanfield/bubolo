@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Audio;
@@ -20,7 +21,6 @@ import bubolo.world.Collidable;
 import bubolo.world.Damageable;
 import bubolo.world.Entity;
 import bubolo.world.Terrain;
-import bubolo.world.TerrainImprovement;
 import bubolo.world.World;
 
 /**
@@ -97,20 +97,14 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	private static final float positionOffsetAmount = 0.1f;
 
-	private float hitPoints;
+	private static final int maxHitPoints = 100;
+	private float hitPoints = maxHitPoints;
 
+	private static final int maxAmmo = 100;
+	private int ammoCount = maxAmmo;
 
-	public static final int TANK_MAX_HIT_POINTS = 100;
-
-	private int ammoCount;
-
-	public static final int TANK_MAX_AMMO = 100;
-
-
-	private int mineCount;
-
-	public static final int TANK_MAX_MINE = 10;
-
+	private static final int maxMine = 10;
+	private int mineCount = maxMine;
 
 	private static final Random randomGenerator = new Random();
 
@@ -127,9 +121,6 @@ public class Tank extends ActorEntity implements Damageable
 		super(args, width, height);
 
 		updateBounds();
-		hitPoints = TANK_MAX_HIT_POINTS;
-		ammoCount = TANK_MAX_AMMO;
-		mineCount = TANK_MAX_MINE;
 	}
 
 	@Override
@@ -141,7 +132,7 @@ public class Tank extends ActorEntity implements Damageable
 
 		updateSpeedForTerrain(world);
 		moveTank(world);
-		checkTrees(world);
+		hidden = checkIfHidden(world);
 	}
 
 	public String getPlayerName() {
@@ -289,6 +280,27 @@ public class Tank extends ActorEntity implements Damageable
 		return hidden || !isAlive();
 	}
 
+	private static Intersector.MinimumTranslationVector minTranslationVector = new MinimumTranslationVector();
+
+	private boolean checkIfHidden(World world)
+	{
+		// If this much of the tank is covered by one or more tree tiles, it counts as hidden.
+		final float minTreeCoverage = width() * 0.85f;
+
+		float treeCoverage = 0;
+		List<Collidable> trees = world.getNearbyCollidables(this, false, 1, Tree.class);
+		for (var tree : trees) {
+			if (tree.overlapsEntity(this, minTranslationVector)) {
+				if (minTranslationVector.depth > minTreeCoverage) {
+					return true;
+				} else {
+					treeCoverage += minTranslationVector.depth;
+				}
+			}
+		}
+		return treeCoverage >= minTreeCoverage;
+	}
+
 	/**
 	 * Returns a list of all solid Entities that will overlap with this Tank if continues on its current path.
 	 */
@@ -411,12 +423,7 @@ public class Tank extends ActorEntity implements Damageable
 		return (rotation() >= (3 * Math.PI) / 2 && rotation() < (2 * Math.PI));
 	}
 
-	private void checkTrees(World world)
-	{
-		// TODO (cdc - 2021-04-04): Make this more resilient by checking all visually overlapping trees.
-		TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
-		hidden = terrainImprovement instanceof Tree;
-	}
+
 
 	/**
 	 * Updates the tank's speed for the underlying terrain.
@@ -610,7 +617,7 @@ public class Tank extends ActorEntity implements Damageable
 	@Override
 	public int maxHitPoints()
 	{
-		return TANK_MAX_HIT_POINTS;
+		return maxHitPoints;
 	}
 
 	/**
@@ -672,13 +679,13 @@ public class Tank extends ActorEntity implements Damageable
 	@Override
 	public void heal(float healPoints)
 	{
-		if (hitPoints + Math.abs(healPoints) < TANK_MAX_HIT_POINTS)
+		if (hitPoints + Math.abs(healPoints) < maxHitPoints)
 		{
 			hitPoints += Math.abs(healPoints);
 		}
 		else
 		{
-			hitPoints = TANK_MAX_HIT_POINTS;
+			hitPoints = maxHitPoints;
 		}
 	}
 
@@ -692,8 +699,8 @@ public class Tank extends ActorEntity implements Damageable
 	{
 		assert newAmmo >= 0;
 		ammoCount += newAmmo;
-		if (ammoCount > TANK_MAX_AMMO) {
-			ammoCount = TANK_MAX_AMMO;
+		if (ammoCount > maxAmmo) {
+			ammoCount = maxAmmo;
 		}
 	}
 
@@ -707,8 +714,8 @@ public class Tank extends ActorEntity implements Damageable
 	{
 		assert minesGathered >= 0;
 		mineCount += minesGathered;
-		if (mineCount > TANK_MAX_MINE) {
-			mineCount = TANK_MAX_MINE;
+		if (mineCount > maxMine) {
+			mineCount = maxMine;
 		}
 	}
 
@@ -756,9 +763,9 @@ public class Tank extends ActorEntity implements Damageable
 			net.send(new MoveTank(this));
 		}
 
-		hitPoints = TANK_MAX_HIT_POINTS;
-		ammoCount = TANK_MAX_AMMO;
-		mineCount = TANK_MAX_MINE;
+		hitPoints = maxHitPoints;
+		ammoCount = maxAmmo;
+		mineCount = maxMine;
 	}
 
 	/**
@@ -767,7 +774,7 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	public int getTankMaxAmmo()
 	{
-		return TANK_MAX_AMMO;
+		return maxAmmo;
 	}
 
 	/**
@@ -776,7 +783,7 @@ public class Tank extends ActorEntity implements Damageable
 	 */
 	public int getTankMaxMineCount()
 	{
-		return TANK_MAX_MINE;
+		return maxMine;
 	}
 
 	@Override

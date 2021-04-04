@@ -186,7 +186,7 @@ public interface World
 	public Mine getMine(int column, int row);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near a an entity. The collidables may be filtered by solidness and type.
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and type.
 	 * The entity that is passed in is not included in the returned list.
 	 *
 	 * @param entity
@@ -197,6 +197,21 @@ public interface World
 	 * @return a list of nearby collidables.
 	 */
 	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
+
+	/**
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and type.
+	 * The entity that is passed in is not included in the returned list. This overload allows for the max distance, in tiles, to
+	 * be passed in.
+	 *
+	 * @param entity
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
+	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
+	 * no type filter is applied.
+	 *
+	 * @return a list of nearby collidables.
+	 */
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance, @Nullable Class<?> typeFilter);
 
 	/**
 	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness.
