@@ -67,6 +67,8 @@ public class BuboloApplication extends AbstractGameApplication
 	 */
 	public BuboloApplication(int windowWidth, int windowHeight, boolean isClient, State initialState, String[] commandLineArgs)
 	{
+		assert initialState != null;
+
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
 		this.isClient = isClient;
@@ -164,7 +166,7 @@ public class BuboloApplication extends AbstractGameApplication
 	}
 
 	@Override
-	public void onStateChanged()
+	protected void onStateChanged()
 	{
 		World world = world();
 
@@ -191,13 +193,17 @@ public class BuboloApplication extends AbstractGameApplication
 			setReady(true);
 		} break;
 		case LOCAL_GAME: {
-			screen.dispose();
+			if (screen != null) {
+				screen.dispose();
+			}
 
 			Vector2 spawnLocation = getRandomSpawn(world);
 			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
 			tank.setOwnedByLocalPlayer(true);
+
+			network.startDebug();
 
 			setReady(true);
 		} break;

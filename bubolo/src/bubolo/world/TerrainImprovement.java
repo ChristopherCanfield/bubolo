@@ -24,7 +24,6 @@ public interface TerrainImprovement {
 		return 0;
 	}
 
-
 	UUID id();
 
 	/**

@@ -133,6 +133,12 @@ public class GameWorld implements World
 			throw new GameLogicException(e.getMessage());
 		}
 
+		assert entity.x() <= getWidth();
+		assert entity.y() <= getHeight() : "Invalid entity y: " + entity.y() + "; Max height: " + getHeight();
+		assert entity.tileColumn() < getTileColumns();
+		assert entity.tileRow() < getTileRows() : String.format("Invalid tile row: %d. Max rows: %d. Position (%d,%d). Type: %s",
+				entity.tileRow(), getTileRows(), entity.tileColumn(), entity.tileRow(), entity.getClass().getName());
+
 		processNewTank(entity);
 		processNewActorEntity(entity, controllerFactory);
 		processNewSpawn(entity);
@@ -182,11 +188,13 @@ public class GameWorld implements World
 			Terrain existingTerrain = terrain[t.tileColumn()][t.tileRow()];
 			if (existingTerrain != null) {
 				assert existingTerrain.isDisposed()
-					: String.format("Terrain % added to tile (%i,%i), which already has a terrain: %",
+					: String.format("Terrain %s added to tile (%d,%d), which already has a terrain: %s",
 							t.getClass().getName(),
 							t.tileColumn(), t.tileRow(),
 							existingTerrain.getClass().getName());
 			}
+
+			terrain[t.tileColumn()][t.tileRow()] = t;
 		}
 	}
 
@@ -201,7 +209,7 @@ public class GameWorld implements World
 			TerrainImprovement existingTerrainImprovement = terrainImprovements.get(tile);
 			if (existingTerrainImprovement != null) {
 				assert ((Entity) existingTerrainImprovement).isDisposed()
-					: String.format("TerrainImprovement % added to tile (%i,%i), which already has an improvement: %",
+					: String.format("TerrainImprovement %s added to tile (%d,%d), which already has an improvement: %s",
 							terrainImprovement.getClass().getName(),
 							entity.tileColumn(), entity.tileRow(),
 							existingTerrainImprovement.getClass().getName());
@@ -216,7 +224,7 @@ public class GameWorld implements World
 			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
 			Mine existingMine = mines.get(tile);
 			if (existingMine != null) {
-				assert mine.isDisposed() : String.format("Mine added to tile (%i,%i), which already has a mine.", mine.tileColumn(), mine.tileRow());
+				assert mine.isDisposed() : String.format("Mine added to tile (%d,%d), which already has a mine.", mine.tileColumn(), mine.tileRow());
 			}
 			mines.put(tile, mine);
 		}
@@ -228,7 +236,7 @@ public class GameWorld implements World
 			for (int row = 0; row < getTileRows(); row++) {
 				if (terrain[column][row] == null) {
 					float x = column * Coords.TileToWorldScale;
-					float y = column * Coords.TileToWorldScale;
+					float y = row * Coords.TileToWorldScale;
 					var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
 					addEntity(terrainType, args);
 				}
@@ -238,6 +246,9 @@ public class GameWorld implements World
 
 	@Override
 	public Terrain getTerrain(int column, int row) {
+		assert column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows() :
+				String.format( "Invalid terrain: %d,%d; max terrain is %d,%d.", column, row, getTileColumns(), getTileRows());
+
 		return terrain[column][row];
 	}
 

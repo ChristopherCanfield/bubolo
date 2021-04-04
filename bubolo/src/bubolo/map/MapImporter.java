@@ -312,7 +312,11 @@ public class MapImporter {
 					int posX = col * Coords.TileToWorldScale;
 					double rotation = Math.PI / 2.0;
 
+					// The x and y coords are flipped in the map.
 					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, (float) rotation);
+
+					System.out.println("Adding " + args);
+
 					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world, args);
 
 					diagnostics.typesImported.add(entity.getClass().getSimpleName());
