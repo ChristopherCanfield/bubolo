@@ -22,7 +22,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, Adaptabl
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Crater.class, Water.class };
 
-	private static final float speedModifier = 1.25f;
+	private static final float speedModifier = 0.45f;
 
 	private static final int width = 32;
 	private static final int height = 32;

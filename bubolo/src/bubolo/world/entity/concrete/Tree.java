@@ -29,7 +29,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	 */
 	public static final int maxHitPoints = 1;
 
-	private static final float speedModifier = 1.25f;
+	private static final float speedModifier = 0.5f;
 
 	private static final int width = 32;
 	private static final int height = 32;

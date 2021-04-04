@@ -25,7 +25,7 @@ public class Water extends Terrain implements Adaptable
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
 	 */
-	private static final float speedModifier = 0.4f;
+	private static final float speedModifier = 0.3f;
 
 	private static final int width = 32;
 	private static final int height = 32;
