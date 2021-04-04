@@ -2,7 +2,7 @@ package bubolo.controllers.ai;
 
 import com.badlogic.gdx.math.Intersector;
 
-import bubolo.controllers.Controller;
+import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
@@ -16,25 +16,22 @@ import bubolo.world.entity.concrete.Tank;
  *
  * @author BU CS673 - Clone Productions
  */
-public class AiPillboxController implements Controller
+public class AiPillboxController extends ActorEntityController<Pillbox>
 {
-	private final Pillbox pillbox;
-
 	/**
 	 * Constructs an AI Pillbox controller.
 	 *
 	 * @param pillbox the pillbox this controller will control.
 	 */
-	public AiPillboxController(Pillbox pillbox)
-	{
-		this.pillbox = pillbox;
+	public AiPillboxController(Pillbox pillbox) {
+		super(pillbox);
 	}
 
 	@Override
 	public void update(World world)
 	{
 		// Only fire if cannon is ready.
-		if (pillbox.isCannonReady()) {
+		if (parent().isCannonReady()) {
 			Tank target = getTarget(world);
 			if (target != null) {
 				fire(getTargetDirection(target), world);
@@ -50,6 +47,7 @@ public class AiPillboxController implements Controller
 	 * @param world the game world.
 	 */
 	private void handleTankCapture(World world) {
+		var pillbox = parent();
 		if (pillbox.hitPoints() <= 0) {
 			pillbox.updateBounds();
 
@@ -76,6 +74,8 @@ public class AiPillboxController implements Controller
 	 */
 	private Tank getTarget(World world)
 	{
+		var pillbox = parent();
+
 		Tank target = null;
 		double targetDistance = Integer.MAX_VALUE;
 
@@ -107,11 +107,11 @@ public class AiPillboxController implements Controller
 	 */
 	private boolean targetInRange(Tank target)
 	{
-		double xdistance = Math.abs(pillbox.x() - target.x());
-		double ydistance = Math.abs(pillbox.y() - target.y());
+		double xdistance = Math.abs(parent().x() - target.x());
+		double ydistance = Math.abs(parent().y() - target.y());
 		double distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
 
-		return (distance < pillbox.getRange());
+		return (distance < parent().getRange());
 	}
 
 	/**
@@ -122,8 +122,8 @@ public class AiPillboxController implements Controller
 	 */
 	private float getTargetDirection(Tank target)
 	{
-		double xvector = target.x() - pillbox.x();
-		double yvector = target.y() - pillbox.y();
+		double xvector = target.x() - parent().x();
+		double yvector = target.y() - parent().y();
 		float direction = (float) Math.atan2(yvector, xvector);
 
 		return direction;
@@ -137,8 +137,8 @@ public class AiPillboxController implements Controller
 	 */
 	private void fire(float rotation, World world)
 	{
-		pillbox.aimCannon(rotation);
-		pillbox.fireCannon(world);
+		parent().aimCannon(rotation);
+		parent().fireCannon(world);
 	}
 
 	private static void sendNetUpdate(Pillbox pillbox)

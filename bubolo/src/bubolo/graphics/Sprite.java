@@ -20,7 +20,7 @@ import bubolo.util.Coords;
 abstract class Sprite implements Drawable
 {
 	// The layer that this sprite is drawn to.
-	private DrawLayer drawLayer;
+	private final DrawLayer drawLayer;
 
 	// The sprite's color. White draws the texture as it appears in the file.
 	private Color color;

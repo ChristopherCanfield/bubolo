@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.badlogic.gdx.math.Intersector;
 
-import bubolo.controllers.Controller;
+import bubolo.controllers.ActorEntityController;
 import bubolo.world.Collidable;
 import bubolo.world.Entity;
 import bubolo.world.World;
@@ -19,24 +19,23 @@ import bubolo.world.entity.concrete.MineExplosion;
  *
  * @author BU CS673 - Clone Productions
  */
-public class AiMineController implements Controller
+public class AiMineController extends ActorEntityController<Mine>
 {
-	private final Mine mine;
-
 	/**
 	 * constructs an AI Mine controller
 	 *
 	 * @param mine
 	 *            the mine this controller will correspond to.
 	 */
-	public AiMineController(Mine mine)
-	{
-		this.mine = mine;
+	public AiMineController(Mine mine) {
+		super(mine);
 	}
 
 	@Override
 	public void update(World world)
 	{
+		var mine = parent();
+
 		if (mine.isActive()) {
 			for(Collidable collider : world.getNearbyCollidables(mine, true)) {
 				if (Intersector.overlapConvexPolygons(collider.bounds(), mine.bounds())) {

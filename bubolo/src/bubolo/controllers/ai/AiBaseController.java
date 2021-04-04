@@ -1,6 +1,6 @@
 package bubolo.controllers.ai;
 
-import bubolo.controllers.Controller;
+import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
@@ -14,14 +14,8 @@ import bubolo.world.entity.concrete.Tank;
  *
  * @author BU CS673 - Clone Productions
  */
-public class AiBaseController implements Controller
+public class AiBaseController extends ActorEntityController<Base>
 {
-	/**
-	 * the base this controller is controlling
-	 */
-	private final Base base;
-
-
 	/**
 	 * Time allowed between supply orders
 	 */
@@ -53,14 +47,15 @@ public class AiBaseController implements Controller
 	 * @param base
 	 *            the base this controller will correspond to.
 	 */
-	public AiBaseController(Base base)
-	{
-		this.base = base;
+	public AiBaseController(Base base) {
+		super(base);
 	}
 
 	@Override
 	public void update(World world)
 	{
+		Base base = parent();
+
 		base.setCharging(false);
 		for (Tank tank : world.getTanks()) {
 			if (tank.overlapsEntity(base)) {
