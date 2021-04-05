@@ -5,8 +5,7 @@ package bubolo.world;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Rubble extends StaticEntity implements TerrainImprovement
-{
+public class Rubble extends StaticEntity implements TerrainImprovement {
 	private static final float speedModifier = 0.6f;
 	private static final int width = 32;
 	private static final int height = 32;
@@ -16,8 +15,7 @@ public class Rubble extends StaticEntity implements TerrainImprovement
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	protected Rubble(ConstructionArgs args)
-	{
+	protected Rubble(ConstructionArgs args) {
 		super(args, width, height);
 	}
 
