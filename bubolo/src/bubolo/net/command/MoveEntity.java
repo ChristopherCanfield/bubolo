@@ -52,7 +52,7 @@ public class MoveEntity extends NetworkCommand
 		try
 		{
 			ActorEntity entity = (ActorEntity) world.getEntity(id);
-			entity.setX(x).setY(y).setRotation(rotation);
+			entity.setPosition(x, y).setRotation(rotation);
 		}
 		catch (GameLogicException e)
 		{

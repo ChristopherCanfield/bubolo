@@ -34,10 +34,12 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	private static final int width = 32;
 	private static final int height = 32;
 
-	private final BoundingBox boundingBox = new BoundingBox();
+	private final BoundingBox boundingBox;
 
 	public Tree(ConstructionArgs args) {
 		super(args, width, height);
+
+		boundingBox = new BoundingBox(this);
 	}
 
 	@Override

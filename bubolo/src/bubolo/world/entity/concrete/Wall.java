@@ -41,11 +41,13 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	private static final int width = 30;
 	private static final int height = 30;
 
-	private BoundingBox boundingBox = new BoundingBox();
+	private final BoundingBox boundingBox;
 
 	public Wall(ConstructionArgs args)
 	{
 		super(args, width, height);
+
+		boundingBox = new BoundingBox(this);
 	}
 
 	@Override

@@ -43,8 +43,7 @@ public class MoveTank extends NetworkCommand
 	{
 		Tank tank = (Tank) world.getEntity(id);
 		tank.setSpeed(new NetTankSpeed(speed));
-		tank.setX(x);
-		tank.setY(y);
+		tank.setPosition(x, y);
 		tank.setRotation(rotation);
 	}
 }

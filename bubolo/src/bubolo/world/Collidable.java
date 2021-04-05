@@ -39,7 +39,7 @@ public interface Collidable {
 	}
 
 	/**
-	 * Whether this collidable object overlaps another.
+	 * Tests whether this collidable object overlaps another.
 	 *
 	 * @param collidable a collidable object to check against.
 	 * @param collisionVector [optional] if present, this will be populated with the minimum magnitude vector required to push the
@@ -47,8 +47,6 @@ public interface Collidable {
 	 * @return true if this collidable object overlaps the passed in collidable.
 	 */
 	default boolean overlapsEntity(Collidable collidable, @Nullable Intersector.MinimumTranslationVector collisionVector) {
-		updateBounds();
-		collidable.updateBounds();
 		return Intersector.overlapConvexPolygons(bounds(), collidable.bounds(), collisionVector);
 	}
 }

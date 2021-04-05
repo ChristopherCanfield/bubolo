@@ -54,7 +54,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private static final int captureWidth = width + 10;
 	private static final int captureHeight = height + 10;
 
-	private final BoundingBox captureBounds = new BoundingBox();
+	private final BoundingBox captureBounds;
 
 	/**
 	 * Constructs a new Pillbox.
@@ -63,7 +63,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	public Pillbox(ConstructionArgs args) {
 		super(args, width, height);
-		updateBounds();
+		captureBounds = new BoundingBox(this, captureWidth, captureHeight);
 	}
 
 	/**

@@ -130,7 +130,8 @@ public class GameWorld implements World
 			var constructor = c.getDeclaredConstructor(Entity.ConstructionArgs.class);
 			entity = constructor.newInstance(args);
 		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
-			throw new GameLogicException(e.getMessage());
+			e.printStackTrace();
+			throw new GameLogicException(String.format("%s: \n%s", e.toString(), e.getCause().toString()));
 		}
 
 		assert entity.x() <= getWidth();

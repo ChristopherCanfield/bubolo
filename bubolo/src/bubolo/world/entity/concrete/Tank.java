@@ -1,13 +1,12 @@
 package bubolo.world.entity.concrete;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
-import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
@@ -24,31 +23,31 @@ import bubolo.world.Terrain;
 import bubolo.world.World;
 
 /**
- * The tank, which may be controlled by a local player, a networked player, or an AI bot.
+ * The tank, which may be controlled by a local player or networked player..
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class Tank extends ActorEntity implements Damageable
-{
+public class Tank extends ActorEntity implements Damageable {
 	private String playerName;
 
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 4.f;
 
-	/**
-	 * Used to calculate the maxSpeed based upon the interaction with the intersected
-	 * terrains
-	 */
+	// The maximum speed after tanking account the underlying terrain & terrainImprovement.
 	private float modifiedMaxSpeed = maxSpeed;
 
 	// The tank's current speed.
-	private float speed = 0.f;
+	private float speed = 0;
 
 	// The rate of acceleration, in pixels per tick.
 	private static final float accelerationRate = 0.01f;
 
 	// The rate of deceleration, in pixels per tick.
 	private static final float decelerationRate = 0.035f;
+
+	// The tank's rate of rotation per tick.
+	private static final float rotationRate = 0.03f;
 
 	// Specifies whether the tank accelerated this tick.
 	private boolean accelerated;
@@ -59,43 +58,34 @@ public class Tank extends ActorEntity implements Damageable
 	// Specifies whether the tank is hidden in trees
 	private boolean hidden;
 
-	// The tank's rate of rotation per tick.
-	private static final float rotationRate = 0.03f;
-
 	// The reload speed of the tank's cannon, in milliseconds.
 	private static final long cannonReloadSpeed = 500;
 
 	// The time that the tank will respawn.
-	private long respawnTime;
+	private long nextResponseTimeMillis;
 
-	private static final long TANK_RESPAWN_TIME_MILLIS = 1000L;
+	private static final long respawnTimeMillis = 1000L;
+
+	// The last time that the cannon was fired.
+	private long cannonFireTime = 0;
 
 	// Minimum amount of time between laying mines.
-	private static final long MINE_RELOAD_SPEED_MILLIS = 500;
-
-	// The last time that the cannon was fired. Populate this with
-	// System.currentTimeMillis().
-	private long cannonFireTime = 0;
+	private static final long mineLayingSpeedMillis = 500;
 
 	// The next time a mine will be ready to be laid.
 	private long mineAvailableTime = 0;
 
-	private Polygon leftBumper = new Polygon();
-	private Polygon rightBumper = new Polygon();
-	private float bumperWidth = 4.0f;
-	private float bumperHeight = 4.0f;
+	// Used for movement collision detection.
+	private final Circle boundingCircle;
+	private final float boundingCircleRadius = 4.0f;
 
-	/**
-	 * The default amount to rotate the Tank by when a bumper collision is detected. Used
-	 * to prevent getting 'stuck' on walls.
-	 */
-	private static final float rotationOffsetAmount = (float) Math.toRadians(1);
+	// The additional amount that the tank will bounce off a solid object.
+	private static final float collisionBounce = 0.25f;
 
-	/**
-	 * The default amount to reposition the Tank by when a bumper collision is detected.
-	 * Used to prevent getting 'stuck' on walls.
-	 */
-	private static final float positionOffsetAmount = 0.1f;
+	// The previous x position. Used for collision handling.
+	private float previousX = 0;
+	// The previous y position. Used for collision handling.
+	private float previousY = 0;
 
 	private static final int maxHitPoints = 100;
 	private float hitPoints = maxHitPoints;
@@ -103,8 +93,8 @@ public class Tank extends ActorEntity implements Damageable
 	private static final int maxAmmo = 100;
 	private int ammoCount = maxAmmo;
 
-	private static final int maxMine = 10;
-	private int mineCount = maxMine;
+	private static final int maxMines = 10;
+	private int mineCount = maxMines;
 
 	private static final Random randomGenerator = new Random();
 
@@ -116,23 +106,32 @@ public class Tank extends ActorEntity implements Damageable
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	public Tank(ConstructionArgs args)
-	{
+	public Tank(ConstructionArgs args) {
 		super(args, width, height);
 
+		boundingCircle = new Circle(x() + width / 2, y() - boundingCircleRadius, boundingCircleRadius);
 		updateBounds();
 	}
 
 	@Override
-	public void onUpdate(World world)
-	{
+	public void updateBounds() {
+		super.updateBounds();
+		boundingCircle.setPosition(x(), y());
+	}
+
+	@Override
+	public void onUpdate(World world) {
 		if (!isAlive()) {
 			respawn(world);
 		}
 
 		updateSpeedForTerrain(world);
 		moveTank(world);
+		performCollisionDetection(world);
 		hidden = checkIfHidden(world);
+
+		decelerated = false;
+		accelerated = false;
 	}
 
 	public String getPlayerName() {
@@ -148,8 +147,7 @@ public class Tank extends ActorEntity implements Damageable
 	 *
 	 * @return the tank's speed.
 	 */
-	public float speed()
-	{
+	public float speed() {
 		return speed;
 	}
 
@@ -158,8 +156,7 @@ public class Tank extends ActorEntity implements Damageable
 	 *
 	 * @param netTankSpeed a NetTankSpeed object that contains the tank's new speed.
 	 */
-	public void setSpeed(NetTankSpeed netTankSpeed)
-	{
+	public void setSpeed(NetTankSpeed netTankSpeed) {
 		if (netTankSpeed.getSpeed() > speed) {
 			accelerated = true;
 		}
@@ -170,8 +167,7 @@ public class Tank extends ActorEntity implements Damageable
 	/**
 	 * Accelerates the tank.
 	 */
-	public void accelerate()
-	{
+	public void accelerate() {
 		if (speed < modifiedMaxSpeed && !accelerated) {
 			speed += accelerationRate;
 			if (speed > modifiedMaxSpeed) {
@@ -185,8 +181,7 @@ public class Tank extends ActorEntity implements Damageable
 	/**
 	 * Decelerates the tank.
 	 */
-	public void decelerate()
-	{
+	public void decelerate() {
 		if (speed > 0 && !decelerated) {
 			speed -= decelerationRate;
 			decelerated = true;
@@ -194,6 +189,9 @@ public class Tank extends ActorEntity implements Damageable
 		clampSpeed();
 	}
 
+	/**
+	 * Ensures that the tank's speed remains between 0 and modifiedMaxSpeed.
+	 */
 	private void clampSpeed() {
 		if (speed > modifiedMaxSpeed) {
 			speed = modifiedMaxSpeed;
@@ -205,16 +203,14 @@ public class Tank extends ActorEntity implements Damageable
 	/**
 	 * Rotates the tank clockwise.
 	 */
-	public void rotateRight()
-	{
+	public void rotateRight() {
 		setRotation(rotation() + rotationRate);
 	}
 
 	/**
 	 * Rotates the tank counter-clockwise.
 	 */
-	public void rotateLeft()
-	{
+	public void rotateLeft() {
 		setRotation(rotation() - rotationRate);
 	}
 
@@ -223,28 +219,21 @@ public class Tank extends ActorEntity implements Damageable
 	 *
 	 * @return true if the cannon is ready to fire.
 	 */
-	public boolean isCannonReady()
-	{
+	public boolean isCannonReady() {
 		return (System.currentTimeMillis() - cannonFireTime > cannonReloadSpeed);
 	}
 
 	/**
-	 * Fires the tank's cannon, which adds a bullet to the world and initiates a cannon
-	 * reload.
+	 * Fires the tank's cannon, which adds a bullet to the world and initiates a cannon reload.
 	 *
-	 * @param world
-	 *            reference to the world.
-	 * @param startX
-	 *            the bullet's start x position.
-	 * @param startY
-	 *            the bullet's start y position.
+	 * @param world  reference to the world.
+	 * @param startX the bullet's start x position.
+	 * @param startY the bullet's start y position.
 	 *
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
-	public Bullet fireCannon(World world, float startX, float startY)
-	{
-		if ((ammoCount > 0) && (cannonFireTime - System.currentTimeMillis() < 0))
-		{
+	public Bullet fireCannon(World world, float startX, float startY) {
+		if ((ammoCount > 0) && (cannonFireTime - System.currentTimeMillis() < 0)) {
 			cannonFireTime = System.currentTimeMillis();
 
 			var args = new Entity.ConstructionArgs(UUID.randomUUID(), startX, startY, rotation());
@@ -256,21 +245,9 @@ public class Tank extends ActorEntity implements Damageable
 			return bullet;
 		}
 
-		else
-		{
+		else {
 			return null;
 		}
-	}
-
-	private Polygon lookAheadBounds()
-	{
-		Polygon lookAheadBounds = bounds();
-
-		float newX = (float) (x() + Math.cos(rotation()) * speed);
-		float newY = (float) (y() + Math.sin(rotation()) * speed);
-
-		lookAheadBounds.setPosition(newX, newY);
-		return lookAheadBounds;
 	}
 
 	/**
@@ -280,10 +257,9 @@ public class Tank extends ActorEntity implements Damageable
 		return hidden || !isAlive();
 	}
 
-	private static Intersector.MinimumTranslationVector minTranslationVector = new MinimumTranslationVector();
+	private static final Intersector.MinimumTranslationVector minTranslationVector = new MinimumTranslationVector();
 
-	private boolean checkIfHidden(World world)
-	{
+	private boolean checkIfHidden(World world) {
 		// If this much of the tank is covered by one or more tree tiles, it counts as hidden.
 		final float minTreeCoverage = width() * 0.85f;
 
@@ -302,130 +278,6 @@ public class Tank extends ActorEntity implements Damageable
 	}
 
 	/**
-	 * Returns a list of all solid Entities that will overlap with this Tank if continues on its current path.
-	 */
-	private List<Collidable> getLookaheadEntities(World world)
-	{
-		var nextTickBounds = lookAheadBounds();
-		var nextTickOverlappedEntities = new ArrayList<Collidable>();
-
-		var collidables = world.getNearbyCollidables(this, true);
-		for (Collidable collidable : collidables) {
-			assert collidable.isSolid() : collidable.toString();
-			if (overlapsEntity(collidable) || Intersector.overlapConvexPolygons(nextTickBounds, collidable.bounds())) {
-				nextTickOverlappedEntities.add(collidable);
-			}
-		}
-
-		return nextTickOverlappedEntities;
-	}
-
-	/**
-	 * Update the left and right bumpers to use current positioning and speed information.
-	 */
-	private void updateBumpers()
-	{
-		updateLeftBumper();
-		updateRightBumper();
-	}
-
-	/**
-	 * Updates the bounding polygon for this Entity with its current position and
-	 * rotation.
-	 */
-	private void updateLeftBumper()
-	{
-		float newX = (float) (x() + Math.cos(rotation()) * speed);
-		float newY = (float) (y() + Math.sin(rotation()) * speed);
-		float w = width();
-		float h = height();
-
-		// Defines the corners of the left bumper as a 4x4 pixel box, placed at the
-		// top-left edge of the tank, with its left edge along the left edge of the
-		// tank and its topmost edge aligned with the front edge of the tank.
-		float[] corners = new float[] { -w / 2f, h / 2f, -w / 2f + 4, h / 2f, -w / 2f, h / 2f - 4,
-				-w / 2f + 4, h / 2f - 4 };
-		leftBumper = new Polygon();
-		leftBumper.setPosition(newX, newY);
-		leftBumper.setOrigin(0, 0);
-		leftBumper.setVertices(corners);
-		leftBumper.rotate((float) Math.toDegrees(rotation() - Math.PI / 2));
-	}
-
-	/**
-	 * Updates the bounding polygon for this Entity with its current position and
-	 * rotation.
-	 */
-	private void updateRightBumper()
-	{
-		float newX = (float) (x() + Math.cos(rotation()) * speed);
-		float newY = (float) (y() + Math.sin(rotation()) * speed);
-		float w = width();
-		float h = height();
-
-		// Defines the corners of the right bumper as a 4x4 pixel box, placed at the
-		// top-right edge of the tank, with its left edge along the left edge of the
-		// tank and its topmost edge aligned with the front edge of the tank.
-		float[] corners = new float[] { w / 2f, h / 2f, w / 2f - bumperWidth, h / 2f, w / 2f,
-				h / 2f - bumperHeight, w / 2f - bumperWidth, h / 2f - bumperHeight };
-		rightBumper = new Polygon();
-		rightBumper.setPosition(newX, newY);
-		rightBumper.setOrigin(0, 0);
-		rightBumper.setVertices(corners);
-		rightBumper.rotate((float) Math.toDegrees(rotation() - Math.PI / 2));
-	}
-
-	/**
-	 * Checks to see if an Entity overlaps with this Tank's left bumper.
-	 */
-	private boolean hitLeftBumper(Collidable e)
-	{
-		return Intersector.overlapConvexPolygons(e.bounds(), leftBumper);
-	}
-
-	/**
-	 * Checks to see if an Entity overlaps with this Tank's right bumper.
-	 */
-	private boolean hitRightBumper(Collidable e)
-	{
-		return Intersector.overlapConvexPolygons(e.bounds(), rightBumper);
-	}
-
-	/**
-	 * Checks to see if this Tank is facing to the Northeast (for bumper collisions)
-	 */
-	private boolean facingNE()
-	{
-		return (rotation() >= 0 && rotation() < (Math.PI / 2));
-	}
-
-	/**
-	 * Checks to see if this Tank is facing to the Northwest (for bumper collisions)
-	 */
-	private boolean facingNW()
-	{
-		return (rotation() >= (Math.PI / 2) && rotation() < Math.PI);
-	}
-
-	/**
-	 * Checks to see if this Tank is facing to the Southwest (for bumper collisions)
-	 */
-	private boolean facingSW()
-	{
-		return (rotation() >= Math.PI && rotation() < (3 * Math.PI) / 2);
-	}
-
-	/**
-	 * Checks to see if this Tank is facing to the Southeast (for bumper collisions)
-	 */
-	private boolean facingSE()
-	{
-		return (rotation() >= (3 * Math.PI) / 2 && rotation() < (2 * Math.PI));
-	}
-
-
-
-	/**
 	 * Updates the tank's speed for the underlying terrain.
 	 *
 	 * @param world reference to the game world.
@@ -442,160 +294,55 @@ public class Tank extends ActorEntity implements Damageable
 	}
 
 	/**
-	 * Updates the Tank's world position according to its speed, acceleration/deceleration
-	 * state, and collision information.
+	 * Updates the Tank's world position according to its speed, acceleration/deceleration state, and collision information.
 	 *
 	 * @param world reference to the game world.
 	 */
-	private void moveTank(World world)
-	{
-		float xPos = x();
-		float yPos = y();
-		float rotation = rotation();
+	private void moveTank(World world) {
+		float amountMovedX = (float) Math.cos(rotation()) * speed;
+		float amountMovedY = (float) Math.sin(rotation()) * speed;
 
-		/*
-		 * The position where the Tank will be after one game tick, if it continues its
-		 * current trajectory and speed.
-		 */
-		float newX = (float) (xPos + Math.cos(rotation) * speed);
-		float newY = (float) (yPos + Math.sin(rotation) * speed);
+		float newX = x() + amountMovedX;
+		float newY = y() + amountMovedY;
 
 		// Prevent the tank from exiting the game world.
 		if (world.containsPoint(newX, newY)) {
 			return;
 		}
 
-		// Update (replace) the right and left bumper polygons to make sure collisions are accurate.
-		updateBumpers();
+		previousX = x();
+		previousY = y();
+		setPosition(newX, newY);
+	}
 
-		// Record which, if any, bumpers were hit.
-		boolean collidingLeft = false;
-		boolean collidingRight = false;
+	private void performCollisionDetection(World world) {
+		int dirX = (x() - previousX) > 0 ? 1 : -1;
+		int dirY = (y() - previousY) > 0 ? 1 : -1;
 
-		for (var collider : getLookaheadEntities(world)) {
-			if (!collidingLeft) {
-				collidingLeft = hitLeftBumper(collider);
-			}
-			if (!collidingRight) {
-				collidingRight = hitRightBumper(collider);
-			}
+		// Search for collisions. If one is found, move the tank back to its previous position, plus an
+		// offset defined by collisionBounce.
+		var adjacentCollidables = world.getNearbyCollidables(this, true, 1, null);
+		for (var collider : adjacentCollidables) {
+			if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
+				float newX = previousX + (-dirX * collisionBounce);
+				float newY = previousY + (-dirY * collisionBounce);
+				setPosition(newX, newY);
 
-			// If colliders were found on the left and right, there is no need to continue checking.
-			if (collidingLeft && collidingRight) {
+				decelerate();
 				break;
 			}
 		}
 
-		/*
-		 * Floats used the offset that should be applied to the Tank to record wall
-		 * collisions.
-		 */
-		float rotationOffset = 0f;
-		float xOffset = 0;
-		float yOffset = 0;
+		// Check again for collisions. If one is found, move the tank back to its previous position, without the
+		// collisionBounce offset. This prevents the tank from tunneling through solid objects, which could occur
+		// if the tank is bounced into a solid object.
+		for (var collider : adjacentCollidables) {
+			if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
+				setPosition(previousX, previousY);
 
-		/*
-		 * If the Tank hit something with its left bumper, restrict travel in the
-		 * appropriate direction, and offset/rotate the Tank to 'slide' away from the
-		 * collision.
-		 */
-		if (collidingLeft) {
-			rotationOffset -= rotationOffsetAmount;
-			if (facingNE())
-			{
-				if (newY > yPos)
-				{
-					newY = yPos;
-					yOffset -= positionOffsetAmount;
-				}
-			}
-			else if (facingNW())
-			{
-				if (newX < xPos)
-				{
-					newX = xPos;
-					xOffset += positionOffsetAmount;
-				}
-			}
-			else if (facingSW())
-			{
-				if (newY < yPos)
-				{
-					newY = yPos;
-					yOffset += positionOffsetAmount;
-				}
-			}
-			else if (facingSE())
-			{
-				if (newX > xPos)
-				{
-					newX = xPos;
-					xOffset -= positionOffsetAmount;
-				}
+				break;
 			}
 		}
-
-		/*
-		 * If the Tank hit something with its right bumper, restrict travel in the
-		 * appropriate direction, and offset/rotate the Tank to 'slide' away from the
-		 * collision.
-		 */
-		if (collidingRight) {
-			rotationOffset += rotationOffsetAmount;
-			if (facingNE())
-			{
-				if (newX > xPos)
-				{
-					newX = xPos;
-					xOffset -= positionOffsetAmount;
-				}
-			}
-			else if (facingNW())
-			{
-				if (newY > yPos)
-				{
-					newY = yPos;
-					yOffset -= positionOffsetAmount;
-				}
-			}
-			else if (facingSW())
-			{
-				if (newX < xPos)
-				{
-					newX = xPos;
-					xOffset += positionOffsetAmount;
-				}
-			}
-			else if (facingSE())
-			{
-				if (newY < yPos)
-				{
-					newY = yPos;
-					yOffset += positionOffsetAmount;
-				}
-			}
-		}
-
-		/*
-		 * If the speed of the Tank is greater than zero, modify its position and rotation
-		 * by the offsets given earlier. Note that if a Tank collides on the left and
-		 * right bumpers simultaneously, the rotational offsets will cancel each other
-		 * out.
-		 */
-		if (speed > 0)
-		{
-			setX(newX + xOffset);
-			setY(newY + yOffset);
-			setRotation(rotation + rotationOffset);
-
-			if (!accelerated)
-			{
-				decelerate();
-			}
-		}
-
-		accelerated = false;
-		decelerated = false;
 	}
 
 	/**
@@ -604,8 +351,7 @@ public class Tank extends ActorEntity implements Damageable
 	 * @return current hit point count
 	 */
 	@Override
-	public float hitPoints()
-	{
+	public float hitPoints() {
 		return hitPoints;
 	}
 
@@ -615,8 +361,7 @@ public class Tank extends ActorEntity implements Damageable
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int maxHitPoints()
-	{
+	public int maxHitPoints() {
 		return maxHitPoints;
 	}
 
@@ -625,8 +370,7 @@ public class Tank extends ActorEntity implements Damageable
 	 *
 	 * @return current ammo count
 	 */
-	public int getAmmoCount()
-	{
+	public int getAmmoCount() {
 		return ammoCount;
 	}
 
@@ -635,21 +379,18 @@ public class Tank extends ActorEntity implements Damageable
 	 *
 	 * @return the current mine count
 	 */
-	public int getMineCount()
-	{
+	public int getMineCount() {
 		return mineCount;
 	}
 
 	/**
 	 * Changes the hit point count after taking damage
 	 *
-	 * @param damagePoints
-	 *            how much damage the tank has taken
+	 * @param damagePoints how much damage the tank has taken
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world)
-	{
-		assert(damagePoints >= 0);
+	public void receiveDamage(float damagePoints, World world) {
+		assert (damagePoints >= 0);
 
 		if (hitPoints > 0) {
 			hitPoints -= damagePoints;
@@ -664,27 +405,21 @@ public class Tank extends ActorEntity implements Damageable
 	/**
 	 * Called when the tank dies.
 	 */
-	private void onDeath()
-	{
+	private void onDeath() {
 		Audio.play(Sfx.TANK_EXPLOSION);
-		respawnTime = System.currentTimeMillis() + TANK_RESPAWN_TIME_MILLIS;
+		nextResponseTimeMillis = System.currentTimeMillis() + respawnTimeMillis;
 	}
 
 	/**
 	 * Increments the tanks health by a given amount
 	 *
-	 * @param healPoints
-	 *            - how many points the tank is given
+	 * @param healPoints - how many points the tank is given
 	 */
 	@Override
-	public void heal(float healPoints)
-	{
-		if (hitPoints + Math.abs(healPoints) < maxHitPoints)
-		{
+	public void heal(float healPoints) {
+		if (hitPoints + Math.abs(healPoints) < maxHitPoints) {
 			hitPoints += Math.abs(healPoints);
-		}
-		else
-		{
+		} else {
 			hitPoints = maxHitPoints;
 		}
 	}
@@ -692,11 +427,9 @@ public class Tank extends ActorEntity implements Damageable
 	/**
 	 * Supplies the tank ammo with given a set amount
 	 *
-	 * @param newAmmo
-	 *            - amount of ammo being transfered to the tank
+	 * @param newAmmo - amount of ammo being transfered to the tank
 	 */
-	public void gatherAmmo(int newAmmo)
-	{
+	public void gatherAmmo(int newAmmo) {
 		assert newAmmo >= 0;
 		ammoCount += newAmmo;
 		if (ammoCount > maxAmmo) {
@@ -707,15 +440,13 @@ public class Tank extends ActorEntity implements Damageable
 	/**
 	 * This method supplies the tank with mines
 	 *
-	 * @param minesGathered
-	 *            - the number of mines to supply the tank with
+	 * @param minesGathered - the number of mines to supply the tank with
 	 */
-	public void gatherMine(int minesGathered)
-	{
+	public void gatherMine(int minesGathered) {
 		assert minesGathered >= 0;
 		mineCount += minesGathered;
-		if (mineCount > maxMine) {
-			mineCount = maxMine;
+		if (mineCount > maxMines) {
+			mineCount = maxMines;
 		}
 	}
 
@@ -725,13 +456,12 @@ public class Tank extends ActorEntity implements Damageable
 	 * @param world reference to the game world.
 	 * @return The mine, or null if a mine is unable to be placed.
 	 */
-	public Mine dropMine(World world)
-	{
+	public Mine dropMine(World world) {
 		if (mineAvailableTime < System.currentTimeMillis() && mineCount > 0) {
 
 			Terrain terrain = world.getTerrain(tileColumn(), tileRow());
 			if (!terrain.isBuildable()) {
-				mineAvailableTime = System.currentTimeMillis() + MINE_RELOAD_SPEED_MILLIS;
+				mineAvailableTime = System.currentTimeMillis() + mineLayingSpeedMillis;
 
 				int mineX = tileColumn() * Coords.TileToWorldScale;
 				int mineY = tileRow() * Coords.TileToWorldScale;
@@ -746,18 +476,16 @@ public class Tank extends ActorEntity implements Damageable
 		return null;
 	}
 
-	private void respawn(World world)
-	{
+	private void respawn(World world) {
 		// Don't allow the tank to respawn until its respawn timer has expired.
-		if (respawnTime > System.currentTimeMillis()) {
+		if (nextResponseTimeMillis > System.currentTimeMillis()) {
 			return;
 		}
 
 		var spawns = world.getSpawns();
 		if (spawns.size() > 0) {
 			Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-			setX(spawn.x());
-			setY(spawn.y());
+			setPosition(spawn.x(), spawn.y());
 
 			Network net = NetworkSystem.getInstance();
 			net.send(new MoveTank(this));
@@ -765,25 +493,25 @@ public class Tank extends ActorEntity implements Damageable
 
 		hitPoints = maxHitPoints;
 		ammoCount = maxAmmo;
-		mineCount = maxMine;
+		mineCount = maxMines;
 	}
 
 	/**
 	 * Maximum amount of ammo for tank
+	 *
 	 * @return maximum ammo count of tank
 	 */
-	public int getTankMaxAmmo()
-	{
+	public int getTankMaxAmmo() {
 		return maxAmmo;
 	}
 
 	/**
 	 * Maximum amount of mines for tank
+	 *
 	 * @return maximum amount of mines a tank can carry
 	 */
-	public int getTankMaxMineCount()
-	{
-		return maxMine;
+	public int getTankMaxMineCount() {
+		return maxMines;
 	}
 
 	@Override

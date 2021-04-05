@@ -24,7 +24,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	private ActorEntity owner;
 	private boolean ownedByLocalPlayer;
 
-	private final BoundingBox boundingBox = new BoundingBox();
+	private final BoundingBox boundingBox;
 
 	private static final Controller nullController = world -> {};
 
@@ -37,6 +37,8 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		this.y = args.y();
 
 		this.rotation = args.rotationRadians();
+
+		boundingBox = new BoundingBox(this);
 	}
 
 	@Override
@@ -54,18 +56,23 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		return x;
 	}
 
-	public ActorEntity setX(float x) {
-		this.x = x;
-		return this;
-	}
-
 	@Override
 	public float y() {
 		return y;
 	}
 
-	public ActorEntity setY(float y) {
+	/**
+	 * Sets the actor's position, and updates its bounds.
+	 *
+	 * @param x the actor's new x position.
+	 * @param y the actor's new y position.
+	 * @return reference to this actor.
+	 */
+	public ActorEntity setPosition(float x, float y) {
+		assert x >= 0 && y >= 0;
+		this.x = x;
 		this.y = y;
+		updateBounds();
 		return this;
 	}
 

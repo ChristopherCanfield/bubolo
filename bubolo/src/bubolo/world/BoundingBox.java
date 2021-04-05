@@ -9,7 +9,15 @@ import com.badlogic.gdx.math.Polygon;
  * @since 0.4.0
  */
 public class BoundingBox {
-	private Polygon bounds;
+	private Polygon bounds = new Polygon(new float[8]);
+
+	public BoundingBox(Entity entity) {
+		this(entity, entity.width(), entity.height());
+	}
+
+	public BoundingBox(Entity entity, int width, int height) {
+		updateBounds(entity, width, height);
+	}
 
 	public void updateBounds(Entity entity) {
 		updateBounds(entity, entity.height(), entity.width());
@@ -21,15 +29,21 @@ public class BoundingBox {
 		float w = width;
 		float h = height;
 
-		float[] corners = new float[] {
-				w / 2f, h / 2f,
-				w / 2f, -h / 2f,
-				-w / 2f, h / 2f,
-				-w / 2f, -h / 2f };
-		bounds = new Polygon();
+		float[] corners = bounds.getVertices();
+		corners[0] = w / 2f;
+		corners[1] = h / 2f;
+
+		corners[2] = w / 2f;
+		corners[3] = -h / 2f;
+
+		corners[4] = -w / 2f;
+		corners[5] = h / 2f;
+
+		corners[6] = w / 2f;
+		corners[7] = -h / 2f;
+
 		bounds.setPosition(x, y);
-		bounds.rotate((float) Math.toDegrees(entity.rotation() - Math.PI / 2));
-		bounds.setVertices(corners);
+		bounds.dirty();
 	}
 
 	public Polygon bounds() {

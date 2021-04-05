@@ -86,8 +86,7 @@ public class Bullet extends ActorEntity
 			return;
 		}
 
-		setX(x() + movementX);
-		setY(y() + movementY);
+		setPosition(x() + movementX, y() + movementY);
 
 		distanceTraveled += Math.abs(movementX) + Math.abs(movementY);
 
