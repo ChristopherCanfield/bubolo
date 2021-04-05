@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.MineExplosion;
+import bubolo.world.MineExplosion;
 
 /**
  * The graphical representation of a MineExplosion Entity.

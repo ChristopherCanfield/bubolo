@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.concrete.Grass;
+import bubolo.world.Grass;
 
 /**
  * The graphical representation of grass entity.

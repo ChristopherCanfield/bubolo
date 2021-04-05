@@ -9,10 +9,10 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateBullet;
 import bubolo.net.command.CreateEntity;
 import bubolo.net.command.MoveTank;
+import bubolo.world.Bullet;
+import bubolo.world.Mine;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Bullet;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * A controller for the local tank. This controller maps keyboard inputs to tank commands.

@@ -3,7 +3,7 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.concrete.Base;
+import bubolo.world.Base;
 
 /**
  * The graphical representation of a Base Entity.

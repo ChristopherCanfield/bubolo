@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.concrete.Tree;
+import bubolo.world.Tree;
 
 /**
  * The graphical representation of a Tree.

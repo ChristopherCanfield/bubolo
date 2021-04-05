@@ -12,21 +12,6 @@ import org.junit.Test;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.ai.AiTreeController;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.concrete.Base;
-import bubolo.world.entity.concrete.Bullet;
-import bubolo.world.entity.concrete.Crater;
-import bubolo.world.entity.concrete.DeepWater;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Road;
-import bubolo.world.entity.concrete.Rubble;
-import bubolo.world.entity.concrete.Spawn;
-import bubolo.world.entity.concrete.Swamp;
-import bubolo.world.entity.concrete.Tank;
-import bubolo.world.entity.concrete.Tree;
-import bubolo.world.entity.concrete.Wall;
-import bubolo.world.entity.concrete.Water;
 
 public class GameWorldTest
 {

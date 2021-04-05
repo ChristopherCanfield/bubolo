@@ -4,8 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.badlogic.gdx.graphics.Camera;
 
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * Controller that moves the camera based on the tank's position.

@@ -7,9 +7,6 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.Spawn;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * Stores and processes game entities.

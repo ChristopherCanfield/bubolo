@@ -1,22 +1,18 @@
-package bubolo.world.entity.concrete;
+package bubolo.world;
 
 import bubolo.util.TileUtil;
-import bubolo.world.Adaptable;
-import bubolo.world.Terrain;
-import bubolo.world.World;
 
 /**
  * Road is a Terrain type that offers tanks improved movement speed.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Road extends Terrain implements Adaptable
-{
+public class Road extends Terrain implements Adaptable {
 	private int tilingState = 0;
 
 	/**
-	 * Intended to be generic -- this is a list of all of the StationaryEntities classes that should
-	 * result in a valid match when checking surrounding tiles to determine adaptive tiling state.
+	 * An array containing the classes that result in a valid match when determining adaptive tiling state.
+	 * TODO (cdc - 2021-04-05): This affects only the visualization, and probably should not be in this class.
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Road.class };
 
@@ -33,20 +29,17 @@ public class Road extends Terrain implements Adaptable
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	public Road(ConstructionArgs args)
-	{
+	protected Road(ConstructionArgs args) {
 		super(args, width, height, speedModifier);
 	}
 
 	@Override
-	public void updateTilingState(World w)
-	{
+	public void updateTilingState(World w) {
 		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
 	}
 
 	@Override
-	public int getTilingState()
-	{
+	public int getTilingState() {
 		return tilingState;
 	}
 }

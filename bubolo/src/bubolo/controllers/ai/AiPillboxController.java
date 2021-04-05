@@ -6,9 +6,9 @@ import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
+import bubolo.world.Pillbox;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * A controller for pillboxes. This controller searches for a target, and fires when the pillbox

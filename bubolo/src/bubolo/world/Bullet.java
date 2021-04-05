@@ -1,21 +1,15 @@
-package bubolo.world.entity.concrete;
+package bubolo.world;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
-import bubolo.world.ActorEntity;
-import bubolo.world.Collidable;
-import bubolo.world.Damageable;
-import bubolo.world.Entity;
-import bubolo.world.World;
 
 /**
- * Bullets are shot by Tanks and Pillboxes, and can cause damage to StationaryElements and other
- * Actors.
+ * Bullets are shot by Tanks and Pillboxes, and can cause damage to StationaryElements and other Actors.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class Bullet extends ActorEntity
-{
+public class Bullet extends ActorEntity {
 	// The max distance the bullet can travel, in world units.
 	private static final float maxDistance = 600;
 
@@ -45,8 +39,7 @@ public class Bullet extends ActorEntity
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	public Bullet(ConstructionArgs args)
-	{
+	protected Bullet(ConstructionArgs args) {
 		super(args, width, height);
 		updateBounds();
 
@@ -63,11 +56,9 @@ public class Bullet extends ActorEntity
 	}
 
 	/**
-	 * Sets the x and y movement values. Should be called once (but not in the constructor, since
-	 * the rotation is not yet set).
+	 * Sets the x and y movement values. Should be called once (but not in the constructor, since the rotation is not yet set).
 	 */
-	private void initialize()
-	{
+	private void initialize() {
 		movementX = (float) (Math.cos(rotation()) * speed);
 		movementY = (float) (Math.sin(rotation()) * speed);
 
@@ -75,13 +66,10 @@ public class Bullet extends ActorEntity
 	}
 
 	/**
-	 * Moves the bullet. Calls dispose() on this entity if the distance travelled has exceeded the
-	 * MAX_DISTANCE value.
+	 * Moves the bullet. Calls dispose() on this entity if the distance travelled has exceeded the MAX_DISTANCE value.
 	 */
-	private void move(World world)
-	{
-		if (distanceTraveled > maxDistance)
-		{
+	private void move(World world) {
+		if (distanceTraveled > maxDistance) {
 			dispose();
 			return;
 		}
@@ -93,8 +81,7 @@ public class Bullet extends ActorEntity
 		processCollisions(world);
 	}
 
-	private void processCollisions(World w)
-	{
+	private void processCollisions(World w) {
 		for (Collidable collidable : w.getNearbyCollidables(this, false, Damageable.class)) {
 			Entity e = (Entity) collidable;
 			if (e != owner() && overlapsEntity(collidable)) {

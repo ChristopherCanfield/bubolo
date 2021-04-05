@@ -1,4 +1,4 @@
-package bubolo.world.entity.concrete;
+package bubolo.world;
 
 import java.util.List;
 import java.util.Random;
@@ -15,12 +15,6 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.MoveTank;
 import bubolo.net.command.NetTankSpeed;
 import bubolo.util.Coords;
-import bubolo.world.ActorEntity;
-import bubolo.world.Collidable;
-import bubolo.world.Damageable;
-import bubolo.world.Entity;
-import bubolo.world.Terrain;
-import bubolo.world.World;
 
 /**
  * The tank, which may be controlled by a local player or networked player..
@@ -106,7 +100,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	public Tank(ConstructionArgs args) {
+	protected Tank(ConstructionArgs args) {
 		super(args, width, height);
 
 		boundingCircle = new Circle(x() + width / 2, y() - boundingCircleRadius, boundingCircleRadius);

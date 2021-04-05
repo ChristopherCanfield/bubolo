@@ -17,9 +17,6 @@ import bubolo.controllers.Controllers;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.Spawn;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * The concrete implementation of the World interface. GameWorld is the sole owner of Entity

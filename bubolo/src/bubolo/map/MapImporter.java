@@ -23,23 +23,23 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 import bubolo.Config;
 import bubolo.util.Coords;
 import bubolo.util.Nullable;
+import bubolo.world.Base;
+import bubolo.world.Crater;
+import bubolo.world.DeepWater;
 import bubolo.world.Entity;
 import bubolo.world.EntityCreationObserver;
 import bubolo.world.GameWorld;
+import bubolo.world.Grass;
+import bubolo.world.Mine;
+import bubolo.world.Pillbox;
+import bubolo.world.Road;
+import bubolo.world.Rubble;
+import bubolo.world.Spawn;
+import bubolo.world.Swamp;
+import bubolo.world.Tree;
+import bubolo.world.Wall;
+import bubolo.world.Water;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Base;
-import bubolo.world.entity.concrete.Crater;
-import bubolo.world.entity.concrete.DeepWater;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Road;
-import bubolo.world.entity.concrete.Rubble;
-import bubolo.world.entity.concrete.Spawn;
-import bubolo.world.entity.concrete.Swamp;
-import bubolo.world.entity.concrete.Tree;
-import bubolo.world.entity.concrete.Wall;
-import bubolo.world.entity.concrete.Water;
 
 /**
  * Imports the Tiled-generated map.

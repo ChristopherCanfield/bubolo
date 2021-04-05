@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import bubolo.graphics.LibGdxAppTester;
 import bubolo.mock.MockBulletCreator;
+import bubolo.world.Pillbox;
 import bubolo.world.entity.EntityTestCase;
 
 public class PillboxTest

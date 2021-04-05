@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.Road;
+import bubolo.world.Road;
 
 /**
  * The graphical representation of a Road

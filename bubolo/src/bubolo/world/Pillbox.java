@@ -1,4 +1,4 @@
-package bubolo.world.entity.concrete;
+package bubolo.world;
 
 import java.util.UUID;
 
@@ -10,38 +10,31 @@ import bubolo.audio.Sfx;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
-import bubolo.world.ActorEntity;
-import bubolo.world.BoundingBox;
-import bubolo.world.Damageable;
-import bubolo.world.Entity;
-import bubolo.world.TerrainImprovement;
-import bubolo.world.World;
 
 /**
- * Pillboxes are stationary defensive structures that can be placed by a Tank.
- * They shoot at an enemy Tank until destroyed, at which point they can be
- * retrieved and used again.
+ * Pillboxes are stationary defensive structures that shoot at enemy tanks, and can be captured. Captured pillboxes do not shoot
+ * at their owner.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 public class Pillbox extends ActorEntity implements Damageable, TerrainImprovement {
-	/* When the cannon will be ready to fire. */
+	/** When the cannon will be ready to fire. */
 	private long cannonReadyTime = 0;
 
-	/* Time required to reload cannon. */
+	/** Time required to reload cannon. */
 	private static final long cannonReloadSpeed = 500;
 
 	/* The direction the pillbox will fire. */
 	private float cannonRotation = 0;
 
-	/* Max range to locate a target. Pillbox will not fire unless there is a tank
-	 * within this range. */
+	/** Max range to locate a target. Pillbox will not fire unless there is a tank within this range. */
 	private double range = 300;
 
-	/* The pillbox's health. */
+	/** The pillbox's health. */
 	private float hitPoints = MAX_HIT_POINTS;
 
-	/* The pillbox's maximum health. */
+	/** The pillbox's maximum health. */
 	public static final int MAX_HIT_POINTS = 100;
 
 	// 0.5f / FPS = heals ~0.5 health per second.
@@ -50,10 +43,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private static final int width = 27;
 	private static final int height = 27;
 
-	// Gives the appearance of capturing the pillbox by touching it.
 	private static final int captureWidth = width + 10;
 	private static final int captureHeight = height + 10;
 
+	// Gives the appearance of capturing the pillbox by touching it.
 	private final BoundingBox captureBounds;
 
 	/**
@@ -61,7 +54,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	public Pillbox(ConstructionArgs args) {
+	protected Pillbox(ConstructionArgs args) {
 		super(args, width, height);
 		captureBounds = new BoundingBox(this, captureWidth, captureHeight);
 	}

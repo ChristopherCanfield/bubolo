@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 /**
  * The graphical representation of a Tank.

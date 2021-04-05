@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 import bubolo.Config;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
+import bubolo.world.Bullet;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Bullet;
 
 /**
  * Creates a bullet on remote computers.

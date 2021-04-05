@@ -3,7 +3,7 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.concrete.Mine;
+import bubolo.world.Mine;
 
 /**
  * The graphical representation of a Mine.

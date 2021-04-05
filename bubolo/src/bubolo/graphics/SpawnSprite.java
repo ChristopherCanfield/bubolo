@@ -3,7 +3,7 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.Spawn;
+import bubolo.world.Spawn;
 
 /**
  * The graphical representation of Spawn entity.

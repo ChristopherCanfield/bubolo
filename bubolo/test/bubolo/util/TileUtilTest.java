@@ -8,12 +8,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import bubolo.world.GameWorld;
+import bubolo.world.Grass;
+import bubolo.world.Tank;
 import bubolo.world.Tile;
+import bubolo.world.Wall;
+import bubolo.world.Water;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Tank;
-import bubolo.world.entity.concrete.Wall;
-import bubolo.world.entity.concrete.Water;
 
 /**
  * @author BU CS673 - Clone Productions

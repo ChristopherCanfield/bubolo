@@ -12,9 +12,9 @@ import org.junit.Test;
 
 import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
+import bubolo.world.Bullet;
+import bubolo.world.Tank;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.concrete.Bullet;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * @author BU CS673 - Clone Productions

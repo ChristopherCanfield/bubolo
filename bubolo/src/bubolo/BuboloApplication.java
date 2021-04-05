@@ -25,9 +25,9 @@ import bubolo.ui.PlayerInfoScreen;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
 import bubolo.world.Entity;
+import bubolo.world.Spawn;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Spawn;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * The Game: this is where the subsystems are initialized, as well as where the main game loop is.

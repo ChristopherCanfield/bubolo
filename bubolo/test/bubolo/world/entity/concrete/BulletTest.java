@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import bubolo.world.Bullet;
+import bubolo.world.Tank;
 import bubolo.world.World;
 import bubolo.world.entity.EntityTestCase;
 

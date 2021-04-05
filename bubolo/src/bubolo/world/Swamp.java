@@ -1,14 +1,11 @@
-package bubolo.world.entity.concrete;
-
-import bubolo.world.Terrain;
+package bubolo.world;
 
 /**
  * Swamp Terrain can be traversed by Tanks, but will reduce movement speed.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Swamp extends Terrain
-{
+public class Swamp extends Terrain {
 	/**
 	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
 	 */
@@ -17,8 +14,7 @@ public class Swamp extends Terrain
 	private static final int width = 32;
 	private static final int height = 32;
 
-	public Swamp(ConstructionArgs args)
-	{
+	protected Swamp(ConstructionArgs args) {
 		super(args, width, height, speedModifier);
 	}
 }

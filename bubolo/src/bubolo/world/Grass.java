@@ -1,9 +1,7 @@
-package bubolo.world.entity.concrete;
-
-import bubolo.world.Terrain;
+package bubolo.world;
 
 /**
- * Grass is the standard Terrain of B.U.B.O.L.O., and offers no special movement effects.
+ * Movement speed on grass is normal.
  *
  * @author BU CS673 - Clone Productions
  */
@@ -17,7 +15,7 @@ public class Grass extends Terrain
 	private static final int width = 32;
 	private static final int height = 32;
 
-	public Grass(ConstructionArgs args)
+	protected Grass(ConstructionArgs args)
 	{
 		super(args, width, height, speedModifier);
 	}

@@ -6,10 +6,10 @@ import java.util.UUID;
 
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
+import bubolo.world.Bullet;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
 import bubolo.world.entity.MockEntity;
-import bubolo.world.entity.concrete.Bullet;
 
 import static org.mockito.Mockito.mock;
 

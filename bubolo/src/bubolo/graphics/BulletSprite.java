@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.concrete.Bullet;
+import bubolo.world.Bullet;
 
 /**
  * The graphical representation of a bullet entity.

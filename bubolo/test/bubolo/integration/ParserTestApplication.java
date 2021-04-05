@@ -13,7 +13,7 @@ import bubolo.graphics.Graphics;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 public class ParserTestApplication extends AbstractGameApplication
 {

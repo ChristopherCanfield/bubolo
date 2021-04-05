@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.concrete.Swamp;
+import bubolo.world.Swamp;
 
 /**
  * The graphical representation of a Swamp.

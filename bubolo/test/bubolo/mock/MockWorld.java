@@ -10,10 +10,10 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.world.EntityCreationObserver;
+import bubolo.world.Tank;
 import bubolo.world.Tile;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * Mock class used for testing components that need a world implementation

@@ -12,8 +12,8 @@ import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.net.NetworkTankController;
 import bubolo.world.ActorEntity;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * Creates a network-controlled tank on connected computers.

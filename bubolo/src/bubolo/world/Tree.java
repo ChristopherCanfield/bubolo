@@ -1,24 +1,17 @@
-package bubolo.world.entity.concrete;
+package bubolo.world;
 
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.util.GameLogicException;
-import bubolo.world.BoundingBox;
-import bubolo.world.Collidable;
-import bubolo.world.Damageable;
-import bubolo.world.StaticEntity;
-import bubolo.world.TerrainImprovement;
-import bubolo.world.World;
 
 /**
- * Trees are StationaryElements that can spread over time, and hide Tanks that drive over them.
+ * Trees hide tanks that drive over them, and can spread over time.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Tree extends StaticEntity implements TerrainImprovement, Collidable, Damageable
-{
+public class Tree extends StaticEntity implements TerrainImprovement, Collidable, Damageable {
 	/**
 	 * The health of the tree
 	 */
@@ -36,7 +29,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 
 	private final BoundingBox boundingBox;
 
-	public Tree(ConstructionArgs args) {
+	protected Tree(ConstructionArgs args) {
 		super(args, width, height);
 
 		boundingBox = new BoundingBox(this);
@@ -53,31 +46,28 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	 * @return current hit point count
 	 */
 	@Override
-	public float hitPoints()
-	{
+	public float hitPoints() {
 		return hitPoints;
 	}
 
 	/**
 	 * Method that returns the maximum number of hit points the entity can have.
+	 *
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int maxHitPoints()
-	{
+	public int maxHitPoints() {
 		return maxHitPoints;
 	}
 
 	/**
 	 * Changes the hit point count after taking damage
 	 *
-	 * @param damagePoints
-	 *            how much damage the tree has taken
+	 * @param damagePoints how much damage the tree has taken
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world)
-	{
-		assert(damagePoints >= 0);
+	public void receiveDamage(float damagePoints, World world) {
+		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
 
 		if (hitPoints <= 0) {
@@ -89,14 +79,12 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	 * Not implemented for trees.
 	 */
 	@Override
-	public void heal(float healPoints)
-	{
+	public void heal(float healPoints) {
 		throw new GameLogicException("Trees cannot be healed.");
 	}
 
 	@Override
-	protected void onDispose()
-	{
+	protected void onDispose() {
 		Audio.play(Sfx.TREE_HIT);
 	}
 

@@ -14,9 +14,9 @@ import bubolo.graphics.SpawnSpriteViewer;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
+import bubolo.world.Spawn;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Spawn;
-import bubolo.world.entity.concrete.Tank;
 
 
 /**

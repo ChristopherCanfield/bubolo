@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import bubolo.world.Base;
 import bubolo.world.entity.EntityTestCase;
 
 public class BaseTest

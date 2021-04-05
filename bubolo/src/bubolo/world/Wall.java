@@ -1,4 +1,4 @@
-package bubolo.world.entity.concrete;
+package bubolo.world;
 
 import java.util.UUID;
 
@@ -7,22 +7,13 @@ import com.badlogic.gdx.math.Polygon;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.util.TileUtil;
-import bubolo.world.Adaptable;
-import bubolo.world.BoundingBox;
-import bubolo.world.Collidable;
-import bubolo.world.Damageable;
-import bubolo.world.Entity;
-import bubolo.world.StaticEntity;
-import bubolo.world.TerrainImprovement;
-import bubolo.world.World;
 
 /**
- * Walls are intended to impede Tank movement, and create Rubble Terrain when destroyed.
+ * Walls block tanks. They are replaced with Rubble when destroyed.
  *
  * @author BU CS673 - Clone Productions
  */
-public class Wall extends StaticEntity implements TerrainImprovement, Collidable, Adaptable, Damageable
-{
+public class Wall extends StaticEntity implements TerrainImprovement, Collidable, Adaptable, Damageable {
 	private int tilingState = 0;
 
 	private static final int maxHitPoints = 100;
@@ -33,8 +24,8 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	private float hitPoints = maxHitPoints;
 
 	/**
-	 * Intended to be generic -- this is a list of all of the StationaryEntities classes that should
-	 * result in a valid match when checking surrounding tiles to determine adaptive tiling state.
+	 * An array containing the classes that result in a valid match when determining adaptive tiling state.
+	 * TODO (cdc - 2021-04-05): This affects only the visualization, and probably should not be in this class.
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Wall.class };
 
@@ -43,22 +34,19 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 
 	private final BoundingBox boundingBox;
 
-	public Wall(ConstructionArgs args)
-	{
+	protected Wall(ConstructionArgs args) {
 		super(args, width, height);
 
 		boundingBox = new BoundingBox(this);
 	}
 
 	@Override
-	public void updateTilingState(World w)
-	{
+	public void updateTilingState(World w) {
 		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
 	}
 
 	@Override
-	public int getTilingState()
-	{
+	public int getTilingState() {
 		return tilingState;
 	}
 
@@ -68,31 +56,28 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 * @return current hit point count
 	 */
 	@Override
-	public float hitPoints()
-	{
+	public float hitPoints() {
 		return hitPoints;
 	}
 
 	/**
 	 * Method that returns the maximum number of hit points the entity can have.
+	 *
 	 * @return - Max Hit points for the entity
 	 */
 	@Override
-	public int maxHitPoints()
-	{
+	public int maxHitPoints() {
 		return maxHitPoints;
 	}
 
 	/**
 	 * Changes the hit point count after taking damage
 	 *
-	 * @param damagePoints
-	 *            how much damage the wall has taken
+	 * @param damagePoints how much damage the wall has taken
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world)
-	{
-		assert(damagePoints >= 0);
+	public void receiveDamage(float damagePoints, World world) {
+		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
 		Audio.play(Sfx.WALL_HIT);
 
@@ -111,9 +96,8 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 * @param healPoints - how many points the wall is given
 	 */
 	@Override
-	public void heal(float healPoints)
-	{
-		assert(healPoints >= 0);
+	public void heal(float healPoints) {
+		assert (healPoints >= 0);
 		if (hitPoints + healPoints < maxHitPoints) {
 			hitPoints += healPoints;
 		} else {

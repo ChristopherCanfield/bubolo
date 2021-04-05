@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 public class ActorTest
 {

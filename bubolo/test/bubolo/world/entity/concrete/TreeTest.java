@@ -7,7 +7,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import bubolo.world.GameWorld;
+import bubolo.world.Grass;
 import bubolo.world.Tile;
+import bubolo.world.Tree;
 import bubolo.world.World;
 import bubolo.world.entity.EntityTestCase;
 

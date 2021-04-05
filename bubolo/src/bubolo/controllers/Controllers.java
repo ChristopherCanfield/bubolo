@@ -9,10 +9,10 @@ import bubolo.controllers.ai.AiPillboxController;
 import bubolo.controllers.input.KeyboardTankController;
 import bubolo.util.Nullable;
 import bubolo.world.ActorEntity;
-import bubolo.world.entity.concrete.Base;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Base;
+import bubolo.world.Mine;
+import bubolo.world.Pillbox;
+import bubolo.world.Tank;
 
 /**
  * Contains static methods for creating controllers.

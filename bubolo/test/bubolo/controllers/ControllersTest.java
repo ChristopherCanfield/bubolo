@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Tank;
-import bubolo.world.entity.concrete.Tree;
+import bubolo.world.Grass;
+import bubolo.world.Tank;
+import bubolo.world.Tree;
 
 public class ControllersTest
 {

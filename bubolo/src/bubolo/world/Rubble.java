@@ -1,7 +1,4 @@
-package bubolo.world.entity.concrete;
-
-import bubolo.world.StaticEntity;
-import bubolo.world.TerrainImprovement;
+package bubolo.world;
 
 /**
  * Rubble is created when structures (like Walls) are destroyed.
@@ -19,7 +16,7 @@ public class Rubble extends StaticEntity implements TerrainImprovement
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	public Rubble(ConstructionArgs args)
+	protected Rubble(ConstructionArgs args)
 	{
 		super(args, width, height);
 	}

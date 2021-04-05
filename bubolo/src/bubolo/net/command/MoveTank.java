@@ -7,8 +7,8 @@ package bubolo.net.command;
 import java.util.UUID;
 
 import bubolo.net.NetworkCommand;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * Moves a tank and updates its speed.

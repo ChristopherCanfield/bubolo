@@ -1,22 +1,16 @@
-package bubolo.world.entity.concrete;
-
-import bubolo.world.ActorEntity;
-import bubolo.world.Collidable;
-import bubolo.world.Damageable;
-import bubolo.world.World;
+package bubolo.world;
 
 /**
- * MineExplosions are created when mines blow up! They're large, and create Craters on top of
- * whatever Terrain is underneath them.
+ * MineExplosions are created when mines blow up. The explosion area is larger than the mine that exploded.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class MineExplosion extends ActorEntity
-{
-	private static final float DAMAGE_PER_TICK = 2;
+public class MineExplosion extends ActorEntity {
+	private static final float damagePerTick = 2;
 
-	/** Length of explosion in milliseconds */
-	private static final long EXPLOSION_LENGTH = 500;
+	/** The explosion's lifetime, in milliseconds */
+	private static final long explosionLifeMillis = 500;
 
 	/** The time the explosion will end. */
 	private final long explosionEndTime;
@@ -29,24 +23,21 @@ public class MineExplosion extends ActorEntity
 	 *
 	 * @param args the entity's construction arguments.
 	 */
-	public MineExplosion(ConstructionArgs args) {
+	protected MineExplosion(ConstructionArgs args) {
 		super(args, width, height);
-		explosionEndTime = System.currentTimeMillis() + EXPLOSION_LENGTH;
+		explosionEndTime = System.currentTimeMillis() + explosionLifeMillis;
 		updateBounds();
 	}
 
 	/**
 	 * @return length of the explosion in milliseconds.
 	 */
-	public long getExplosionLength()
-	{
-		return EXPLOSION_LENGTH;
+	public long getExplosionLength() {
+		return explosionLifeMillis;
 	}
 
-
 	@Override
-	public void onUpdate(World world)
-	{
+	public void onUpdate(World world) {
 		if (explosionEndTime < System.currentTimeMillis()) {
 			dispose();
 
@@ -54,10 +45,11 @@ public class MineExplosion extends ActorEntity
 			for (Collidable collider : world.getNearbyCollidables(this, true, Damageable.class)) {
 				// We know the collider is a damageable, since we filtered to include only Damageables.
 				Damageable damageable = (Damageable) collider;
-				damageable.receiveDamage(DAMAGE_PER_TICK, world);
+				damageable.receiveDamage(damagePerTick, world);
 			}
 		}
 	}
+
 	@Override
 	public boolean isSolid() {
 		return false;

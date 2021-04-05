@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import bubolo.world.Rubble;
 import bubolo.world.entity.EntityTestCase;
 
 public class RubbleTest

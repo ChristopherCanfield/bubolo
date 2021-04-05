@@ -6,11 +6,11 @@ import com.badlogic.gdx.math.Intersector;
 
 import bubolo.controllers.ActorEntityController;
 import bubolo.world.Collidable;
+import bubolo.world.Crater;
 import bubolo.world.Entity;
+import bubolo.world.Mine;
+import bubolo.world.MineExplosion;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Crater;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.MineExplosion;
 
 
 /**

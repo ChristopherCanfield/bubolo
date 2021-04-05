@@ -4,9 +4,9 @@ import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
+import bubolo.world.Base;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Base;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * A controller for bases. This controller checks for contact with its owner and heals and

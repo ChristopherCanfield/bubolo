@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
+import bubolo.world.Grass;
+import bubolo.world.Mine;
 import bubolo.world.Tile;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Mine;
 
 /**
  * Mock class used for testing components that need a world implementation

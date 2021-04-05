@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.concrete.Rubble;
+import bubolo.world.Rubble;
 
 /**
  * The graphical representation of Rubble.

@@ -10,9 +10,9 @@ import org.mockito.Mock;
 import bubolo.controllers.Controller;
 import bubolo.mock.MockWorld;
 import bubolo.world.GameWorld;
+import bubolo.world.Tank;
 import bubolo.world.World;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.concrete.Tank;
 
 public class EntityTest
 {

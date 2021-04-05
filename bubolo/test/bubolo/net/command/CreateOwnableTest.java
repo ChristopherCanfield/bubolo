@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
+import bubolo.world.Pillbox;
+import bubolo.world.Tank;
 import bubolo.world.entity.OldEntity;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * @author BU CS673 - Clone Productions
