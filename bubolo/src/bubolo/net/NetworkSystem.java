@@ -93,8 +93,7 @@ public class NetworkSystem implements Network
 	}
 
 	@Override
-	public void connect(InetAddress serverIpAddress, String clientName)
-			throws NetworkException, IllegalStateException
+	public void connect(InetAddress serverIpAddress, String clientName) throws NetworkException, IllegalStateException
 	{
 		checkState(subsystem == null, "The network system has already been started. " +
 				"Do not call startServer or connect more than once.");

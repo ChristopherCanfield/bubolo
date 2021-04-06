@@ -124,8 +124,6 @@ public class Tank extends ActorEntity implements Damageable {
 		performCollisionDetection(world);
 		hidden = checkIfHidden(world);
 
-		Terrain terrain = world.getTerrain(tileColumn(), tileRow());
-
 		decelerated = false;
 		accelerated = false;
 	}

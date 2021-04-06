@@ -15,7 +15,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /**
+ * Base class for sprites.
+ *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 abstract class Sprite implements Drawable
 {

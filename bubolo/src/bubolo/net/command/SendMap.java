@@ -4,6 +4,7 @@
 
 package bubolo.net.command;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -52,6 +53,7 @@ public class SendMap extends NetworkCommand
 	public void execute(WorldOwner worldOwner)
 	{
 		World world = new GameWorld(columns, rows);
+		worldOwner.setWorld(world);
 
 		for (var entityData : entities) {
 			var args = new Entity.ConstructionArgs(entityData.id(), entityData.x(), entityData.y(), entityData.rotation());
@@ -60,10 +62,8 @@ public class SendMap extends NetworkCommand
 
 		// Process a game tick, which finalizes the addition of the new entities to the world.
 		world.update();
-
-		worldOwner.setWorld(world);
 	}
 
 	// Minimal data record for sending map data to remote players.
-	private static record EntitySerializationData(Class<? extends Entity> type, UUID id, float x, float y, float rotation) {}
+	private static record EntitySerializationData(Class<? extends Entity> type, UUID id, float x, float y, float rotation) implements Serializable {}
 }
