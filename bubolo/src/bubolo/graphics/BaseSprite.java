@@ -3,7 +3,7 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.concrete.Base;
+import bubolo.world.Base;
 
 /**
  * The graphical representation of a Base Entity.
@@ -56,7 +56,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	 */
 	BaseSprite(Base base)
 	{
-		super(DrawLayer.THIRD, base);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, base);
 
 		allFrames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 32, 32);
 		chargingFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2],
@@ -66,12 +66,12 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 
 	private void updateColorSet()
 	{
-		if (!this.getEntity().isOwned())
+		if (!getEntity().hasOwner())
 		{
 			animationState = 0;
 			colorId = ColorSets.NEUTRAL;
 		}
-		else if (this.getEntity().isLocalPlayer())
+		else if (getEntity().isOwnedByLocalPlayer())
 		{
 			colorId = ColorSets.BLUE;
 		}
@@ -133,7 +133,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
-		if (e.isLocalPlayer()) {
+		if (e.isOwnedByLocalPlayer()) {
 			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
 		}
 	}

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Before;
 import org.junit.Test;
 
+import bubolo.world.Water;
 import bubolo.world.World;
 import bubolo.world.entity.EntityTestCase;
 

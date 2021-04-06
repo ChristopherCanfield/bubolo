@@ -5,8 +5,8 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 
 import bubolo.controllers.Controller;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Tank;
 
 
 public class KeyboardTankControllerTest

@@ -9,14 +9,13 @@ package bubolo.net.command;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
-import bubolo.world.World;
 
 /**
  * Notifies players that a new client has connected.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
-public class ClientConnected implements NetworkCommand
+public class ClientConnected extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -24,7 +23,7 @@ public class ClientConnected implements NetworkCommand
 
 	/**
 	 * Constructs a ClientConnected object.
-	 * 
+	 *
 	 * @param playerName
 	 *            the name of the player that connected.
 	 */
@@ -35,7 +34,7 @@ public class ClientConnected implements NetworkCommand
 
 	/**
 	 * Returns the name of the client.
-	 * 
+	 *
 	 * @return the name of the client.
 	 */
 	public String getClientName()
@@ -44,7 +43,7 @@ public class ClientConnected implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	protected void execute()
 	{
 		Network net = NetworkSystem.getInstance();
 		net.getNotifier().notifyClientConnected(playerName);

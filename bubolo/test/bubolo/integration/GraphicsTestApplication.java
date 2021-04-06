@@ -8,23 +8,23 @@ import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
+import bubolo.world.Base;
+import bubolo.world.Bullet;
+import bubolo.world.Crater;
+import bubolo.world.DeepWater;
 import bubolo.world.GameWorld;
+import bubolo.world.Grass;
+import bubolo.world.Mine;
+import bubolo.world.MineExplosion;
+import bubolo.world.Pillbox;
+import bubolo.world.Road;
+import bubolo.world.Rubble;
+import bubolo.world.Swamp;
+import bubolo.world.Tank;
 import bubolo.world.Tile;
-import bubolo.world.entity.concrete.Base;
-import bubolo.world.entity.concrete.Bullet;
-import bubolo.world.entity.concrete.Crater;
-import bubolo.world.entity.concrete.DeepWater;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Mine;
-import bubolo.world.entity.concrete.MineExplosion;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Road;
-import bubolo.world.entity.concrete.Rubble;
-import bubolo.world.entity.concrete.Swamp;
-import bubolo.world.entity.concrete.Tank;
-import bubolo.world.entity.concrete.Tree;
-import bubolo.world.entity.concrete.Wall;
-import bubolo.world.entity.concrete.Water;
+import bubolo.world.Tree;
+import bubolo.world.Wall;
+import bubolo.world.Water;
 
 /**
  * For testing only.

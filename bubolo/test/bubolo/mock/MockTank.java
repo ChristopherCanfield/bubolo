@@ -1,7 +1,7 @@
 package bubolo.mock;
 
 import bubolo.world.Damageable;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 /**
  * A mock Tank class used for testing the Graphics system.

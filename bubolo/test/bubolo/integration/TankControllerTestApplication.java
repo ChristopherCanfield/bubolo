@@ -10,11 +10,11 @@ import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.world.GameWorld;
+import bubolo.world.Grass;
+import bubolo.world.Tank;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Terrain;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.entity.OldTerrain;
 
 /**
  * For testing only.

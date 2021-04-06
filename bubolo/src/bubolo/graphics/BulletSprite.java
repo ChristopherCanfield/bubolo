@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.concrete.Bullet;
+import bubolo.world.Bullet;
 
 /**
  * The graphical representation of a bullet entity.
@@ -25,7 +25,7 @@ class BulletSprite extends AbstractEntitySprite<Bullet>
 	 */
 	BulletSprite(Bullet bullet)
 	{
-		super(DrawLayer.FOURTH, bullet);
+		super(DrawLayer.EFFECTS, bullet);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 	}
@@ -36,7 +36,7 @@ class BulletSprite extends AbstractEntitySprite<Bullet>
 		if (isDisposed())
 		{
 			SpriteSystem spriteSystem = graphics.sprites();
-			spriteSystem.addSprite(new BulletExplosionSprite(Math.round(getEntity().getX()), Math.round(getEntity().getY())));
+			spriteSystem.addSprite(new BulletExplosionSprite(Math.round(getEntity().x()), Math.round(getEntity().y())));
 			spriteSystem.removeSprite(this);
 		}
 		else

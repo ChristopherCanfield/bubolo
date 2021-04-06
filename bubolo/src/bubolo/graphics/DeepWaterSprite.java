@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.DeepWater;
+import bubolo.world.DeepWater;
 
 /**
  * The graphical representation of a DeepWater.
@@ -26,7 +26,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater>
 	 */
 	DeepWaterSprite(DeepWater deepWater)
 	{
-		super(DrawLayer.SECOND, deepWater);
+		super(DrawLayer.TERRAIN, deepWater);
 
 		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
 		frames = Graphics.getTextureRegion1d(path, getClass());

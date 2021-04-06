@@ -5,8 +5,8 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 
 import bubolo.controllers.Controller;
+import bubolo.world.Pillbox;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Pillbox;
 
 
 public class AIPillboxControllerTest

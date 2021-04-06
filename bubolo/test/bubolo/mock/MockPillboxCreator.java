@@ -4,10 +4,10 @@ import java.util.UUID;
 
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
+import bubolo.world.Grass;
+import bubolo.world.Pillbox;
 import bubolo.world.Tile;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Pillbox;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Mock class used for testing components that need a world implementation
@@ -25,26 +25,26 @@ public class MockPillboxCreator extends MockWorld
 	}
 	
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c) throws GameLogicException
+	public <T extends OldEntity> T addEntity(Class<T> c) throws GameLogicException
 	{
 		return (T) new Pillbox();
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id) throws GameLogicException
+	public <T extends OldEntity> T addEntity(Class<T> c, UUID id) throws GameLogicException
 	{
 		return (T) new Pillbox();
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
+	public <T extends OldEntity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
 			throws GameLogicException
 	{
 		return (T) new Pillbox();
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
+	public <T extends OldEntity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
 			throws GameLogicException
 	{
 		return (T) new Pillbox();

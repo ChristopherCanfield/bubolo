@@ -13,9 +13,9 @@ import bubolo.graphics.Graphics;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
+import bubolo.world.Pillbox;
+import bubolo.world.Tank;
 import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.concrete.Pillbox;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * For testing only.

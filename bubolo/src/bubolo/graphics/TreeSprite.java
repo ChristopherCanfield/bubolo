@@ -4,14 +4,14 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.Entity;
+import bubolo.world.Tree;
 
 /**
  * The graphical representation of a Tree.
  *
  * @author BU673 - Clone Industries
  */
-class TreeSprite extends AbstractEntitySprite<Entity>
+class TreeSprite extends AbstractEntitySprite<Tree>
 {
 	private Texture image;
 
@@ -27,9 +27,9 @@ class TreeSprite extends AbstractEntitySprite<Entity>
 	 * @param tree
 	 *            Reference to the Tree that this TreeSprite represents.
 	 */
-	TreeSprite(Entity tree)
+	TreeSprite(Tree tree)
 	{
-		super(DrawLayer.THIRD, tree);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, tree);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 		Random rand = new Random();

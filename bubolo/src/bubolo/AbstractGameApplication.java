@@ -8,7 +8,7 @@ import bubolo.world.World;
 
 /**
  * Abstract base class for Game Applications.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 public abstract class AbstractGameApplication implements GameApplication
@@ -16,10 +16,10 @@ public abstract class AbstractGameApplication implements GameApplication
 	private boolean ready;
 
 	/** The game world. **/
-	protected World world;
-	
+	private World world;
+
 	private State state;
-	
+
 	/**
 	 * Constructs an AbstractGameApplication;
 	 */
@@ -36,7 +36,7 @@ public abstract class AbstractGameApplication implements GameApplication
 
 	/**
 	 * Sets whether the game is ready.
-	 * 
+	 *
 	 * @param value
 	 *            true if the game is ready.
 	 */
@@ -44,20 +44,30 @@ public abstract class AbstractGameApplication implements GameApplication
 	{
 		ready = value;
 	}
-	
+
+	@Override
+	public World world() {
+		return world;
+	}
+
+	@Override
+	public void setWorld(World world) {
+		this.world = world;
+	}
+
 	@Override
 	public void setState(State state)
 	{
 		this.state = state;
 		onStateChanged();
 	}
-	
+
 	@Override
 	public State getState()
 	{
 		return state;
 	}
-	
+
 	/**
 	 * Called when the application's state is changed.
 	 */
@@ -83,6 +93,6 @@ public abstract class AbstractGameApplication implements GameApplication
 	@Override
 	public boolean isGameStarted()
 	{
-		return (isReady() && world != null && world.getTiles() != null);
+		return (isReady() && world != null);
 	}
 }

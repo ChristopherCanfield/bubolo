@@ -8,12 +8,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import bubolo.world.GameWorld;
+import bubolo.world.Grass;
+import bubolo.world.Tank;
 import bubolo.world.Tile;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Tank;
-import bubolo.world.entity.concrete.Wall;
-import bubolo.world.entity.concrete.Water;
+import bubolo.world.Wall;
+import bubolo.world.Water;
+import bubolo.world.entity.OldEntity;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -103,7 +103,7 @@ public class TileUtilTest
 	@Test
 	public void getEntityTile()
 	{
-		Entity entity = new Tank().setTransform(31, 42, 0);
+		OldEntity entity = new Tank().setTransform(31, 42, 0);
 		Tile tile = TileUtil.getEntityTile(entity, world);
 		assertEquals("returned incorrect tile", 0, tile.getGridX());
 		assertEquals("returned incorrect tile", 1, tile.getGridY());

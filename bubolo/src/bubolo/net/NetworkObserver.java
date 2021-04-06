@@ -57,8 +57,8 @@ public interface NetworkObserver
 	/**
 	 * Called when a message is received through the network.
 	 *
-	 * @param message
-	 *            the message text.
+	 * @param messageType the type of message that was received.
+	 * @param message the message text.
 	 */
 	void onMessageReceived(MessageType messageType, String message);
 }

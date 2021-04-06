@@ -1,0 +1,58 @@
+package bubolo.world;
+
+import bubolo.audio.Audio;
+import bubolo.audio.Sfx;
+
+/**
+ * Mines can be placed by Tanks to do damage to enemy Tanks, or to destroy/modify Terrain/structures.
+ *
+ * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
+ */
+public class Mine extends ActorEntity {
+	/** Amount of time before mine becomes active, in milliseconds */
+	private static final int fuseTimeMillis = 5000;
+
+	/** Time the mine was created in milliseconds. */
+	private long createdTime;
+
+	private static final int width = 25;
+	private static final int height = 25;
+
+	/**
+	 * Constructs a new Mine.
+	 *
+	 * @param args the entity's construction arguments.
+	 */
+	protected Mine(ConstructionArgs args) {
+		super(args, width, height);
+
+		createdTime = System.currentTimeMillis();
+		setOwnedByLocalPlayer(true);
+		updateBounds();
+	}
+
+	/**
+	 * Whether the mine is armed or not. The mine starts unarmed, and becomes armed after a short delay. Unarmed mines
+	 * do not explode when touched.
+	 *
+	 * @return whether or not this mine is armed.
+	 */
+	public boolean isArmed() {
+		boolean active = false;
+		if ((this.createdTime + fuseTimeMillis) < System.currentTimeMillis()) {
+			active = true;
+		}
+		return active;
+	}
+
+	@Override
+	protected void onDispose() {
+		Audio.play(Sfx.MINE_EXPLOSION);
+	}
+
+	@Override
+	public boolean isSolid() {
+		return false;
+	}
+}

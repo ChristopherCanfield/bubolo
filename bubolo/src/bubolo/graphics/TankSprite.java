@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 /**
  * The graphical representation of a Tank.
@@ -85,7 +85,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	 */
 	TankSprite(Tank tank)
 	{
-		super(DrawLayer.FOURTH, tank);
+		super(DrawLayer.TANKS, tank);
 
 		bulletTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + BULLET_TEXTURE_FILE);
 		mineTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + MINE_TEXTURE_FILE);
@@ -98,7 +98,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	void drawTankPlayerName(Graphics graphics) {
 		var tank = getEntity();
 		// Render non-hidden network tank names.
-		if (!tank.isLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
+		if (!tank.isOwnedByLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
 			font.setColor(ENEMY_TANK_NAME_COLOR);
 			font.draw(graphics.batch(), tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
@@ -112,7 +112,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var tank = getEntity();
-		if (tank.isLocalPlayer()) {
+		if (tank.isOwnedByLocalPlayer()) {
 			StatusBarRenderer.drawHealthBar(tank, graphics.shapeRenderer(), graphics.camera());
 			drawTankAmmo(tank, graphics);
 		}
@@ -161,7 +161,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		int textVerticalPosition = (int) screenHeight - 5;
 		// Render the ammo count text.
 		font.setColor(TANK_UI_FONT_COLOR);
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.getAmmoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.ammoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
 
 		// Mine texture divided by number of frames per row.
 		float mineWidth = mineTexture.getWidth() / 6;
@@ -171,13 +171,13 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		spriteBatch.draw(mineTexture, screenHalfWidth + 13, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
 
 		// Render the mine count text.
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.getMineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.mineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}
 
 	private static Vector2 tankCameraCoordinates(Tank tank, Camera camera) {
-		return Coords.worldToCamera(camera, new Vector2(tank.getX(), tank.getY()));
+		return Coords.worldToCamera(camera, new Vector2(tank.x(), tank.y()));
 	}
 
 	@Override
@@ -198,8 +198,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 			{
 				explosionCreated = true;
 				SpriteSystem spriteSystem = graphics.sprites();
-				spriteSystem.addSprite(
-						new TankExplosionSprite((int)getEntity().getX(), (int)getEntity().getY()));
+				spriteSystem.addSprite(new TankExplosionSprite((int) getEntity().x(), (int) getEntity().y()));
 			}
 			return;
 		}
@@ -212,7 +211,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 
 	private void animateAndDraw(Graphics graphics)
 	{
-		animationState = (getEntity().getSpeed() > 0.f) ? 1 : 0;
+		animationState = (getEntity().speed() > 0.f) ? 1 : 0;
 		switch (animationState)
 		{
 		case 0:
@@ -260,7 +259,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	private Visibility visibility()
 	{
 		if (getEntity().isHidden()) {
-			if (getEntity().isLocalPlayer()) {
+			if (getEntity().isOwnedByLocalPlayer()) {
 				setColor(tankHiddenColor);
 				return Visibility.HIDDEN;
 			} else {
@@ -287,8 +286,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	 * Initializes the tank. This is needed because the Tank entity may not know whether it is local
 	 * or not at construction time.
 	 *
-	 * @param camera
-	 *            reference to the camera.
+	 * @param graphics reference to the graphics system.
 	 */
 	private void initialize(Graphics graphics)
 	{
@@ -301,7 +299,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		frameIndex = 0;
 		frameTimeRemaining = millisPerFrame;
 
-		if (getEntity().isLocalPlayer())
+		if (getEntity().isOwnedByLocalPlayer())
 		{
 			CameraController controller = new TankCameraController(getEntity());
 			graphics.addCameraController(controller);
@@ -313,7 +311,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 
 	private static int determineColorSet(Tank tank)
 	{
-		return tank.isLocalPlayer() ? ColorSets.BLUE : ColorSets.RED;
+		return tank.isOwnedByLocalPlayer() ? ColorSets.BLUE : ColorSets.RED;
 	}
 
 	private enum Visibility

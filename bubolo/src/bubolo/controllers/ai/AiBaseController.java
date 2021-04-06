@@ -1,14 +1,12 @@
 package bubolo.controllers.ai;
 
-import bubolo.controllers.Controller;
+import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.net.command.UpdateOwnable;
-import bubolo.util.TileUtil;
+import bubolo.net.command.ChangeOwner;
+import bubolo.world.Base;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Base;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * A controller for bases. This controller checks for contact with its owner and heals and
@@ -16,14 +14,8 @@ import bubolo.world.entity.concrete.Tank;
  *
  * @author BU CS673 - Clone Productions
  */
-public class AiBaseController implements Controller
+public class AiBaseController extends ActorEntityController<Base>
 {
-	/**
-	 * the base this controller is controlling
-	 */
-	private final Base base;
-
-
 	/**
 	 * Time allowed between supply orders
 	 */
@@ -32,7 +24,7 @@ public class AiBaseController implements Controller
 	/**
 	 * Time since last supply order
 	 */
-	private long lastSupplyTime = 0;
+	private long nextSupplyTime = 0;
 
 	/**
 	 * Time allowed for base to gain supplies
@@ -45,7 +37,7 @@ public class AiBaseController implements Controller
 	private static final int HIT_POINTS_PER_HEAL = 10;
 
 	/**
-	 * Time since the last replinishment
+	 * Time since the last replenishment
 	 */
 	private long lastReplinishment = 0;
 
@@ -55,52 +47,48 @@ public class AiBaseController implements Controller
 	 * @param base
 	 *            the base this controller will correspond to.
 	 */
-	public AiBaseController(Base base)
-	{
-		this.base = base;
+	public AiBaseController(Base base) {
+		super(base);
 	}
 
 	@Override
 	public void update(World world)
 	{
-		base.setCharging(false);
-		for (Entity entity : TileUtil.getLocalCollisions(base, world))
-		{
-			if (entity instanceof Tank tank)
-			{
-				if (!this.base.isOwned())
-				{
-					base.setOwnerId(tank.getId());
-					base.heal(100);
+		Base base = parent();
 
-					if (tank.isLocalPlayer() && !base.isLocalPlayer()) {
-						base.setLocalPlayer(true);
-						Network net = NetworkSystem.getInstance();
-						net.send(new UpdateOwnable(base));
-					}
-				}
-				else
-				{
-					if(tank.getId() == base.getOwnerId() && !isTankRecharged(tank))
-					{
+		base.setCharging(false);
+		for (Tank tank : world.getTanks()) {
+			if (tank.overlapsEntity(base)) {
+				// Base has an owner.
+				if (base.hasOwner()) {
+					if(tank.equals(base.owner()) && !isTankRecharged(tank)) {
 						base.setCharging(true);
 
-						if((System.currentTimeMillis() - lastSupplyTime > resupplyDelayTime))
-						{
-							lastSupplyTime = System.currentTimeMillis();
-							if (tank.getHitPoints() < tank.getMaxHitPoints())
-							{
+						if(System.currentTimeMillis() > nextSupplyTime) {
+							nextSupplyTime = System.currentTimeMillis() + resupplyDelayTime;
+							if (tank.hitPoints() < tank.maxHitPoints()) {
 								tank.heal(base.giveHitPoints());
 							}
-							if(tank.getAmmoCount() < tank.getTankMaxAmmo())
-							{
-								tank.gatherAmmo(base.giveAmmo());
+							if(tank.ammoCount() < tank.getTankMaxAmmo()) {
+								tank.collectAmmo(base.giveAmmo());
 							}
-							if(tank.getMineCount() < tank.getTankMaxMineCount())
-							{
-								tank.gatherMine(base.giveMine());
+							if(tank.mineCount() < tank.getTankMaxMineCount()) {
+								tank.collectMines(base.giveMine());
 							}
 						}
+					}
+
+				// Base does not have an existing owner.
+				} else {
+					base.setOwner(tank);
+					base.heal(100);
+
+					if (tank.isOwnedByLocalPlayer() && !base.isOwnedByLocalPlayer()) {
+						base.setOwnedByLocalPlayer(true);
+						base.setOwner(tank);
+
+						Network net = NetworkSystem.getInstance();
+						net.send(new ChangeOwner(base));
 					}
 				}
 			}
@@ -115,8 +103,8 @@ public class AiBaseController implements Controller
 	}
 
 	private static boolean isTankRecharged(Tank tank) {
-		return tank.getHitPoints() >= tank.getMaxHitPoints()
-				&& tank.getAmmoCount() >= tank.getTankMaxAmmo()
-				&& tank.getMineCount() >= tank.getTankMaxMineCount();
+		return tank.hitPoints() >= tank.maxHitPoints()
+				&& tank.ammoCount() >= tank.getTankMaxAmmo()
+				&& tank.mineCount() >= tank.getTankMaxMineCount();
 	}
 }

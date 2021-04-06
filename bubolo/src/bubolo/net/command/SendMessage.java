@@ -7,14 +7,13 @@ package bubolo.net.command;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
-import bubolo.world.World;
 
 /**
  * Used to send a message across the network.
  *
  * @author BU CS673 - Clone Productions
  */
-public class SendMessage implements NetworkCommand
+public class SendMessage extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -53,7 +52,7 @@ public class SendMessage implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	protected void execute()
 	{
 		Network net = NetworkSystem.getInstance();
 		net.getNotifier().notifyMessageReceived(messageType, message);

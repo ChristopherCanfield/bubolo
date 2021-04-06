@@ -4,14 +4,14 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.Entity;
+import bubolo.world.Swamp;
 
 /**
  * The graphical representation of a Swamp.
  *
  * @author BU673 - Clone Industries
  */
-class SwampSprite extends AbstractEntitySprite<Entity>
+class SwampSprite extends AbstractEntitySprite<Swamp>
 {
 	private final Texture image;
 
@@ -27,9 +27,9 @@ class SwampSprite extends AbstractEntitySprite<Entity>
 	 * @param swamp
 	 *            Reference to the Swamp that this SwampSprite represents.
 	 */
-	SwampSprite(Entity swamp)
+	SwampSprite(Swamp swamp)
 	{
-		super(DrawLayer.FIRST, swamp);
+		super(DrawLayer.TERRAIN, swamp);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 

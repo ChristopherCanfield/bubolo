@@ -8,6 +8,7 @@ package bubolo.audio;
  * </code>
  *
  * @author Christopher D. Canfield
+ * @since 0.4.0
  */
 public enum Sfx
 {

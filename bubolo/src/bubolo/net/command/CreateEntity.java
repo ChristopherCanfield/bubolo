@@ -13,19 +13,16 @@ import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
-import bubolo.world.Ownable;
-import bubolo.world.Tile;
+import bubolo.world.ActorEntity;
+import bubolo.world.Entity;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
 
 /**
  * Generic entity creator for the network.
  *
  * @author BU CS673 - Clone Productions
  */
-public class CreateEntity implements NetworkCommand
+public class CreateEntity extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -79,8 +76,7 @@ public class CreateEntity implements NetworkCommand
 	 * @param factory
 	 *            factory for adding custom controllers to this entity.
 	 */
-	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation,
-			ControllerFactory factory)
+	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation, ControllerFactory factory)
 	{
 		this.type = type;
 		this.id = id;
@@ -91,29 +87,18 @@ public class CreateEntity implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	protected void execute(World world)
 	{
 		try
 		{
+			var args = new Entity.ConstructionArgs(id, x, y, rotation);
+
 			Entity entity;
-			if (factory == null) {
-				entity = world.addEntity(type, id);
-			} else {
-				entity = world.addEntity(type, id, factory);
-			}
+			entity = world.addEntity(type, args, factory);
 
-			entity.setX(x).setY(y).setRotation(rotation);
-
-			Tile tile = world.getTileFromWorldPosition(x, y);
-			if (entity instanceof Terrain terrain) {
-				tile.setTerrain(terrain, world);
-			} else if (entity instanceof StationaryElement stationaryElement) {
-				tile.setElement(stationaryElement, world);
-			}
-
-			if (entity instanceof Ownable)
+			if (entity instanceof ActorEntity actor)
 			{
-				((Ownable)entity).setLocalPlayer(false);
+				actor.setOwnedByLocalPlayer(false);
 			}
 		}
 		catch (GameLogicException e)

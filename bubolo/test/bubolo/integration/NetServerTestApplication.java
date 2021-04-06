@@ -20,7 +20,7 @@ import bubolo.net.command.CreateTank;
 import bubolo.net.command.SendMessage.MessageType;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.Screen;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 /**
  * For testing only.

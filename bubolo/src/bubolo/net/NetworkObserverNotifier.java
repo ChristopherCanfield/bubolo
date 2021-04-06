@@ -123,8 +123,8 @@ public class NetworkObserverNotifier
 	/**
 	 * Notifies observers that a message has been received.
 	 *
-	 * @param message
-	 *            the message text.
+	 * @param messageType the type of the received message.
+	 * @param message the message text.
 	 */
 	public void notifyMessageReceived(MessageType messageType, String message)
 	{

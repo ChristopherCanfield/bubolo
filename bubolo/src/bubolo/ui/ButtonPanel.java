@@ -27,6 +27,7 @@ class ButtonPanel extends JPanel
 	/**
 	 * Constructor for the Main Menu Button Panel
 	 *
+	 * @param parentFrame the parent JFrame.
 	 * @param singlePlayer
 	 *            a runnable that launches the single player game.
 	 * @param hostMultiPlayer

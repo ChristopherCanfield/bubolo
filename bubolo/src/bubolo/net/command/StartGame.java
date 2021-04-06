@@ -4,19 +4,19 @@
 
 package bubolo.net.command;
 
-import static com.google.common.base.Preconditions.*;
-import bubolo.controllers.ai.AiTreeController;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
-import bubolo.world.World;
+import bubolo.net.WorldOwner;
 
 /**
  * Command that is used to notify the clients to start the game.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
-public class StartGame implements NetworkCommand
+public class StartGame extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,7 @@ public class StartGame implements NetworkCommand
 
 	/**
 	 * Notifies clients that the game is starting.
-	 * 
+	 *
 	 * @param secondsUntilStart
 	 *            the number of seconds until the game starts.
 	 * @param sendMapCommand
@@ -38,13 +38,13 @@ public class StartGame implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	public void execute(WorldOwner worldOwner)
 	{
 		// Only the server has a Tree controller, to eliminate the risk of synchronization issues.
-		world.removeController(AiTreeController.class);
+		//worldOwner.world().removeController(AiTreeController.class);
 
 		// Build the map on the client.
-		sendMapCommand.execute(world);
+		sendMapCommand.execute(worldOwner);
 
 		// Notify NetworkObservers about the game start time.
 		Network net = NetworkSystem.getInstance();

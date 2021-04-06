@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.Road;
+import bubolo.world.Road;
 
 /**
  * The graphical representation of a Road
@@ -25,7 +25,7 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	 */
 	RoadSprite(Road road)
 	{
-		super(DrawLayer.SECOND, road);
+		super(DrawLayer.TERRAIN, road);
 
 		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
 		frames = Graphics.getTextureRegion1d(path, getClass());

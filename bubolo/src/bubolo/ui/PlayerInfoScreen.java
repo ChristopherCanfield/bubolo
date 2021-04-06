@@ -210,7 +210,7 @@ public class PlayerInfoScreen extends Screen
 				InetAddress ipAddress;
 				try
 				{
-					ipAddress = Inet4Address.getByName(ipAddressField.getText());
+					ipAddress = InetAddress.getByName(ipAddressField.getText());
 
 					final Network network = NetworkSystem.getInstance();
 					network.connect(ipAddress, playerNameField.getText());

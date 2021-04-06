@@ -24,9 +24,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import bubolo.ui.Screen;
 import bubolo.util.Coords;
+import bubolo.world.Entity;
 import bubolo.world.EntityCreationObserver;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
 
 /**
  * The top-level class for the Graphics system.
@@ -262,8 +262,7 @@ public class Graphics implements EntityCreationObserver
 	/**
 	 * Draw all sprites, ordered by draw layer.
 	 *
-	 * @param entities
-	 *            the list of entities.
+	 * @param sprites the list of sprites that will be drawn.
 	 */
 	private void drawSpritesByLayer(List<Sprite> sprites)
 	{
@@ -318,7 +317,7 @@ public class Graphics implements EntityCreationObserver
 			for (int col = 0; col < background[0].length; col++) {
 				var sprite = background[row][col];
 				var position = Coords.cameraToWorld(camera,
-						new Vector2(col * Coords.TILE_TO_WORLD_SCALE, row * Coords.TILE_TO_WORLD_SCALE));
+						new Vector2(col * Coords.TileToWorldScale, row * Coords.TileToWorldScale));
 				// Change the positions of the background sprites so they are always on screen.
 				sprite.x = (int) position.x;
 				sprite.y = (int) position.y;
@@ -329,8 +328,8 @@ public class Graphics implements EntityCreationObserver
 	}
 
 	private void initializeBackground() {
-		int rows = Math.round(camera.viewportHeight / Coords.TILE_TO_WORLD_SCALE) + 1;
-		int columns = Math.round(camera.viewportWidth / Coords.TILE_TO_WORLD_SCALE) + 1;
+		int rows = Math.round(camera.viewportHeight / Coords.TileToWorldScale) + 1;
+		int columns = Math.round(camera.viewportWidth / Coords.TileToWorldScale) + 1;
 		background = new BackgroundSprite[rows][columns];
 
 		for (int row = 0; row < rows; row++) {

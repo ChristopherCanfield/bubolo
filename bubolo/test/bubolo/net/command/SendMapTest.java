@@ -17,10 +17,10 @@ import bubolo.mock.MockWorld;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.world.GameWorld;
+import bubolo.world.Grass;
 import bubolo.world.Tile;
+import bubolo.world.Water;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Water;
 
 /**
  * @author BU CS673 - Clone Productions

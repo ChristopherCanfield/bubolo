@@ -9,23 +9,22 @@ package bubolo.net.command;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
 import bubolo.net.NetworkSystem;
-import bubolo.world.World;
 
 /**
  * Notifies a client that it has connected to the server.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
-public class ConnectedToServer implements NetworkCommand
+public class ConnectedToServer extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
 	private final String clientName;
 	private final String serverName;
-	
+
 	/**
 	 * Constructs a ConnectedToServer object.
-	 * 
+	 *
 	 * @param clientName
 	 *            the name of the client that connected.
 	 * @param serverName
@@ -38,12 +37,12 @@ public class ConnectedToServer implements NetworkCommand
 	}
 
 	@Override
-	public void execute(World world)
+	protected void execute()
 	{
 		Network net = NetworkSystem.getInstance();
 		net.getNotifier().notifyConnect(clientName, serverName);
 	}
-	
+
 	/**
 	 * Gets the name of the client.
 	 * @return the name of the client.
@@ -52,7 +51,7 @@ public class ConnectedToServer implements NetworkCommand
 	{
 		return clientName;
 	}
-	
+
 	/**
 	 * Gets the name of the server.
 	 * @return the name of the server.

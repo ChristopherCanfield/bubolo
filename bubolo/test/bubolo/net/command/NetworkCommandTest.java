@@ -15,7 +15,7 @@ import org.junit.Test;
 import bubolo.mock.MockTank;
 import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
-import bubolo.world.entity.concrete.Grass;
+import bubolo.world.Grass;
 
 /**
  * @author BU CS673 - Clone Productions

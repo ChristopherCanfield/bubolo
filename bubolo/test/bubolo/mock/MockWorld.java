@@ -10,10 +10,10 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.world.EntityCreationObserver;
+import bubolo.world.Tank;
 import bubolo.world.Tile;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.entity.OldEntity;
 
 /**
  * Mock class used for testing components that need a world implementation
@@ -22,33 +22,33 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class MockWorld implements World
 {
-	private List<Entity> entities = new ArrayList<Entity>();
-	private Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
+	private List<OldEntity> entities = new ArrayList<OldEntity>();
+	private Map<UUID, OldEntity> entityMap = new HashMap<UUID, OldEntity>();
 
 	/**
 	 * Adds the entity to the MockWorld.
 	 * @param e the entity to add.
 	 */
-	public void add(Entity e)
+	public void add(OldEntity e)
 	{
 		entities.add(e);
 		entityMap.put(e.getId(), e);
 	}
 
 	@Override
-	public Entity getEntity(UUID id) throws GameLogicException
+	public OldEntity getEntity(UUID id) throws GameLogicException
 	{
 		return entityMap.get(id);
 	}
 
 	@Override
-	public List<Entity> getEntities()
+	public List<OldEntity> getEntities()
 	{
 		return entities;
 	}
 
 	@Override
-	public void removeEntity(Entity e)
+	public void removeEntity(OldEntity e)
 	{
 	}
 
@@ -77,26 +77,26 @@ public class MockWorld implements World
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c) throws GameLogicException
+	public <T extends OldEntity> T addEntity(Class<T> c) throws GameLogicException
 	{
 		return addEntity(c, null, null);
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id) throws GameLogicException
+	public <T extends OldEntity> T addEntity(Class<T> c, UUID id) throws GameLogicException
 	{
 		return addEntity(c, id, null);
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
+	public <T extends OldEntity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
 			throws GameLogicException
 	{
 		return addEntity(c, null, controllerFactory);
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
+	public <T extends OldEntity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
 			throws GameLogicException
 	{
 		T entity = null;
@@ -133,13 +133,13 @@ public class MockWorld implements World
 	}
 
 	@Override
-	public List<Entity> getActors()
+	public List<OldEntity> getActors()
 	{
 		return null;
 	}
 
 	@Override
-	public List<Entity> getEffects()
+	public List<OldEntity> getEffects()
 	{
 		return null;
 	}
@@ -155,7 +155,7 @@ public class MockWorld implements World
 	}
 
 	@Override
-	public List<Entity> getSpawns()
+	public List<OldEntity> getSpawns()
 	{
 		// do nothing
 		return null;

@@ -6,21 +6,24 @@
 
 package bubolo.graphics;
 
+import static bubolo.util.Coords.worldToCamera;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import bubolo.util.Coords;
-
 /**
+ * Base class for sprites.
+ *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 abstract class Sprite implements Drawable
 {
 	// The layer that this sprite is drawn to.
-	private DrawLayer drawLayer;
+	private final DrawLayer drawLayer;
 
 	// The sprite's color. White draws the texture as it appears in the file.
 	private Color color;
@@ -96,11 +99,8 @@ abstract class Sprite implements Drawable
 	 */
 	protected final void drawTexture(Graphics graphics, Texture texture)
 	{
-		Vector2 cameraCoordinates = Coords.worldToCamera(graphics.camera(),
-				new Vector2(getX() - (texture.getWidth() / 2),
-						getY() - (texture.getHeight() / 2)));
-
 		Vector2 origin = getOrigin(texture.getWidth(), texture.getHeight());
+		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), new Vector2(getX() - origin.x, getY() - origin.y));
 
 		var batch = graphics.batch();
 		batch.setColor(color);
@@ -127,11 +127,9 @@ abstract class Sprite implements Drawable
 	 */
 	protected final void drawTexture(Graphics graphics, TextureRegion texture)
 	{
-		Vector2 cameraCoordinates = Coords.worldToCamera(graphics.camera(),
-				new Vector2(getX() - (texture.getRegionWidth() / 2),
-						getY() - (texture.getRegionHeight() / 2)));
-
 		Vector2 origin = getOrigin(texture.getRegionWidth(), texture.getRegionHeight());
+
+		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), new Vector2(getX() - origin.x, getY() - origin.y));
 
 		var batch = graphics.batch();
 		batch.setColor(color);

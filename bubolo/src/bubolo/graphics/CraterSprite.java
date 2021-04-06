@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.Crater;
+import bubolo.world.Crater;
 
 /**
  * The graphical representation of a Crater
@@ -25,7 +25,7 @@ class CraterSprite extends AbstractEntitySprite<Crater>
 	 */
 	CraterSprite(Crater crater)
 	{
-		super(DrawLayer.SECOND, crater);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, crater);
 
 		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
 		frames = Graphics.getTextureRegion1d(path, getClass());

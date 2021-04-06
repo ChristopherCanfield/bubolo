@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import bubolo.controllers.Controller;
 import bubolo.world.GameWorld;
+import bubolo.world.Mine;
 import bubolo.world.Tile;
-import bubolo.world.entity.concrete.Mine;
 
 
 public class AIMineControllerTest

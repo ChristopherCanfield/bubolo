@@ -14,7 +14,7 @@ public class MockSpriteTextureRegion extends AbstractEntitySprite<MockTank>
 	 */
 	public MockSpriteTextureRegion()
 	{
-		super(DrawLayer.THIRD, new MockTank());
+		super(DrawLayer.MINES, new MockTank());
 	}
 
 	@Override

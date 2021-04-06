@@ -19,7 +19,7 @@ import bubolo.net.command.ClientConnected;
 
 /**
  * The game client.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 class Client implements NetworkSubsystem, Runnable
@@ -33,7 +33,7 @@ class Client implements NetworkSubsystem, Runnable
 
 	// Reference to the network system.
 	private final Network network;
-	
+
 	// The name of this player.
 	private String playerName;
 
@@ -41,7 +41,7 @@ class Client implements NetworkSubsystem, Runnable
 
 	/**
 	 * Constructs a Client object.
-	 * 
+	 *
 	 * @param network
 	 *            reference to the network.
 	 */
@@ -53,7 +53,7 @@ class Client implements NetworkSubsystem, Runnable
 
 	/**
 	 * Attempts to connect to the specified IP address.
-	 * 
+	 *
 	 * @param serverIpAddress
 	 *            the IP address of a server. Note that this isn't necessarily the <i>game</i>
 	 *            server, since clients also connect directly to each other.
@@ -67,7 +67,7 @@ class Client implements NetworkSubsystem, Runnable
 		try
 		{
 			playerName = clientName;
-			
+
 			server = new Socket(serverIpAddress, NetworkInformation.GAME_PORT);
 			server.setTcpNoDelay(true);
 
@@ -108,7 +108,7 @@ class Client implements NetworkSubsystem, Runnable
 		{
 			while (!shutdown.get())
 			{
-				NetworkCommand command = (NetworkCommand)inputStream.readObject();
+				NetworkCommand command = (NetworkCommand) inputStream.readObject();
 				network.postToGameThread(command);
 			}
 		}

@@ -14,7 +14,7 @@ public abstract class Coords
 	 * Defines the scale used to determine the relationship between world units, map
 	 * units, and tile units
 	 */
-	public static final int TILE_TO_WORLD_SCALE = 32;
+	public static final int TileToWorldScale = 32;
 
 	/**
 	 * Converts world coordinates to camera coordinates.

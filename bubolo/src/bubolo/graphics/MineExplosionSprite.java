@@ -2,15 +2,15 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.MineExplosion;
+import bubolo.Config;
+import bubolo.world.MineExplosion;
 
 /**
  * The graphical representation of a MineExplosion Entity.
  *
  * @author BU673 - Clone Industries
  */
-class MineExplosionSprite extends AbstractEntitySprite<Entity>
+class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 {
 
 	// The index representing which animation frame will be drawn.
@@ -43,11 +43,11 @@ class MineExplosionSprite extends AbstractEntitySprite<Entity>
 	 */
 	MineExplosionSprite(MineExplosion exp)
 	{
-		super(DrawLayer.TOP, exp);
+		super(DrawLayer.EFFECTS, exp);
 
 		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 60, 60);
 
-		millisPerFrame = (((MineExplosion)this.getEntity()).getExplosionLength())/frames.length;
+		millisPerFrame = (int) Config.MillisPerFrame;
 	}
 
 	@Override

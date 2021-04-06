@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import bubolo.world.MineExplosion;
 import bubolo.world.World;
 import bubolo.world.entity.EntityTestCase;
 

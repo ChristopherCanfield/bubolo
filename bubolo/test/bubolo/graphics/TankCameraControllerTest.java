@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import bubolo.mock.MockTank;
 import bubolo.mock.MockWorld;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;

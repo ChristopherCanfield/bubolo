@@ -7,38 +7,38 @@ package bubolo.world;
  */
 public interface Damageable
 {
-	public int getHeight();
-	public int getWidth();
+	public int height();
+	public int width();
 
-	public float getX();
-	public float getY();
+	public float x();
+	public float y();
 
 	/**
-	 * Returns the current health of the tank
+	 * Returns the current health of the entity.
 	 *
-	 * @return current hit point count
+	 * @return the entity's hit points.
 	 */
-	public float getHitPoints();
+	public float hitPoints();
 
 	/**
-	 * Method that returns the maximum number of hit points the entity can have.
-	 * @return - Max Hit points for the entity
-	 */
-	public int getMaxHitPoints();
-
-	/**
-	 * Changes the hit point count after taking damage
+	 * Returns the entity's maximum number of hit points.
 	 *
-	 * @param damagePoints
-	 *            how much damage the tank has taken
+	 * @return the entity's max hit points.
 	 */
-	public void takeHit(float damagePoints);
+	public int maxHitPoints();
 
 	/**
-	 * Increments the tanks health by a given amount
+	 * Gives damage to the entity.
 	 *
-	 * @param healPoints
-	 *            - how many points the tank is given
+	 * @param damage the amount of damage done. Must be <= 0.
+	 * @param world reference to the game world.
+	 */
+	public void receiveDamage(float damage, World world);
+
+	/**
+	 * Increases the entity's current health.
+	 *
+	 * @param healPoints the amount of health that is restored. Must be >= 0.
 	 */
 	public void heal(float healPoints);
 
@@ -47,5 +47,7 @@ public interface Damageable
 	 *
 	 * @return true if the entity is alive.
 	 */
-	public boolean isAlive();
+	default public boolean isAlive() {
+		return hitPoints() > 0;
+	}
 }

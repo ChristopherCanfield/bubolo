@@ -7,15 +7,15 @@ package bubolo.net.command;
 import java.util.UUID;
 
 import bubolo.net.NetworkCommand;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * Moves a tank and updates its speed.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
-public class MoveTank implements NetworkCommand
+public class MoveTank extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
@@ -31,20 +31,19 @@ public class MoveTank implements NetworkCommand
 	 */
 	public MoveTank(Tank tank)
 	{
-		this.id = tank.getId();
-		this.speed = tank.getSpeed();
-		this.x = tank.getX();
-		this.y = tank.getY();
-		this.rotation = tank.getRotation();
+		this.id = tank.id();
+		this.speed = tank.speed();
+		this.x = tank.x();
+		this.y = tank.y();
+		this.rotation = tank.rotation();
 	}
 
 	@Override
-	public void execute(World world)
+	protected void execute(World world)
 	{
-		Tank tank = (Tank)world.getEntity(id);
+		Tank tank = (Tank) world.getEntity(id);
 		tank.setSpeed(new NetTankSpeed(speed));
-		tank.setX(x);
-		tank.setY(y);
+		tank.setPosition(x, y);
 		tank.setRotation(rotation);
 	}
 }

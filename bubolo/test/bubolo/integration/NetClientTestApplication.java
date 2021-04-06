@@ -21,7 +21,7 @@ import bubolo.net.command.SendMessage.MessageType;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.Screen;
 import bubolo.world.GameWorld;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.world.Tank;
 
 /**
  * For testing only.

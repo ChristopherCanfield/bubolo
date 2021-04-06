@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.Pillbox;
+import bubolo.world.Pillbox;
 
 /**
  * The graphical representation of a Pillbox
@@ -43,7 +43,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 	 */
 	PillboxSprite(Pillbox pillbox)
 	{
-		super(DrawLayer.THIRD, pillbox);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, pillbox);
 
 		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 32, 32);
 	}
@@ -67,11 +67,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 
 	private void updateColorSet()
 	{
-		if (!getEntity().isOwned())
+		if (!getEntity().hasOwner())
 		{
 			colorId = ColorSets.NEUTRAL;
 		}
-		else if (getEntity().isLocalPlayer())
+		else if (getEntity().isOwnedByLocalPlayer())
 		{
 			colorId = ColorSets.BLUE;
 		}
@@ -103,7 +103,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
-		if (e.isLocalPlayer()) {
+		if (e.isOwnedByLocalPlayer()) {
 			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
 		}
 	}

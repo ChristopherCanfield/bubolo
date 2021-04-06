@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.Water;
+import bubolo.world.Water;
 
 /**
  * The graphical representation of a Water.
@@ -25,7 +25,9 @@ class WaterSprite extends AbstractEntitySprite<Water>
 	 */
 	WaterSprite(Water water)
 	{
-		super(DrawLayer.SECOND, water);
+		/* TODO (cdc - 2021-04-06): Water is drawn in the terrain improvements layer in order to ensure that it is drawn above craters. This is a hack,
+		   and will need to change if bridges are implemented. */
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, water);
 
 		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
 		frames = Graphics.getTextureRegion1d(path, getClass());

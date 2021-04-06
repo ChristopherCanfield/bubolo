@@ -1,29 +1,22 @@
 package bubolo.world;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
-import bubolo.controllers.ai.AiTreeController;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
-import bubolo.world.entity.Actor;
-import bubolo.world.entity.Effect;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.StationaryElement;
-import bubolo.world.entity.Terrain;
-import bubolo.world.entity.concrete.Grass;
-import bubolo.world.entity.concrete.Spawn;
-import bubolo.world.entity.concrete.Tank;
+import bubolo.util.Nullable;
 
 /**
  * The concrete implementation of the World interface. GameWorld is the sole owner of Entity
@@ -33,36 +26,48 @@ import bubolo.world.entity.concrete.Tank;
  */
 public class GameWorld implements World
 {
+	 /**
+	 * A tile address on the game map.
+	 *
+	 * @author Christopher D. Canfield
+	 * @since 0.4.0
+	 */
+	private static record Tile(int column, int row) {
+		Tile {
+			assert column >= 0;
+			assert row >= 0;
+		}
+	}
+
 	private EntityCreationObserver entityCreationObserver;
 
-	private final List<Entity> entities = new ArrayList<Entity>();
-	private final Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
+	private final List<Entity> entities = new ArrayList<>();
+	private final List<Entity> entitiesUnmodifiableView = Collections.unmodifiableList(entities);
+	private final Map<UUID, Entity> entityMap = new HashMap<>();
 
-	// first: x; second: y.
-	private Tile[][] mapTiles = null;
+	private final List<Tank> tanks = new ArrayList<>();
+	private final List<Tank> tanksUnmodifiableView = Collections.unmodifiableList(tanks);
 
-	// The list of entities to remove. The entities array can't be modified while it
-	// is being iterated over.
-	private final List<Entity> entitiesToRemove = new ArrayList<Entity>();
+	private final List<ActorEntity> actors = new ArrayList<>();
+	private final List<ActorEntity> actorsUnmodifiableView = Collections.unmodifiableList(actors);
+
+	private final List<Spawn> spawns = new ArrayList<>();
+	private final List<Spawn> spawnsUnmodifiableView = Collections.unmodifiableList(spawns);
+
+	// first: column; second: row.
+	private Terrain[][] terrain;
+	private final Map<Tile, TerrainImprovement> terrainImprovements = new HashMap<>();
+	private final Map<Tile, Mine> mines = new HashMap<>();
+
+	// The entities to remove.
+	private final Set<Entity> entitiesToRemove = new HashSet<>();
 
 	// The list of entities to add. The entities array can't be modified while it is
 	// being iterated over.
-	private final List<Entity> entitiesToAdd = new ArrayList<Entity>();
-
-	// the list of Tanks that exist in the world
-	private final List<Tank> tanks = new ArrayList<Tank>();
+	private final List<Entity> entitiesToAdd = new ArrayList<>();
 
 	// list of world controllers
-	private final List<Controller> worldControllers = new ArrayList<Controller>();
-
-	// the list of all Effects that currently exist in the world
-	private final List<Entity> effects = new ArrayList<Entity>();
-
-	// the list of all Actors which currently exist in the world
-	private final List<Entity> actors = new ArrayList<Entity>();
-
-	// the list of all Spawn Locations currently in the world
-	private final List<Entity> spawns = new ArrayList<Entity>();
+	private final List<Controller> worldControllers = new ArrayList<>();
 
 	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
@@ -71,36 +76,31 @@ public class GameWorld implements World
 	private boolean adaptableRemovedThisTick = false;
 	private boolean adaptableAddedThisTick = false;
 
-	private int width;
-	private int height;
+	// Width in world units.
+	private final int width;
+	// Height in world units.
+	private final int height;
 
 	/**
-	 * Constructs the GameWorld object.
+	 * Constructs a GameWorld object.
 	 *
-	 * @param worldMapWidth
-	 *            the width of the game world map.
-	 * @param worldMapHeight
-	 *            the height of the game world map.
+	 * @param worldTileColumns the width of the game world map, in tiles.
+	 * @param worldTileRows the height of the game world map, in tiles.
 	 */
-	public GameWorld(int worldMapWidth, int worldMapHeight)
+	public GameWorld(int worldTileColumns, int worldTileRows)
 	{
-		int tilesX = worldMapWidth / Coords.TILE_TO_WORLD_SCALE;
-		int tilesY = worldMapHeight / Coords.TILE_TO_WORLD_SCALE;
-		mapTiles = new Tile[tilesX][tilesY];
+		assert(worldTileColumns > 0);
+		assert(worldTileRows > 0);
 
-		this.width = worldMapWidth;
-		this.height = worldMapHeight;
+		assert worldTileColumns < 2_500 : "Unlikely worldTileColumns value passed to GameWorld: " + worldTileColumns;
+		assert worldTileRows < 2_500 : "Unlikely worldTileRows value passed to GameWorld: " + worldTileRows;
 
-		addController(AiTreeController.class);
-	}
+		terrain = new Terrain[worldTileColumns][worldTileRows];
 
-	/**
-	 * Constructs a default game world. This is intended for use by the network. The map's height
-	 * and width must be set before calling the <code>update</code> method.
-	 */
-	public GameWorld()
-	{
-		this(0, 0);
+		width = worldTileColumns * Coords.TileToWorldScale;
+		height = worldTileRows * Coords.TileToWorldScale;
+
+		//addController(AiTreeController.class);
 	}
 
 	@Override
@@ -108,20 +108,255 @@ public class GameWorld implements World
 		this.entityCreationObserver = entityCreationObserver;
 	}
 
-
-
 	@Override
-	public void setHeight(int height)
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException
 	{
-		checkArgument(height > 0, "height parameter must be greater than zero: %s", height);
-		this.height = height;
+		return addEntity(c, args, null);
 	}
 
 	@Override
-	public void setWidth(int width)
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, ControllerFactory controllerFactory) throws GameLogicException, IllegalStateException
 	{
-		checkArgument(width > 0, "width parameter must be greater than zero: %s", width);
-		this.width = width;
+		if (entityMap.containsKey(args.id())) {
+			throw new GameLogicException("The specified entity already exists. Entity id: " + args.id()
+					+ ". Entity type: " + entityMap.get(args.id()).getClass().getName());
+		}
+
+		T entity;
+		try {
+			var constructor = c.getDeclaredConstructor(Entity.ConstructionArgs.class);
+			entity = constructor.newInstance(args);
+		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+			throw new GameLogicException(String.format("%s: \n%s", e.toString(), e.getCause().toString()));
+		}
+
+		assert entity.x() <= getWidth();
+		assert entity.y() <= getHeight() : "Invalid entity y: " + entity.y() + "; Max height: " + getHeight();
+		assert entity.tileColumn() < getTileColumns();
+		assert entity.tileRow() < getTileRows() : String.format("Invalid tile row: %d. Max rows: %d. Position (%d,%d). Type: %s",
+				entity.tileRow(), getTileRows(), entity.tileColumn(), entity.tileRow(), entity.getClass().getName());
+
+		if (entity instanceof ActorEntity actor) {
+			Controllers.getInstance().createController(actor, controllerFactory);
+		}
+
+		processNewSpawn(entity);
+
+		entitiesToAdd.add(entity);
+		entityMap.put(entity.id(), entity);
+
+		if (entityCreationObserver != null) {
+			entityCreationObserver.onEntityCreated(entity);
+		}
+
+		return entity;
+	}
+
+	private void processNewTank(Entity entity) {
+		if (entity instanceof Tank tank) {
+			tanks.add(tank);
+		}
+	}
+
+	private void processNewActorEntity(Entity entity) {
+		if (entity instanceof ActorEntity actor) {
+			actors.add(actor);
+		}
+	}
+
+	private void processNewSpawn(Entity entity) {
+		if (entity instanceof Spawn spawn) {
+			spawns.add(spawn);
+		}
+	}
+
+	private void processNewAdaptable(Entity entity) {
+		if (entity instanceof Adaptable adaptable) {
+			adaptables.add(adaptable);
+			adaptableAddedThisTick = true;
+		}
+	}
+
+	private void processNewTerrain(Entity entity) {
+		if (entity instanceof Terrain t) {
+			Terrain existingTerrain = terrain[t.tileColumn()][t.tileRow()];
+			if (existingTerrain != null) {
+				assert existingTerrain.isDisposed()
+					: String.format("Terrain %s added to tile (%d,%d), which already has a terrain: %s",
+							t.getClass().getName(),
+							t.tileColumn(), t.tileRow(),
+							existingTerrain.getClass().getName());
+			}
+
+			terrain[t.tileColumn()][t.tileRow()] = t;
+		}
+	}
+
+	private void processNewTerrainImprovement(Entity entity) {
+		if (entity instanceof TerrainImprovement terrainImprovement) {
+			// Check for mutually exclusive combinations.
+			assert !(terrainImprovement instanceof Terrain);
+			assert !(terrainImprovement instanceof Mine);
+
+			// Add the terrain improvement. If one already exists, ensure that it has been disposed.
+			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
+			TerrainImprovement existingTerrainImprovement = terrainImprovements.get(tile);
+			if (existingTerrainImprovement != null) {
+				assert ((Entity) existingTerrainImprovement).isDisposed()
+					: String.format("TerrainImprovement %s added to tile (%d,%d), which already has an improvement: %s",
+							terrainImprovement.getClass().getName(),
+							entity.tileColumn(), entity.tileRow(),
+							existingTerrainImprovement.getClass().getName());
+			}
+			terrainImprovements.put(tile, terrainImprovement);
+		}
+	}
+
+	private void processNewMine(Entity entity) {
+		if (entity instanceof Mine mine) {
+			// Add the terrain improvement. If one already exists, ensure that it has been disposed.
+			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
+			Mine existingMine = mines.get(tile);
+			if (existingMine != null) {
+				assert mine.isDisposed() : String.format("Mine added to tile (%d,%d), which already has a mine.", mine.tileColumn(), mine.tileRow());
+			}
+			mines.put(tile, mine);
+		}
+	}
+
+	@Override
+	public <T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType) {
+		for (int column = 0; column < getTileColumns(); column++) {
+			for (int row = 0; row < getTileRows(); row++) {
+				if (terrain[column][row] == null) {
+					float x = column * Coords.TileToWorldScale;
+					float y = row * Coords.TileToWorldScale;
+					var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
+					addEntity(terrainType, args);
+				}
+			}
+		}
+	}
+
+	@Override
+	public Terrain getTerrain(int column, int row) {
+		assert column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows() :
+				String.format( "Invalid terrain: %d,%d; max terrain is %d,%d.", column, row, getTileColumns(), getTileRows());
+
+		return terrain[column][row];
+	}
+
+	@Override
+	public TerrainImprovement getTerrainImprovement(int column, int row) {
+		return terrainImprovements.get(new Tile(column, row));
+	}
+
+	@Override
+	public Mine getMine(int column, int row) {
+		return mines.get(new Tile(column, row));
+	}
+
+	@Override
+	public int getWidth()
+	{
+		return width;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return height;
+	}
+
+	@Override
+	public int getTileColumns() {
+		return terrain.length;
+	}
+
+	@Override
+	public int getTileRows() {
+		return terrain[0].length;
+	}
+
+	@Override
+	public void update()
+	{
+		// Update all world controllers
+		for (Controller c : worldControllers) {
+			c.update(this);
+		}
+
+		// Update all non-disposed actors.
+		for (var actor : actors) {
+			if (!actor.isDisposed()) {
+				actor.update(this);
+			}
+		}
+
+		// Check for disposed entities.
+		entitiesToRemove.addAll(entities.stream()
+				.filter(e -> e.isDisposed())
+				.toList()
+		);
+
+		removeEntities(entitiesToRemove);
+		entitiesToRemove.clear();
+
+		// Update the tiling state of each entity to add, if applicable.
+		if (adaptableRemovedThisTick) {
+			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
+		}
+		adaptableRemovedThisTick = false;
+
+		if (!entitiesToAdd.isEmpty()) {
+			entities.addAll(entitiesToAdd);
+			// Sort by type.
+			entities.sort((leftEntity, rightEntity) -> leftEntity.getClass().getName().compareTo(rightEntity.getClass().getName()));
+
+			for (Entity entity : entitiesToAdd) {
+				processNewTank(entity);
+				processNewActorEntity(entity);
+				processNewAdaptable(entity);
+				processNewTerrain(entity);
+				processNewTerrainImprovement(entity);
+				processNewMine(entity);
+			}
+
+			entitiesToAdd.clear();
+		}
+
+		if (adaptableAddedThisTick) {
+			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
+		}
+		adaptableAddedThisTick = false;
+	}
+
+	/**
+	 * Removes a collection of entities from the game world. Must not be called during iteration of
+	 * the entities, tanks, actors, spawns, or adaptables lists.
+	 *
+	 * @param markedForRemoval a collection of entities to remove.
+	 */
+	@SuppressWarnings("unlikely-arg-type")
+	private void removeEntities(Collection<Entity> markedForRemoval) {
+		if (!markedForRemoval.isEmpty()) {
+			entities.removeAll(markedForRemoval);
+			entityMap.values().removeAll(markedForRemoval);
+
+			terrainImprovements.values().removeAll(markedForRemoval);
+
+			tanks.removeAll(markedForRemoval);
+			actors.removeAll(markedForRemoval);
+			spawns.removeAll(markedForRemoval);
+			mines.values().removeAll(markedForRemoval);
+
+			var adaptablesToRemove = markedForRemoval.stream()
+					.filter(e -> e instanceof Adaptable)
+					.map(e -> (Adaptable) e)
+					.toList();
+			adaptableRemovedThisTick = adaptables.removeAll(adaptablesToRemove);
+		}
 	}
 
 	@Override
@@ -139,290 +374,105 @@ public class GameWorld implements World
 	@Override
 	public List<Entity> getEntities()
 	{
-		List<Entity> copyOfEntities = Collections.unmodifiableList(entities);
-		return copyOfEntities;
-	}
-
-	@Override
-	public <T extends Entity> T addEntity(Class<T> c) throws GameLogicException
-	{
-		return addEntity(c, UUID.randomUUID(), null);
-	}
-
-	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id) throws GameLogicException
-	{
-		return addEntity(c, id, null);
-	}
-
-	@Override
-	public <T extends Entity> T addEntity(Class<T> c, ControllerFactory controllerFactory)
-			throws GameLogicException
-	{
-		return addEntity(c, UUID.randomUUID(), controllerFactory);
-	}
-
-	@Override
-	public <T extends Entity> T addEntity(Class<T> c, UUID id, ControllerFactory controllerFactory)
-			throws GameLogicException, IllegalStateException
-	{
-		if (entityMap.containsKey(id))
-		{
-			throw new GameLogicException("The specified entity already exists. Entity id: " + id +
-					". Entity type: " + entityMap.get(id).getClass().getName());
-		}
-
-		T entity;
-		try
-		{
-			entity = c.newInstance();
-		}
-		catch (InstantiationException | IllegalAccessException e)
-		{
-			throw new GameLogicException(e.getMessage());
-		}
-
-		entity.setId(id);
-
-		Controllers.getInstance().createController(entity, controllerFactory);
-
-		if (entity instanceof Tank tank)
-		{
-			tanks.add(tank);
-		}
-
-		if (entity instanceof Effect)
-		{
-			effects.add(entity);
-		}
-
-		if (entity instanceof Actor)
-		{
-			actors.add(entity);
-		}
-
-		if (entity instanceof Spawn)
-		{
-			spawns.add(entity);
-		}
-
-		if (entity instanceof Adaptable adaptable) {
-			adaptables.add(adaptable);
-			adaptableAddedThisTick = true;
-		}
-
-		entitiesToAdd.add(entity);
-		entityMap.put(entity.getId(), entity);
-
-		if (entityCreationObserver != null) {
-			entityCreationObserver.onEntityCreated(entity);
-		}
-
-		return entity;
-	}
-
-	@Override
-	public void removeEntity(Entity e)
-	{
-		e.dispose();
-		entityMap.remove(e.getId());
-
-		if (e instanceof Tank)
-		{
-			tanks.remove(e);
-		}
-
-		if (e instanceof Actor)
-		{
-			actors.remove(e);
-		}
-
-		if (e instanceof Effect)
-		{
-			effects.remove(e);
-		}
-
-		if (e instanceof Spawn)
-		{
-			spawns.remove(e);
-		}
-
-		if (e instanceof Adaptable adaptable) {
-			adaptables.remove(adaptable);
-			adaptableRemovedThisTick = true;
-		}
-	}
-
-	@Override
-	public List<Entity> getActors()
-	{
-		return actors;
-	}
-
-	@Override
-	public List<Entity> getEffects()
-	{
-		return effects;
-	}
-
-	@Override
-	public void removeEntity(UUID id) throws GameLogicException
-	{
-		removeEntity(entityMap.get(id));
-	}
-
-	@Override
-	public Tile[][] getTiles()
-	{
-		return mapTiles;
-	}
-
-	@Override
-	public Tile getTileFromWorldPosition(float worldX, float worldY) {
-		int x = ((int) worldX) / Coords.TILE_TO_WORLD_SCALE;
-		int y = ((int) worldY) / Coords.TILE_TO_WORLD_SCALE;
-
-		var tile = mapTiles[x][y];
-		assert tile != null;
-		return tile;
-	}
-
-	@Override
-	public void setTiles(Tile[][] mapTiles)
-	{
-		this.mapTiles = mapTiles;
-		setWidth(mapTiles.length * Coords.TILE_TO_WORLD_SCALE);
-		setHeight(mapTiles[0].length * Coords.TILE_TO_WORLD_SCALE);
-
-		// Starting on 2/2021, Tiles can be created without an associated Terrain, in order to increase
-		// the map importer's flexibility with slightly malformed, but otherwise valid, map files.
-		// These lines add a Grass tile to any tile that is missing an associated terrain.
-		for (Tile[] tiles : mapTiles) {
-			for (Tile tile : tiles) {
-				if (!tile.hasTerrain()) {
-					tile.setTerrain(addEntity(Grass.class), this);
-				}
-			}
-		}
-
-		for (int i = 0; i < 2; i++) {
-			for (Tile[] tiles : mapTiles) {
-				for (Tile tile : tiles) {
-					Terrain terrain = tile.getTerrain();
-					updateTilingStateIfAdaptable(this, terrain);
-
-					if (tile.hasElement()) {
-						StationaryElement element = tile.getElement();
-						updateTilingStateIfAdaptable(this, element);
-					}
-				}
-			}
-		}
-	}
-
-	private static void updateTilingStateIfAdaptable(World world, Entity e) {
-		if (e instanceof Adaptable adaptable) {
-			adaptable.updateTilingState(world);
-		}
-	}
-
-	@Override
-	public int getWidth()
-	{
-		return width;
-	}
-
-	@Override
-	public int getHeight()
-	{
-		return height;
-	}
-
-	@Override
-	public int getTileColumns() {
-		assert width / Coords.TILE_TO_WORLD_SCALE == mapTiles.length;
-		return mapTiles.length;
-	}
-
-	@Override
-	public int getTileRows() {
-		assert height / Coords.TILE_TO_WORLD_SCALE == mapTiles[0].length;
-		return mapTiles[0].length;
-	}
-
-	@Override
-	public void update()
-	{
-		// Update all world controllers
-		for (Controller c : worldControllers)
-		{
-			c.update(this);
-		}
-
-		checkState(width > 0,
-				"worldMapWidth must be greater than 0. worldMapWidth: %s", width);
-		checkState(height > 0,
-				"worldMapHeight must be greater than 0. worldMapHeight: %s", height);
-
-		// Update all entities.
-		for (Entity e : entities)
-		{
-			if (!e.isDisposed()) { e.update(this); }
-
-			if (e.isDisposed())
-			{
-				entitiesToRemove.add(e);
-			}
-		}
-
-		entities.removeAll(entitiesToRemove);
-		entitiesToRemove.clear();
-
-		// Update the tiling state of each entity to add, if applicable.
-		if (adaptableRemovedThisTick) {
-			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
-		}
-		adaptableRemovedThisTick = false;
-
-		entities.addAll(entitiesToAdd);
-		entitiesToAdd.clear();
-		if (adaptableAddedThisTick) {
-			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
-		}
-		adaptableAddedThisTick = false;
+		return entitiesUnmodifiableView;
 	}
 
 	@Override
 	public List<Tank> getTanks()
 	{
-		List<Tank> copyOfTanks = Collections.unmodifiableList(tanks);
-		return copyOfTanks;
+		return tanksUnmodifiableView;
 	}
 
 	@Override
-	public List<Entity> getSpawns()
+	public List<ActorEntity> getActors()
 	{
-		List<Entity> copyOfSpawns = Collections.unmodifiableList(spawns);
-		return copyOfSpawns;
+		return actorsUnmodifiableView;
+	}
+
+	@Override
+	public List<Spawn> getSpawns()
+	{
+		return spawnsUnmodifiableView;
+	}
+
+	@Override
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects) {
+		return getNearbyCollidables(entity, onlyIncludeSolidObjects, null);
+	}
+
+	@Override
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
+		final int tileMaxDistance = 3;
+		return getNearbyCollidables(entity, onlyIncludeSolidObjects, tileMaxDistance, typeFilter);
+	}
+
+	@Override
+	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, int tileMaxDistance, @Nullable Class<?> typeFilter) {
+		assert tileMaxDistance >= 0;
+
+		final int startTileColumn = targetEntity.tileColumn() - tileMaxDistance;
+		final int startTileRow = targetEntity.tileRow() - tileMaxDistance;
+
+		final int endTileColumn = targetEntity.tileColumn() + tileMaxDistance;
+		final int endTileRow = targetEntity.tileRow() + tileMaxDistance;
+
+		List<Collidable> nearbyCollidables = new ArrayList<>();
+		for (int column = startTileColumn; column <= endTileColumn; column++) {
+			for (int row = startTileRow; row <= endTileRow; row++) {
+				if (isValidTile(column, row)) {
+					TerrainImprovement ti = terrainImprovements.get(new Tile(column, row));
+					if (includeInNearbyCollidablesList((Entity) ti, onlyIncludeSolidObjects, typeFilter)) {
+						nearbyCollidables.add((Collidable) ti);
+					}
+				}
+			}
+		}
+
+		// Iterate through every actor to determine which ones are nearby. There's really no better way to do this
+		// currently; if it becomes a bottleneck, I'll look into optimizing it.
+		for (ActorEntity actor : actors) {
+			if (!actor.equals(targetEntity)
+					&& isEntityWithinTileRange(actor, startTileColumn, endTileColumn, startTileRow, endTileRow)
+					&& includeInNearbyCollidablesList(actor, onlyIncludeSolidObjects, typeFilter)) {
+				nearbyCollidables.add(actor);
+			}
+		}
+
+		return nearbyCollidables;
+	}
+
+	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
+		if (e instanceof Collidable c) {
+			var result =  (!onlyIncludeSolidObjects || c.isSolid())
+					&& (typeFilter == null || typeFilter.isInstance(c));
+			return result;
+		}
+		return false;
+	}
+
+	private static boolean isEntityWithinTileRange(Entity e, int minColumn, int maxColumn, int minRow, int maxRow) {
+		int col = e.tileColumn();
+		int row = e.tileRow();
+		return col >= minColumn && col <= maxColumn && row >= minRow && row <= maxRow;
+	}
+
+	@Override
+	public boolean isValidTile(int column, int row) {
+		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
 	}
 
 	@Override
 	public void addController(Class<? extends Controller> controllerType)
 	{
-		for (Controller c : worldControllers)
-		{
-			if (c.getClass() == controllerType)
-			{
+		for (Controller c : worldControllers) {
+			if (c.getClass() == controllerType) {
 				return;
 			}
 		}
 
-		try
-		{
-			worldControllers.add(controllerType.newInstance());
-		}
-		catch (InstantiationException | IllegalAccessException e)
-		{
+		try {
+			worldControllers.add(controllerType.getConstructor().newInstance());
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new GameLogicException(e);
 		}
 	}
@@ -430,10 +480,8 @@ public class GameWorld implements World
 	@Override
 	public void removeController(Class<? extends Controller> controllerType)
 	{
-		for (Controller c : worldControllers)
-		{
-			if (c.getClass() == controllerType)
-			{
+		for (Controller c : worldControllers) {
+			if (c.getClass() == controllerType) {
 				worldControllers.remove(c);
 				return;
 			}

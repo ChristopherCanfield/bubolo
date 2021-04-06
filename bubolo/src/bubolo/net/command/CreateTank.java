@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.net.NetworkTankController;
+import bubolo.world.ActorEntity;
+import bubolo.world.Tank;
 import bubolo.world.World;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Tank;
 
 /**
  * Creates a network-controlled tank on connected computers.
@@ -32,14 +32,14 @@ public class CreateTank extends CreateEntity
 	 */
 	public CreateTank(Tank tank)
 	{
-		super(Tank.class, tank.getId(), tank.getX(), tank.getY(), tank.getRotation(),
+		super(Tank.class, tank.id(), tank.x(), tank.y(), tank.rotation(),
 				new ControllerFactory() {
 					private static final long serialVersionUID = 1L;
 
 					@Override
-					public void create(Entity entity)
+					public void create(ActorEntity entity)
 					{
-						entity.addController(new NetworkTankController());
+						entity.setController(new NetworkTankController());
 					}
 				});
 
@@ -56,7 +56,7 @@ public class CreateTank extends CreateEntity
 		{
 			Tank tank = (Tank) world.getEntity(getId());
 			tank.setPlayerName(playerName);
-			tank.setLocalPlayer(false);
+			tank.setOwnedByLocalPlayer(false);
 		}
 		catch (Exception e)
 		{

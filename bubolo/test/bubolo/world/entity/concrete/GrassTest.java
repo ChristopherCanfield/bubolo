@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import bubolo.world.Grass;
 import bubolo.world.entity.EntityTestCase;
 
 public class GrassTest

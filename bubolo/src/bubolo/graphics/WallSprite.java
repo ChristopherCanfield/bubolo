@@ -2,7 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.world.entity.concrete.Wall;
+import bubolo.world.Wall;
 
 /**
  * The graphical representation of a Wall
@@ -29,7 +29,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	 */
 	WallSprite(Wall wall)
 	{
-		super(DrawLayer.THIRD, wall);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, wall);
 
 		var undamagedTexturePath = Graphics.TEXTURE_PATH + UNDAMAGED_TEXTURE_FILE;
 		undamagedFrames = Graphics.getTextureRegion1d(undamagedTexturePath, getClass());
@@ -54,7 +54,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 		else
 		{
 			TextureRegion[] frames;
-			if (getEntity().getHitPoints() == Wall.MAX_HIT_POINTS) {
+			if (getEntity().hitPoints() == getEntity().maxHitPoints()) {
 				frames = undamagedFrames;
 			} else {
 				frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
@@ -67,8 +67,8 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	 * Returns the index into the damaged frames, or -1 if the wall is undamaged.
 	 */
 	private static int calculateDamagedFramesIndex(Wall entity) {
-		int health = Math.round(entity.getHitPoints());
-		if (health == Wall.MAX_HIT_POINTS) {
+		int health = Math.round(entity.hitPoints());
+		if (health == entity.maxHitPoints()) {
 			return -1;
 		} else if (health >= 75) {
 			return 0;

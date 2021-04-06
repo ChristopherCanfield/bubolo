@@ -7,12 +7,9 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
-import bubolo.world.entity.Entity;
-import bubolo.world.entity.concrete.Tank;
 
 /**
- * Provides access to game entities. This is the primary interface between the Model and other
- * systems.
+ * Stores and processes game entities.
  *
  * @author BU CS673 - Clone Productions
  */
@@ -30,54 +27,37 @@ public interface World
 	public Entity getEntity(UUID id) throws GameLogicException;
 
 	/**
-	 * Returns the list of all entities in the world. Ordering should not be assumed, and may change
-	 * between calls.
+	 * Returns an unmodifiable view of all entities in the world.
 	 *
 	 * @return the list of entities.
 	 */
 	public List<Entity> getEntities();
 
 	/**
-	 * Returns the list of all tanks in the world. Ordering should not be assumed, and may change
-	 * between calls.
+	 * Returns an unmodifiable view of all tanks in the world.
 	 *
 	 * @return the list of tanks.
 	 */
 	public List<Tank> getTanks();
 
 	/**
-	 * Returns the list of all Spawn Locations in the world. Ordering should not be assumed, and may
-	 * change between calls.
+	 * Returns an unmodifiable view of all Spawn Locations in the world.
 	 *
-	 * @return the list of Spawns.
+	 * @return the list of spawns.
 	 */
-	public List<Entity> getSpawns();
+	public List<Spawn> getSpawns();
 
 	/**
-	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
-	 * between calls.
+	 * Returns an unmodifiable view of all actors in the world.
 	 *
 	 * @return the list of actors.
 	 */
-	public List<Entity> getActors();
+	public List<ActorEntity> getActors();
 
 	/**
-	 * Returns the list of all actors in the world. Ordering should not be assumed, and may change
-	 * between calls.
+	 * Constructs and adds an entity to the world, and returns a reference to the newly constructed entity.
 	 *
-	 * @return the list of effects.
-	 */
-	public List<Entity> getEffects();
-
-	/**
-	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
-	 * is added to the world. Only one observer can be attached to the world at a time.
-	 * @param entityCreationObserver
-	 */
-	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
-
-	/**
-	 * Performs the following actions:
+	 * The following actions are performed:
 	 * <ol>
 	 * <li>A new Entity of the specified type is created.</li>
 	 * <li>The new Entity is added to the World</li>
@@ -85,35 +65,21 @@ public interface World
 	 * <li>One or more Controllers are created and added to the Controllers list.</li>
 	 * </ol>
 	 *
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
+	 * @param c the entity's class object. For example, to create a new Tank, call this method
+	 *          using the following form: <code>World.addEntity(Tank.class, args).</code>
+	 * @param args the entity's construction arguments.
 	 * @return reference to the new entity.
 	 * @throws GameLogicException
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c) throws GameLogicException;
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException;
 
 	/**
-	 * @see World#addEntity(Class)
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
-	 * @param id
-	 *            the UUID that will be used for the entity.
-	 * @return reference to the new entity.
-	 * @throws GameLogicException
-	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
-	 *             entity.
-	 */
-	public <T extends Entity> T addEntity(Class<T> c, @Nullable UUID id) throws GameLogicException;
-
-	/**
-	 * @see World#addEntity(Class)
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
+	 * @see World#addEntity(Class, Entity.ConstructionArgs)
+	 * @param c the entity's class object. For example, to create a new Tank, call this method
+	 *          using the following form: <code>World.addEntity(Tank.class, args).</code>
+	 * @param args the entity's construction arguments.
 	 * @param controllerFactory
 	 *            an object that implements the ControllerFactory interface. This should be used to
 	 *            override the default controller settings. In other words, use a controller factory
@@ -124,58 +90,32 @@ public interface World
 	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
 	 *             entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, @Nullable ControllerFactory controllerFactory)
-			throws GameLogicException;
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory) throws GameLogicException;
 
 	/**
-	 * @see World#addEntity(Class)
-	 * @param c
-	 *            the entity's class object. For example, to create a new Tank, call this method
-	 *            using the following form: <code>World.addEntity(Tank.class).</code>
-	 * @param id
-	 *            the UUID that will be used for the entity.
-	 * @param controllerFactory
-	 *            an object that implements the ControllerFactory interface. This should be used to
-	 *            override the default controller settings. In other words, use a controller factory
-	 *            to set different controller(s) for an entity than the default.
-	 * @return reference to the new entity.
-	 * @throws GameLogicException
-	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
-	 *             entity.
-	 */
-	public <T extends Entity> T addEntity(Class<T> c, @Nullable UUID id,
-			@Nullable ControllerFactory controllerFactory)
-			throws GameLogicException;
-
-	/**
-	 * Removes an entity from the world. After this method is called, the specified entity will no
-	 * longer be drawn or updated.
+	 * Populates all empty tiles with the specified terrain type.
 	 *
-	 * @param e
-	 *            the entity to remove.
+	 * @param terrainType the terrain type to populate all empty tiles with.
 	 */
-	public void removeEntity(Entity e);
+	public <T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType);
 
 	/**
-	 * Removes an entity from the world. After this method is called, the specified entity will no
-	 * longer be drawn or updated. Throws a GameLogicException if the entity is not found.
+	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
+	 * is added to the world. Only one observer can be attached to the world at a time.
 	 *
-	 * @param id
-	 *            the unique id of the entity to remove.
-	 * @throws GameLogicException
-	 *             if the entity is not found.
+	 * @param entityCreationObserver
 	 */
-	public void removeEntity(UUID id) throws GameLogicException;
+	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
 
 	/**
-	 * Returns the width of the world.
+	 * Returns the width of the world in world units.
 	 *
 	 * @return the width of the world.
 	 */
 	public int getWidth();
 
 	/**
-	 * Returns the height of the world.
+	 * Returns the height of the world in world units.
 	 *
 	 * @return the height of the world.
 	 */
@@ -184,8 +124,9 @@ public interface World
 	/**
 	 * True if the point is within the world, or false otherwise.
 	 *
-	 * @param x x position of the point.
-	 * @param y y position of the point.
+	 * @param x x position of the point, in world units.
+	 * @param y y position of the point, in world units.
+	 *
 	 * @return true if the point is within the world.
 	 */
 	default public boolean containsPoint(float x, float y) {
@@ -204,21 +145,7 @@ public interface World
 	 */
 	public int getTileRows();
 
-	/**
-	 * Sets the world's height.
-	 *
-	 * @param height
-	 *            the world's height.
-	 */
-	public void setHeight(int height);
-
-	/**
-	 * Sets the world's width.
-	 *
-	 * @param width
-	 *            the world's width.
-	 */
-	public void setWidth(int width);
+	public boolean isValidTile(int column, int row);
 
 	/**
 	 * Updates the game world. Must be called once per game tick.
@@ -226,27 +153,73 @@ public interface World
 	public void update();
 
 	/**
-	 * Returns a 2d Tile Array representation of stationary objects in the world
+	 * Returns the terrain located in the specified (column, row) tile position.
 	 *
-	 * @return the 2d Tile Array representing the stationary objects in the world
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 *
+	 * @return the terrain in the specified tile position.
 	 */
-	public Tile[][] getTiles();
+	public Terrain getTerrain(int column, int row);
 
 	/**
-	 * Returns a Tile from a world position.
-	 * @param worldX the world x position.
-	 * @param worldY the world y position.
-	 * @return the tile.
+	 * Returns the terrain improvement located in the specified (column, row) tile position, or null if none is.
+	 *
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 *
+	 * @return the terrain improvement in the specified tile position, or false otherwise.
 	 */
-	public Tile getTileFromWorldPosition(float worldX, float worldY);
+	public TerrainImprovement getTerrainImprovement(int column, int row);
 
 	/**
-	 * Allows the setting of a 2d Tile Array representation of stationary objects in the world
+	 *Returns the mine located in specified (column, row) tile position, or null if none is.
 	 *
-	 * @param mapTiles
-	 *            is the representation to set the MapTiles field to
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 *
+	 * @return the mine in the specified tile position, or false otherwise.
 	 */
-	public void setTiles(Tile[][] mapTiles);
+	public Mine getMine(int column, int row);
+
+	/**
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and type.
+	 * The entity that is passed in is not included in the returned list.
+	 *
+	 * @param entity
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
+	 * no type filter is applied.
+	 *
+	 * @return a list of nearby collidables.
+	 */
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
+
+	/**
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and type.
+	 * The entity that is passed in is not included in the returned list. This overload allows for the max distance, in tiles, to
+	 * be passed in.
+	 *
+	 * @param entity
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
+	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
+	 * no type filter is applied.
+	 *
+	 * @return a list of nearby collidables.
+	 */
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance, @Nullable Class<?> typeFilter);
+
+	/**
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness.
+	 * The entity that is passed in is not included in the returned list.
+	 *
+	 * @param entity
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 *
+	 * @return a list of nearby collidables.
+	 */
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects);
 
 	/**
 	 * Adds a controller of the specified type to the world.
@@ -266,6 +239,7 @@ public interface World
 
 	/**
 	 * Returns the world controller count.
+	 *
 	 * @return the world controller count.
 	 */
 	public int getControllerCount();

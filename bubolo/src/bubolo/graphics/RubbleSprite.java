@@ -4,14 +4,14 @@ import java.util.Random;
 
 import com.badlogic.gdx.graphics.Texture;
 
-import bubolo.world.entity.Entity;
+import bubolo.world.Rubble;
 
 /**
  * The graphical representation of Rubble.
  *
  * @author BU673 - Clone Industries
  */
-class RubbleSprite extends AbstractEntitySprite<Entity>
+class RubbleSprite extends AbstractEntitySprite<Rubble>
 {
 	private Texture image;
 
@@ -27,9 +27,9 @@ class RubbleSprite extends AbstractEntitySprite<Entity>
 	 * @param rubble
 	 *            Reference to the Rubble that this RubbleSprite represents.
 	 */
-	RubbleSprite(Entity rubble)
+	RubbleSprite(Rubble rubble)
 	{
-		super(DrawLayer.SECOND, rubble);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, rubble);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 
