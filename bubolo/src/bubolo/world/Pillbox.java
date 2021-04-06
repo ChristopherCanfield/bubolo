@@ -25,10 +25,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/** Time required to reload cannon. */
 	private static final long cannonReloadSpeed = 500;
 
-	/* The direction the pillbox will fire. */
+	/** The direction the pillbox will fire. */
 	private float cannonRotation = 0;
 
-	/** Max range to locate a target. Pillbox will not fire unless there is a tank within this range. */
+	/** Max range to locate a target. The pillbox will not fire unless there is a tank within this range. */
 	private double range = 300;
 
 	/** The pillbox's health. */
@@ -40,11 +40,13 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
 
-	private static final int width = 27;
-	private static final int height = 27;
+	private static final int width = 30;
+	private static final int height = 30;
 
-	private static final int captureWidth = width + 10;
-	private static final int captureHeight = height + 10;
+	private static final int captureBoundsExtraWidth = 12;
+	private static final int captureWidth = width + captureBoundsExtraWidth;
+	private static final int captureBoundsExtraHeight = 12;
+	private static final int captureHeight = height + captureBoundsExtraHeight;
 
 	// Gives the appearance of capturing the pillbox by touching it.
 	private final BoundingBox captureBounds;
@@ -56,7 +58,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	protected Pillbox(ConstructionArgs args) {
 		super(args, width, height);
-		captureBounds = new BoundingBox(this, captureWidth, captureHeight);
+		captureBounds = new BoundingBox(x() - (captureBoundsExtraWidth / 2), 
+				y() - (captureBoundsExtraHeight / 2), 
+				captureWidth, 
+				captureHeight);
 	}
 
 	/**
@@ -69,7 +74,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	@Override
 	public void updateBounds() {
 		super.updateBounds();
-		captureBounds.updateBounds(this, captureWidth, captureHeight);
+		captureBounds.updateBounds(x() - (captureBoundsExtraWidth / 2), y() - (captureBoundsExtraHeight / 2), captureWidth, captureHeight);
 	}
 
 	@Override

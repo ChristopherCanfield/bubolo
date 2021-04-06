@@ -33,11 +33,10 @@ public class ChangeOwner extends NetworkCommand
 	 *
 	 * @param ownable the actor entity entity to update.
 	 */
-
 	public ChangeOwner(ActorEntity ownable)
 	{
 		this.id = ownable.id();
-		this.ownerId = ownable.owner().id();
+		this.ownerId = (ownable.owner() != null) ? ownable.owner().id() : null;
 	}
 
 	@Override

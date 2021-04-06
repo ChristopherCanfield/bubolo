@@ -12,20 +12,18 @@ public class BoundingBox {
 	private Polygon bounds = new Polygon(new float[8]);
 
 	public BoundingBox(Entity entity) {
-		this(entity, entity.width(), entity.height());
+		this(entity.x(), entity.y(), entity.width(), entity.height());
 	}
 
-	public BoundingBox(Entity entity, int width, int height) {
-		updateBounds(entity, width, height);
+	public BoundingBox(float x, float y, int width, int height) {
+		updateBounds(x, y, width, height);
 	}
 
 	public void updateBounds(Entity entity) {
-		updateBounds(entity, entity.height(), entity.width());
+		updateBounds(entity.x(), entity.y(), entity.height(), entity.width());
 	}
-
-	public void updateBounds(Entity entity, int width, int height) {
-		float x = entity.x();
-		float y = entity.y();
+	
+	public void updateBounds(float x, float y, int width, int height) {
 		float w = width;
 		float h = height;
 

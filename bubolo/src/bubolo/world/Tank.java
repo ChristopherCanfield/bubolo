@@ -71,7 +71,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 	// Used for movement collision detection.
 	private final Circle boundingCircle;
-	private final float boundingCircleRadius = 4.0f;
+	private final float boundingCircleRadius = 6.0f;
 
 	// The additional amount that the tank will bounce off a solid object.
 	private static final float collisionBounce = 0.25f;
@@ -103,7 +103,7 @@ public class Tank extends ActorEntity implements Damageable {
 	protected Tank(ConstructionArgs args) {
 		super(args, width, height);
 
-		boundingCircle = new Circle(x() + width / 2, y() - boundingCircleRadius, boundingCircleRadius);
+		boundingCircle = new Circle(x(), y(), boundingCircleRadius);
 		updateBounds();
 	}
 
