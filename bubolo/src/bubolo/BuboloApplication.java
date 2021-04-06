@@ -176,13 +176,8 @@ public class BuboloApplication extends AbstractGameApplication
 			screen.dispose();
 
 			Entity.ConstructionArgs args;
-			if (!isClient) {
-				Vector2 spawnLocation = getRandomSpawn(world);
-				args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
-			} else {
-				// TODO (cdc - 2021-03-31): What is the purpose of using this, rather than spawn locations?
-				args = new Entity.ConstructionArgs(UUID.randomUUID(), getRandomX(), 200, 0);
-			}
+			Vector2 spawnLocation = getRandomSpawn(world);
+			args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
 			tank.setPlayerName(network.getPlayerName());
@@ -240,11 +235,11 @@ public class BuboloApplication extends AbstractGameApplication
 		return null;
 	}
 
-	private static int getRandomX()
-	{
-		int val = (new Random()).nextInt(10);
-		return (1250 + (100 * val));
-	}
+//	private static int getRandomX()
+//	{
+//		int val = (new Random()).nextInt(10);
+//		return (1250 + (100 * val));
+//	}
 
 	/**
 	 * Called when the application is destroyed.

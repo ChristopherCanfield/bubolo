@@ -56,18 +56,18 @@ public class Tank extends ActorEntity implements Damageable {
 	private static final long cannonReloadSpeed = 500;
 
 	// The time that the tank will respawn.
-	private long nextResponseTimeMillis;
+	private long nextRespawnTime;
 
 	private static final long respawnTimeMillis = 1000L;
 
 	// The last time that the cannon was fired.
-	private long cannonFireTime = 0;
+	private long cannonReadyTime = 0;
 
 	// Minimum amount of time between laying mines.
 	private static final long mineLayingSpeedMillis = 500;
 
 	// The next time a mine will be ready to be laid.
-	private long mineAvailableTime = 0;
+	private long mineReadyTime = 0;
 
 	// Used for movement collision detection.
 	private final Circle boundingCircle;
@@ -107,6 +107,32 @@ public class Tank extends ActorEntity implements Damageable {
 		updateBounds();
 	}
 
+	private void respawn(World world) {
+		// Don't allow the tank to respawn until its respawn timer has expired.
+		if (nextRespawnTime > System.currentTimeMillis()) {
+			var spawns = world.getSpawns();
+			if (spawns.size() > 0) {
+				Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+				setPosition(spawn.x(), spawn.y());
+
+				Network net = NetworkSystem.getInstance();
+				net.send(new MoveTank(this));
+			}
+
+			hitPoints = maxHitPoints;
+			ammoCount = maxAmmo;
+			mineCount = maxMines;
+			cannonReadyTime = 0;
+			mineReadyTime = 0;
+
+			speed = 0;
+			modifiedMaxSpeed = maxSpeed;
+			accelerated = false;
+			decelerated = false;
+			hidden = false;
+		}
+	}
+
 	@Override
 	public void updateBounds() {
 		super.updateBounds();
@@ -117,6 +143,7 @@ public class Tank extends ActorEntity implements Damageable {
 	public void onUpdate(World world) {
 		if (!isAlive()) {
 			respawn(world);
+			return;
 		}
 
 		updateSpeedForTerrain(world);
@@ -234,7 +261,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady() {
-		return (System.currentTimeMillis() - cannonFireTime > cannonReloadSpeed);
+		return (System.currentTimeMillis() - cannonReadyTime > cannonReloadSpeed);
 	}
 
 	/**
@@ -247,8 +274,8 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
 	public Bullet fireCannon(World world, float startX, float startY) {
-		if ((ammoCount > 0) && (cannonFireTime - System.currentTimeMillis() < 0)) {
-			cannonFireTime = System.currentTimeMillis();
+		if ((ammoCount > 0) && (cannonReadyTime - System.currentTimeMillis() < 0)) {
+			cannonReadyTime = System.currentTimeMillis();
 
 			var args = new Entity.ConstructionArgs(UUID.randomUUID(), startX, startY, rotation());
 			Bullet bullet = world.addEntity(Bullet.class, args);
@@ -421,7 +448,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private void onDeath() {
 		Audio.play(Sfx.TANK_EXPLOSION);
-		nextResponseTimeMillis = System.currentTimeMillis() + respawnTimeMillis;
+		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
 	}
 
 	/**
@@ -472,7 +499,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	public Mine placeMine(World world) {
 		if (canPlaceMineHere(world)) {
-			mineAvailableTime = System.currentTimeMillis() + mineLayingSpeedMillis;
+			mineReadyTime = System.currentTimeMillis() + mineLayingSpeedMillis;
 
 			float mineX = x();
 			float mineY = y();
@@ -487,7 +514,7 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	private boolean canPlaceMineHere(World world) {
-		if (mineAvailableTime < System.currentTimeMillis() && mineCount > 0) {
+		if (mineReadyTime < System.currentTimeMillis() && mineCount > 0) {
 			Terrain terrain = world.getTerrain(tileColumn(), tileRow());
 			if (terrain.isValidBuildTarget() && world.getMine(tileColumn(), tileRow()) == null) {
 				TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
@@ -496,26 +523,6 @@ public class Tank extends ActorEntity implements Damageable {
 			return false;
 		}
 		return false;
-	}
-
-	private void respawn(World world) {
-		// Don't allow the tank to respawn until its respawn timer has expired.
-		if (nextResponseTimeMillis > System.currentTimeMillis()) {
-			return;
-		}
-
-		var spawns = world.getSpawns();
-		if (spawns.size() > 0) {
-			Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-			setPosition(spawn.x(), spawn.y());
-
-			Network net = NetworkSystem.getInstance();
-			net.send(new MoveTank(this));
-		}
-
-		hitPoints = maxHitPoints;
-		ammoCount = maxAmmo;
-		mineCount = maxMines;
 	}
 
 	/**
