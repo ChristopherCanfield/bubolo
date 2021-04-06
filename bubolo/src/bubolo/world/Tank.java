@@ -14,6 +14,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.MoveTank;
 import bubolo.net.command.NetTankSpeed;
+import bubolo.util.Coords;
 
 /**
  * The tank, which may be controlled by a local player or networked player..
@@ -123,6 +124,8 @@ public class Tank extends ActorEntity implements Damageable {
 		performCollisionDetection(world);
 		hidden = checkIfHidden(world);
 
+		Terrain terrain = world.getTerrain(tileColumn(), tileRow());
+
 		decelerated = false;
 		accelerated = false;
 	}
@@ -133,6 +136,26 @@ public class Tank extends ActorEntity implements Damageable {
 
 	public void setPlayerName(String name) {
 		this.playerName = name;
+	}
+
+	/**
+	 * Returns the tile column at the center of the tank.
+	 *
+	 * @return the tile column at the center of the tank.
+	 */
+	@Override
+	public int tileColumn() {
+		return (int) (x() + width) / Coords.TileToWorldScale;
+	}
+
+	/**
+	 * Returns the tile row at the center of the tank.
+	 *
+	 * @return the tile row at the center of the tank.
+	 */
+	@Override
+	public int tileRow() {
+		return (int) (y() + height) / Coords.TileToWorldScale;
 	}
 
 	/**

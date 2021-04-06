@@ -259,7 +259,6 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	private Visibility visibility()
 	{
 		if (getEntity().isHidden()) {
-			System.out.println("Tank is hidden");
 			if (getEntity().isOwnedByLocalPlayer()) {
 				setColor(tankHiddenColor);
 				return Visibility.HIDDEN;
