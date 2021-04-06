@@ -29,7 +29,7 @@ class RubbleSprite extends AbstractEntitySprite<Rubble>
 	 */
 	RubbleSprite(Rubble rubble)
 	{
-		super(DrawLayer.SECOND, rubble);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, rubble);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 

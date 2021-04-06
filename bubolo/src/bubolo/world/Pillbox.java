@@ -58,9 +58,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	protected Pillbox(ConstructionArgs args) {
 		super(args, width, height);
-		captureBounds = new BoundingBox(x() - (captureBoundsExtraWidth / 2), 
-				y() - (captureBoundsExtraHeight / 2), 
-				captureWidth, 
+		captureBounds = new BoundingBox(x() - (captureBoundsExtraWidth / 2),
+				y() - (captureBoundsExtraHeight / 2),
+				captureWidth,
 				captureHeight);
 	}
 
@@ -220,5 +220,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	@Override
 	public boolean isSolid() {
 		return true;
+	}
+
+	@Override
+	public boolean isValidMinePlacementTarget() {
+		return false;
 	}
 }

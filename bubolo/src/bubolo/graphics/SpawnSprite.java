@@ -31,7 +31,7 @@ class SpawnSprite extends AbstractEntitySprite<Spawn>
 	 */
 	SpawnSprite(Spawn spawn)
 	{
-		super(DrawLayer.SECOND, spawn);
+		super(DrawLayer.TOP, spawn);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 		frames = TextureUtil.splitFrames(image, 32, 32);

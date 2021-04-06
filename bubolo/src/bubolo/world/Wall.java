@@ -111,6 +111,11 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	}
 
 	@Override
+	public boolean isValidMinePlacementTarget() {
+		return false;
+	}
+
+	@Override
 	public Polygon bounds() {
 		return boundingBox.bounds();
 	}

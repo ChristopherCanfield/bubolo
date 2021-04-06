@@ -25,7 +25,7 @@ class CraterSprite extends AbstractEntitySprite<Crater>
 	 */
 	CraterSprite(Crater crater)
 	{
-		super(DrawLayer.SECOND, crater);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, crater);
 
 		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
 		frames = Graphics.getTextureRegion1d(path, getClass());

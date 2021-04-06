@@ -10,9 +10,6 @@ import bubolo.audio.Sfx;
  * @author Christopher D. Canfield
  */
 public class Mine extends ActorEntity {
-	/** Whether this Mine is exploding. */
-	private boolean isExploding = false;
-
 	/** Amount of time before mine becomes active, in milliseconds */
 	private static final int fuseTimeMillis = 5000;
 
@@ -36,29 +33,12 @@ public class Mine extends ActorEntity {
 	}
 
 	/**
-	 * Checks to see if this mine is currently exploding!
+	 * Whether the mine is armed or not. The mine starts unarmed, and becomes armed after a short delay. Unarmed mines
+	 * do not explode when touched.
 	 *
-	 * @return true if this mine is in the process of exploding, false otherwise.
+	 * @return whether or not this mine is armed.
 	 */
-	public boolean isExploding() {
-		return isExploding;
-	}
-
-	/**
-	 * Sets the explosion status of this Mine.
-	 *
-	 * @param explode should be true if this mine should be exploding, false otherwise.
-	 */
-	public void setExploding(boolean explode) {
-		this.isExploding = explode;
-	}
-
-	/**
-	 * Whether the mine is active or not. The mine starts inactive, and becomes active after the delay is reached.
-	 *
-	 * @return whether or not this mine is active
-	 */
-	public boolean isActive() {
+	public boolean isArmed() {
 		boolean active = false;
 		if ((this.createdTime + fuseTimeMillis) < System.currentTimeMillis()) {
 			active = true;

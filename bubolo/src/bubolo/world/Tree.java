@@ -94,6 +94,11 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	}
 
 	@Override
+	public boolean isValidMinePlacementTarget() {
+		return true;
+	}
+
+	@Override
 	public Polygon bounds() {
 		return boundingBox.bounds();
 	}

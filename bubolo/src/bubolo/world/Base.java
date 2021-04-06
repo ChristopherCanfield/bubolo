@@ -52,6 +52,11 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 		updateBounds();
 	}
 
+	@Override
+	public boolean isValidMinePlacementTarget() {
+		return false;
+	}
+
 	/**
 	 * Checks whether or not this base is currently charging a tank.
 	 *

@@ -43,7 +43,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 	 */
 	PillboxSprite(Pillbox pillbox)
 	{
-		super(DrawLayer.THIRD, pillbox);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, pillbox);
 
 		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 32, 32);
 	}

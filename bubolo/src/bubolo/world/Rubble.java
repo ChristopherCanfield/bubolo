@@ -23,4 +23,9 @@ public class Rubble extends StaticEntity implements TerrainImprovement {
 	public float speedModifier() {
 		return speedModifier;
 	}
+
+	@Override
+	public boolean isValidMinePlacementTarget() {
+		return true;
+	}
 }

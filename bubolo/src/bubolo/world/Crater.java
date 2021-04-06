@@ -32,6 +32,11 @@ public class Crater extends StaticEntity implements TerrainImprovement, Adaptabl
 	}
 
 	@Override
+	public boolean isValidMinePlacementTarget() {
+		return true;
+	}
+
+	@Override
 	public void updateTilingState(World w) {
 		tilingState = TileUtil.getTilingState(this, w, matchingTypes);
 	}

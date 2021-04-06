@@ -31,7 +31,7 @@ public class DeepWater extends Terrain implements Adaptable {
 	}
 
 	@Override
-	public boolean isBuildable() {
+	public boolean isValidBuildTarget() {
 		return false;
 	}
 

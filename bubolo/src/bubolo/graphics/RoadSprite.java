@@ -25,7 +25,7 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	 */
 	RoadSprite(Road road)
 	{
-		super(DrawLayer.SECOND, road);
+		super(DrawLayer.TERRAIN, road);
 
 		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
 		frames = Graphics.getTextureRegion1d(path, getClass());

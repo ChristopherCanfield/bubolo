@@ -2,6 +2,7 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import bubolo.Config;
 import bubolo.world.MineExplosion;
 
 /**
@@ -42,11 +43,11 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 	 */
 	MineExplosionSprite(MineExplosion exp)
 	{
-		super(DrawLayer.TOP, exp);
+		super(DrawLayer.EFFECTS, exp);
 
 		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 60, 60);
 
-		millisPerFrame = (this.getEntity().getExplosionLength())/frames.length;
+		millisPerFrame = (int) Config.MillisPerFrame;
 	}
 
 	@Override

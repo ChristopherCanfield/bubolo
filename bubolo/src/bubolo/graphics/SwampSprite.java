@@ -29,7 +29,7 @@ class SwampSprite extends AbstractEntitySprite<Swamp>
 	 */
 	SwampSprite(Swamp swamp)
 	{
-		super(DrawLayer.FIRST, swamp);
+		super(DrawLayer.TERRAIN, swamp);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 

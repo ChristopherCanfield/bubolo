@@ -29,7 +29,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	 */
 	WallSprite(Wall wall)
 	{
-		super(DrawLayer.THIRD, wall);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, wall);
 
 		var undamagedTexturePath = Graphics.TEXTURE_PATH + UNDAMAGED_TEXTURE_FILE;
 		undamagedFrames = Graphics.getTextureRegion1d(undamagedTexturePath, getClass());

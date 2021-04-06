@@ -24,6 +24,13 @@ public interface TerrainImprovement {
 		return 0;
 	}
 
+	/**
+	 * Specifies whether objects such as mines can be built on top of this improvement.
+	 *
+	 * @return true if mines can be built on top of this improvement.
+	 */
+	boolean isValidMinePlacementTarget();
+
 	UUID id();
 
 	/**
@@ -48,4 +55,6 @@ public interface TerrainImprovement {
 	default int tileRow() {
 		return (int) y() / Coords.TileToWorldScale;
 	}
+
+	void dispose();
 }

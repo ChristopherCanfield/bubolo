@@ -1,5 +1,7 @@
 package bubolo.world;
 
+import bubolo.Config;
+
 /**
  * MineExplosions are created when mines blow up. The explosion area is larger than the mine that exploded.
  *
@@ -7,13 +9,14 @@ package bubolo.world;
  * @author Christopher D. Canfield
  */
 public class MineExplosion extends ActorEntity {
-	private static final float damagePerTick = 2;
-
 	/** The explosion's lifetime, in milliseconds */
-	private static final long explosionLifeMillis = 500;
+	private static final int explosionLifeTicks = (int) (500 / Config.MillisPerFrame);
+
+	private static final float totalDamage = 25;
+	private static final float damagePerTick = totalDamage / explosionLifeTicks;
 
 	/** The time the explosion will end. */
-	private final long explosionEndTime;
+	private int framesRemaining = explosionLifeTicks;
 
 	private static final int width = 60;
 	private static final int height = 60;
@@ -25,27 +28,23 @@ public class MineExplosion extends ActorEntity {
 	 */
 	protected MineExplosion(ConstructionArgs args) {
 		super(args, width, height);
-		explosionEndTime = System.currentTimeMillis() + explosionLifeMillis;
 		updateBounds();
-	}
-
-	/**
-	 * @return length of the explosion in milliseconds.
-	 */
-	public long getExplosionLength() {
-		return explosionLifeMillis;
 	}
 
 	@Override
 	public void onUpdate(World world) {
-		if (explosionEndTime < System.currentTimeMillis()) {
+		if (framesRemaining == 0) {
 			dispose();
 
 		} else {
-			for (Collidable collider : world.getNearbyCollidables(this, true, Damageable.class)) {
-				// We know the collider is a damageable, since we filtered to include only Damageables.
-				Damageable damageable = (Damageable) collider;
-				damageable.receiveDamage(damagePerTick, world);
+			framesRemaining--;
+
+			for (Collidable collider : world.getNearbyCollidables(this, false, Damageable.class)) {
+				if (overlapsEntity(collider)) {
+					// We know the collider is a damageable, since we filtered to include only Damageables.
+					Damageable damageable = (Damageable) collider;
+					damageable.receiveDamage(damagePerTick, world);
+				}
 			}
 		}
 	}

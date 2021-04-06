@@ -29,7 +29,7 @@ class TreeSprite extends AbstractEntitySprite<Tree>
 	 */
 	TreeSprite(Tree tree)
 	{
-		super(DrawLayer.THIRD, tree);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, tree);
 
 		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
 		Random rand = new Random();

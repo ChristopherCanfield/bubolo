@@ -69,11 +69,11 @@ public class AiBaseController extends ActorEntityController<Base>
 							if (tank.hitPoints() < tank.maxHitPoints()) {
 								tank.heal(base.giveHitPoints());
 							}
-							if(tank.getAmmoCount() < tank.getTankMaxAmmo()) {
-								tank.gatherAmmo(base.giveAmmo());
+							if(tank.ammoCount() < tank.getTankMaxAmmo()) {
+								tank.collectAmmo(base.giveAmmo());
 							}
-							if(tank.getMineCount() < tank.getTankMaxMineCount()) {
-								tank.gatherMine(base.giveMine());
+							if(tank.mineCount() < tank.getTankMaxMineCount()) {
+								tank.collectMines(base.giveMine());
 							}
 						}
 					}
@@ -104,7 +104,7 @@ public class AiBaseController extends ActorEntityController<Base>
 
 	private static boolean isTankRecharged(Tank tank) {
 		return tank.hitPoints() >= tank.maxHitPoints()
-				&& tank.getAmmoCount() >= tank.getTankMaxAmmo()
-				&& tank.getMineCount() >= tank.getTankMaxMineCount();
+				&& tank.ammoCount() >= tank.getTankMaxAmmo()
+				&& tank.mineCount() >= tank.getTankMaxMineCount();
 	}
 }

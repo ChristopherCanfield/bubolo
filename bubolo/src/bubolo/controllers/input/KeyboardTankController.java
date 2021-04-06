@@ -71,7 +71,7 @@ public class KeyboardTankController implements Controller
 
 	private static void processCannon(Tank tank, World world)
 	{
-		if (Gdx.input.isKeyPressed(Keys.SPACE) && tank.isCannonReady() && (tank.getAmmoCount() > 0) )
+		if (Gdx.input.isKeyPressed(Keys.SPACE) && tank.isCannonReady() && (tank.ammoCount() > 0) )
 		{
 			float tankCenterX = tank.x();
 			float tankCenterY = tank.y();
@@ -97,12 +97,12 @@ public class KeyboardTankController implements Controller
 
 	 private static void processMineLaying(Tank tank, World world)
 	 {
-		 if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT) && (tank.getMineCount() > 0))
+		 if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT) && (tank.mineCount() > 0))
 		 {
 //				float tankCenterX = tank.x();
 //				float tankCenterY = tank.y();
 
-				Mine mine = tank.dropMine(world);
+				Mine mine = tank.placeMine(world);
 //						tankCenterX + 18 * (float)Math.cos(tank.rotation()),
 //						tankCenterY + 18 * (float)Math.sin(tank.rotation()));
 				if(mine != null) {

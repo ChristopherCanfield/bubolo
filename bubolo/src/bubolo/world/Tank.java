@@ -14,7 +14,6 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.MoveTank;
 import bubolo.net.command.NetTankSpeed;
-import bubolo.util.Coords;
 
 /**
  * The tank, which may be controlled by a local player or networked player..
@@ -255,7 +254,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private boolean checkIfHidden(World world) {
 		// If this much of the tank is covered by one or more tree tiles, it counts as hidden.
-		final float minTreeCoverage = width() * 0.85f;
+		final float minTreeCoverage = width() * 0.7f;
 
 		float treeCoverage = 0;
 		List<Collidable> trees = world.getNearbyCollidables(this, false, 1, Tree.class);
@@ -364,7 +363,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 *
 	 * @return current ammo count
 	 */
-	public int getAmmoCount() {
+	public int ammoCount() {
 		return ammoCount;
 	}
 
@@ -373,7 +372,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 *
 	 * @return the current mine count
 	 */
-	public int getMineCount() {
+	public int mineCount() {
 		return mineCount;
 	}
 
@@ -419,26 +418,26 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Supplies the tank ammo with given a set amount
+	 * Supplies the tank with the specified amount of ammo.
 	 *
-	 * @param newAmmo - amount of ammo being transfered to the tank
+	 * @param ammo the amount of ammo to increase the tank's ammo by.
 	 */
-	public void gatherAmmo(int newAmmo) {
-		assert newAmmo >= 0;
-		ammoCount += newAmmo;
+	public void collectAmmo(int ammo) {
+		assert ammo >= 0;
+		ammoCount += ammo;
 		if (ammoCount > maxAmmo) {
 			ammoCount = maxAmmo;
 		}
 	}
 
 	/**
-	 * This method supplies the tank with mines
+	 * Supplies the tank with the specified number of mines.
 	 *
-	 * @param minesGathered - the number of mines to supply the tank with
+	 * @param mines the number of mines to add to the tank's stores.
 	 */
-	public void gatherMine(int minesGathered) {
-		assert minesGathered >= 0;
-		mineCount += minesGathered;
+	public void collectMines(int mines) {
+		assert mines >= 0;
+		mineCount += mines;
 		if (mineCount > maxMines) {
 			mineCount = maxMines;
 		}
@@ -450,24 +449,32 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param world reference to the game world.
 	 * @return The mine, or null if a mine is unable to be placed.
 	 */
-	public Mine dropMine(World world) {
-		if (mineAvailableTime < System.currentTimeMillis() && mineCount > 0) {
+	public Mine placeMine(World world) {
+		if (canPlaceMineHere(world)) {
+			mineAvailableTime = System.currentTimeMillis() + mineLayingSpeedMillis;
 
-			Terrain terrain = world.getTerrain(tileColumn(), tileRow());
-			if (!terrain.isBuildable()) {
-				mineAvailableTime = System.currentTimeMillis() + mineLayingSpeedMillis;
+			float mineX = x();
+			float mineY = y();
 
-				int mineX = tileColumn() * Coords.TileToWorldScale;
-				int mineY = tileRow() * Coords.TileToWorldScale;
+			var args = new Entity.ConstructionArgs(UUID.randomUUID(), mineX, mineY, 0);
+			Mine mine = world.addEntity(Mine.class, args);
 
-				var args = new Entity.ConstructionArgs(UUID.randomUUID(), mineX, mineY, 0);
-				Mine mine = world.addEntity(Mine.class, args);
-
-				mineCount--;
-				return mine;
-			}
+			mineCount--;
+			return mine;
 		}
 		return null;
+	}
+
+	private boolean canPlaceMineHere(World world) {
+		if (mineAvailableTime < System.currentTimeMillis() && mineCount > 0) {
+			Terrain terrain = world.getTerrain(tileColumn(), tileRow());
+			if (terrain.isValidBuildTarget() && world.getMine(tileColumn(), tileRow()) == null) {
+				TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
+				return (terrainImprovement == null || terrainImprovement.isValidMinePlacementTarget());
+			}
+			return false;
+		}
+		return false;
 	}
 
 	private void respawn(World world) {

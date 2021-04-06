@@ -44,7 +44,7 @@ class BulletExplosionSprite extends Sprite
 	 */
 	BulletExplosionSprite(int x, int y)
 	{
-		super(DrawLayer.TOP);
+		super(DrawLayer.EFFECTS);
 
 		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, WIDTH, HEIGHT);
 

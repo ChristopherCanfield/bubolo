@@ -85,7 +85,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	 */
 	TankSprite(Tank tank)
 	{
-		super(DrawLayer.FOURTH, tank);
+		super(DrawLayer.TANKS, tank);
 
 		bulletTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + BULLET_TEXTURE_FILE);
 		mineTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + MINE_TEXTURE_FILE);
@@ -161,7 +161,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		int textVerticalPosition = (int) screenHeight - 5;
 		// Render the ammo count text.
 		font.setColor(TANK_UI_FONT_COLOR);
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.getAmmoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.ammoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
 
 		// Mine texture divided by number of frames per row.
 		float mineWidth = mineTexture.getWidth() / 6;
@@ -171,7 +171,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		spriteBatch.draw(mineTexture, screenHalfWidth + 13, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
 
 		// Render the mine count text.
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.getMineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
+		font.draw(graphics.batch(), "x " + Integer.toString(tank.mineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}
@@ -259,6 +259,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	private Visibility visibility()
 	{
 		if (getEntity().isHidden()) {
+			System.out.println("Tank is hidden");
 			if (getEntity().isOwnedByLocalPlayer()) {
 				setColor(tankHiddenColor);
 				return Visibility.HIDDEN;

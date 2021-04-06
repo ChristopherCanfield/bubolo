@@ -121,13 +121,13 @@ public class TankTest
 	@Test
 	public void getAmmoCount()
 	{
-		assertEquals(100, tank.getAmmoCount(), 0);
+		assertEquals(100, tank.ammoCount(), 0);
 	}
 
 	@Test
 	public void getMineCount()
 	{
-		assertEquals(10, tank.getMineCount(), 0);
+		assertEquals(10, tank.mineCount(), 0);
 	}
 
 	@Test
@@ -156,15 +156,15 @@ public class TankTest
 	@Test
 	public void gatherMine()
 	{
-		tank.gatherMine(1);
-		assertEquals(Tank.maxMine, tank.getMineCount(), 0);
+		tank.collectMines(1);
+		assertEquals(Tank.maxMine, tank.mineCount(), 0);
 	}
 
 	@Test
 	public void gatherAmmo()
 	{
-		tank.gatherAmmo(10);
-		assertEquals(100, tank.getAmmoCount(), 0);
+		tank.collectAmmo(10);
+		assertEquals(100, tank.ammoCount(), 0);
 	}
 
 	@Test

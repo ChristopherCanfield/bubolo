@@ -33,7 +33,7 @@ public class Terrain extends StaticEntity {
 	 *
 	 * @return true if this terrain can be built on.
 	 */
-	public boolean isBuildable() {
+	public boolean isValidBuildTarget() {
 		return true;
 	}
 }

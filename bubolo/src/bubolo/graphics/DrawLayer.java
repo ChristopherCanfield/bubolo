@@ -3,40 +3,45 @@ package bubolo.graphics;
 /**
  * Used to determine the draw order. Sprites that are drawn first may be partially or fully covered
  * by a sprite that is drawn later.
- * 
+ *
  * @author BU CS673 - Clone Productions
  */
 enum DrawLayer
 {
 
 	/**
-	 * The background layer. Using this in anything except for the background layer will cause the
-	 * sprite to never be drawn.
+	 * The background layer. Using this in anything except for the background layer will result in the
+	 * sprite never being drawn.
 	 */
 	BACKGROUND,
 
 	/**
-	 * The lowest sprite draw layer. Higher numbers are drawn above lower numbers.
+	 * The lowest general sprite draw layer. Intended for use with terrain.
 	 */
-	FIRST,
+	TERRAIN,
 
 	/**
-	 * The second-level sprite draw layer. Higher numbers are drawn above lower numbers.
+	 * The second sprite draw layer. Intended for use with terrain improvements.
 	 */
-	SECOND,
+	TERRAIN_IMPROVEMENTS,
 
 	/**
-	 * The third-level sprite draw layer. Higher numbers are drawn above lower numbers.
+	 * The third sprite draw layer. Intended for use with mines.
 	 */
-	THIRD,
+	MINES,
 
 	/**
-	 * The fourth sprite draw layer. Higher numbers are drawn above lower numbers.
+	 * The fourth sprite draw layer. Intended for use with tanks.
 	 */
-	FOURTH,
+	TANKS,
 
 	/**
-	 * The top sprite draw layer.
+	 * The fifth sprite draw layer. Intended for use with effects, such as explosions.
+	 */
+	EFFECTS,
+
+	/**
+	 * The top sprite draw layer, which is drawn above all other layers.
 	 */
 	TOP
 }
