@@ -58,7 +58,7 @@ public class Tank extends ActorEntity implements Damageable {
 	// The time that the tank will respawn.
 	private long nextRespawnTime;
 
-	private static final long respawnTimeMillis = 1000L;
+	private static final long respawnTimeMillis = 2000L;
 
 	// The last time that the cannon was fired.
 	private long cannonReadyTime = 0;
@@ -109,7 +109,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private void respawn(World world) {
 		// Don't allow the tank to respawn until its respawn timer has expired.
-		if (nextRespawnTime > System.currentTimeMillis()) {
+		if (nextRespawnTime < System.currentTimeMillis()) {
 			var spawns = world.getSpawns();
 			if (spawns.size() > 0) {
 				Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));

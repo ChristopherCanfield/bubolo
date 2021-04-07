@@ -8,7 +8,7 @@ import bubolo.world.Mine;
  * The graphical representation of a Mine.
  *
  * @author BU673 - Clone Industries
- * @Christopher D. Canfield
+ * @author Christopher D. Canfield
  */
 class MineSprite extends AbstractEntitySprite<Mine> {
 	// The index representing which animation frame will be drawn.

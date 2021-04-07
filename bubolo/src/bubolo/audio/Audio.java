@@ -23,6 +23,7 @@ import bubolo.util.GameLogicException;
  * The top-level class for the Sound system.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 public class Audio implements Music.OnCompletionListener
 {
@@ -56,14 +57,11 @@ public class Audio implements Music.OnCompletionListener
 	// The music on completion listener. This is used when a song has finished playing.
 	private static Music.OnCompletionListener musicOnCompletionListener = new Audio();
 
-	private static Sfx lastSoundPlayed1;
-	private static Sfx lastSoundPlayed2;
-	private static long nextPlayTime;
-	private static final long soundDelay = 60L;
-
 	private static final Map<Sfx, Sound> soundEffects = new HashMap<>();
 
 	private static boolean initialized = false;
+
+	private static final Random random = new Random();
 
 	/**
 	 * Initializes the sound system.
@@ -83,20 +81,17 @@ public class Audio implements Music.OnCompletionListener
 	public static void play(Sfx soundEffect)
 	{
 		if (initialized) {
-			// Prevent the same sound from playing once per tick. This occurred because the mine explosion
-			// lasts for multiple ticks in the world.
-			if ((lastSoundPlayed1 != soundEffect && lastSoundPlayed2 != soundEffect) || nextPlayTime < System.currentTimeMillis())
-			{
-				nextPlayTime = System.currentTimeMillis() + soundDelay;
-				lastSoundPlayed2 = lastSoundPlayed1;
-				lastSoundPlayed1 = soundEffect;
-
-				Sound sound = getSoundEffect(soundEffect);
-				sound.play(soundEffectVolume);
-			}
+			Sound sound = getSoundEffect(soundEffect);
+			long id = sound.play(soundEffectVolume);
+			sound.setPitch(id, getRandomPitch(0.8f, 1.2f));
 		} else {
 			logger.warning("Audio.play called before audio system was initialized.");
 		}
+	}
+
+	private static float getRandomPitch(float min, float max) {
+		float adjustment = random.nextFloat() * (max - min);
+		return max - adjustment;
 	}
 
 	/**

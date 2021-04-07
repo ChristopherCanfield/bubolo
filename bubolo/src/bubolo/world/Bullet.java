@@ -69,13 +69,15 @@ public class Bullet extends ActorEntity {
 	 * Moves the bullet. Calls dispose() on this entity if the distance travelled has exceeded the MAX_DISTANCE value.
 	 */
 	private void move(World world) {
-		if (distanceTraveled > maxDistance) {
+		float newX = x() + movementX;
+		float newY = y() + movementY;
+
+		if (distanceTraveled > maxDistance || newX < 0 || newY < 0) {
 			dispose();
 			return;
 		}
 
 		setPosition(x() + movementX, y() + movementY);
-
 		distanceTraveled += Math.abs(movementX) + Math.abs(movementY);
 
 		processCollisions(world);

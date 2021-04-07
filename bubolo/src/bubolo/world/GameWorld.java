@@ -23,15 +23,16 @@ import bubolo.util.Nullable;
  * objects.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 public class GameWorld implements World
 {
 	 /**
-	 * A tile address on the game map.
-	 *
-	 * @author Christopher D. Canfield
-	 * @since 0.4.0
-	 */
+	  * A tile address on the game map.
+	  *
+	  * @author Christopher D. Canfield
+	  * @since 0.4.0
+	  */
 	private static record Tile(int column, int row) {
 		Tile {
 			assert column >= 0;
@@ -198,6 +199,11 @@ public class GameWorld implements World
 			// Check for mutually exclusive combinations.
 			assert !(terrainImprovement instanceof Terrain);
 			assert !(terrainImprovement instanceof Mine);
+
+			Terrain t = terrain[entity.tileColumn()][entity.tileRow()];
+			assert t == null || t.isValidBuildTarget() : String.format(
+					"Invalid target tile (%d,%d) for terrain improvement %s. Terrain %s is not a valid build target.",
+					t.tileColumn(), t.tileRow(), entity.getClass().getSimpleName(), t.getClass().getSimpleName());
 
 			// Add the terrain improvement. If one already exists, ensure that it has been disposed.
 			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
