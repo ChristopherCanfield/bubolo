@@ -5,8 +5,8 @@ import java.util.UUID;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Config;
-import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
+import bubolo.audio.SfxRateLimiter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
@@ -50,6 +50,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	// Gives the appearance of capturing the pillbox by touching it.
 	private final BoundingBox captureBounds;
+
+	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
 
 	/**
 	 * Constructs a new Pillbox.
@@ -184,7 +186,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	public void receiveDamage(float damagePoints, World world) {
 		assert damagePoints >= 0;
 
-		Audio.play(Sfx.PILLBOX_HIT);
+		sfxPlayer.play(Sfx.PILLBOX_HIT);
 		hitPoints -= damagePoints;
 		if (hitPoints < 0) {
 			// Give the player a few seconds to claim the damaged pillbox.

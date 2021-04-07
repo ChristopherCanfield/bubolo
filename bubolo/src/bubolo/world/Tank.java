@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
+import bubolo.audio.SfxRateLimiter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.MoveTank;
@@ -94,6 +95,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private static final int width = 20;
 	private static final int height = 20;
+
+	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
 
 	/**
 	 * Constructs a Tank.
@@ -435,7 +438,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 		if (hitPoints > 0) {
 			hitPoints -= damagePoints;
-			Audio.play(Sfx.TANK_HIT);
+			sfxPlayer.play(Sfx.TANK_HIT);
 
 			if (hitPoints <= 0) {
 				onDeath();

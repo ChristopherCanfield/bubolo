@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import com.badlogic.gdx.math.Polygon;
 
-import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
+import bubolo.audio.SfxRateLimiter;
 import bubolo.util.TileUtil;
 
 /**
@@ -33,6 +33,8 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	private static final int height = 30;
 
 	private final BoundingBox boundingBox;
+
+	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
 
 	protected Wall(ConstructionArgs args) {
 		super(args, width, height);
@@ -79,7 +81,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	public void receiveDamage(float damagePoints, World world) {
 		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
-		Audio.play(Sfx.WALL_HIT);
+		sfxPlayer.play(Sfx.WALL_HIT);
 
 		if (hitPoints <= 0) {
 			// When the wall is destroyed, replace it with rubble.
