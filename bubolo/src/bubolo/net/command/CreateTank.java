@@ -43,8 +43,8 @@ public class CreateTank extends CreateEntity
 					}
 				});
 
-		assert tank.getPlayerName() != null;
-		this.playerName = tank.getPlayerName();
+		assert tank.playerName() != null;
+		this.playerName = tank.playerName();
 	}
 
 	@Override

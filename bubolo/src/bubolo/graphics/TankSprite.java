@@ -101,7 +101,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		if (!tank.isOwnedByLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
 			font.setColor(ENEMY_TANK_NAME_COLOR);
-			font.draw(graphics.batch(), tank.getPlayerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
+			font.draw(graphics.batch(), tank.playerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
 	}
 

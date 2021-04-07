@@ -155,7 +155,7 @@ public class Tank extends ActorEntity implements Damageable {
 		accelerated = false;
 	}
 
-	public String getPlayerName() {
+	public String playerName() {
 		return playerName;
 	}
 
@@ -526,20 +526,16 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Maximum amount of ammo for tank
-	 *
-	 * @return maximum ammo count of tank
+	 * @return the tank's max ammo count.
 	 */
-	public int getTankMaxAmmo() {
+	public int maxAmmo() {
 		return maxAmmo;
 	}
 
 	/**
-	 * Maximum amount of mines for tank
-	 *
-	 * @return maximum amount of mines a tank can carry
+	 * @return the tank's max mine count.
 	 */
-	public int getTankMaxMineCount() {
+	public int maxMines() {
 		return maxMines;
 	}
 

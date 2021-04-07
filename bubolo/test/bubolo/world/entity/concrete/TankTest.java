@@ -194,7 +194,7 @@ public class TankTest
 	public void getMax()
 	{
 		assertEquals(100, tank.maxHitPoints(), 0);
-		assertEquals(100, tank.getTankMaxAmmo(), 0);
-		assertEquals(10, tank.getTankMaxMineCount(), 0);
+		assertEquals(100, tank.maxAmmo(), 0);
+		assertEquals(10, tank.maxMines(), 0);
 	}
 }
