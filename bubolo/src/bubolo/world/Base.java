@@ -1,42 +1,53 @@
 package bubolo.world;
 
+import bubolo.Config;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
 
 /**
- * Bases allow Tanks to heal and recover their mines, and capturing them is the primary goal of the game.
+ * Bases repair their owner, and refill the owner's ammo and mine stores.
  *
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class Base extends ActorEntity implements Damageable, TerrainImprovement {
-	/**
-	 * Whether this Base is currently charging a Tank.
-	 */
-	private boolean isCharging = false;
-
-	/**
-	 * The number of hit points the base has.
-	 */
-	private float hitPoints = maxHitPoints;
+	/** Whether this base is currently refueling a Tank. */
+	private boolean refueling = false;
 
 	private static final int maxHitPoints = 100;
+	
+	/** The base's health. Once this reaches zero, the base becomes capturable. */
+	private float hitPoints = maxHitPoints;
+	
+	/** The amount of time that the base takes to heal from zero, in seconds. */
+	private static final int baseHealTimeSeconds = 90;
+	private static final float baseHealPerTick = maxHitPoints / baseHealTimeSeconds / (float) Config.FPS;
+	/** The amount of time that the base is capturable after its health has been reduced to zero. */
+	private static final int captureTimeSeconds = 10;
+	
+	private static final int maxRepairPoints = 100;
+	private static final int maxAmmo = 100;
+	private static final int maxMines = 10;
+	
+	private float repairPoints = maxRepairPoints;
+	private float ammo = maxAmmo;
+	private float mines = maxMines;
 
-	private static final int hitPointsRechargeRate = 5;
+	/** The amount of time the base takes to refill its repair points, ammo, and mines (from zero), in seconds. */
+	private static final int refillTimeSeconds = 300;
+	private static final float repairPointsRefilledPerTick = maxRepairPoints / refillTimeSeconds / (float) Config.FPS;
+	private static final float ammoRefilledPerTick = maxAmmo / refillTimeSeconds / (float) Config.FPS;
+	private static final float minesRefilledPerTick = maxMines / refillTimeSeconds / (float) Config.FPS;
 
-	private int mineCount = MAX_MINE_COUNT;
-
-	private static final int MAX_MINE_COUNT = 10;
-
-	private static final int MINE_REPLENISH_RATE = 1;
-
-	private int ammoCount = MAX_AMMO_COUNT;
-
-	private static final int MAX_AMMO_COUNT = 100;
-
-	private static final int AMMO_REPLENISH_RATE = 5;
-
+	/** The number of ticks between tank refueling. */
+	private static final int ticksBetweenTankRefuelEvent = Config.FPS; // 1 second per refuel.
+	
+	/** The amount of health a tank is refueled per refueling event. The time between refuel events is limited by ticksBetweenTankRefuelEvent. */ 
+	private static final float healthTankRefuelAmount = 10; 
+	private static final int ammoTankRefuelAmount = 10;
+	private static final int mineTankRefuelAmount = 1;
+	
 	private static final int width = 26;
 	private static final int height = 30;
 
@@ -63,7 +74,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	 * @return the current charging status of this base.
 	 */
 	public boolean isCharging() {
-		return isCharging;
+		return isRefueling;
 	}
 
 	/**
@@ -72,7 +83,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	 * @param charge sets whether this base is charging.
 	 */
 	public void setCharging(boolean charge) {
-		isCharging = charge;
+		isRefueling = charge;
 	}
 
 	/**
@@ -226,21 +237,10 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	}
 
 	/**
-	 * Donates hit points to an object to heal
-	 *
-	 * @return the amount of hit points to give
+	 * Repairs the specified tank.
 	 */
-	public float giveHitPoints() {
-		float hitPointsGiven;
-		if (hitPoints - hitPointsRechargeRate < 0) {
-			hitPointsGiven = hitPoints;
-			hitPoints = 0;
-			return hitPointsGiven;
-		} else {
-			hitPoints -= hitPointsRechargeRate;
-			hitPointsGiven = hitPointsRechargeRate;
-		}
-		return hitPointsGiven;
+	public void repair(Tank tank) {
+		if ()
 	}
 
 	@Override
