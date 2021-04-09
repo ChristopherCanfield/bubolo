@@ -52,8 +52,8 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	private static final int resuplyEventAmmoAmount = 10;
 	private static final int resuplyEventMinesAmount = 1;
 
-	private static final int width = 26;
-	private static final int height = 30;
+	private static final int width = 32;
+	private static final int height = 32;
 
 	private static final float speedModifier = 0.75f;
 
@@ -235,7 +235,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	@Override
 	public boolean isSolid() {
-		return false;
+		return (owner() != null && !isOwnedByLocalPlayer());
 	}
 
 	@Override
