@@ -7,9 +7,6 @@ import com.badlogic.gdx.math.Polygon;
 import bubolo.Config;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
-import bubolo.net.command.ChangeOwner;
 
 /**
  * Pillboxes are stationary defensive structures that shoot at enemy tanks, and can be captured. Captured pillboxes do not shoot
@@ -31,11 +28,16 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/** Max range to locate a target. The pillbox will not fire unless there is a tank within this range. */
 	private double range = 300;
 
-	/** The pillbox's health. */
-	private float hitPoints = MAX_HIT_POINTS;
-
 	/** The pillbox's maximum health. */
-	public static final int MAX_HIT_POINTS = 100;
+	private static final int maxHitPoints = 100;
+
+	/** The pillbox's health. */
+	private float hitPoints = maxHitPoints;
+
+	/** The amount of time that the pillbox is capturable after its health has been reduced to zero. */
+	private static final int captureTimeSeconds = 10;
+	private static final int captureTimeTicks = captureTimeSeconds * Config.FPS;
+	private int captureTimeRemainingTicks = captureTimeTicks;
 
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
@@ -81,7 +83,11 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	@Override
 	protected void onUpdate(World world) {
-		heal(hpPerTick);
+		if (captureTimeRemainingTicks <= 0) {
+			heal(hpPerTick);
+		} else {
+			captureTimeRemainingTicks--;
+		}
 	}
 
 	@Override
@@ -90,7 +96,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		// so another player
 		// can't instantly grab it without needing to reduce its health.
 		if (newOwner != null) {
-			hitPoints = 10;
+			hitPoints = 5;
 		}
 	}
 
@@ -169,7 +175,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	@Override
 	public int maxHitPoints() {
-		return MAX_HIT_POINTS;
+		return maxHitPoints;
 	}
 
 	@Override
@@ -188,20 +194,11 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 		sfxPlayer.play(Sfx.PILLBOX_HIT);
 		hitPoints -= damagePoints;
+
 		if (hitPoints < 0) {
 			// Give the player a few seconds to claim the damaged pillbox.
-			hitPoints = -10;
-		}
-
-		if (hitPoints <= 0) {
-			// TODO (cdc - 2021-04-08): I'm not sure if I want to change pillboxes to neutral when they lose all health.
-			if (isOwnedByLocalPlayer() && owner() != null) {
-				setOwnedByLocalPlayer(false);
-				setOwner(null);
-
-				Network net = NetworkSystem.getInstance();
-				net.send(new ChangeOwner(this));
-			}
+			captureTimeRemainingTicks = captureTimeTicks;
+			hitPoints = 0;
 		}
 	}
 
@@ -215,8 +212,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		assert healPoints >= 0;
 
 		hitPoints += healPoints;
-		if (hitPoints > MAX_HIT_POINTS) {
-			hitPoints = MAX_HIT_POINTS;
+		if (hitPoints > maxHitPoints) {
+			hitPoints = maxHitPoints;
 		}
 	}
 
