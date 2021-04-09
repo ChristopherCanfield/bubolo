@@ -159,7 +159,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	@Override
 	public float hitPoints() {
-		return hitPoints;
+		return Math.max(0, hitPoints);
 	}
 
 	/**
@@ -194,6 +194,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		}
 
 		if (hitPoints <= 0) {
+			// TODO (cdc - 2021-04-08): I'm not sure if I want to change pillboxes to neutral when they lose all health.
 			if (isOwnedByLocalPlayer() && owner() != null) {
 				setOwnedByLocalPlayer(false);
 				setOwner(null);

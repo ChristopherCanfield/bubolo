@@ -455,9 +455,9 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Increments the tanks health by a given amount
+	 * Heals the tank.
 	 *
-	 * @param healPoints - how many points the tank is given
+	 * @param healPoints the amount of health the tank will receive.
 	 */
 	@Override
 	public void heal(float healPoints) {
@@ -468,12 +468,18 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	public void refuel(float healPoints, int ammo, int mines) {
+		heal(healPoints);
+		refuelAmmo(ammo);
+		refuelMines(mines);
+	}
+
 	/**
 	 * Supplies the tank with the specified amount of ammo.
 	 *
 	 * @param ammo the amount of ammo to increase the tank's ammo by.
 	 */
-	public void collectAmmo(int ammo) {
+	private void refuelAmmo(int ammo) {
 		assert ammo >= 0;
 		ammoCount += ammo;
 		if (ammoCount > maxAmmo) {
@@ -486,7 +492,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 *
 	 * @param mines the number of mines to add to the tank's stores.
 	 */
-	public void collectMines(int mines) {
+	private void refuelMines(int mines) {
 		assert mines >= 0;
 		mineCount += mines;
 		if (mineCount > maxMines) {

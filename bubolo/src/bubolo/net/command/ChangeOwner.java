@@ -44,9 +44,15 @@ public class ChangeOwner extends NetworkCommand
 	{
 		try {
 			ActorEntity ownable = (ActorEntity) world.getEntity(id);
-			ActorEntity owner = (ActorEntity) world.getEntity(ownerId);
+			if (ownerId != null) {
+				ActorEntity owner = (ActorEntity) world.getEntity(ownerId);
 
-			ownable.setOwner(owner);
+				ownable.setOwner(owner);
+				ownable.setOwnedByLocalPlayer(owner.isOwnedByLocalPlayer());
+			} else {
+				ownable.setOwner(null);
+				ownable.setOwnedByLocalPlayer(false);
+			}
 
 		} catch (GameLogicException e) {
 			Logger.getLogger(Config.AppProgramaticTitle).warning("UpdateOwnable net command: Unable to find ownable entity. ID: " + id);

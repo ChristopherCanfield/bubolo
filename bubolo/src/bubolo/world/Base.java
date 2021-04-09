@@ -13,41 +13,45 @@ import bubolo.net.command.ChangeOwner;
  */
 public class Base extends ActorEntity implements Damageable, TerrainImprovement {
 	/** Whether this base is currently refueling a Tank. */
-	private boolean refueling = false;
+	private boolean refuelingTank = false;
 
 	private static final int maxHitPoints = 100;
-	
+
 	/** The base's health. Once this reaches zero, the base becomes capturable. */
 	private float hitPoints = maxHitPoints;
-	
+
 	/** The amount of time that the base takes to heal from zero, in seconds. */
 	private static final int baseHealTimeSeconds = 90;
 	private static final float baseHealPerTick = maxHitPoints / baseHealTimeSeconds / (float) Config.FPS;
+
 	/** The amount of time that the base is capturable after its health has been reduced to zero. */
 	private static final int captureTimeSeconds = 10;
-	
+	private static final int captureTimeTicks = captureTimeSeconds * Config.FPS;
+	private int captureTimeRemainingTicks = captureTimeTicks;
+
 	private static final int maxRepairPoints = 100;
 	private static final int maxAmmo = 100;
 	private static final int maxMines = 10;
-	
+
 	private float repairPoints = maxRepairPoints;
 	private float ammo = maxAmmo;
 	private float mines = maxMines;
 
 	/** The amount of time the base takes to refill its repair points, ammo, and mines (from zero), in seconds. */
 	private static final int refillTimeSeconds = 300;
-	private static final float repairPointsRefilledPerTick = maxRepairPoints / refillTimeSeconds / (float) Config.FPS;
-	private static final float ammoRefilledPerTick = maxAmmo / refillTimeSeconds / (float) Config.FPS;
-	private static final float minesRefilledPerTick = maxMines / refillTimeSeconds / (float) Config.FPS;
+	private static final float repairPointsRefilledPerTick = maxRepairPoints / (float) refillTimeSeconds / Config.FPS;
+	private static final float ammoRefilledPerTick = maxAmmo / (float) refillTimeSeconds / Config.FPS;
+	private static final float minesRefilledPerTick = maxMines / (float) refillTimeSeconds / Config.FPS;
 
-	/** The number of ticks between tank refueling. */
-	private static final int ticksBetweenTankRefuelEvent = Config.FPS; // 1 second per refuel.
-	
-	/** The amount of health a tank is refueled per refueling event. The time between refuel events is limited by ticksBetweenTankRefuelEvent. */ 
-	private static final float healthTankRefuelAmount = 10; 
-	private static final int ammoTankRefuelAmount = 10;
-	private static final int mineTankRefuelAmount = 1;
-	
+	/** The number of ticks between tank resupplying. */
+	private static final int ticksBetweenTankResupplyEvent = Config.FPS; // 1 second per refuel.
+	private int ticksUntilNextResupplyEvent = 0;
+
+	/** The amount of health a tank is refueled per resupply event. The time between resupply events is limited by ticksBetweenTankResupplyEvent. */
+	private static final float resuplyEventRepairAmount = 10;
+	private static final int resuplyEventAmmoAmount = 10;
+	private static final int resuplyEventMinesAmount = 1;
+
 	private static final int width = 26;
 	private static final int height = 30;
 
@@ -64,26 +68,103 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	}
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	protected void onUpdate(World world) {
+		ticksUntilNextResupplyEvent--;
+		refillSuppliesAndHealth();
+
+		refuelingTank = false;
+		for (Tank tank : world.getTanks()) {
+			if (overlapsEntity(tank)) {
+				if (refuelTank(tank)) {
+					refuelingTank = true;
+					break;
+				} else {
+					refuelingTank = false;
+					processCapture(tank);
+				}
+			}
+		}
+	}
+
+	private void refillSuppliesAndHealth() {
+		if (captureTimeRemainingTicks == 0) {
+			repairPoints += repairPointsRefilledPerTick;
+			ammo += ammoRefilledPerTick;
+			mines += minesRefilledPerTick;
+			hitPoints += baseHealPerTick;
+
+			clampSuppliesAndHealth();
+
+		// Don't refill supplies if the base is capturable.
+		} else {
+			captureTimeRemainingTicks--;
+		}
+	}
+
+	private void clampSuppliesAndHealth() {
+		if (repairPoints > maxRepairPoints) { repairPoints = maxRepairPoints; }
+		else if (repairPoints < 0) { repairPoints = 0; }
+
+		if (ammo > maxAmmo) { ammo = maxAmmo; }
+		else if (ammo < 0) { ammo = 0; }
+
+		if (mines > maxMines) { mines = maxMines; }
+		else if (mines < 0) { mines = 0; }
+
+		if (hitPoints > maxHitPoints) { hitPoints = maxHitPoints; }
+		else if (hitPoints < 0) { hitPoints = 0; }
+	}
+
+	private boolean refuelTank(Tank tank) {
+		if (tank == owner() && !isTankRefueled(tank)) {
+			if (ticksUntilNextResupplyEvent <= 0) {
+				float refuelRepairPoints = (repairPoints > resuplyEventRepairAmount) ? repairPoints : resuplyEventRepairAmount;
+				repairPoints -= refuelRepairPoints;
+
+				int refuelAmmo = (int) ((ammo > resuplyEventAmmoAmount) ? ammo : resuplyEventAmmoAmount);
+				ammo -= refuelAmmo;
+
+				int refuelMines = (int) ((mines > resuplyEventMinesAmount) ? mines : resuplyEventMinesAmount);
+				mines -= refuelMines;
+
+				tank.refuel(repairPoints, refuelAmmo, refuelMines);
+
+				clampSuppliesAndHealth();
+				ticksUntilNextResupplyEvent = ticksBetweenTankResupplyEvent;
+			}
+
+			return true;
+		}
 		return false;
 	}
 
-	/**
-	 * Checks whether or not this base is currently charging a tank.
-	 *
-	 * @return the current charging status of this base.
-	 */
-	public boolean isCharging() {
-		return isRefueling;
+	private void processCapture(Tank tank) {
+		if (owner() == null || (hitPoints <= 0 && tank != owner() && tank.isOwnedByLocalPlayer())) {
+			setOwnedByLocalPlayer(true);
+			setOwner(tank);
+
+			Network net = NetworkSystem.getInstance();
+			net.send(new ChangeOwner(this));
+		}
+	}
+
+	@Override
+	protected void onOwnerChanged(ActorEntity owner) {
+		// Give the base a small amount of health when it is captured.
+		heal(5);
+	}
+
+	private static boolean isTankRefueled(Tank tank) {
+		return tank.hitPoints() >= tank.maxHitPoints()
+				&& tank.ammoCount() >= tank.maxAmmo()
+				&& tank.mineCount() >= tank.maxMines();
 	}
 
 	/**
-	 * Sets the charging state of this base.
-	 *
-	 * @param charge sets whether this base is charging.
+	 * @return true if this base is currently refueling a tank.
 	 */
-	public void setCharging(boolean charge) {
-		isRefueling = charge;
+	public boolean isRefueling() {
+		return refuelingTank;
 	}
 
 	/**
@@ -119,128 +200,37 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 			hitPoints -= damagePoints;
 			if (hitPoints < 0) {
 				hitPoints = 0;
-			}
-
-			if (hitPoints <= 0 && isOwnedByLocalPlayer()) {
-				setOwnedByLocalPlayer(false);
-				setOwner(null);
-
-				Network net = NetworkSystem.getInstance();
-				net.send(new ChangeOwner(this));
+				captureTimeRemainingTicks = captureTimeTicks;
 			}
 		}
 	}
 
 	/**
-	 * Increments the base's health by a given amount
+	 * Heals the base by the specified amount.
 	 *
-	 * @param healPoints - how many points the base is given
+	 * @param healPoints the amount that the base's health will be increased.
 	 */
 	@Override
 	public void heal(float healPoints) {
 		assert (healPoints >= 0);
-		if (hitPoints + healPoints < maxHitPoints) {
-			hitPoints += healPoints;
-		} else {
+		hitPoints += healPoints;
+		if (hitPoints > maxHitPoints) {
 			hitPoints = maxHitPoints;
 		}
 	}
 
 	/**
-	 * The current amount of ammo at the base
-	 *
-	 * @return the current amount of ammo
+	 * Bases are always alive, even when their health is at zero.
 	 */
-	public int getAmmoCount() {
-		return ammoCount;
+	@Override
+	public boolean isAlive() {
+		return true;
 	}
 
-	/**
-	 * The maximum amount of ammo a base can have
-	 *
-	 * @return the maximum amount of ammo storage at a base
-	 */
-	public static int getMaxAmmoCount() {
-		return MAX_AMMO_COUNT;
-	}
 
-	/**
-	 * Replenishes the ammo for the base
-	 */
-	public void gatherAmmo() {
-		if (ammoCount + AMMO_REPLENISH_RATE < MAX_AMMO_COUNT) {
-			ammoCount += AMMO_REPLENISH_RATE;
-		} else {
-			ammoCount = MAX_AMMO_COUNT;
-		}
-	}
-
-	/**
-	 * Method that deducts ammo from supply to give to tank
-	 *
-	 * @return - amount of ammo capable of being supplied at request
-	 */
-	public int giveAmmo() {
-		if (ammoCount - AMMO_REPLENISH_RATE < 0) {
-			int ammoGiven = ammoCount;
-			ammoCount = 0;
-			return ammoGiven;
-		} else {
-			ammoCount -= AMMO_REPLENISH_RATE;
-			return AMMO_REPLENISH_RATE;
-		}
-	}
-
-	/**
-	 * The current number of mines at a base
-	 *
-	 * @return the current number of mines
-	 */
-	public int getMineCount() {
-		return mineCount;
-	}
-
-	/**
-	 * The maximum number of mines a base can have
-	 *
-	 * @return the maximum storage for mines at a base
-	 */
-	public static int getMaxMineCount() {
-		return MAX_MINE_COUNT;
-	}
-
-	/**
-	 * Replenishes the mines for the base
-	 */
-	public void gatherMines() {
-		if (mineCount + MINE_REPLENISH_RATE < MAX_MINE_COUNT) {
-			mineCount += MINE_REPLENISH_RATE;
-		} else {
-			mineCount = MAX_MINE_COUNT;
-		}
-	}
-
-	/**
-	 * Method that deducts mines from supply to give to tank
-	 *
-	 * @return - amount of mines capable of being supplied at request
-	 */
-	public int giveMine() {
-		if (mineCount - MINE_REPLENISH_RATE < 0) {
-			int minesGiven = mineCount;
-			mineCount = 0;
-			return minesGiven;
-		} else {
-			mineCount -= MINE_REPLENISH_RATE;
-			return MINE_REPLENISH_RATE;
-		}
-	}
-
-	/**
-	 * Repairs the specified tank.
-	 */
-	public void repair(Tank tank) {
-		if ()
+	@Override
+	public boolean isValidMinePlacementTarget() {
+		return false;
 	}
 
 	@Override

@@ -2,13 +2,13 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.GameLogicException;
 import bubolo.world.Base;
 
 /**
  * The graphical representation of a Base Entity.
  *
  * @author BU673 - Clone Industries
+ * @author Christopher D. Canfield
  */
 class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 {
@@ -36,12 +36,12 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	// The time of the last frame, in milliseconds.
 	private long lastFrameTime;
 
-	// The current animation state of the Base, determines which animation to play.
-	private int animationState = 0;
-
 	// The last animation state that the Base was in, used to determine when to reset
 	// the starting frame.
 	private int lastAnimationState = 0;
+
+	private final int minRefuelingAnimationTimeMillis = 1_000;
+	private long refuelingAnimationEndTime;
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "base.png";
@@ -66,17 +66,11 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 
 	private void updateColorSet()
 	{
-		if (!getEntity().hasOwner())
-		{
-			animationState = 0;
+		if (!getEntity().hasOwner()) {
 			colorId = ColorSets.NEUTRAL;
-		}
-		else if (getEntity().isOwnedByLocalPlayer())
-		{
+		} else if (getEntity().isOwnedByLocalPlayer()) {
 			colorId = ColorSets.BLUE;
-		}
-		else
-		{
+		} else {
 			colorId = ColorSets.RED;
 		}
 	}
@@ -92,40 +86,32 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 		{
 			updateColorSet();
 
-			animationState = (this.getEntity().isCharging()) ? 1 : 0;
+			if (refuelingAnimationEndTime < System.currentTimeMillis()) {
+				if (getEntity().isRefueling()) {
+					refuelingAnimationEndTime = System.currentTimeMillis() + minRefuelingAnimationTimeMillis;
+				}
+			}
 
-			switch (animationState)
-			{
-			case 0:
-				if (lastAnimationState != 0)
-				{
+			if (refuelingAnimationEndTime < System.currentTimeMillis()) {
+				if (lastAnimationState != 0) {
 					lastAnimationState = 0;
 					frameIndex = 0;
 				}
 				drawTexture(graphics, idleFrames[colorId]);
-				break;
-
-			case 1:
-				if (lastAnimationState != 1)
-				{
-					frameIndex = 0;
+			} else {
+				if (lastAnimationState != 1) {
 					lastAnimationState = 1;
+					frameIndex = 0;
 				}
 				drawTexture(graphics, chargingFrames[frameIndex][colorId]);
 
 				// Progress the Base charging animation.
 				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
 				lastFrameTime = System.currentTimeMillis();
-				if (frameTimeRemaining < 0)
-				{
+				if (frameTimeRemaining < 0) {
 					frameTimeRemaining = millisPerFrame;
 					frameIndex = (frameIndex == chargingFrames.length - 1) ? 0 : frameIndex + 1;
 				}
-				break;
-
-			default:
-				throw new GameLogicException(
-						"Programming error in BaseSprite: default case reached.");
 			}
 		}
 	}
