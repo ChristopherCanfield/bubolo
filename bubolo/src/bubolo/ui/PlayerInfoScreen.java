@@ -19,8 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 import bubolo.GameApplication;
 import bubolo.GameApplication.State;
@@ -71,11 +71,11 @@ public class PlayerInfoScreen extends Screen
 		createIpAddressRow(skin);
 		addOkButtonRow(skin);
 
-		table.row().colspan(8).padTop(50.f).align(Align.center);
+		table.row().colspan(8).padTop(50.f).center();
 		statusLabel1 = new Label("", skin);
 		table.add(statusLabel1);
 
-		table.row().colspan(8).padTop(50.f).align(Align.left).padLeft(100.f);
+		table.row().colspan(8).padTop(50.f).left().padLeft(100.f);
 		statusLabel2 = new Label("", skin);
 		table.add(statusLabel2);
 
