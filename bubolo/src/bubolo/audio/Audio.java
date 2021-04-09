@@ -83,7 +83,7 @@ public class Audio implements Music.OnCompletionListener
 		if (initialized) {
 			Sound sound = getSoundEffect(soundEffect);
 			long id = sound.play(soundEffectVolume);
-			sound.setPitch(id, getRandomPitch(0.8f, 1.2f));
+			sound.setPitch(id, getRandomPitch(0.6f, 1.4f));
 		} else {
 			logger.warning("Audio.play called before audio system was initialized.");
 		}
