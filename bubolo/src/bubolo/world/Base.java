@@ -4,6 +4,7 @@ import bubolo.Config;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
+import bubolo.util.Time;
 
 /**
  * Bases repair their owner, and refill the owner's ammo and mine stores.
@@ -22,11 +23,11 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	/** The amount of time that the base takes to heal from zero, in seconds. */
 	private static final int baseHealTimeSeconds = 90;
-	private static final float baseHealPerTick = maxHitPoints / baseHealTimeSeconds / (float) Config.FPS;
+	private static final float baseHealPerTick = maxHitPoints / Time.secondsToTicks(baseHealTimeSeconds);
 
 	/** The amount of time that the base is capturable after its health has been reduced to zero. */
 	private static final int captureTimeSeconds = 10;
-	private static final int captureTimeTicks = captureTimeSeconds * Config.FPS;
+	private static final int captureTimeTicks = Time.secondsToTicks(captureTimeSeconds);
 	private int captureTimeRemainingTicks = captureTimeTicks;
 
 	private static final int maxRepairPoints = 100;
@@ -39,9 +40,9 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	/** The amount of time the base takes to refill its repair points, ammo, and mines (from zero), in seconds. */
 	private static final int refillTimeSeconds = 300;
-	private static final float repairPointsRefilledPerTick = maxRepairPoints / (float) refillTimeSeconds / Config.FPS;
-	private static final float ammoRefilledPerTick = maxAmmo / (float) refillTimeSeconds / Config.FPS;
-	private static final float minesRefilledPerTick = maxMines / (float) refillTimeSeconds / Config.FPS;
+	private static final float repairPointsRefilledPerTick = maxRepairPoints / Time.secondsToTicks(refillTimeSeconds);
+	private static final float ammoRefilledPerTick = maxAmmo / Time.secondsToTicks(refillTimeSeconds);
+	private static final float minesRefilledPerTick = maxMines / Time.secondsToTicks(refillTimeSeconds);
 
 	/** The number of ticks between tank resupplying. */
 	private static final int ticksBetweenTankResupplyEvent = Config.FPS; // 1 second per refuel.
