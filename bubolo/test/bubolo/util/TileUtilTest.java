@@ -10,10 +10,8 @@ import org.junit.Test;
 import bubolo.world.GameWorld;
 import bubolo.world.Grass;
 import bubolo.world.Tank;
-import bubolo.world.Tile;
 import bubolo.world.Wall;
 import bubolo.world.Water;
-import bubolo.world.entity.OldEntity;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -21,7 +19,6 @@ import bubolo.world.entity.OldEntity;
 public class TileUtilTest
 {
 	static GameWorld world;
-	static Tile[][] tiles;
 	static Tank tank;
 
 	@BeforeClass
@@ -39,13 +36,6 @@ public class TileUtilTest
 
 		var wall = world.addEntity(Wall.class);
 		tiles[0][0].setElement(wall, world);
-	}
-
-	@Test
-	public void isValidTile(){
-		assertTrue(TileUtil.isValidTile(0,0, world));
-		assertFalse(TileUtil.isValidTile(3,3, world));
-		assertFalse(TileUtil.isValidTile(-1,0, world));
 	}
 
 	@Test
@@ -71,16 +61,6 @@ public class TileUtilTest
 	}
 
 	@Test
-	public void getLocalEntites(){
-		var l = TileUtil.getLocalEntities(0, 0, world);
-		assertTrue("List of local Entities does not contain correct objects!",  l.contains(tiles[0][0].getTerrain()));
-		l = TileUtil.getLocalEntities(3*32f + 16f, 3*32f + 16f, world);
-		assertTrue("List of local Entities does not contain correct objects!", l.contains(tiles[1][1].getTerrain()));
-		assertFalse("List of local Entities contains incorrect objects!", l.contains(tiles[0][0].getTerrain()));
-
-	}
-
-	@Test
 	public void getClosestTile(){
 		int i = TileUtil.getClosestTileX(31);
 		int j = TileUtil.getClosestTileY(42);
@@ -89,17 +69,6 @@ public class TileUtilTest
 
 	}
 
-	@Test
-	public void getLocalCollisions(){
-		var l = TileUtil.getLocalEntities(0, 0, world);
-		assertTrue("List of local Entities does not contain correct objects!", l.contains(tiles[0][0].getTerrain()));
-		l = TileUtil.getLocalEntities(3*32f + 16f, 3*32f + 16f, world);
-		assertTrue("List of local Entities does not contain correct objects!", l.contains(tiles[1][1].getTerrain()));
-		assertFalse("List of local Entities contains incorrect objects!", l.contains(tiles[0][0].getTerrain()));
-
-		var c = TileUtil.getLocalCollisions(tank, world);
-		assertTrue("List of local collisions does not contain correct objects", c.contains(tiles[0][0].getElement()));
-	}
 	@Test
 	public void getEntityTile()
 	{

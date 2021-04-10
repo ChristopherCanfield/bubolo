@@ -54,19 +54,20 @@ public class Controllers
 	 *            reference to the entity.
 	 * @param factory
 	 *            reference to a controller factory, or null if the default behavior should be used.
+	 * @return true if a controller was attached to the entity, or false otherwise.
 	 */
-	public void createController(ActorEntity entity, @Nullable ControllerFactory factory)
+	public boolean createController(ActorEntity entity, @Nullable ControllerFactory factory)
 	{
 		ControllerFactory controllerFactory = factory;
-		if (controllerFactory == null)
-		{
+		if (controllerFactory == null) {
 			controllerFactory = defaultFactories.get(entity.getClass());
 		}
 
-		if (controllerFactory != null)
-		{
+		if (controllerFactory != null) {
 			controllerFactory.create(entity);
+			return true;
 		}
+		return false;
 	}
 
 	/**

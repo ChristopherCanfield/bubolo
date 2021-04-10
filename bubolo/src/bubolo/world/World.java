@@ -12,6 +12,7 @@ import bubolo.util.Nullable;
  * Stores and processes game entities.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 public interface World
 {

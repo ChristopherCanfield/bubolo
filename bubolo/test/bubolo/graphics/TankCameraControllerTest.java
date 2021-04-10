@@ -1,25 +1,19 @@
 package bubolo.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 
 import bubolo.mock.MockTank;
 import bubolo.mock.MockWorld;
 import bubolo.world.Tank;
 
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-
 public class TankCameraControllerTest
 {
-
-	@Test
-	public void testTankCameraController()
-	{
-		CameraController controller = new TankCameraController(new MockTank());
-	}
-
 	@Test
 	public void testSetCamera()
 	{
@@ -34,7 +28,7 @@ public class TankCameraControllerTest
 		CameraController controller = new TankCameraController(new MockTank());
 		assertFalse(controller.hasCamera());
 	}
-	
+
 	@Test
 	public void testHasCameraTrue()
 	{
@@ -52,13 +46,13 @@ public class TankCameraControllerTest
 		controller.setCamera(camera);
 		controller.update(new MockWorld());
 	}
-	
+
 	@Test
 	public void testUpdateLessThanZero()
 	{
 		Camera camera = new OrthographicCamera(20, 30);
 		Tank tank = new MockTank();
-		tank.setX(-100).setY(-120);
+		tank.setPosition(-100, -120);
 		CameraController controller = new TankCameraController(tank);
 		controller.setCamera(camera);
 		controller.update(new MockWorld());
@@ -69,7 +63,7 @@ public class TankCameraControllerTest
 	{
 		Camera camera = new OrthographicCamera(20, 30);
 		Tank tank = new MockTank();
-		tank.setX(200).setY(200);
+		tank.setPosition(200, 200);
 		CameraController controller = new TankCameraController(tank);
 		controller.setCamera(camera);
 		controller.update(new MockWorld());
