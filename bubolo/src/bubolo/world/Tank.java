@@ -13,6 +13,8 @@ import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
+import bubolo.net.command.CreateBullet;
+import bubolo.net.command.CreateEntity;
 import bubolo.net.command.MoveTank;
 import bubolo.net.command.NetTankSpeed;
 import bubolo.util.Coords;
@@ -220,6 +222,8 @@ public class Tank extends ActorEntity implements Damageable {
 			accelerated = true;
 		}
 		clampSpeed();
+
+		sendMoveToNetwork();
 	}
 
 	/**
@@ -231,6 +235,8 @@ public class Tank extends ActorEntity implements Damageable {
 			decelerated = true;
 		}
 		clampSpeed();
+
+		sendMoveToNetwork();
 	}
 
 	/**
@@ -249,6 +255,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	public void rotateRight() {
 		setRotation(rotation() + rotationRate);
+		sendMoveToNetwork();
 	}
 
 	/**
@@ -256,6 +263,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	public void rotateLeft() {
 		setRotation(rotation() - rotationRate);
+		sendMoveToNetwork();
 	}
 
 	/**
@@ -286,10 +294,11 @@ public class Tank extends ActorEntity implements Damageable {
 
 			ammoCount--;
 
-			return bullet;
-		}
+			Network net = NetworkSystem.getInstance();
+			net.send(new CreateBullet(bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
 
-		else {
+			return bullet;
+		} else {
 			return null;
 		}
 	}
@@ -386,6 +395,16 @@ public class Tank extends ActorEntity implements Damageable {
 
 				break;
 			}
+		}
+	}
+
+	/**
+	 * Sends tank move information to the network.
+	 */
+	private void sendMoveToNetwork() {
+		if (isOwnedByLocalPlayer()) {
+			Network net = NetworkSystem.getInstance();
+			net.send(new MoveTank(this));
 		}
 	}
 
@@ -517,6 +536,10 @@ public class Tank extends ActorEntity implements Damageable {
 			Mine mine = world.addEntity(Mine.class, args);
 
 			mineCount--;
+
+			Network net = NetworkSystem.getInstance();
+			net.send(new CreateEntity(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation()));
+
 			return mine;
 		}
 		return null;

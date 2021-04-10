@@ -4,13 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
 import bubolo.controllers.Controller;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
-import bubolo.net.command.CreateBullet;
-import bubolo.net.command.CreateEntity;
-import bubolo.net.command.MoveTank;
-import bubolo.world.Bullet;
-import bubolo.world.Mine;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
@@ -18,97 +11,57 @@ import bubolo.world.World;
  * A controller for the local tank. This controller maps keyboard inputs to tank commands.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class KeyboardTankController implements Controller
-{
+public class KeyboardTankController implements Controller {
 	private final Tank tank;
 
 	/**
 	 * Constructs a keyboard tank controller.
 	 *
-	 * @param tank
-	 *            reference to the local tank.
+	 * @param tank reference to the local tank.
 	 */
-	public KeyboardTankController(Tank tank)
-	{
+	public KeyboardTankController(Tank tank) {
 		this.tank = tank;
 	}
 
 	@Override
-	public void update(World world)
-	{
+	public void update(World world) {
 		processMovement(tank);
 		processCannon(tank, world);
 		processMineLaying(tank, world);
 	}
 
-	private static void processMovement(Tank tank)
-	{
+	private static void processMovement(Tank tank) {
 		// TODO (cdc - 3/14/2014): allow the key mappings to be changed.
 
-		if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.UP))
-		{
+		if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.UP)) {
 			tank.accelerate();
-			sendMove(tank);
-		}
-		else if (Gdx.input.isKeyPressed(Keys.S) || Gdx.input.isKeyPressed(Keys.DOWN))
-		{
+		} else if (Gdx.input.isKeyPressed(Keys.S) || Gdx.input.isKeyPressed(Keys.DOWN)) {
 			tank.decelerate();
-			sendMove(tank);
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.LEFT))
-		{
+		if (Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.LEFT)) {
 			tank.rotateRight();
-			sendMove(tank);
-		}
-		else if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT))
-		{
+		} else if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)) {
 			tank.rotateLeft();
-			sendMove(tank);
 		}
 	}
 
-	private static void processCannon(Tank tank, World world)
-	{
-		if (Gdx.input.isKeyPressed(Keys.SPACE) && tank.isCannonReady() && (tank.ammoCount() > 0) )
-		{
+	private static void processCannon(Tank tank, World world) {
+		if (Gdx.input.isKeyPressed(Keys.SPACE) && tank.isCannonReady() && (tank.ammoCount() > 0)) {
 			float tankCenterX = tank.x();
 			float tankCenterY = tank.y();
 
-			Bullet bullet = tank.fireCannon(world,
-					tankCenterX + 18 * (float) Math.cos(tank.rotation()),
+			tank.fireCannon(world, tankCenterX + 18 * (float) Math.cos(tank.rotation()),
 					tankCenterY + 18 * (float) Math.sin(tank.rotation()));
-			if(bullet != null)
-			{
-				Network net = NetworkSystem.getInstance();
-				net.send(new CreateBullet(bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), tank.id()));
-			}
-
 		}
 	}
 
-	private static void sendMove(Tank tank)
-	{
-		Network net = NetworkSystem.getInstance();
-		net.send(new MoveTank(tank));
+	private static void processMineLaying(Tank tank, World world) {
+		if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)
+				|| Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT) && (tank.mineCount() > 0)) {
+			tank.placeMine(world);
+		}
 	}
-
-
-	 private static void processMineLaying(Tank tank, World world)
-	 {
-		 if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT) && (tank.mineCount() > 0))
-		 {
-//				float tankCenterX = tank.x();
-//				float tankCenterY = tank.y();
-
-				Mine mine = tank.placeMine(world);
-//						tankCenterX + 18 * (float)Math.cos(tank.rotation()),
-//						tankCenterY + 18 * (float)Math.sin(tank.rotation()));
-				if(mine != null) {
-					Network net = NetworkSystem.getInstance();
-					net.send(new CreateEntity(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation()));
-				}
-		 }
-	 }
 }

@@ -14,9 +14,9 @@ import bubolo.world.World;
  * Moves a tank and updates its speed.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class MoveTank extends NetworkCommand
-{
+public class MoveTank extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -27,10 +27,10 @@ public class MoveTank extends NetworkCommand
 
 	/**
 	 * Constructs a Move Tank command.
+	 *
 	 * @param tank the tank to move.
 	 */
-	public MoveTank(Tank tank)
-	{
+	public MoveTank(Tank tank) {
 		this.id = tank.id();
 		this.speed = tank.speed();
 		this.x = tank.x();
@@ -39,8 +39,7 @@ public class MoveTank extends NetworkCommand
 	}
 
 	@Override
-	protected void execute(World world)
-	{
+	protected void execute(World world) {
 		Tank tank = (Tank) world.getEntity(id);
 		tank.setSpeed(new NetTankSpeed(speed));
 		tank.setPosition(x, y);
