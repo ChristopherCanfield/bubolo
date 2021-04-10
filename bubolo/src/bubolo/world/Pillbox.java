@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Polygon;
 import bubolo.Config;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
+import bubolo.util.Time;
 
 /**
  * Pillboxes are stationary defensive structures that shoot at enemy tanks, and can be captured. Captured pillboxes do not shoot
@@ -20,7 +21,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private long cannonReadyTime = 0;
 
 	/** Time required to reload cannon. */
-	private static final long cannonReloadSpeed = 500;
+	private static final long cannonReloadSpeedMillis = 500;
 
 	/** The direction the pillbox will fire. */
 	private float cannonRotation = 0;
@@ -36,7 +37,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	/** The amount of time that the pillbox is capturable after its health has been reduced to zero. */
 	private static final int captureTimeSeconds = 10;
-	private static final int captureTimeTicks = captureTimeSeconds * Config.FPS;
+	private static final int captureTimeTicks = Time.secondsToTicks(captureTimeSeconds);
 	private int captureTimeRemainingTicks = captureTimeTicks;
 
 	// 0.5f / FPS = heals ~0.5 health per second.
@@ -124,7 +125,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param world reference to world.
 	 */
 	public void fireCannon(World world) {
-		cannonReadyTime = System.currentTimeMillis() + cannonReloadSpeed;
+		cannonReadyTime = System.currentTimeMillis() + cannonReloadSpeedMillis;
 
 		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), cannonRotation);
 		Bullet bullet = world.addEntity(Bullet.class, args);
