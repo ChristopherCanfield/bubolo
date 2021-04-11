@@ -140,28 +140,32 @@ public class BuboloApplication extends AbstractGameApplication
 	@Override
 	public void render()
 	{
-		final State state = getState();
-		World world = world();
-		if (state == State.NET_GAME)
-		{
-			graphics.draw(world);
-			world.update();
-			network.update(this);
-		}
-		else if (state == State.LOCAL_GAME)
-		{
-			graphics.draw(world);
-			world.update();
-		}
-		else if (state == State.GAME_LOBBY ||
-				state == State.GAME_STARTING)
-		{
-			graphics.draw(screen);
-			network.update(this);
-		}
-		else if (state == State.PLAYER_INFO)
-		{
-			graphics.draw(screen);
+		try {
+			final State state = getState();
+			World world = world();
+			if (state == State.NET_GAME)
+			{
+				graphics.draw(world);
+				world.update();
+				network.update(this);
+			}
+			else if (state == State.LOCAL_GAME)
+			{
+				graphics.draw(world);
+				world.update();
+			}
+			else if (state == State.GAME_LOBBY ||
+					state == State.GAME_STARTING)
+			{
+				graphics.draw(screen);
+				network.update(this);
+			}
+			else if (state == State.PLAYER_INFO)
+			{
+				graphics.draw(screen);
+			}
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, e.toString(), e);
 		}
 	}
 
