@@ -15,6 +15,8 @@ import bubolo.world.World;
 public class Timer {
 	private int[] alarms;
 	private Consumer<World>[] actions;
+	private int size;
+
 	private int nextAlarmIndex = 0;
 
 	@SuppressWarnings("unchecked")
@@ -47,6 +49,10 @@ public class Timer {
 		int id = nextAlarmIndex;
 		alarms[id] = scheduledTicks;
 		actions[id] = action;
+
+		if (id >= size) {
+			size = id + 1;
+		}
 
 		nextAlarmIndex++;
 		if (alarms[nextAlarmIndex] > 0) {
@@ -108,16 +114,17 @@ public class Timer {
 
 	public void update(World world) {
 		// Decrement all scheduled alarms.
-		final int length = alarms.length;
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < size; i++) {
 			alarms[i]--;
 		}
 
 		// If an alarm has reached zero, execute the action, then destroy it.
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < size; i++) {
 			if (alarms[i] == 0) {
 				actions[i].accept(world);
 				actions[i] = null;
+			} else if (alarms[i] < 0) {
+				alarms[i] = 0;
 			}
 		}
 
