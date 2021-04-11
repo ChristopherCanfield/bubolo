@@ -21,8 +21,9 @@ public class Timer {
 
 	@SuppressWarnings("unchecked")
 	public Timer(int initialSize) {
-		alarms = new int[initialSize];
-		actions = new Consumer[initialSize];
+		int adjustedInitialSize = (initialSize < 2) ? 2 : initialSize;
+		alarms = new int[adjustedInitialSize];
+		actions = new Consumer[adjustedInitialSize];
 	}
 
 	/**
@@ -47,6 +48,9 @@ public class Timer {
 		int scheduledTicks = (ticks > 0) ? ticks : 1;
 
 		int id = nextAlarmIndex;
+		assert alarms[id] <= 0;
+		assert actions[id] == null;
+
 		alarms[id] = scheduledTicks;
 		actions[id] = action;
 
@@ -56,7 +60,7 @@ public class Timer {
 		}
 
 		nextAlarmIndex++;
-		if (alarms[nextAlarmIndex] > 0) {
+		if (size == alarms.length || actions[nextAlarmIndex] != null) {
 			nextAlarmIndex = findNextAlarmIndex();
 		}
 
@@ -93,7 +97,7 @@ public class Timer {
 	public void cancel(int id) {
 		assert actions[id] != null;
 
-		alarms[id] = 0;
+		alarms[id] = -1;
 		actions[id] = null;
 	}
 
@@ -105,8 +109,8 @@ public class Timer {
 	private int resize() {
 		int previousSize = alarms.length;
 
-		final int growthFactor = 2;
-		int newSize = previousSize * growthFactor;
+		final float growthFactor = 1.5f;
+		int newSize = Math.round(previousSize * growthFactor);
 		alarms = Arrays.copyOf(alarms, newSize);
 		actions = Arrays.copyOf(actions, newSize);
 
@@ -121,11 +125,11 @@ public class Timer {
 
 		// If an alarm has reached zero, execute the action, then destroy it.
 		for (int i = 0; i < size; i++) {
-			if (alarms[i] == 0) {
+			if (alarms[i] == 0 && actions[i] != null) {
 				actions[i].accept(world);
 				actions[i] = null;
 			} else if (alarms[i] < 0) {
-				alarms[i] = 0;
+				alarms[i] = -1;
 			}
 		}
 
@@ -134,9 +138,7 @@ public class Timer {
 
 	private int findNextAlarmIndex() {
 		for (int i = 0; i < alarms.length; i++) {
-			if (alarms[i] <= 0) {
-				assert(actions[i] == null);
-
+			if (alarms[i] <= 0 && actions[i] == null) {
 				return i;
 			}
 		}

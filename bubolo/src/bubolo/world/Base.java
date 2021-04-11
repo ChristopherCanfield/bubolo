@@ -40,18 +40,18 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	private float mines = maxMines;
 
 	/** The amount of time the base takes to refill its repair points, ammo, and mines (from zero), in seconds. */
-	private static final int refillTimeTicks = Time.secondsToTicks(240);
+	private static final int refillTimeTicks = Time.secondsToTicks(150);
 	private static final float repairPointsRefilledPerTick = maxRepairPoints / refillTimeTicks;
 	private static final float ammoRefilledPerTick = maxAmmo / refillTimeTicks;
 	private static final float minesRefilledPerTick = maxMines / refillTimeTicks;
 
 	/** The number of ticks between tank resupplying. */
 	private static final int ticksBetweenTankResupplyEvent = Config.FPS; // 1 second per refuel.
-	private boolean readyToRefuel = true;
+	private boolean readyToResupplyTank = true;
 
 	/** The amount of health a tank is refueled per resupply event. The time between resupply events is limited by ticksBetweenTankResupplyEvent. */
-	private static final float resuplyEventRepairAmount = 10;
-	private static final int resuplyEventAmmoAmount = 10;
+	private static final float resuplyEventRepairAmount = 4;
+	private static final int resuplyEventAmmoAmount = 4;
 	private static final int resuplyEventMinesAmount = 1;
 
 	private static final int width = 32;
@@ -118,20 +118,20 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	private boolean refuelTank(Tank tank) {
 		if (tank == owner() && !isTankRefueled(tank)) {
-			if (readyToRefuel) {
-				float refuelRepairPoints = (repairPoints > resuplyEventRepairAmount) ? repairPoints : resuplyEventRepairAmount;
+			if (readyToResupplyTank) {
+				float refuelRepairPoints = (repairPoints > resuplyEventRepairAmount) ? resuplyEventRepairAmount : repairPoints;
 				repairPoints -= refuelRepairPoints;
 
-				int refuelAmmo = (int) ((ammo > resuplyEventAmmoAmount) ? ammo : resuplyEventAmmoAmount);
+				int refuelAmmo = (int) ((ammo > resuplyEventAmmoAmount) ? resuplyEventAmmoAmount : ammo);
 				ammo -= refuelAmmo;
 
-				int refuelMines = (int) ((mines > resuplyEventMinesAmount) ? mines : resuplyEventMinesAmount);
+				int refuelMines = (int) ((mines > resuplyEventMinesAmount) ? resuplyEventMinesAmount : mines);
 				mines -= refuelMines;
 
-				tank.refuel(repairPoints, refuelAmmo, refuelMines);
+				tank.refuel(refuelRepairPoints, refuelAmmo, refuelMines);
 
 				clampSuppliesAndHealth();
-				readyToRefuel = false;
+				readyToResupplyTank = false;
 			}
 			return true;
 		}
@@ -140,8 +140,10 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	// Used by the timer.
 	private void onReadyToRefuel(World world) {
-		readyToRefuel = true;
-		world.timer().scheduleTicks(ticksBetweenTankResupplyEvent, this::onReadyToRefuel);
+		if (!isDisposed()) {
+			readyToResupplyTank = true;
+			world.timer().scheduleTicks(ticksBetweenTankResupplyEvent, this::onReadyToRefuel);
+		}
 	}
 
 	private void processCapture(Tank tank) {

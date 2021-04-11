@@ -71,7 +71,7 @@ public class GameWorld implements World
 	// list of world controllers
 	private final List<Controller> worldControllers = new ArrayList<>();
 
-	private final Timer timer = new Timer(30);
+	private final Timer timer = new Timer(20);
 
 	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,

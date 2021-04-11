@@ -67,7 +67,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private long cannonReadyTime = 0;
 
 	// Minimum amount of time between laying mines.
-	private static final long mineLayingSpeedMillis = 500;
+	private static final long mineLayingSpeedMillis = 1_000;
 
 	// The next time a mine will be ready to be laid.
 	private long mineReadyTime = 0;
@@ -548,9 +548,12 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private boolean canPlaceMineHere(World world) {
 		if (mineReadyTime < System.currentTimeMillis() && mineCount > 0) {
-			Terrain terrain = world.getTerrain(tileColumn(), tileRow());
-			if (terrain.isValidBuildTarget() && world.getMine(tileColumn(), tileRow()) == null) {
-				TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
+			int tileX = (int) x() / Coords.TileToWorldScale;
+			int tileY = (int) y() / Coords.TileToWorldScale;
+
+			Terrain terrain = world.getTerrain(tileX, tileY);
+			if (terrain.isValidBuildTarget() && world.getMine(tileX, tileY) == null) {
+				TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileX, tileY);
 				return (terrainImprovement == null || terrainImprovement.isValidMinePlacementTarget());
 			}
 			return false;

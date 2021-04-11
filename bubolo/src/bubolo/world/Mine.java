@@ -2,6 +2,7 @@ package bubolo.world;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
+import bubolo.util.Time;
 
 /**
  * Mines can be placed by Tanks to do damage to enemy Tanks, or to destroy/modify Terrain/structures.
@@ -11,10 +12,10 @@ import bubolo.audio.Sfx;
  */
 public class Mine extends ActorEntity {
 	/** Amount of time before mine becomes active, in milliseconds */
-	private static final int fuseTimeMillis = 5000;
+	private static final int fuseTimeTicks = Time.secondsToTicks(5);
 
 	/** Time the mine was created in milliseconds. */
-	private long createdTime;
+	private boolean armed;
 
 	private static final int width = 25;
 	private static final int height = 25;
@@ -28,7 +29,7 @@ public class Mine extends ActorEntity {
 	protected Mine(ConstructionArgs args, World world) {
 		super(args, width, height);
 
-		createdTime = System.currentTimeMillis();
+		world.timer().scheduleTicks(fuseTimeTicks, w -> armed = true);
 		setOwnedByLocalPlayer(true);
 		updateBounds();
 	}
@@ -40,11 +41,7 @@ public class Mine extends ActorEntity {
 	 * @return whether or not this mine is armed.
 	 */
 	public boolean isArmed() {
-		boolean active = false;
-		if ((this.createdTime + fuseTimeMillis) < System.currentTimeMillis()) {
-			active = true;
-		}
-		return active;
+		return armed;
 	}
 
 	@Override

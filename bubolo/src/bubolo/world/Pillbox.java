@@ -17,11 +17,9 @@ import bubolo.util.Time;
  * @author Christopher D. Canfield
  */
 public class Pillbox extends ActorEntity implements Damageable, TerrainImprovement {
-	/** When the cannon will be ready to fire. */
-	private long cannonReadyTime = 0;
-
 	/** Time required to reload cannon. */
-	private static final long cannonReloadSpeedMillis = 500;
+	private static final int cannonReloadSpeedTicks = Time.secondsToTicks(0.5f);
+	private boolean cannonReloaded = true;
 
 	/** The direction the pillbox will fire. */
 	private float cannonRotation = 0;
@@ -36,9 +34,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private float hitPoints = maxHitPoints;
 
 	/** The amount of time that the pillbox is capturable after its health has been reduced to zero. */
-	private static final int captureTimeSeconds = 10;
-	private static final int captureTimeTicks = Time.secondsToTicks(captureTimeSeconds);
-	private int captureTimeRemainingTicks = captureTimeTicks;
+	private static final int captureTimeTicks = Time.secondsToTicks(10);
+	private boolean capturable = false;
+	private int capturableTimerId = -1;
 
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
@@ -85,18 +83,15 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	@Override
 	protected void onUpdate(World world) {
-		if (captureTimeRemainingTicks <= 0) {
+		if (!capturable) {
 			heal(hpPerTick);
-		} else {
-			captureTimeRemainingTicks--;
 		}
 	}
 
 	@Override
 	protected void onOwnerChanged(ActorEntity newOwner) {
 		// If the Pillbox gained a new owner, set its health to a small positive value,
-		// so another player
-		// can't instantly grab it without needing to reduce its health.
+		// so another player can't instantly grab it without needing to reduce its health.
 		if (newOwner != null) {
 			hitPoints = 5;
 		}
@@ -108,7 +103,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady() {
-		return System.currentTimeMillis() > cannonReadyTime && hitPoints() > 0;
+		return cannonReloaded && hitPoints() > 0;
 	}
 
 	/**
@@ -126,7 +121,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param world reference to world.
 	 */
 	public void fireCannon(World world) {
-		cannonReadyTime = System.currentTimeMillis() + cannonReloadSpeedMillis;
+		cannonReloaded = false;
+		world.timer().scheduleTicks(cannonReloadSpeedTicks, w -> cannonReloaded = true);
 
 		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), cannonRotation);
 		Bullet bullet = world.addEntity(Bullet.class, args);
@@ -175,9 +171,20 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 		if (hitPoints < 0) {
 			// Give the player a few seconds to claim the damaged pillbox.
-			captureTimeRemainingTicks = captureTimeTicks;
+			if (capturable) {
+				world.timer().rescheduleTicks(capturableTimerId, captureTimeTicks);
+			} else {
+				capturableTimerId = world.timer().scheduleTicks(captureTimeTicks, this::onCapturableTimerExpired);
+			}
+
+			capturable = true;
 			hitPoints = 0;
 		}
+	}
+
+	private void onCapturableTimerExpired(World world) {
+		capturable = false;
+		capturableTimerId = -1;
 	}
 
 	/**
