@@ -34,6 +34,21 @@ public class TimerTest {
 	}
 
 	/**
+	 * Constructs a timer of size 1, schedules an action, updates the world, and then tests to see if the action was executed.
+	 */
+	@Test
+	public void timerSize1ThenSchedule() {
+		timer = new Timer(1);
+		timer.update(world);
+
+		TestAction action = new TestAction();
+		timer.scheduleTicks(1, action);
+		timer.update(world);
+
+		assertTrue(action.wasActionExecuted);
+	}
+
+	/**
 	 * Schedules an action, and ensures that it is executed the timer expires.
 	 */
 	@Test
@@ -92,6 +107,19 @@ public class TimerTest {
 			timer.update(world);
 			assertTrue(actions.get(ticks).wasActionExecuted);
 		}
+	}
+
+	/**
+	 * Schedules a large number of actions.
+	 */
+	@Test
+	public void scheduleMany() {
+		final int actions = 1_000;
+		for (int i = 0; i < actions; i++) {
+			timer.scheduleTicks(1, new TestAction());
+		}
+
+		world.update();
 	}
 
 	/**

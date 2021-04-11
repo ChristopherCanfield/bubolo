@@ -56,7 +56,6 @@ public class Timer {
 
 		if (id >= size) {
 			size = id + 1;
-			System.out.printf("Timer size is %d, capacity is %d%n", size, alarms.length);
 		}
 
 		nextAlarmIndex++;
@@ -104,7 +103,7 @@ public class Timer {
 	/**
 	 * Grows the two arrays.
 	 *
-	 * @return the length of the previous array + 1.
+	 * @return the next valid index.
 	 */
 	private int resize() {
 		int previousSize = alarms.length;
@@ -114,7 +113,7 @@ public class Timer {
 		alarms = Arrays.copyOf(alarms, newSize);
 		actions = Arrays.copyOf(actions, newSize);
 
-		return previousSize + 1;
+		return previousSize;
 	}
 
 	public void update(World world) {
