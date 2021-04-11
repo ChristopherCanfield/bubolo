@@ -7,6 +7,7 @@ import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
+import bubolo.util.Timer;
 
 /**
  * Stores and processes game entities.
@@ -54,6 +55,8 @@ public interface World
 	 * @return the list of actors.
 	 */
 	public List<ActorEntity> getActors();
+
+	public Timer timer();
 
 	/**
 	 * Constructs and adds an entity to the world, and returns a reference to the newly constructed entity.

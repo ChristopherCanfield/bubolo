@@ -17,6 +17,7 @@ import bubolo.controllers.Controllers;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
+import bubolo.util.Timer;
 
 /**
  * The concrete implementation of the World interface. GameWorld is the sole owner of Entity
@@ -69,6 +70,8 @@ public class GameWorld implements World
 
 	// list of world controllers
 	private final List<Controller> worldControllers = new ArrayList<>();
+
+	private final Timer timer = new Timer(30);
 
 	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
@@ -264,6 +267,11 @@ public class GameWorld implements World
 	}
 
 	@Override
+	public Timer timer() {
+		return timer;
+	}
+
+	@Override
 	public int getWidth()
 	{
 		return width;
@@ -288,6 +296,8 @@ public class GameWorld implements World
 	@Override
 	public void update()
 	{
+		timer.update(this);
+
 		// Update all world controllers
 		for (Controller c : worldControllers) {
 			c.update(this);
