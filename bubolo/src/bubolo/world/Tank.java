@@ -273,7 +273,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady() {
-		return (System.currentTimeMillis() - cannonReadyTime > cannonReloadSpeed);
+		return (System.currentTimeMillis() - cannonReadyTime > cannonReloadSpeed) && isAlive();
 	}
 
 	/**
