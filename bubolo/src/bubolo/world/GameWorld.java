@@ -128,11 +128,12 @@ public class GameWorld implements World
 
 		T entity;
 		try {
-			var constructor = c.getDeclaredConstructor(Entity.ConstructionArgs.class);
-			entity = constructor.newInstance(args);
+			var constructor = c.getDeclaredConstructor(Entity.ConstructionArgs.class, World.class);
+			entity = constructor.newInstance(args, this);
 		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
-			throw new GameLogicException(String.format("%s: \n%s", e.toString(), e.getCause().toString()));
+			String cause = (e.getCause() != null) ? e.getCause().toString() : "No cause reported.";
+			throw new GameLogicException(String.format("%s: \n%s", e.toString(), cause));
 		}
 
 		assert entity.x() <= getWidth();

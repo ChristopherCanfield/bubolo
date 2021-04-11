@@ -23,8 +23,9 @@ public class Mine extends ActorEntity {
 	 * Constructs a new Mine.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Mine(ConstructionArgs args) {
+	protected Mine(ConstructionArgs args, World world) {
 		super(args, width, height);
 
 		createdTime = System.currentTimeMillis();

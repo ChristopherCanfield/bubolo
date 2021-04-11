@@ -36,7 +36,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 
 	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
 
-	protected Wall(ConstructionArgs args) {
+	protected Wall(ConstructionArgs args, World world) {
 		super(args, width, height);
 
 		boundingBox = new BoundingBox(this);

@@ -21,8 +21,8 @@ final class StatusBarRenderer {
 	 * Draws a health bar above an entity. Only draws the health bar if the entity is alive and health is not at 100%.
 	 *
 	 * @param entity the damageable entity that will gain a health bar.
-	 * @param shapeRenderer
-	 * @param camera
+	 * @param shapeRenderer a shape renderer object.
+	 * @param camera the camera.
 	 */
 	static void drawHealthBar(Damageable entity, ShapeRenderer shapeRenderer, Camera camera) {
 		if (entity.isAlive() && entity.hitPoints() < entity.maxHitPoints()) {

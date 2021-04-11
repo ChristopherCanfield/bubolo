@@ -14,7 +14,7 @@ public class Grass extends Terrain {
 	private static final int width = 32;
 	private static final int height = 32;
 
-	protected Grass(ConstructionArgs args) {
+	protected Grass(ConstructionArgs args, World world) {
 		super(args, width, height, speedModifier);
 	}
 }

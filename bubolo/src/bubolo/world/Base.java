@@ -31,23 +31,23 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	/** Whether the base can be captured by a tank driving over it. */
 	private boolean capturable = false;
 
-	private static final int maxRepairPoints = 100;
-	private static final int maxAmmo = 100;
-	private static final int maxMines = 10;
+	private static final float maxRepairPoints = 100;
+	private static final float maxAmmo = 100;
+	private static final float maxMines = 10;
 
 	private float repairPoints = maxRepairPoints;
 	private float ammo = maxAmmo;
 	private float mines = maxMines;
 
 	/** The amount of time the base takes to refill its repair points, ammo, and mines (from zero), in seconds. */
-	private static final int refillTimeSeconds = 240;
-	private static final float repairPointsRefilledPerTick = maxRepairPoints / (float) Time.secondsToTicks(refillTimeSeconds);
-	private static final float ammoRefilledPerTick = maxAmmo / (float) Time.secondsToTicks(refillTimeSeconds);
-	private static final float minesRefilledPerTick = maxMines / (float) Time.secondsToTicks(refillTimeSeconds);
+	private static final int refillTimeTicks = Time.secondsToTicks(240);
+	private static final float repairPointsRefilledPerTick = maxRepairPoints / refillTimeTicks;
+	private static final float ammoRefilledPerTick = maxAmmo / refillTimeTicks;
+	private static final float minesRefilledPerTick = maxMines / refillTimeTicks;
 
 	/** The number of ticks between tank resupplying. */
 	private static final int ticksBetweenTankResupplyEvent = Config.FPS; // 1 second per refuel.
-	private int ticksUntilNextResupplyEvent = 0;
+	private boolean readyToRefuel = true;
 
 	/** The amount of health a tank is refueled per resupply event. The time between resupply events is limited by ticksBetweenTankResupplyEvent. */
 	private static final float resuplyEventRepairAmount = 10;
@@ -63,15 +63,16 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	 * Constructs a new Base.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Base(ConstructionArgs args) {
+	protected Base(ConstructionArgs args, World world) {
 		super(args, width, height);
 		updateBounds();
+		world.timer().scheduleTicks(ticksBetweenTankResupplyEvent, this::onReadyToRefuel);
 	}
 
 	@Override
 	protected void onUpdate(World world) {
-		ticksUntilNextResupplyEvent--;
 		refillSuppliesAndHealth();
 
 		refuelingTank = false;
@@ -117,7 +118,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	private boolean refuelTank(Tank tank) {
 		if (tank == owner() && !isTankRefueled(tank)) {
-			if (ticksUntilNextResupplyEvent <= 0) {
+			if (readyToRefuel) {
 				float refuelRepairPoints = (repairPoints > resuplyEventRepairAmount) ? repairPoints : resuplyEventRepairAmount;
 				repairPoints -= refuelRepairPoints;
 
@@ -130,11 +131,17 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 				tank.refuel(repairPoints, refuelAmmo, refuelMines);
 
 				clampSuppliesAndHealth();
-				ticksUntilNextResupplyEvent = ticksBetweenTankResupplyEvent;
+				readyToRefuel = false;
 			}
 			return true;
 		}
 		return false;
+	}
+
+	// Used by the timer.
+	private void onReadyToRefuel(World world) {
+		readyToRefuel = true;
+		world.timer().scheduleTicks(ticksBetweenTankResupplyEvent, this::onReadyToRefuel);
 	}
 
 	private void processCapture(Tank tank) {

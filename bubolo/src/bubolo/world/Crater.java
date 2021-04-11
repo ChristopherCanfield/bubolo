@@ -22,7 +22,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, Adaptabl
 	private static final int width = 32;
 	private static final int height = 32;
 
-	protected Crater(ConstructionArgs args) {
+	protected Crater(ConstructionArgs args, World world) {
 		super(args, width, height);
 	}
 

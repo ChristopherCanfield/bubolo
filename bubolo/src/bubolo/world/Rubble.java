@@ -14,8 +14,9 @@ public class Rubble extends StaticEntity implements TerrainImprovement {
 	 * Constructs a new Rubble.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Rubble(ConstructionArgs args) {
+	protected Rubble(ConstructionArgs args, World world) {
 		super(args, width, height);
 	}
 

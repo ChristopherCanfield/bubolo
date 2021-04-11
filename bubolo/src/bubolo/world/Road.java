@@ -28,8 +28,9 @@ public class Road extends Terrain implements Adaptable {
 	 * Constructs a new Road.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Road(ConstructionArgs args) {
+	protected Road(ConstructionArgs args, World world) {
 		super(args, width, height, speedModifier);
 	}
 

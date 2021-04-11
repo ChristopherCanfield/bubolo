@@ -60,8 +60,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * Constructs a new Pillbox.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Pillbox(ConstructionArgs args) {
+	protected Pillbox(ConstructionArgs args, World world) {
 		super(args, width, height);
 		captureBounds = new BoundingBox(x() - (captureBoundsExtraWidth / 2),
 				y() - (captureBoundsExtraHeight / 2),

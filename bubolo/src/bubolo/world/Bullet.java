@@ -38,8 +38,9 @@ public class Bullet extends ActorEntity {
 	 * Constructs a new Bullet.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Bullet(ConstructionArgs args) {
+	protected Bullet(ConstructionArgs args, World world) {
 		super(args, width, height);
 		updateBounds();
 

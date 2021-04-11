@@ -26,7 +26,7 @@ public class Water extends Terrain implements Adaptable {
 	private static final int width = 32;
 	private static final int height = 32;
 
-	protected Water(ConstructionArgs args) {
+	protected Water(ConstructionArgs args, World world) {
 		super(args, width, height, speedModifier);
 	}
 

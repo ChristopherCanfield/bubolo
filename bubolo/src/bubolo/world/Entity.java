@@ -5,7 +5,17 @@ import java.util.UUID;
 import bubolo.util.Coords;
 
 /**
- * Base class for objects that live in the game world.
+ * Base class for objects that live in the game world. Entities are created using the World.addEntity method:
+ * <p>
+ * {@code world.addEntity(EntityType.class, args);}
+ * </code>
+ * <p>
+ * All entities must have a two-argument constructor, which takes an Entity.ConstructionArgs object and a reference
+ * to the game world:
+ * <p>
+ * {@code EntityType(Entity.ConstructionArgs args, World world)}
+ * </p>
+ * The constructor does not need to be public.
  *
  * @author Christopher D. Canfield
  * @since 0.4.0

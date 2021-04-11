@@ -52,6 +52,7 @@ public class Timer {
 
 		if (id >= size) {
 			size = id + 1;
+			System.out.printf("Timer size is %d, capacity is %d%n", size, alarms.length);
 		}
 
 		nextAlarmIndex++;

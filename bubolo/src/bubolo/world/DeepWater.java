@@ -26,7 +26,7 @@ public class DeepWater extends Terrain implements Adaptable {
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Water.class };
 
-	protected DeepWater(ConstructionArgs args) {
+	protected DeepWater(ConstructionArgs args, World world) {
 		super(args, width, height, speedModifier);
 	}
 

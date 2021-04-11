@@ -25,8 +25,9 @@ public class MineExplosion extends ActorEntity {
 	 * Constructs a new MineExplosion.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected MineExplosion(ConstructionArgs args) {
+	protected MineExplosion(ConstructionArgs args, World world) {
 		super(args, width, height);
 		updateBounds();
 	}

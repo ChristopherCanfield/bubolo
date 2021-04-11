@@ -126,10 +126,10 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	}
 
 	/**
-	 * tell the pillbox to aim and fire
+	 * Aims and fires the pillbox's cannon.
 	 *
-	 * @param rotation
-	 * @param world
+	 * @param rotation the pillbox cannon's rotation.
+	 * @param world reference to the game world.
 	 */
 	private void fire(float rotation, World world)
 	{

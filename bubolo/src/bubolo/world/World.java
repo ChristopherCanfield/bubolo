@@ -107,7 +107,7 @@ public interface World
 	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
 	 * is added to the world. Only one observer can be attached to the world at a time.
 	 *
-	 * @param entityCreationObserver
+	 * @param entityCreationObserver the observer to notify when new entities are added to the world.
 	 */
 	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
 
@@ -190,7 +190,7 @@ public interface World
 	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and type.
 	 * The entity that is passed in is not included in the returned list.
 	 *
-	 * @param entity
+	 * @param entity the target entity.
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
 	 * no type filter is applied.
@@ -204,7 +204,7 @@ public interface World
 	 * The entity that is passed in is not included in the returned list. This overload allows for the max distance, in tiles, to
 	 * be passed in.
 	 *
-	 * @param entity
+	 * @param entity the target entity.
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
 	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
@@ -218,7 +218,7 @@ public interface World
 	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness.
 	 * The entity that is passed in is not included in the returned list.
 	 *
-	 * @param entity
+	 * @param entity the target entity.
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 *
 	 * @return a list of nearby collidables.

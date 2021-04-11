@@ -104,8 +104,9 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Constructs a Tank.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Tank(ConstructionArgs args) {
+	protected Tank(ConstructionArgs args, World world) {
 		super(args, width, height);
 
 		boundingCircle = new Circle(x(), y(), boundingCircleRadius);

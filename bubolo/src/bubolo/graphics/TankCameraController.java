@@ -21,7 +21,7 @@ class TankCameraController implements CameraController
 	 * Constructs a TankCameraController. Package-private because TankCameraControllers are internal
 	 * to the Graphics system.
 	 *
-	 * @param tank
+	 * @param tank the tank that the camera will follow.
 	 */
 	TankCameraController(Tank tank)
 	{

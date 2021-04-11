@@ -29,7 +29,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 
 	private final BoundingBox boundingBox;
 
-	protected Tree(ConstructionArgs args) {
+	protected Tree(ConstructionArgs args, World world) {
 		super(args, width, height);
 
 		boundingBox = new BoundingBox(this);

@@ -137,7 +137,7 @@ class Server implements NetworkSubsystem
 	/**
 	 * Removes the client
 	 *
-	 * @param client
+	 * @param client the client to remove.
 	 */
 	private void removeClient(ClientSocket client)
 	{

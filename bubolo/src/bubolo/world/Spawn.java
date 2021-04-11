@@ -13,8 +13,9 @@ public class Spawn extends StaticEntity {
 	 * Constructs a new Spawn.
 	 *
 	 * @param args the entity's construction arguments.
+	 * @param world reference to the game world.
 	 */
-	protected Spawn(ConstructionArgs args) {
+	protected Spawn(ConstructionArgs args, World world) {
 		super(args, width, height);
 	}
 }

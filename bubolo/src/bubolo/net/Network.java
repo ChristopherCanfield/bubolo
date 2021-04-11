@@ -81,7 +81,7 @@ public interface Network
 	/**
 	 * Runs a NetworkCommand in the game logic thread.
 	 *
-	 * @param command
+	 * @param command the command to post to the game logic thread.
 	 */
 	void postToGameThread(NetworkCommand command);
 
