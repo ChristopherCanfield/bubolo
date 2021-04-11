@@ -1,4 +1,4 @@
-package bubolo.world.entity;
+package bubolo.mock;
 
 import java.util.UUID;
 

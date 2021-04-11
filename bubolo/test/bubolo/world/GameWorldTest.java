@@ -3,80 +3,13 @@ package bubolo.world;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import bubolo.controllers.ControllerFactory;
-import bubolo.controllers.ai.AiTreeController;
-import bubolo.world.entity.OldEntity;
-
 public class GameWorldTest
 {
-	@Test
-	public void gameWorldBadWidth()
-	{
-		try
-		{
-			World w = new GameWorld(-100, 1000);
-			w.update();
-			fail("GameWorld did not fail on invalid input");
-		}
-		catch (Exception e)
-		{
-		}
-	}
-
-	@Test
-	public void getTanks()
-	{
-		GameWorld w= new GameWorld(500, 500);
-		Tank t = w.addEntity(Tank.class);
-		var l = w.getTanks();
-		assertEquals("List does not contain the target tank!", true, l.contains(t));
-		w.removeEntity(t);
-		l = w.getTanks();
-		assertEquals("List contains the target tank after it was removed!", false, l.contains(t));
-	}
-
-	@Test
-	public void getSpawns()
-	{
-		GameWorld w= new GameWorld(500, 500);
-		Spawn s = w.addEntity(Spawn.class);
-		var l = w.getSpawns();
-		assertEquals("List does not contain the target Spawn!", true, l.contains(s));
-		w.removeEntity(s);
-		l = w.getSpawns();
-		assertEquals("List contains the target tank after it was removed!", false, l.contains(s));
-	}
-
-	@Test
-	public void getEffects()
-	{
-		GameWorld w= new GameWorld(500, 500);
-		Bullet b = w.addEntity(Bullet.class);
-		var l = w.getEffects();
-		assertEquals("List does not contain the target tank!", true, l.contains(b));
-		w.removeEntity(b);
-		l = w.getEffects();
-		assertEquals("List contains the target tank after it was removed!", false, l.contains(b));
-	}
-
-	@Test
-	public void getActors()
-	{
-		GameWorld w= new GameWorld(500, 500);
-		Tank t = w.addEntity(Tank.class);
-		var l = w.getActors();
-		assertEquals("List does not contain the target tank!", true, l.contains(t));
-		w.removeEntity(t);
-		l = w.getActors();
-		assertEquals("List contains the target tank after it was removed!", false, l.contains(t));
-	}
-
 	@Test
 	public void gameWorldBadHeight()
 	{
@@ -249,68 +182,5 @@ public class GameWorldTest
 	{
 		World w = new GameWorld(10, 50);
 		assertEquals(50, w.getHeight());
-	}
-	@Test
-	public void testGetMapTiles()
-	{
-		GameWorld w = new GameWorld(1, 1);
-		Tile[][] tiles = new Tile[1][1];
-		tiles[0][0] = new Tile(0, 0);
-		w.setTiles(tiles);
-		assertSame(tiles, w.getTiles());
-	}
-	@Test
-	public void testSetMapTiles()
-	{
-		World w = new GameWorld(10, 50);
-		assertEquals(50, w.getHeight());
-	}
-
-	@Test
-	public void testSetMapHeight()
-	{
-		World w = new GameWorld(0, 0);
-		w.setHeight(40);
-		assertEquals(40, w.getHeight());
-	}
-
-	@Test
-	public void testSetMapWidth()
-	{
-		World w = new GameWorld(0, 0);
-		w.setWidth(75);
-		assertEquals(75, w.getWidth());
-	}
-
-	@Test
-	public void testAddEntity()
-	{
-		World w = new GameWorld(0,0);
-		OldEntity e = new Grass();
-		ControllerFactory c;
-		c = null;
-		w.addEntity(e.getClass(), e.getId());
-		w.addEntity(e.getClass(), c);
-	}
-
-	@Test
-	public void testTileFunctions()
-	{
-		World w = new GameWorld(0,0);
-		Tile[][] mapTiles = new Tile[1][1];
-		mapTiles[0][0] = new Tile(0, 0, w.addEntity(Grass.class));
-		w.setTiles(mapTiles);
-		assertEquals(Grass.class, w.getTiles()[0][0].getTerrain().getClass());
-	}
-
-	@Test
-	public void addRemoveController()
-	{
-		World w = new GameWorld(0, 0);
-		w.addController(AiTreeController.class);
-		assertEquals(1, w.getControllerCount());
-
-		w.removeController(AiTreeController.class);
-		assertEquals(0, w.getControllerCount());
 	}
 }
