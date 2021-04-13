@@ -17,8 +17,8 @@ public class Config {
 	public static final double SecondsPerFrame = 1.0 / FPS;
 	public static final double MillisPerFrame = 1000.0 / FPS;
 
-	public static final int InitialWindowHeight = 600;
-	public static final int InitialWindowWidth = 1067;
+	public static final int InitialWindowHeight = 720;
+	public static final int InitialWindowWidth = 1280;
 
 	public static final int MaxWorldColumns = (Short.MAX_VALUE * 2 + 2) / Coords.TileToWorldScale;
 	public static final int MaxWorldRows = MaxWorldColumns;
