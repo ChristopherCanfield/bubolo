@@ -64,8 +64,8 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	/**
 	 * Sets the actor's position, and updates its bounds.
 	 *
-	 * @param x the actor's new x position.
-	 * @param y the actor's new y position.
+	 * @param x the actor's new x position. >= 0.
+	 * @param y the actor's new y position. >= 0.
 	 * @return reference to this actor.
 	 */
 	public ActorEntity setPosition(float x, float y) {

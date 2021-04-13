@@ -21,23 +21,33 @@ import bubolo.util.Coords;
  * @since 0.4.0
  */
 public abstract class Entity {
+	/** The max size that an entity's height and width can each be. */
+	public static final int EntityMaxSize = Byte.MAX_VALUE;
 
 	public static record ConstructionArgs(UUID id, float x, float y, float rotationRadians) {}
 
 	private final UUID id;
 	private boolean disposed;
 
-	private final int width;
-	private final int height;
+	private final byte width;
+	private final byte height;
 
+	/**
+	 * @param id the entity's unique ID. Use UUID.randomUUID() if the entity does not already have an ID.
+	 * @param width the entity's width. > 0 && <= Entity.MaxSize.
+	 * @param height the entity's height. > 0 && <= Entity.MaxSize.
+	 */
 	protected Entity(UUID id, int width, int height) {
 		assert id != null;
-		assert width >= 0;
-		assert height >= 0;
+
+		assert width > 0;
+		assert width <= Entity.EntityMaxSize;
+		assert height > 0;
+		assert height <= Entity.EntityMaxSize;
 
 		this.id = id;
-		this.width = width;
-		this.height = height;
+		this.width = (byte) width;
+		this.height = (byte) height;
 	}
 
 	/**

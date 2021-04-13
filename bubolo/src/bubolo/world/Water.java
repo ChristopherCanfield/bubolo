@@ -8,7 +8,7 @@ import bubolo.util.TileUtil;
  * @author BU CS673 - Clone Productions
  */
 public class Water extends Terrain implements Adaptable {
-	private int tilingState = 0;
+	private byte tilingState = 0;
 
 	private final boolean[] cornerMatches = new boolean[4];
 
@@ -53,7 +53,7 @@ public class Water extends Terrain implements Adaptable {
 	}
 
 	@Override
-	public int getTilingState() {
+	public byte getTilingState() {
 		return tilingState;
 	}
 }

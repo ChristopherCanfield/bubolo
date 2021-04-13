@@ -1,5 +1,6 @@
 package bubolo.world;
 
+import bubolo.Config;
 import bubolo.util.Coords;
 
 /**
@@ -13,24 +14,37 @@ import bubolo.util.Coords;
  * @since 0.4.0
  */
 public abstract class StaticEntity extends Entity {
-	private final float x;
-	private final float y;
+	private final short x;
+	private final short y;
 
+	/**
+	 * @param args id != null; x >= 0 && <= Config.MaxWorldX; y >= 0 && <= Config.MaxWorldY.
+	 * @param width the entity's width. > 0 && <= 127.
+	 * @param height the entity's height. > 0 && <= 127.
+	 */
 	protected StaticEntity(ConstructionArgs args, int width, int height) {
 		super(args.id(), width, height);
 
-		this.x = args.x();
-		this.y = args.y();
+		assert args.x() >= 0;
+		assert args.x() <= Config.MaxWorldX;
+		assert args.y() >= 0;
+		assert args.y() <= Config.MaxWorldY;
+
+
+		this.x = (short) args.x();
+		this.y = (short) args.y();
 	}
 
 	@Override
 	public float x() {
-		return x;
+		// Make unsigned.
+		return x & 0xffff;
 	}
 
 	@Override
 	public float y() {
-		return y;
+		// Make unsigned.
+		return y & 0xffff;
 	}
 
 	@Override

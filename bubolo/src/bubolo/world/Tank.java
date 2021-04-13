@@ -360,7 +360,7 @@ public class Tank extends ActorEntity implements Damageable {
 		float newY = y() + amountMovedY;
 
 		// Prevent the tank from exiting the game world.
-		if (world.containsPoint(newX, newY)) {
+		if (!world.containsPoint(newX, newY)) {
 			return;
 		}
 

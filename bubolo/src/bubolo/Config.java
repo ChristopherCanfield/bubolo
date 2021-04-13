@@ -1,5 +1,7 @@
 package bubolo;
 
+import bubolo.util.Coords;
+
 /**
  * Configuration constants.
  *
@@ -17,4 +19,9 @@ public class Config {
 
 	public static final int InitialWindowHeight = 600;
 	public static final int InitialWindowWidth = 1067;
+
+	public static final int MaxWorldColumns = (Short.MAX_VALUE * 2 + 2) / Coords.TileToWorldScale;
+	public static final int MaxWorldRows = MaxWorldColumns;
+	public static final int MaxWorldX = MaxWorldColumns * Coords.TileToWorldScale - 1;
+	public static final int MaxWorldY = MaxWorldRows * Coords.TileToWorldScale - 1;
 }

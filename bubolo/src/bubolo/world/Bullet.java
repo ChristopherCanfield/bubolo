@@ -73,7 +73,7 @@ public class Bullet extends ActorEntity {
 		float newX = x() + movementX;
 		float newY = y() + movementY;
 
-		if (distanceTraveled > maxDistance || newX < 0 || newY < 0) {
+		if (distanceTraveled > maxDistance || !world.containsPoint(newX, newY)) {
 			dispose();
 			return;
 		}

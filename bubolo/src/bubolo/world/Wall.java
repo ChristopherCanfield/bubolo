@@ -14,7 +14,7 @@ import bubolo.util.TileUtil;
  * @author BU CS673 - Clone Productions
  */
 public class Wall extends StaticEntity implements TerrainImprovement, Collidable, Adaptable, Damageable {
-	private int tilingState = 0;
+	private byte tilingState = 0;
 
 	private static final int maxHitPoints = 100;
 
@@ -48,7 +48,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	}
 
 	@Override
-	public int getTilingState() {
+	public byte getTilingState() {
 		return tilingState;
 	}
 

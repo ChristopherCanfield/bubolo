@@ -129,9 +129,9 @@ public abstract class TileUtil
 	 * @return an integer representing the correct adaptive tiling state for the specified
 	 *         tile, according to the adaptive tiling mechanism outlined on the project wiki.
 	 */
-	public static int getTilingState(Entity t, World w, Class<?>[] targetClasses)
+	public static byte getTilingState(Entity t, World w, Class<?>[] targetClasses)
 	{
-		int stateSum = 0;
+		byte stateSum = 0;
 
 		getEdgeMatches(tilingStateArray, t, w, targetClasses);
 		boolean[] edges = tilingStateArray;

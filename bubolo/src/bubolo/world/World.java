@@ -134,7 +134,7 @@ public interface World
 	 * @return true if the point is within the world.
 	 */
 	default public boolean containsPoint(float x, float y) {
-		return x < 0 || x > getWidth() || y < 0 || y > getHeight();
+		return !(x < 0 || x > getWidth() || y < 0 || y > getHeight());
 	}
 
 	/**

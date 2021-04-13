@@ -9,7 +9,7 @@ import bubolo.util.TileUtil;
  * @author BU CS673 - Clone Productions
  */
 public class Crater extends StaticEntity implements TerrainImprovement, Adaptable {
-	private int tilingState = 0;
+	private byte tilingState = 0;
 
 	/**
 	 * An array containing the classes that result in a valid match when determining adaptive tiling state. TODO (cdc -
@@ -42,7 +42,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, Adaptabl
 	}
 
 	@Override
-	public int getTilingState() {
+	public byte getTilingState() {
 		return tilingState;
 	}
 }

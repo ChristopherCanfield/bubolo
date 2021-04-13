@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import bubolo.Config;
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
@@ -88,16 +89,15 @@ public class GameWorld implements World
 	/**
 	 * Constructs a GameWorld object.
 	 *
-	 * @param worldTileColumns the width of the game world map, in tiles.
-	 * @param worldTileRows the height of the game world map, in tiles.
+	 * @param worldTileColumns the width of the game world map, in tiles. > 0 && <= Config.MaxWorldColumns.
+	 * @param worldTileRows the height of the game world map, in tiles. > 0 && <= Config.MaxWorldRows.
 	 */
 	public GameWorld(int worldTileColumns, int worldTileRows)
 	{
-		assert(worldTileColumns > 0);
-		assert(worldTileRows > 0);
-
-		assert worldTileColumns < 2_500 : "Unlikely worldTileColumns value passed to GameWorld: " + worldTileColumns;
-		assert worldTileRows < 2_500 : "Unlikely worldTileRows value passed to GameWorld: " + worldTileRows;
+		assert worldTileColumns > 0;
+		assert worldTileColumns <= Config.MaxWorldColumns;
+		assert worldTileRows > 0;
+		assert worldTileRows <= Config.MaxWorldRows;
 
 		terrain = new Terrain[worldTileColumns][worldTileRows];
 

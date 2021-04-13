@@ -8,7 +8,7 @@ import bubolo.util.TileUtil;
  * @author BU CS673 - Clone Productions
  */
 public class Road extends Terrain implements Adaptable {
-	private int tilingState = 0;
+	private byte tilingState = 0;
 
 	/**
 	 * An array containing the classes that result in a valid match when determining adaptive tiling state.
@@ -40,7 +40,7 @@ public class Road extends Terrain implements Adaptable {
 	}
 
 	@Override
-	public int getTilingState() {
+	public byte getTilingState() {
 		return tilingState;
 	}
 }

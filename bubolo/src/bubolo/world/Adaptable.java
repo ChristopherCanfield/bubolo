@@ -20,5 +20,5 @@ public interface Adaptable
 	 * Returns the current adaptive tiling state of this Entity.
 	 * @return the current adaptive tiling state of this Entity.
 	 */
-	public int getTilingState();
+	public byte getTilingState();
 }
