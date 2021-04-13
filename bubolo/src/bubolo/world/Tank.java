@@ -117,12 +117,15 @@ public class Tank extends ActorEntity implements Damageable {
 		// Don't allow the tank to respawn until its respawn timer has expired.
 		if (nextRespawnTime < System.currentTimeMillis() && isOwnedByLocalPlayer()) {
 			var spawns = world.getSpawns();
+			// TODO (cdc - 2021-04-13): getSpawns() should guarantee that it returns one or more spawns.
 			if (spawns.size() > 0) {
-				Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-				setPosition(spawn.x(), spawn.y());
-
-				Network net = NetworkSystem.getInstance();
-				net.send(new UpdateTankAttributes(this));
+				// Loop until a suitable spawn point is found.
+				boolean spawnFound = false;
+				do {
+					Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+					setPosition(spawn.x(), spawn.y());
+					spawnFound = world.getNearbyCollidables(this, true, 4, Tank.class).isEmpty();
+				} while (!spawnFound);
 			}
 
 			hitPoints = maxHitPoints;
