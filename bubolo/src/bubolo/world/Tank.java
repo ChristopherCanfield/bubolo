@@ -15,8 +15,8 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateBullet;
 import bubolo.net.command.CreateEntity;
-import bubolo.net.command.MoveTank;
-import bubolo.net.command.NetTankSpeed;
+import bubolo.net.command.NetTankAttributes;
+import bubolo.net.command.UpdateTankAttributes;
 import bubolo.util.Coords;
 
 /**
@@ -115,14 +115,14 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private void respawn(World world) {
 		// Don't allow the tank to respawn until its respawn timer has expired.
-		if (nextRespawnTime < System.currentTimeMillis()) {
+		if (nextRespawnTime < System.currentTimeMillis() && isOwnedByLocalPlayer()) {
 			var spawns = world.getSpawns();
 			if (spawns.size() > 0) {
 				Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
 				setPosition(spawn.x(), spawn.y());
 
 				Network net = NetworkSystem.getInstance();
-				net.send(new MoveTank(this));
+				net.send(new UpdateTankAttributes(this));
 			}
 
 			hitPoints = maxHitPoints;
@@ -136,6 +136,7 @@ public class Tank extends ActorEntity implements Damageable {
 			accelerated = false;
 			decelerated = false;
 			hidden = false;
+			notifyNetwork();
 		}
 	}
 
@@ -199,16 +200,19 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Sets the tank's speed. For use with the network system.
+	 * Sets some of the tank's non-public attributes. For use with the network system.
 	 *
-	 * @param netTankSpeed a NetTankSpeed object that contains the tank's new speed.
+	 * @param netTankAttributes a NetTankAttributes object that contains the tank's new attributes.
 	 */
-	public void setSpeed(NetTankSpeed netTankSpeed) {
-		if (netTankSpeed.getSpeed() > speed) {
+	public void setNetAttributes(NetTankAttributes netTankAttributes) {
+		if (netTankAttributes.speed > speed) {
 			accelerated = true;
+		} else if (netTankAttributes.speed < speed) {
+			decelerated = true;
 		}
 
-		this.speed = netTankSpeed.getSpeed();
+		this.speed = netTankAttributes.speed;
+		this.hitPoints = netTankAttributes.hitPoints;
 	}
 
 	/**
@@ -224,7 +228,7 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 		clampSpeed();
 
-		sendMoveToNetwork();
+		notifyNetwork();
 	}
 
 	/**
@@ -237,7 +241,7 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 		clampSpeed();
 
-		sendMoveToNetwork();
+		notifyNetwork();
 	}
 
 	/**
@@ -256,7 +260,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	public void rotateRight() {
 		setRotation(rotation() + rotationRate);
-		sendMoveToNetwork();
+		notifyNetwork();
 	}
 
 	/**
@@ -264,7 +268,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	public void rotateLeft() {
 		setRotation(rotation() - rotationRate);
-		sendMoveToNetwork();
+		notifyNetwork();
 	}
 
 	/**
@@ -402,10 +406,10 @@ public class Tank extends ActorEntity implements Damageable {
 	/**
 	 * Sends tank move information to the network.
 	 */
-	private void sendMoveToNetwork() {
+	private void notifyNetwork() {
 		if (isOwnedByLocalPlayer()) {
 			Network net = NetworkSystem.getInstance();
-			net.send(new MoveTank(this));
+			net.send(new UpdateTankAttributes(this));
 		}
 	}
 
@@ -458,6 +462,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 		if (hitPoints > 0) {
 			hitPoints -= damagePoints;
+
+			notifyNetwork();
 			sfxPlayer.play(Sfx.TANK_HIT);
 
 			if (hitPoints <= 0) {

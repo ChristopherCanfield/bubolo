@@ -11,7 +11,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.audio.Audio;
@@ -252,7 +251,6 @@ public class BuboloApplication extends AbstractGameApplication
 		Audio.dispose();
 		NetworkSystem.getInstance().dispose();
 		Graphics.dispose();
-		Gdx.app.exit();
 		/* TODO (2021-04-13): After updating to lwjgl3, the process remains in the background even after the window is closed and
 		 * this dispose method is called. I'm not sure why that is. System.exit is a temporary hack until I can look into it further. */
 		System.exit(0);

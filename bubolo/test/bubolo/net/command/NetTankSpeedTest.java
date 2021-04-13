@@ -14,13 +14,13 @@ import org.junit.Test;
 public class NetTankSpeedTest
 {
 	/**
-	 * Test method for {@link bubolo.net.command.NetTankSpeed#getSpeed()}.
+	 * Test method for {@link bubolo.net.command.NetTankAttributes#getSpeed()}.
 	 */
 	@Test
 	public void testGetSpeed()
 	{
 		final float SPEED = 11.74f;
-		NetTankSpeed speed = new NetTankSpeed(SPEED);
+		NetTankAttributes speed = new NetTankAttributes(SPEED);
 		assertEquals(SPEED, speed.getSpeed(), 0.01f);
 	}
 }

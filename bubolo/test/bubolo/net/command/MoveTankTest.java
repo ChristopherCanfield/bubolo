@@ -19,7 +19,7 @@ import bubolo.world.Tank;
 public class MoveTankTest
 {
 	/**
-	 * Test method for {@link bubolo.net.command.MoveTank#execute(bubolo.world.World)}.
+	 * Test method for {@link bubolo.net.command.UpdateTankAttributes#execute(bubolo.world.World)}.
 	 */
 	@Test
 	public void testExecute()
@@ -28,7 +28,7 @@ public class MoveTankTest
 		Tank tank = new MockTank();
 		tank.setId(id);
 		
-		NetworkCommand command = new MoveTank(tank);
+		NetworkCommand command = new UpdateTankAttributes(tank);
 		MockWorld world = new MockWorld();
 		world.add(tank);
 		command.execute(world);

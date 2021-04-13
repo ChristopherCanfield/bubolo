@@ -27,8 +27,7 @@ public class CreateTank extends CreateEntity
 	private final String playerName;
 
 	/**
-	 * @param tank
-	 *            reference to the tank that should be created on network players' computers.
+	 * @param tank reference to the tank that should be created on network players' computers.
 	 */
 	public CreateTank(Tank tank)
 	{
