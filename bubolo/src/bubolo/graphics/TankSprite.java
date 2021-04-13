@@ -302,7 +302,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		if (getEntity().isOwnedByLocalPlayer())
 		{
 			CameraController controller = new TankCameraController(getEntity());
-			graphics.addCameraController(controller);
+			graphics.setCameraController(controller);
 			controller.setCamera(graphics.camera());
 		}
 

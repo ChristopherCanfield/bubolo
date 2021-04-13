@@ -36,7 +36,7 @@ import bubolo.world.World;
 public class Graphics implements EntityCreationObserver
 {
 	/**
-	 * File path where textures are stored.
+	 * Textures file path.
 	 */
 	public static final String TEXTURE_PATH = "res/textures/";
 
@@ -51,8 +51,8 @@ public class Graphics implements EntityCreationObserver
 
 	private SpriteSystem spriteSystem;
 
-	// The list of camera controllers.
-	private List<CameraController> cameraControllers = new ArrayList<CameraController>();
+	// The attached camera controllers.
+	private CameraController cameraController;
 
 	// The comparator used to sort sprites.
 	private static final Comparator<Sprite> spriteComparator = Comparator.comparing(Sprite::getDrawLayer)
@@ -231,10 +231,9 @@ public class Graphics implements EntityCreationObserver
 			ui.draw();
 		}
 
-		// Update the camera controller(s).
-		for (CameraController c : cameraControllers)
-		{
-			c.update(world);
+		// Update the camera controller.
+		if (cameraController != null) {
+			cameraController.update(world);
 		}
 
 		// Remove destroyed sprites from the list.
@@ -249,14 +248,14 @@ public class Graphics implements EntityCreationObserver
 	}
 
 	/**
-	 * Adds the specified camera controller.
+	 * Attaches the specified camera controller to the graphics system. Only one camera controller can be attached at a time.
+	 * The camera controller's update method will be called once per draw call.
 	 *
-	 * @param controller
-	 *            a camera controller. The update method will be called once per draw call.
+	 * @param controller the camera controller to attach.
 	 */
-	void addCameraController(CameraController controller)
+	void setCameraController(CameraController controller)
 	{
-		cameraControllers.add(controller);
+		cameraController = controller;
 	}
 
 	/**
