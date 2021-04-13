@@ -20,13 +20,13 @@ public interface GameApplication extends ApplicationListener, WorldOwner
 		MAIN_MENU,
 
 		/** The enter player information state. **/
-		PLAYER_INFO,
+		NET_GAME_SETUP,
 
 		/** The game lobby state. **/
-		GAME_LOBBY,
+		NET_GAME_LOBBY,
 
 		/** The game is starting. **/
-		GAME_STARTING,
+		NET_GAME_STARTING,
 
 		/** The single player game state. **/
 		LOCAL_GAME,

@@ -10,8 +10,8 @@ import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.audio.Audio;
@@ -41,9 +41,6 @@ public class BuboloApplication extends AbstractGameApplication
 	private final int windowWidth;
 	private final int windowHeight;
 
-	private final boolean isClient;
-	private final State initialState;
-
 	private Graphics graphics;
 
 	private Network network;
@@ -52,27 +49,27 @@ public class BuboloApplication extends AbstractGameApplication
 
 	private Path mapPath = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
 
+	public enum PlayerType {
+		LocalSinglePlayer,
+		Host,
+		Client
+	}
+
+	private final PlayerType playerType;
+
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
 	 *
-	 * @param windowWidth
-	 *            the width of the window.
-	 * @param windowHeight
-	 *            the height of the window.
-	 * @param isClient
-	 *            specifies whether this is a client player.
-	 * @param initialState
-	 *            the initial application state.
+	 * @param windowWidth the width of the window.
+	 * @param windowHeight the height of the window.
+	 * @param playerType whether this is a local single player, network host, or network client.
 	 * @param commandLineArgs the arguments passed to the application through the command line.
 	 */
-	public BuboloApplication(int windowWidth, int windowHeight, boolean isClient, State initialState, String[] commandLineArgs)
+	public BuboloApplication(int windowWidth, int windowHeight, PlayerType playerType, String[] commandLineArgs)
 	{
-		assert initialState != null;
-
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
-		this.isClient = isClient;
-		this.initialState = initialState;
+		this.playerType = playerType;
 
 		if (commandLineArgs.length != 0) {
 			Path argPath = FileSystems.getDefault().getPath("res", "maps/" + commandLineArgs[0]);
@@ -104,7 +101,7 @@ public class BuboloApplication extends AbstractGameApplication
 		network = NetworkSystem.getInstance();
 
 		// Server or single-player
-		if (!isClient) {
+		if (playerType != PlayerType.Client) {
 			try {
 				MapImporter importer = new MapImporter();
 				// Import the map.
@@ -115,14 +112,17 @@ public class BuboloApplication extends AbstractGameApplication
 			}
 		}
 
-		setState(initialState);
+		if (playerType == PlayerType.LocalSinglePlayer) {
+			setState(State.LOCAL_GAME);
+		} else {
+			setState(State.NET_GAME_SETUP);
+		}
 	}
 
 	private static void initializeLogger() {
 		try {
 			// TODO (cdc - 2021-03-16): This log file probably belongs in appdata and equivalent on other systems, rather than temp.
-			FileHandler fileHandler = new FileHandler("%t" + Config.AppTitle + ".log");
-			fileHandler.setFormatter(new SimpleFormatter());
+			FileHandler fileHandler = new FileHandler("%t" + Config.AppTitle + ".log", 5_000, 3, true);
 			logger.addHandler(fileHandler);
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
@@ -154,13 +154,13 @@ public class BuboloApplication extends AbstractGameApplication
 				graphics.draw(world);
 				world.update();
 			}
-			else if (state == State.GAME_LOBBY ||
-					state == State.GAME_STARTING)
+			else if (state == State.NET_GAME_LOBBY ||
+					state == State.NET_GAME_STARTING)
 			{
 				graphics.draw(screen);
 				network.update(this);
 			}
-			else if (state == State.PLAYER_INFO)
+			else if (state == State.NET_GAME_SETUP)
 			{
 				graphics.draw(screen);
 			}
@@ -206,13 +206,14 @@ public class BuboloApplication extends AbstractGameApplication
 
 			setReady(true);
 		} break;
-		case GAME_LOBBY:
+		case NET_GAME_LOBBY:
 			screen = new LobbyScreen(this, world);
 			break;
-		case PLAYER_INFO:
+		case NET_GAME_SETUP:
+			boolean isClient = (playerType == PlayerType.Client);
 			screen = new PlayerInfoScreen(this, isClient);
 			break;
-		case GAME_STARTING:
+		case NET_GAME_STARTING:
 			// Do nothing.
 			break;
 		case MAIN_MENU:
@@ -249,5 +250,11 @@ public class BuboloApplication extends AbstractGameApplication
 	public void dispose()
 	{
 		Audio.dispose();
+		NetworkSystem.getInstance().dispose();
+		Graphics.dispose();
+		Gdx.app.exit();
+		/* TODO (2021-04-13): After updating to lwjgl3, the process remains in the background even after the window is closed and
+		 * this dispose method is called. I'm not sure why that is. System.exit is a temporary hack until I can look into it further. */
+		System.exit(0);
 	}
 }

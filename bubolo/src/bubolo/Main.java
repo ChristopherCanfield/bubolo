@@ -1,79 +1,53 @@
 package bubolo;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
-import bubolo.GameApplication.State;
+import bubolo.BuboloApplication.PlayerType;
 import bubolo.ui.MenuScreen;
 
 /**
  * The application's entry point.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class Main
-{
-	private static Application application;
+public class Main {
 
 	/**
 	 * The application's entry point.
 	 *
-	 * @param args
-	 *            Unused. Arguments passed on startup will be ignored.
+	 * @param args command line arguments are passed to the application on startup.
 	 */
-	public static void main(String[] args)
-	{
+	@SuppressWarnings("unused")
+	public static void main(String[] args) {
 		Runnable serverApplication = () -> {
-			LwjglApplicationConfiguration cfg = defaultLwjglAppConfig();
-			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
-					State.PLAYER_INFO, args), cfg));
+			var cfg = defaultLwjglAppConfig();
+			new Lwjgl3Application(
+					new BuboloApplication(Config.InitialWindowWidth, Config.InitialWindowHeight, PlayerType.Host, args), cfg);
 		};
 
 		Runnable clientApplication = () -> {
-			LwjglApplicationConfiguration cfg = defaultLwjglAppConfig();
-			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, true,
-					State.PLAYER_INFO, args), cfg));
+			var cfg = defaultLwjglAppConfig();
+			new Lwjgl3Application(
+					new BuboloApplication(Config.InitialWindowWidth, Config.InitialWindowHeight, PlayerType.Client, args), cfg);
 		};
 
 		Runnable singlePlayerApplication = () -> {
-			LwjglApplicationConfiguration cfg = defaultLwjglAppConfig();
-			setApplication(new LwjglApplication(new BuboloApplication(cfg.width, cfg.height, false,
-					State.LOCAL_GAME, args), cfg));
+			var cfg = defaultLwjglAppConfig();
+			new Lwjgl3Application(new BuboloApplication(Config.InitialWindowWidth, Config.InitialWindowHeight,
+					PlayerType.LocalSinglePlayer, args), cfg);
 		};
 
-		MenuScreen menuScreen = new MenuScreen(singlePlayerApplication, serverApplication,
-				clientApplication);
+		MenuScreen menuScreen = new MenuScreen(singlePlayerApplication, serverApplication, clientApplication);
 		menuScreen.setVisible(true);
 	}
 
-	private static LwjglApplicationConfiguration defaultLwjglAppConfig() {
-		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		cfg.title = Config.AppTitle;
-		cfg.width = Config.InitialWindowWidth;
-		cfg.height = Config.InitialWindowHeight;
-		cfg.foregroundFPS = cfg.backgroundFPS = Config.FPS;
+	private static Lwjgl3ApplicationConfiguration defaultLwjglAppConfig() {
+		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
+		cfg.setTitle(Config.AppTitle);
+		cfg.setWindowedMode(Config.InitialWindowWidth, Config.InitialWindowHeight);
+		cfg.setForegroundFPS(Config.FPS);
 		return cfg;
-	}
-
-	/**
-	 * Sets the game application.
-	 *
-	 * @param application
-	 *            the game application.
-	 */
-	static void setApplication(Application application)
-	{
-		Main.application = application;
-	}
-
-	/**
-	 * Returns a reference to the application.
-	 *
-	 * @return the game application.
-	 */
-	static Application getApplication()
-	{
-		return Main.application;
 	}
 }

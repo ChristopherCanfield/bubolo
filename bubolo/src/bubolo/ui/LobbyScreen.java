@@ -157,7 +157,7 @@ public class LobbyScreen extends Screen implements NetworkObserver
 	@Override
 	protected void onUpdate()
 	{
-		if (app.getState() == State.GAME_STARTING)
+		if (app.getState() == State.NET_GAME_STARTING)
 		{
 			final long currentTime = System.currentTimeMillis();
 			final long secondsRemaining = (startTime - currentTime) / 1000L;
@@ -222,7 +222,7 @@ public class LobbyScreen extends Screen implements NetworkObserver
 		startTime = currentTime + (secondsUntilStart * 1000);
 		lastSecondsRemaining = secondsUntilStart;
 
-		app.setState(State.GAME_STARTING);
+		app.setState(State.NET_GAME_STARTING);
 	}
 
 	@Override

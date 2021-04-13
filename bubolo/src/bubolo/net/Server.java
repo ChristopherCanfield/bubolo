@@ -94,6 +94,7 @@ class Server implements NetworkSubsystem
 
 			clientAcceptor = new Thread(
 					new ClientAcceptor(shutdown, gameStarted, clients, socket, this, network));
+			clientAcceptor.setDaemon(true);
 			clientAcceptor.start();
 		}
 		catch (IOException e)

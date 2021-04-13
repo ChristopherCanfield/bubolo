@@ -188,7 +188,7 @@ public class PlayerInfoScreen extends Screen
 	private void startServer() {
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameField.getText());
-		app.setState(State.GAME_LOBBY);
+		app.setState(State.NET_GAME_LOBBY);
 	}
 
 	private void connectToServer() {
@@ -222,7 +222,7 @@ public class PlayerInfoScreen extends Screen
 					return;
 				}
 
-				app.setState(State.GAME_LOBBY);
+				app.setState(State.NET_GAME_LOBBY);
 			}
 			else
 			{

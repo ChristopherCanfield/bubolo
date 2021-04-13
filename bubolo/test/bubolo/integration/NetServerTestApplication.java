@@ -107,7 +107,7 @@ public class NetServerTestApplication extends AbstractGameApplication implements
 		network.addObserver(this);
 		network.startServer(playerName);
 
-		setState(State.GAME_LOBBY);
+		setState(State.NET_GAME_LOBBY);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class NetServerTestApplication extends AbstractGameApplication implements
 			world.update();
 			network.update(world);
 		}
-		else if (state == State.GAME_LOBBY || state == State.GAME_STARTING)
+		else if (state == State.NET_GAME_LOBBY || state == State.NET_GAME_STARTING)
 		{
 			graphics.draw(gameLobby);
 			network.update(world);
@@ -148,7 +148,7 @@ public class NetServerTestApplication extends AbstractGameApplication implements
 
 			setReady(true);
 		}
-		else if (state == State.GAME_LOBBY)
+		else if (state == State.NET_GAME_LOBBY)
 		{
 			gameLobby = new LobbyScreen(this, world);
 		}

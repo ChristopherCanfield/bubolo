@@ -46,10 +46,10 @@ class ButtonPanel extends JPanel
 		setLayout(new GridLayout(4, 1));
 
 		// Create set of JButtons to be displayed on the Main Menu
-		JButton singleBtn = new JButton("NEW SINGLE PLAYER GAME");
-		JButton hostMPBtn = new JButton("HOST MULTI-PLAYER GAME");
-		JButton joinMPBtn = new JButton("JOIN MULTI-PLAYER GAME");
-		JButton exitBtn = new JButton("EXIT");
+		JButton singleBtn = new JButton("Single Player Game");
+		JButton hostMPBtn = new JButton("Host Multiplayer Game");
+		JButton joinMPBtn = new JButton("Join Multiplayer Game");
+		JButton exitBtn = new JButton("Exit");
 
 		// Add the buttons to this panel
 		add(singleBtn);
@@ -93,8 +93,6 @@ class ButtonPanel extends JPanel
 			}
 		});
 	}
-
-	// public void actionPerformed
 
 	/**
 	 * Starts the game by creating a new Thread and running the Runnable passed into the

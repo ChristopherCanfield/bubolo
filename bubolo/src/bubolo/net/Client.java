@@ -75,7 +75,9 @@ class Client implements NetworkSubsystem, Runnable
 			send(new ClientConnected(playerName));
 
 			// Start the network reader thread.
-			new Thread(this).start();
+			Thread thread = new Thread(this, "net-client");
+			thread.setDaemon(true);
+			thread.start();
 		}
 		catch (IOException e)
 		{
