@@ -239,12 +239,6 @@ public class BuboloApplication extends AbstractGameApplication
 		return null;
 	}
 
-//	private static int getRandomX()
-//	{
-//		int val = (new Random()).nextInt(10);
-//		return (1250 + (100 * val));
-//	}
-
 	/**
 	 * Called when the application is destroyed.
 	 *
