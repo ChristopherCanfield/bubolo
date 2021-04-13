@@ -67,8 +67,8 @@ public class LobbyScreen extends Screen implements NetworkObserver
 		this.world = world;
 
 		TextureAtlas atlas = new TextureAtlas(
-				new FileHandle(UserInterface.UI_PATH + "uiskin.atlas"));
-		Skin skin = new Skin(new FileHandle(UserInterface.UI_PATH + "uiskin.json"), atlas);
+				new FileHandle(UiConstants.UI_PATH + "uiskin.atlas"));
+		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "uiskin.json"), atlas);
 
 		createMessageHistoryBox(skin);
 		createSendMessageRow(skin);
@@ -248,5 +248,6 @@ public class LobbyScreen extends Screen implements NetworkObserver
 	{
 		Network net = NetworkSystem.getInstance();
 		net.removeObserver(this);
+		Gdx.input.setInputProcessor(null);
 	}
 }

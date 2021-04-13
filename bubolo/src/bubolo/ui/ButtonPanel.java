@@ -100,19 +100,19 @@ class ButtonPanel extends JPanel
 	 */
 	private void singleBtnPerformed()
 	{
-		singlePlayerTarget.run();
 		parentFrame.setVisible(false);
+		singlePlayerTarget.run();
 	}
 
 	private void joinMPBtnPerformed()
 	{
-		joinMultiPlayerTarget.run();
 		parentFrame.setVisible(false);
+		joinMultiPlayerTarget.run();
 	}
 
 	private void hostMPBtnPerformed()
 	{
-		hostMultiPlayerTarget.run();
 		parentFrame.setVisible(false);
+		hostMultiPlayerTarget.run();
 	}
 }

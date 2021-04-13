@@ -50,6 +50,8 @@ public class PlayerInfoScreen extends Screen
 	private boolean connectToServer;
 	private int ticksUntilConnect;
 
+	private static final int leftPadding = 440;
+
 	/**
 	 * Constructs the network game lobby.
 	 *
@@ -64,8 +66,8 @@ public class PlayerInfoScreen extends Screen
 		this.isClient = isClient;
 
 		TextureAtlas atlas = new TextureAtlas(
-				new FileHandle(UserInterface.UI_PATH + "uiskin.atlas"));
-		Skin skin = new Skin(new FileHandle(UserInterface.UI_PATH + "uiskin.json"), atlas);
+				new FileHandle(UiConstants.UI_PATH + "uiskin.atlas"));
+		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "uiskin.json"), atlas);
 
 		createPlayerNameRow(skin);
 		createIpAddressRow(skin);
@@ -75,7 +77,7 @@ public class PlayerInfoScreen extends Screen
 		statusLabel1 = new Label("", skin);
 		table.add(statusLabel1);
 
-		table.row().colspan(8).padTop(50.f).left().padLeft(100.f);
+		table.row().colspan(8).padTop(50.f).left().padLeft(leftPadding);
 		statusLabel2 = new Label("", skin);
 		table.add(statusLabel2);
 
@@ -103,7 +105,7 @@ public class PlayerInfoScreen extends Screen
 				.align(Align.left)
 				.padTop(100.f);
 
-		table.add(new Label("Name:", skin)).padLeft(300.f);
+		table.add(new Label("Name:", skin)).padLeft(leftPadding);
 
 		playerNameField = new TextField("", skin);
 		table.add(playerNameField).width(250.f);
@@ -116,13 +118,13 @@ public class PlayerInfoScreen extends Screen
 				.padTop(5.f);
 
 		if (isClient) {
-			table.add(new Label("Server IP Address:", skin)).padLeft(300.f);
+			table.add(new Label("Host IP Address:", skin)).padLeft(leftPadding);
 
 			ipAddressField = new TextField("", skin);
 			table.add(ipAddressField).width(160.f);
 		} else {
 			try {
-				table.add(new Label("IP Address:", skin)).padLeft(300.0f);
+				table.add(new Label("IP Address:", skin)).padLeft(leftPadding);
 
 				String ipAddresses = getIpAddresses();
 				table.add(new Label(ipAddresses, skin));

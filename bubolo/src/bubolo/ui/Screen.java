@@ -58,11 +58,6 @@ public abstract class Screen
 		stage.act();
 		onUpdate();
 		stage.draw();
-
-//		if (debug)
-//		{
-//			Table.drawDebug(stage);
-//		}
 	}
 
 	/**
@@ -70,6 +65,11 @@ public abstract class Screen
 	 */
 	protected void onUpdate()
 	{
+	}
+
+	public void resize(int width, int height) {
+		stage.getViewport().update(width, height, true);
+		System.out.println("Resize called");
 	}
 
 	/**

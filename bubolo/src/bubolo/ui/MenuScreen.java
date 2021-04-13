@@ -43,7 +43,7 @@ public class MenuScreen extends JFrame
 		setSize(500, 500);
 		setLayout(new GridLayout(2, 1));
 		setLocationRelativeTo(null);
-		setIconImage(UserInterface.gameIcon.getImage());
+		setIconImage(UiConstants.gameIcon.getImage());
 		setResizable(false);
 
 		// Add the MainPanel which contains our logo/title

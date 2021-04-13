@@ -239,6 +239,13 @@ public class BuboloApplication extends AbstractGameApplication
 		return null;
 	}
 
+	@Override
+	public void resize(int width, int height) {
+		if (screen != null) {
+			screen.resize(width, height);
+		}
+	}
+
 	/**
 	 * Called when the application is destroyed.
 	 *

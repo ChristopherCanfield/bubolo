@@ -13,7 +13,7 @@ import bubolo.audio.Audio;
  * User interface constants.
  * @author BU CS673 - Clone Productions
  */
-public abstract class UserInterface
+public abstract class UiConstants
 {
 	/**
 	 * File path where UI icons are stored.
