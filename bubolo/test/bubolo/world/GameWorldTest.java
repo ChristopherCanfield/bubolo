@@ -4,138 +4,137 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.junit.Test;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import bubolo.util.Coords;
+import bubolo.world.Entity.ConstructionArgs;
 
 public class GameWorldTest
 {
-	@Test
-	public void gameWorldBadHeight()
-	{
-		try
-		{
-			World w = new GameWorld(100, -1000);
-			w.update();
-			fail("GameWorld did not fail on invalid input");
-		}
-		catch (Exception e)
-		{
-		}
+	private final ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), 0, 0, 0);
+
+	private World world;
+
+	@BeforeEach
+	public void beforeEach() {
+		world = new GameWorld(2, 2);
 	}
 
 	@Test
-	public void testAddEntityBase()
+	public void addEntityBase()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Base.class));
+		assertNotNull(world.addEntity(Base.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityBullet()
+	public void addEntityBullet()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Bullet.class));
+		assertNotNull(world.addEntity(Bullet.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityCrater()
+	public void addEntityCrater()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Crater.class));
+		assertNotNull(world.addEntity(Crater.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityDeepWater()
+	public void addEntityDeepWater()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(DeepWater.class));
+		assertNotNull(world.addEntity(DeepWater.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityGrass()
+	public void addEntityGrass()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Grass.class));
+		assertNotNull(world.addEntity(Grass.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityMine()
+	public void addEntityMine()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Mine.class));
+		assertNotNull(world.addEntity(Mine.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityPillbox()
+	public void addEntityPillbox()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Pillbox.class));
+		assertNotNull(world.addEntity(Pillbox.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityRoad()
+	public void addEntityRoad()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Road.class));
+		assertNotNull(world.addEntity(Road.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityRubble()
+	public void addEntityRubble()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Rubble.class));
+		assertNotNull(world.addEntity(Rubble.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntitySwamp()
+	public void addEntitySwamp()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Swamp.class));
+		assertNotNull(world.addEntity(Swamp.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityTank()
+	public void addEntityTank()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Tank.class));
+		assertNotNull(world.addEntity(Tank.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityTree()
+	public void addEntityTree()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Tree.class));
+		assertNotNull(world.addEntity(Tree.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityWall()
+	public void addEntityWall()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Wall.class));
+		assertNotNull(world.addEntity(Wall.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testAddEntityWater()
+	public void addEntityWater()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		assertNotNull(world.addEntity(Water.class));
+		assertNotNull(world.addEntity(Water.class, args));
+		world.update();
 	}
 
 	@Test
-	public void testGetEntity()
+	public void getEntity()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		OldEntity t = world.addEntity(Tank.class);
+		var t = world.addEntity(Tank.class, args);
 
-		assertEquals(t, world.getEntity(t.getId()));
+		assertEquals(t, world.getEntity(t.id()));
+		world.update();
 	}
 
 	@Test
-	public void testGetEntities()
+	public void getEntities()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		OldEntity t = world.addEntity(Tank.class);
+		var t = world.addEntity(Tank.class, args);
 		world.update();
 
 		assertEquals(1, world.getEntities().size());
@@ -143,44 +142,31 @@ public class GameWorldTest
 	}
 
 	@Test
-	public void testRemoveEntity_Entity()
+	public void removeEntity()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		OldEntity t = world.addEntity(Tank.class);
+		var t = world.addEntity(Tank.class, args);
 
 		world.update();
 		assertTrue(world.getEntities().contains(t));
+		t.dispose();
 
-		world.removeEntity(t);
 		world.update();
 		assertFalse(world.getEntities().contains(t));
 	}
 
 	@Test
-	public void testRemoveEntity_UUID()
+	public void getTileColumnsAndWidth()
 	{
-		GameWorld world = new GameWorld(1, 2);
-		OldEntity t = world.addEntity(Tank.class);
-
-		world.update();
-		assertTrue(world.getEntities().contains(t));
-
-		world.removeEntity(t.getId());
-		world.update();
-		assertFalse(world.getEntities().contains(t));
+		World w = new GameWorld(10, 50);
+		assertEquals(10, w.getTileColumns());
+		assertEquals(10 * Coords.TileToWorldScale, w.getWidth());
 	}
 
 	@Test
-	public void testGetMapWidth()
+	public void getTileRowsAndHeight()
 	{
 		World w = new GameWorld(10, 50);
-		assertEquals(10, w.getWidth());
-	}
-
-	@Test
-	public void testGetMapHeight()
-	{
-		World w = new GameWorld(10, 50);
-		assertEquals(50, w.getHeight());
+		assertEquals(50, w.getTileRows());
+		assertEquals(50 * Coords.TileToWorldScale, w.getHeight());
 	}
 }

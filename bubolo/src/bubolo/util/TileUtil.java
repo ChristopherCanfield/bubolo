@@ -13,91 +13,12 @@ import bubolo.world.World;
 
 public abstract class TileUtil
 {
-//	/**
-//	 * get a list of entities that are currently colliding with a given entity
-//	 *
-//	 * @param entity
-//	 * 			the entity to check for collisions
-//	 * @param world
-//	 * 			reference to the game world
-//	 * @return
-//	 * 			the list of entities that are colliding with the given entity
-//	 */
-//	public static List<OldEntity> getLocalCollisions(OldEntity entity, World world)
-//	{
-//		ArrayList<OldEntity> localCollisions = new ArrayList<OldEntity>();
-//		getLocalEntities(entity.getX(),entity.getY(),world);
-//
-//		for(OldEntity collider:TileUtil.getLocalEntities(entity.getX(),entity.getY(), world))
-//		{
-//			if (collider.isSolid() && collider != entity)
-//			{
-//				if (Intersector.overlapConvexPolygons(collider.getBounds(), entity.getBounds()))
-//				{
-//					localCollisions.add(collider);
-//				}
-//			}
-//		}
-//
-//		return localCollisions;
-//	}
-//
-//	/**
-//	 * Get all entities are likely to overlap with Entities within the given grid
-//	 * location.
-//	 *
-//	 * @param gridX
-//	 *            is the X index of the target grid location.
-//	 * @param gridY
-//	 *            is the Y index of the target grid location.
-//	 * @param w
-//	 *            is the World in which the Entities reside.
-//	 * @return a List of all Entities which could be near the target location.
-//	 */
-//	public static List<OldEntity> getLocalEntities(int gridX, int gridY, World w)
-//	{
-//		ArrayList<OldEntity> localEnts = new ArrayList<OldEntity>();
-//		Tile[][] worldTiles = w.getTiles();
-//		if (worldTiles == null)
-//		{
-//			localEnts.addAll(w.getEntities());
-//		}
-//		else
-//		{
-//			int startX = gridX - LOCAL_TILE_DISTANCE;
-//			int startY = gridY - LOCAL_TILE_DISTANCE;
-//			for (int i = 0; i < 5; i++)
-//			{
-//				for (int j = 0; j < 5; j++)
-//				{
-//					if (isValidTile(startX + i, startY + j, w))
-//					{
-//						Tile targetTile = worldTiles[startX + i][startY + j];
-//						localEnts.add(targetTile.getTerrain());
-//						if (targetTile.hasElement())
-//						{
-//							localEnts.add(targetTile.getElement());
-//						}
-//					}
-//				}
-//			}
-//			if (w.getActors() != null)
-//			{
-//				localEnts.addAll(w.getActors());
-//			}
-//			if (w.getEffects() != null)
-//			{
-//				localEnts.addAll(w.getEffects());
-//			}
-//		}
-//		return localEnts;
-//	}
-
 	private static boolean matchesType(int column, int row, World world, Class<?>[] targetTypes)
 	{
 		if (world.isValidTile(column, row)) {
 			Terrain terrain = world.getTerrain(column, row);
-			boolean containsTarget = Arrays.stream(targetTypes).anyMatch(type -> type.equals(terrain.getClass()));
+			Class<?> terrainType = terrain != null ? terrain.getClass() : null;
+			boolean containsTarget = Arrays.stream(targetTypes).anyMatch(type -> type.equals(terrainType));
 			if (!containsTarget) {
 				TerrainImprovement ti = world.getTerrainImprovement(column, row);
 				if (ti != null) {
