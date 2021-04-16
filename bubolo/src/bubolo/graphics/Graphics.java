@@ -341,19 +341,16 @@ public class Graphics implements EntityCreationObserver
 	/**
 	 * Returns true if the x, y, height and width of the sprite are within the camera's view.
 	 *
-	 * @param camera
-	 *            the game camera.
-	 * @param sprite
-	 *            the sprite to check.
+	 * @param camera the game camera.
+	 * @param sprite the sprite to check.
 	 * @return true if the sprite is within the camera's view, or false otherwise.
 	 */
 	private static boolean withinCameraView(Camera camera, Sprite sprite)
 	{
-		if (sprite instanceof TankSprite)
-		{
-			// Always draw the tank, since otherwise the camera won't be attached to it if the tank
-			// starts off screen.
-			return true;
+		if (sprite instanceof TankSprite tankSprite) {
+			if (tankSprite.getEntity().isOwnedByLocalPlayer()) {
+				return true;
+			}
 		}
 
 		float cameraX = camera.position.x;
@@ -373,8 +370,7 @@ public class Graphics implements EntityCreationObserver
 	/**
 	 * Loads all textures. This isn't strictly necessary, but we encountered slight hiccups when a
 	 * sprite type was loaded for the first time. This was most noticeable when the first bullet is
-	 * fired. Note that only pngs are currently loaded (if all files were loaded, file system
-	 * artificacts could be picked up, like the Windows thumbs.db file).
+	 * fired. Textures are assumed to be pngs.
 	 */
 	private static void loadAllTextures()
 	{
