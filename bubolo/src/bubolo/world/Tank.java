@@ -1,5 +1,7 @@
 package bubolo.world;
 
+import static com.badlogic.gdx.math.MathUtils.clamp;
+
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -251,11 +253,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Ensures that the tank's speed remains between 0 and modifiedMaxSpeed.
 	 */
 	private void clampSpeed() {
-		if (speed > modifiedMaxSpeed) {
-			speed = modifiedMaxSpeed;
-		} else if (speed < 0) {
-			speed = 0;
-		}
+		speed = clamp(speed, 0, modifiedMaxSpeed);
 	}
 
 	/**
