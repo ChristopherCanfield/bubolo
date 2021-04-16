@@ -33,16 +33,19 @@ public class Tank extends ActorEntity implements Damageable {
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 4.f;
 
-	// The maximum speed after tanking account the underlying terrain & terrainImprovement.
-	private float modifiedMaxSpeed = maxSpeed;
+	// The maximum speed after adjusting for the underlying terrain & terrain improvement.
+	private float adjustedMaxSpeed = maxSpeed;
 
 	// The tank's current speed.
 	private float speed = 0;
 
-	// The rate of acceleration, in pixels per tick.
+	// The rate of acceleration, in world units per tick.
 	private static final float accelerationRate = 0.01f;
 
-	// The rate of deceleration, in pixels per tick.
+	// The acceleration rate after adjusting for the underlying terrain and terrain improvement.
+	private float adjustedAccelerationRate = accelerationRate;
+
+	// The rate of deceleration, in world units per tick.
 	private static final float decelerationRate = 0.035f;
 
 	// The tank's rate of rotation per tick.
@@ -78,7 +81,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private final Circle boundingCircle;
 	private final float boundingCircleRadius = 6.0f;
 
-	// The additional amount that the tank will bounce off a solid object.
+	// Additional amount that the tank will bounce off a solid object.
 	private static final float collisionBounce = 0.25f;
 
 	// The previous x position. Used for collision handling.
@@ -137,7 +140,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mineReadyTime = 0;
 
 			speed = 0;
-			modifiedMaxSpeed = maxSpeed;
+			adjustedMaxSpeed = maxSpeed;
 			accelerated = false;
 			decelerated = false;
 			hidden = false;
@@ -162,6 +165,8 @@ public class Tank extends ActorEntity implements Damageable {
 		moveTank(world);
 		performCollisionDetection(world);
 		hidden = checkIfHidden(world);
+
+		System.out.printf("Speed: %f | Acceleration: %f | Max speed %f%n", speed, adjustedAccelerationRate, adjustedMaxSpeed);
 
 		decelerated = false;
 		accelerated = false;
@@ -224,10 +229,10 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Accelerates the tank.
 	 */
 	public void accelerate() {
-		if (speed < modifiedMaxSpeed && !accelerated) {
-			speed += accelerationRate;
-			if (speed > modifiedMaxSpeed) {
-				speed = modifiedMaxSpeed;
+		if (speed < adjustedMaxSpeed && !accelerated) {
+			speed += adjustedAccelerationRate;
+			if (speed > adjustedMaxSpeed) {
+				speed = adjustedMaxSpeed;
 			}
 			accelerated = true;
 		}
@@ -253,7 +258,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Ensures that the tank's speed remains between 0 and modifiedMaxSpeed.
 	 */
 	private void clampSpeed() {
-		speed = clamp(speed, 0, modifiedMaxSpeed);
+		speed = clamp(speed, 0, adjustedMaxSpeed);
 	}
 
 	/**
@@ -337,17 +342,19 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Updates the tank's speed for the underlying terrain.
+	 * Updates the tank's max speed and acceleration for the underlying terrain.
 	 *
 	 * @param world reference to the game world.
 	 */
 	private void updateSpeedForTerrain(World world) {
 		var terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
 		if (terrainImprovement != null && terrainImprovement.speedModifier() > 0) {
-			modifiedMaxSpeed = maxSpeed * terrainImprovement.speedModifier();
+			adjustedMaxSpeed = maxSpeed * terrainImprovement.speedModifier();
+			adjustedAccelerationRate = accelerationRate * terrainImprovement.speedModifier();
 		} else {
 			var terrain = world.getTerrain(tileColumn(), tileRow());
-			modifiedMaxSpeed = maxSpeed * terrain.speedModifier();
+			adjustedMaxSpeed = maxSpeed * terrain.speedModifier();
+			adjustedAccelerationRate = accelerationRate * terrain.speedModifier();
 		}
 		clampSpeed();
 	}

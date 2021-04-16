@@ -3,7 +3,7 @@ package bubolo.world;
 import bubolo.util.TileUtil;
 
 /**
- * Road is a Terrain type that offers tanks improved movement speed.
+ * Roads increase tank movement speed.
  *
  * @author BU CS673 - Clone Productions
  */
@@ -16,10 +16,7 @@ public class Road extends Terrain implements Adaptable {
 	 */
 	private Class<?>[] matchingTypes = new Class[] { Road.class };
 
-	/**
-	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
-	 */
-	private static final float speedModifier = 1.25f;
+	private static final TerrainTravelSpeed terrainTravelSpeed = TerrainTravelSpeed.Fast;
 
 	private static final int width = 32;
 	private static final int height = 32;
@@ -31,7 +28,7 @@ public class Road extends Terrain implements Adaptable {
 	 * @param world reference to the game world.
 	 */
 	protected Road(ConstructionArgs args, World world) {
-		super(args, width, height, speedModifier);
+		super(args, width, height, terrainTravelSpeed.speedModifier);
 	}
 
 	@Override

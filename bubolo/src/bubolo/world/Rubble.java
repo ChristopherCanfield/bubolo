@@ -6,7 +6,7 @@ package bubolo.world;
  * @author BU CS673 - Clone Productions
  */
 public class Rubble extends StaticEntity implements TerrainImprovement {
-	private static final float speedModifier = 0.6f;
+	private static final TerrainTravelSpeed terrainTravelSpeed = TerrainTravelSpeed.VerySlow;
 	private static final int width = 32;
 	private static final int height = 32;
 
@@ -22,7 +22,7 @@ public class Rubble extends StaticEntity implements TerrainImprovement {
 
 	@Override
 	public float speedModifier() {
-		return speedModifier;
+		return terrainTravelSpeed.speedModifier;
 	}
 
 	@Override

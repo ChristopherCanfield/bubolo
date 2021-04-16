@@ -12,10 +12,7 @@ public class DeepWater extends Terrain implements Adaptable {
 
 	private final boolean[] cornerMatches = new boolean[4];
 
-	/**
-	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
-	 */
-	private static final float speedModifier = 0.2f;
+	private static final TerrainTravelSpeed terrainTravelSpeed = TerrainTravelSpeed.VerySlow;
 
 	private static final int width = 32;
 	private static final int height = 32;
@@ -27,7 +24,7 @@ public class DeepWater extends Terrain implements Adaptable {
 	private Class<?>[] matchingTypes = new Class[] { Water.class };
 
 	protected DeepWater(ConstructionArgs args, World world) {
-		super(args, width, height, speedModifier);
+		super(args, width, height, terrainTravelSpeed.speedModifier);
 	}
 
 	@Override

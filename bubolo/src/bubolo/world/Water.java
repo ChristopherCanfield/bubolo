@@ -18,16 +18,13 @@ public class Water extends Terrain implements Adaptable {
 	 */
 	private static final Class<?>[] matchingTypes = new Class[] { Water.class, DeepWater.class };
 
-	/**
-	 * Modifier field used to reset an objects cap speed while traversing this terrain type.
-	 */
-	private static final float speedModifier = 0.3f;
+	private static final TerrainTravelSpeed terrainTravelSpeed = TerrainTravelSpeed.VerySlow;
 
 	private static final int width = 32;
 	private static final int height = 32;
 
 	protected Water(ConstructionArgs args, World world) {
-		super(args, width, height, speedModifier);
+		super(args, width, height, terrainTravelSpeed.speedModifier);
 	}
 
 	@Override
