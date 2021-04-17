@@ -4,7 +4,6 @@ package bubolo.audio;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.alDistanceModel;
-import static org.lwjgl.openal.AL10.alListener3f;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,6 +68,9 @@ public class Audio implements Music.OnCompletionListener
 	// OpenAL rolloff factor.
 	private static float rolloffFactor;
 
+	private static float listenerX;
+	private static float listenerY;
+
 	/**
 	 * Initializes the sound system.
 	 *
@@ -88,7 +90,8 @@ public class Audio implements Music.OnCompletionListener
 	}
 
 	public static void setListenerPosition(float x, float y) {
-		alListener3f(AL_POSITION, x, y, 0);
+		listenerX = x;
+		listenerY = y;
 	}
 
 	/**
@@ -104,11 +107,25 @@ public class Audio implements Music.OnCompletionListener
 			long id = sound.play(soundEffectVolume * soundEffect.volumeAdjustment);
 			// Ensure that the sound was played.
 			if (id != -1) {
-				sound.setPitch(id, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
+				AL10.alListener3f(AL_POSITION, listenerX, listenerY, 0f);
+				System.out.println("Error1: " + AL10.alGetError());
+
 				int sourceId = (int) id;
+				AL10.alSourcef(sourceId, AL10.AL_PITCH, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
+				System.out.println("Error2: " + AL10.alGetError());
+				AL10.alSource3f(sourceId, AL_POSITION, x, y, 1f);
+				System.out.println("Error3: " + AL10.alGetError());
 				AL10.alSourcef(sourceId, AL10.AL_ROLLOFF_FACTOR, rolloffFactor);
+				System.out.println("Error4: " + AL10.alGetError());
 				AL10.alSourcef(sourceId, AL10.AL_REFERENCE_DISTANCE, referenceDistance);
-				AL10.alSource3f(sourceId, AL_POSITION, x, y, 2f);
+				System.out.println("Error5: " + AL10.alGetError());
+				System.out.printf("Setting alSource3f AL_POSITION: %f,%f%n", x, y);
+
+				float[] l1 = new float[1];
+				float[] l2 = new float[1];
+				float[] l3 = new float[1];
+				AL10.alGetListener3f(AL_POSITION, l1, l2, l3);
+				System.out.printf("Listener location: %f,%f,%f%n", l1[0], l2[0], l3[0]);
 //				AL10.alSourcePlay(sourceId);
 			}
 		} else {
@@ -118,6 +135,8 @@ public class Audio implements Music.OnCompletionListener
 
 	private static float getRandomPitch(float min, float max) {
 		float adjustment = random.nextFloat() * (max - min);
+		float pitch = max - adjustment;
+		assert pitch >= 0.5f && pitch <= 2.0f;
 		return max - adjustment;
 	}
 
