@@ -45,7 +45,7 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 	{
 		super(DrawLayer.EFFECTS, exp);
 
-		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 60, 60);
+		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 60, 60);
 
 		millisPerFrame = (int) Config.MillisPerFrame;
 	}

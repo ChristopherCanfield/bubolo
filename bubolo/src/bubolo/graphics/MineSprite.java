@@ -44,7 +44,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	MineSprite(Mine mine) {
 		super(DrawLayer.MINES, mine);
 
-		allFrames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 21, 21);
+		allFrames = Graphics.getTextureRegion2d(TEXTURE_FILE, 21, 21);
 		idleFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2], allFrames[1] };
 	}
 

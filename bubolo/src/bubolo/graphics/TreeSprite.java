@@ -31,7 +31,7 @@ class TreeSprite extends AbstractEntitySprite<Tree>
 	{
 		super(DrawLayer.TERRAIN_IMPROVEMENTS, tree);
 
-		image = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
+		image = Graphics.getTexture(TEXTURE_FILE);
 		Random rand = new Random();
 		rotation = (float) (rand.nextInt(4) * (Math.PI/2));
 	}

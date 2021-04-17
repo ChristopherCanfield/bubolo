@@ -46,7 +46,7 @@ class TankExplosionSprite extends Sprite
 	{
 		super(DrawLayer.TOP);
 
-		frames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, WIDTH, HEIGHT);
+		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, WIDTH, HEIGHT);
 
 		frameTimeRemaining = millisPerFrame;
 		lastFrameTime = System.currentTimeMillis();

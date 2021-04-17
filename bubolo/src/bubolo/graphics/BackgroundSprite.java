@@ -28,7 +28,7 @@ class BackgroundSprite extends Sprite
 	{
 		super(DrawLayer.BACKGROUND);
 
-		texture = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
+		texture = Graphics.getTexture(TEXTURE_FILE);
 
 		this.x = x;
 		this.y = y;

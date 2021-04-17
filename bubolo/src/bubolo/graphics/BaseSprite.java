@@ -58,7 +58,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	{
 		super(DrawLayer.TERRAIN_IMPROVEMENTS, base);
 
-		allFrames = Graphics.getTextureRegion2d(Graphics.TEXTURE_PATH + TEXTURE_FILE, 32, 32);
+		allFrames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
 		chargingFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2],
 				allFrames[3], allFrames[4], allFrames[5], allFrames[6], allFrames[7] };
 		idleFrames = allFrames[0];

@@ -32,7 +32,7 @@ public class TankSinkingSprite extends Sprite {
 		this.y = tank.y();
 		this.rotation = tank.rotation();
 
-		this.texture = Graphics.getTexture(Graphics.TEXTURE_PATH + textureFile);
+		this.texture = Graphics.getTexture(textureFile);
 		this.frames = TextureUtil.splitFrames(texture, 32, 32)[0];
 	}
 
@@ -72,7 +72,6 @@ public class TankSinkingSprite extends Sprite {
 		float percentTimeRemaining = ticksRemaining / (float) drownTimeTicks;
 		float scale = Interpolation.pow2In.apply(0, 1, percentTimeRemaining);
 
-		System.out.println("Scale: " + scale);
 		drawTexture(graphics, frames[0], scale);
 	}
 }

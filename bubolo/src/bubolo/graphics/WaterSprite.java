@@ -29,8 +29,7 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		   and will need to change if bridges are implemented. */
 		super(DrawLayer.TERRAIN_IMPROVEMENTS, water);
 
-		var path = Graphics.TEXTURE_PATH + TEXTURE_FILE;
-		frames = Graphics.getTextureRegion1d(path, getClass());
+		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
 	}
 
 	@Override

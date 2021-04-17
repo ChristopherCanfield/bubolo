@@ -11,34 +11,29 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.util.Coords;
-import bubolo.util.GameLogicException;
 import bubolo.world.Tank;
 
 /**
  * The graphical representation of a Tank.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
-{
+class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	// The index representing which animation frame will be drawn.
 	private int frameIndex;
 
 	// An index representing which row of the sprite sheet to use, based on color set.
 	private int colorId = ColorSets.RED;
 
-	// An array of all frames held in the texture sheet, by ROW and then COLUMN.
-	// Why the y value first? Because the y value represents the color set to be used.
+	// An array of all frames held in the texture sheet, by row and then column. Row = color set.
 	private TextureRegion[][] frames;
-
-	// An array of the frames to be used for the driving backward animation.
-	private TextureRegion[][] backwardFrames;
 
 	// An array of the frames to be used for the driving forward animation.
 	private TextureRegion[][] forwardFrames;
 
 	// Frame to be used for the standing (idle) animation
-	private TextureRegion[] standingFrames;
+	private TextureRegion[] idleFrames;
 
 	// The number of milliseconds per frame.
 	private static final long millisPerFrame = 100;
@@ -49,20 +44,13 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	// The time of the last frame, in milliseconds.
 	private long lastFrameTime;
 
-	// The current animation state of the tank, determines which animation to play.
-	private int animationState = 1;
-
-	// The last animation state that the tank was in, used to determine when to reset
-	// the starting frame.
-	private int lastAnimationState = 0;
-
 	// Ensures that only one tank explosion is created per death.
 	private boolean deathAnimationCreated;
 
 	// For player name drawing.
 	private static final BitmapFont font = new BitmapFont();
 
-	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229/255f, 74/255f, 39/255f, 1);
+	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "tank.png";
@@ -73,31 +61,29 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	private final Texture bulletTexture;
 	private final Texture mineTexture;
 
-	private static final Color TANK_UI_BOX_COLOR = new Color(50/255f, 50/255f, 50/255f, 110/255f);
-	private static final Color TANK_UI_FONT_COLOR = new Color(240/255f, 240/255f, 240/255f, 1f);
+	private static final Color TANK_UI_BOX_COLOR = new Color(50 / 255f, 50 / 255f, 50 / 255f, 110 / 255f);
+	private static final Color TANK_UI_FONT_COLOR = new Color(240 / 255f, 240 / 255f, 240 / 255f, 1f);
 
 	/**
-	 * Constructor for the TankSprite. This is Package-private because sprites should not be
-	 * directly created outside of the graphics system.
+	 * Constructor for the TankSprite. This is Package-private because sprites should not be directly created outside of the
+	 * graphics system.
 	 *
-	 * @param tank
-	 *            Reference to the tank that this TankSprite represents.
+	 * @param tank Reference to the tank that this TankSprite represents.
 	 */
-	TankSprite(Tank tank)
-	{
+	TankSprite(Tank tank) {
 		super(DrawLayer.TANKS, tank);
 
-		bulletTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + BULLET_TEXTURE_FILE);
-		mineTexture = Graphics.getTexture(Graphics.TEXTURE_PATH + MINE_TEXTURE_FILE);
+		bulletTexture = Graphics.getTexture(BULLET_TEXTURE_FILE);
+		mineTexture = Graphics.getTexture(MINE_TEXTURE_FILE);
 	}
 
 	/**
-	 * Draws the tank's name. This is a separate method to ensure that tank UI elements are drawn above all other objects.
-	 * begin() must have been called on graphics.batch() before calling this method.
+	 * Draws the tank's name. This is a separate method to ensure that tank UI elements are drawn above all other objects. begin()
+	 * must have been called on graphics.batch() before calling this method.
 	 */
 	void drawTankPlayerName(Graphics graphics) {
 		var tank = getEntity();
-		// Render non-hidden network tank names.
+		// Render names for visible network tanks.
 		if (!tank.isOwnedByLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
 			font.setColor(ENEMY_TANK_NAME_COLOR);
@@ -107,7 +93,8 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 
 	/**
 	 * Draws the tank's health bar. Uses the shape renderer, so it should be called after completing drawing that uses the Batch.
-	 * Unlike with the methods that use batch(), begin() does not need to be called on graphics.shapeRenderer() before calling this method.
+	 * Unlike with the methods that use batch(), begin() does not need to be called on graphics.shapeRenderer() before calling
+	 * this method.
 	 */
 	@Override
 	public void drawUiElements(Graphics graphics) {
@@ -181,20 +168,13 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
-		if (isDisposed())
-		{
+	public void draw(Graphics graphics) {
+		if (isDisposed()) {
 			graphics.sprites().removeSprite(this);
-			return;
-		}
-		else if (frames == null)
-		{
+		} else if (frames == null) {
 			initialize(graphics);
-		}
-		else if (!getEntity().isAlive())
-		{
-			if(!deathAnimationCreated) {
+		} else if (!getEntity().isAlive()) {
+			if (!deathAnimationCreated) {
 				deathAnimationCreated = true;
 
 				if (getEntity().drowned()) {
@@ -203,64 +183,27 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 					graphics.sprites().addSprite(new TankExplosionSprite((int) getEntity().x(), (int) getEntity().y()));
 				}
 			}
-			return;
-		}
-		deathAnimationCreated = false;
-
-		if (visibility() != Visibility.NETWORK_TANK_HIDDEN) {
+		} else if (visibility() != Visibility.NETWORK_TANK_HIDDEN) {
+			deathAnimationCreated = false;
 			animateAndDraw(graphics);
 		}
 	}
 
-	private void animateAndDraw(Graphics graphics)
-	{
-		animationState = (getEntity().speed() > 0.f) ? 1 : 0;
-		switch (animationState)
-		{
-		case 0:
-			if (lastAnimationState != 0)
-			{
-				lastAnimationState = 0;
-				frameIndex = 0;
-			}
-			drawTexture(graphics, standingFrames[colorId]);
-			break;
-
-		case 1:
-			if (lastAnimationState != 1)
-			{
-				frameIndex = 0;
-				lastAnimationState = 1;
-			}
+	private void animateAndDraw(Graphics graphics) {
+		// Tank is moving.
+		if (getEntity().speed() > 0) {
 			drawTexture(graphics, forwardFrames[frameIndex][colorId]);
-
-			// Progress the tank drive forward animation.
 			animate(forwardFrames);
 
-			break;
-
-		case 2:
-			if (lastAnimationState != 2)
-			{
-				frameIndex = 0;
-				lastAnimationState = 2;
-			}
-			drawTexture(graphics, backwardFrames[frameIndex][colorId]);
-
-			// Progress the tank drive backward animation.
-			animate(backwardFrames);
-
-			break;
-
-		default:
-			throw new GameLogicException("Programming error in tankSprite: default case reached.");
+			// Tank is idle.
+		} else {
+			drawTexture(graphics, idleFrames[colorId]);
 		}
 	}
 
 	private static final Color tankHiddenColor = new Color(Color.WHITE).mul(1.f, 1.f, 1.f, 0.6f);
 
-	private Visibility visibility()
-	{
+	private Visibility visibility() {
 		if (getEntity().isHidden()) {
 			if (getEntity().isOwnedByLocalPlayer()) {
 				setColor(tankHiddenColor);
@@ -274,36 +217,30 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		}
 	}
 
-	private void animate(TextureRegion[][] animationFrames)
-	{
+	private void animate(TextureRegion[][] animationFrames) {
 		frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
 		lastFrameTime = System.currentTimeMillis();
-		if (frameTimeRemaining < 0)
-		{
+		if (frameTimeRemaining < 0) {
 			frameTimeRemaining = millisPerFrame;
 			frameIndex = (frameIndex == animationFrames.length - 1) ? 0 : frameIndex + 1;
 		}
 	}
 
 	/**
-	 * Initializes the tank. This is needed because the Tank entity may not know whether it is local
-	 * or not at construction time.
+	 * Initializes the tank. This is needed because the Tank entity may not know whether it is local or not at construction time.
 	 *
 	 * @param graphics reference to the graphics system.
 	 */
-	private void initialize(Graphics graphics)
-	{
-		Texture texture = Graphics.getTexture(Graphics.TEXTURE_PATH + TEXTURE_FILE);
+	private void initialize(Graphics graphics) {
+		Texture texture = Graphics.getTexture(TEXTURE_FILE);
 		frames = TextureUtil.splitFrames(texture, 32, 32);
 
 		forwardFrames = new TextureRegion[][] { frames[0], frames[1], frames[2] };
-		backwardFrames = new TextureRegion[][] { frames[0], frames[2], frames[1] };
-		standingFrames = frames[0];
+		idleFrames = frames[0];
 		frameIndex = 0;
 		frameTimeRemaining = millisPerFrame;
 
-		if (getEntity().isOwnedByLocalPlayer())
-		{
+		if (getEntity().isOwnedByLocalPlayer()) {
 			CameraController controller = new TankCameraController(getEntity());
 			graphics.setCameraController(controller);
 			controller.setCamera(graphics.camera());
@@ -312,13 +249,11 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		colorId = determineColorSet(getEntity());
 	}
 
-	private static int determineColorSet(Tank tank)
-	{
+	private static int determineColorSet(Tank tank) {
 		return tank.isOwnedByLocalPlayer() ? ColorSets.BLUE : ColorSets.RED;
 	}
 
-	private enum Visibility
-	{
+	private enum Visibility {
 		VISIBLE, NETWORK_TANK_HIDDEN, HIDDEN
 	}
 }

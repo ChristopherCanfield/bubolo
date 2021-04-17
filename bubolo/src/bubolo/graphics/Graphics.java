@@ -38,7 +38,7 @@ public class Graphics implements EntityCreationObserver
 	/**
 	 * Textures file path.
 	 */
-	public static final String TEXTURE_PATH = "res/textures/";
+	private static final String TEXTURE_PATH = "res/textures/";
 
 	// Stores the textures, so that only one copy is stored in memory.
 	private static Map<String, Texture> textures = new HashMap<>();
@@ -63,20 +63,19 @@ public class Graphics implements EntityCreationObserver
 	private BackgroundSprite[][] background;
 
 	/**
-	 * Returns a texture from a path. Ensures that the same texture isn't stored multiple times.
+	 * Returns a texture from a file name. Ensures that the same texture isn't stored multiple times.
 	 * Will load the file if it has not yet been loaded.
 	 *
-	 * @param path
-	 *            the path to the texture file.
+	 * @param fileName the name of the texture file. Do not include the full path.
 	 * @return the requested texture.
 	 */
-	static Texture getTexture(String path)
+	static Texture getTexture(String fileName)
 	{
-		Texture texture = textures.get(path);
+		Texture texture = textures.get(fileName);
 		if (texture == null)
 		{
-			texture = new Texture(new FileHandle(new File(path)));
-			textures.put(path, texture);
+			texture = new Texture(new FileHandle(new File(TEXTURE_PATH + fileName)));
+			textures.put(fileName, texture);
 		}
 
 		return texture;
@@ -379,7 +378,7 @@ public class Graphics implements EntityCreationObserver
 		{
 			if (file.getName().endsWith("png"))
 			{
-				getTexture(TEXTURE_PATH + file.getName());
+				getTexture(file.getName());
 			}
 		}
 	}
