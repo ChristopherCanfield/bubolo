@@ -19,9 +19,9 @@ public class SfxRateLimiter {
 	 * @param soundEffect the sound effect to play.
 	 * @return whether the sound effect was played or not.
 	 */
-	public boolean play(Sfx soundEffect) {
+	public boolean play(Sfx soundEffect, float x, float y) {
 		if (nextSfxPlayTime < System.currentTimeMillis()) {
-			Audio.play(soundEffect);
+			Audio.play(soundEffect, x, y);
 			nextSfxPlayTime = System.currentTimeMillis() + rateLimitMillis;
 			return true;
 		}

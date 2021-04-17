@@ -356,7 +356,7 @@ public class Tank extends ActorEntity implements Damageable {
 		var terrain = world.getTerrain(tileColumn(), tileRow());
 		if (terrain instanceof DeepWater) {
 			drowned = true;
-			Audio.play(Sfx.TankDrowned);
+			Audio.play(Sfx.TankDrowned, x(), y());
 			onDeath();
 			return true;
 		}
@@ -498,10 +498,10 @@ public class Tank extends ActorEntity implements Damageable {
 			hitPoints -= damagePoints;
 
 			notifyNetwork();
-			sfxPlayer.play(Sfx.TankHit);
+			sfxPlayer.play(Sfx.TankHit, x(), y());
 
 			if (hitPoints <= 0) {
-				Audio.play(Sfx.TankExplosion);
+				Audio.play(Sfx.TankExplosion, x(), y());
 				onDeath();
 			}
 		}

@@ -91,10 +91,6 @@ public class Audio implements Music.OnCompletionListener
 		alListener3f(AL_POSITION, x, y, 0);
 	}
 
-	public static void play(Sfx soundEffect) {
-		play(soundEffect, 0, 0);
-	}
-
 	/**
 	 * Plays a sound effect. This should be called in the following way:<br><br>
 	 * <code>Audio.play(Sfx.EXPLOSION);<br>
@@ -113,6 +109,7 @@ public class Audio implements Music.OnCompletionListener
 				AL10.alSourcef(sourceId, AL10.AL_ROLLOFF_FACTOR, rolloffFactor);
 				AL10.alSourcef(sourceId, AL10.AL_REFERENCE_DISTANCE, referenceDistance);
 				AL10.alSource3f(sourceId, AL_POSITION, x, y, 2f);
+//				AL10.alSourcePlay(sourceId);
 			}
 		} else {
 			logger.warning("Audio.play called before audio system was initialized.");
