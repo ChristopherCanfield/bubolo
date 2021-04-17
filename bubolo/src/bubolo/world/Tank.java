@@ -31,7 +31,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private String playerName;
 
 	// Max speed in world units per tick.
-	private static final float maxSpeed = 4.f;
+	private static final float maxSpeed = 3.25f;
 
 	// The maximum speed after adjusting for the underlying terrain & terrain improvement.
 	private float adjustedMaxSpeed = maxSpeed;
@@ -165,8 +165,6 @@ public class Tank extends ActorEntity implements Damageable {
 		moveTank(world);
 		performCollisionDetection(world);
 		hidden = checkIfHidden(world);
-
-		System.out.printf("Speed: %f | Acceleration: %f | Max speed %f%n", speed, adjustedAccelerationRate, adjustedMaxSpeed);
 
 		decelerated = false;
 		accelerated = false;
