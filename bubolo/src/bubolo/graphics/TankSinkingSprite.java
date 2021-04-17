@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Interpolation;
 import bubolo.util.Time;
 import bubolo.world.Tank;
 
-public class TankDrowningSprite extends Sprite {
+public class TankSinkingSprite extends Sprite {
 
 	private float x;
 	private float y;
@@ -21,11 +21,11 @@ public class TankDrowningSprite extends Sprite {
 	private final TextureRegion[] frames;
 
 	/**
-	 * Constructs a tank drowning animation, which has the tank scale down until it disappears.
+	 * Constructs a tank sinking animation, which has the tank scale down until it disappears.
 	 *
 	 * @param tank the tank that is drowning.
 	 */
-	TankDrowningSprite(Tank tank) {
+	TankSinkingSprite(Tank tank) {
 		super(DrawLayer.EFFECTS);
 
 		this.x = tank.x();

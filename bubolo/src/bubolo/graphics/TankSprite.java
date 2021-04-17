@@ -198,7 +198,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 				deathAnimationCreated = true;
 
 				if (getEntity().drowned()) {
-					graphics.sprites().addSprite(new TankDrowningSprite(getEntity()));
+					graphics.sprites().addSprite(new TankSinkingSprite(getEntity()));
 				} else {
 					graphics.sprites().addSprite(new TankExplosionSprite((int) getEntity().x(), (int) getEntity().y()));
 				}
