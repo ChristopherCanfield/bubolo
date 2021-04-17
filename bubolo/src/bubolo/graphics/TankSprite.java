@@ -57,7 +57,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 	private int lastAnimationState = 0;
 
 	// Ensures that only one tank explosion is created per death.
-	private boolean explosionCreated;
+	private boolean deathAnimationCreated;
 
 	// For player name drawing.
 	private static final BitmapFont font = new BitmapFont();
@@ -194,15 +194,18 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable
 		}
 		else if (!getEntity().isAlive())
 		{
-			if(!explosionCreated)
-			{
-				explosionCreated = true;
-				SpriteSystem spriteSystem = graphics.sprites();
-				spriteSystem.addSprite(new TankExplosionSprite((int) getEntity().x(), (int) getEntity().y()));
+			if(!deathAnimationCreated) {
+				deathAnimationCreated = true;
+
+				if (getEntity().drowned()) {
+					graphics.sprites().addSprite(new TankDrowningSprite(getEntity()));
+				} else {
+					graphics.sprites().addSprite(new TankExplosionSprite((int) getEntity().x(), (int) getEntity().y()));
+				}
 			}
 			return;
 		}
-		explosionCreated = false;
+		deathAnimationCreated = false;
 
 		if (visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			animateAndDraw(graphics);

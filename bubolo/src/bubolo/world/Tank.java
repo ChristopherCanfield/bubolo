@@ -92,6 +92,9 @@ public class Tank extends ActorEntity implements Damageable {
 	private static final int maxHitPoints = 100;
 	private float hitPoints = maxHitPoints;
 
+	// Whether the tank's death was caused by drowning.
+	private boolean drowned;
+
 	private static final int maxAmmo = 100;
 	private int ammoCount = maxAmmo;
 
@@ -134,6 +137,7 @@ public class Tank extends ActorEntity implements Damageable {
 			}
 
 			hitPoints = maxHitPoints;
+			drowned = false;
 			ammoCount = maxAmmo;
 			mineCount = maxMines;
 			cannonReadyTime = 0;
@@ -144,6 +148,7 @@ public class Tank extends ActorEntity implements Damageable {
 			accelerated = false;
 			decelerated = false;
 			hidden = false;
+
 			notifyNetwork();
 		}
 	}
@@ -348,6 +353,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private boolean checkForDrowned(World world) {
 		var terrain = world.getTerrain(tileColumn(), tileRow());
 		if (terrain instanceof DeepWater) {
+			drowned = true;
 			Audio.play(Sfx.TankDrowned);
 			onDeath();
 			return true;
@@ -453,6 +459,10 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	public int maxHitPoints() {
 		return maxHitPoints;
+	}
+
+	public boolean drowned() {
+		return drowned;
 	}
 
 	/**

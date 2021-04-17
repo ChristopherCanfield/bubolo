@@ -15,17 +15,13 @@ public abstract class TextureUtil
 	/**
 	 * Split a sprite texture up into discrete frames, using the standardized height and
 	 * width of each frame to determine start and end points of each frame. Used for
-	 * separating ColorSets and animation frames. Note that all frames must be the same
-	 * size, and the texture must have no empty space.
+	 * separating ColorSets and animation frames. All frames must be the same
+	 * size, with no padding between frames.
 	 *
-	 * @param tex
-	 *            is the texture to be split into frames.
-	 * @param frameWidth
-	 *            is the width of each frame.
-	 * @param frameHeight
-	 *            is the height of each frame.
-	 * @return a two-sided array of TextureRegions, representing each frame. They are
-	 *         returned in [COLUMN][ROW] order to allow easy separation by ColorSet.
+	 * @param tex the texture to be split into frames.
+	 * @param frameWidth the width of each frame.
+	 * @param frameHeight the height of each frame.
+	 * @return a two-dimensional array of TextureRegions, in [column][row] order. The column represents the color set.
 	 */
 	public static TextureRegion[][] splitFrames(Texture tex, int frameWidth, int frameHeight)
 	{

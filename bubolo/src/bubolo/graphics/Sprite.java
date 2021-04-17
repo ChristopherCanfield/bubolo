@@ -28,9 +28,7 @@ abstract class Sprite implements Drawable
 	// The sprite's color. White draws the texture as it appears in the file.
 	private Color color;
 
-	// Ideally, these probably should not be placed into Sprite.
-	private static final float SCALE_X = 1.f;
-	private static final float SCALE_Y = 1.f;
+	private static final float SCALE = 1.f;
 
 	/**
 	 * Constructs a sprite.
@@ -112,20 +110,30 @@ abstract class Sprite implements Drawable
 				origin.y,
 				texture.getWidth(),
 				texture.getHeight(),
-				SCALE_X,
-				SCALE_Y,
+				SCALE,
+				SCALE,
 				(float)(MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)),
 				0, 0, texture.getWidth(), texture.getHeight(), false, false);
 	}
 
 	/**
-	 * Draws the texture to the screen. batch.begin() must be called before calling this method.
+	 * Draws the texture region to the screen. batch.begin() must be called before calling this method.
 	 *
 	 * @param graphics the graphics system.
-	 * @param texture
-	 *            The texture region to draw.
+	 * @param texture The texture region to draw.
 	 */
-	protected final void drawTexture(Graphics graphics, TextureRegion texture)
+	protected final void drawTexture(Graphics graphics, TextureRegion texture) {
+		drawTexture(graphics, texture, SCALE);
+	}
+
+	/**
+	 * Draws the texture region to the screen. batch.begin() must be called before calling this method.
+	 *
+	 * @param graphics the graphics system.
+	 * @param texture The texture region to draw.
+	 * @param scale the scale that the texture region will be drawn.
+	 */
+	protected final void drawTexture(Graphics graphics, TextureRegion texture, float scale)
 	{
 		Vector2 origin = getOrigin(texture.getRegionWidth(), texture.getRegionHeight());
 
@@ -141,8 +149,8 @@ abstract class Sprite implements Drawable
 				origin.y,
 				texture.getRegionWidth(),
 				texture.getRegionHeight(),
-				SCALE_X,
-				SCALE_Y,
+				scale,
+				scale,
 				(float)(MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)));
 	}
 
