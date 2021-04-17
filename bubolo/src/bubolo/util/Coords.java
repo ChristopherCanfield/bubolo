@@ -11,8 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 public abstract class Coords
 {
 	/**
-	 * Defines the scale used to determine the relationship between world units, map
-	 * units, and tile units
+	 * Defines the scale used to determine the relationship between world units and tile units
 	 */
 	public static final int TileToWorldScale = 32;
 

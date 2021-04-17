@@ -173,6 +173,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 		decelerated = false;
 		accelerated = false;
+
+		Audio.setListenerPosition(x(), y());
 	}
 
 	public String playerName() {

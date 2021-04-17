@@ -2,6 +2,9 @@ package bubolo.audio;
 
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.lwjgl.openal.AL10.AL_POSITION;
+import static org.lwjgl.openal.AL10.alDistanceModel;
+import static org.lwjgl.openal.AL10.alListener3f;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
+
+import org.lwjgl.openal.AL10;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -34,14 +39,10 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	private Audio() {}
 
-	/**
-	 * The path to the music files.
-	 */
+	/** The path to the music files. */
 	public static final String MUSIC_PATH = "res/music/";
 
-	/**
-	 * The path to the sound effect files.
-	 */
+	/** The path to the sound effect files. */
 	public static final String SFX_PATH = "res/sfx/";
 
 	// The sound effects volume. The default is 75%.
@@ -63,13 +64,35 @@ public class Audio implements Music.OnCompletionListener
 
 	private static final Random random = new Random();
 
+	// OpenAL reference distance: the distance that the sound is played at its highest volume.
+	private static float referenceDistance;
+	// OpenAL rolloff factor.
+	private static float rolloffFactor;
+
 	/**
 	 * Initializes the sound system.
+	 *
+	 * @param worldWidth the world's width, in world units.
+	 * @param worldHeight the world's height, in world units.
+	 * @param viewportWidth the viewport's width, in world units.
+	 * @param viewportHeight the viewport's height, in world units.
 	 */
-	public static void initialize()
-	{
+	public static void initialize(float worldWidth, float worldHeight, float viewportWidth, float viewportHeight) {
 		initialized = true;
 		preloadCoreSoundEffects();
+
+		alDistanceModel(AL10.AL_INVERSE_DISTANCE);
+
+		referenceDistance = Math.max(viewportWidth, viewportHeight) * 0.5f;
+		rolloffFactor = Math.min(worldWidth / viewportWidth, worldHeight / viewportHeight);
+	}
+
+	public static void setListenerPosition(float x, float y) {
+		alListener3f(AL_POSITION, x, y, 0);
+	}
+
+	public static void play(Sfx soundEffect) {
+		play(soundEffect, 0, 0);
 	}
 
 	/**
@@ -78,12 +101,19 @@ public class Audio implements Music.OnCompletionListener
 	 * Audio.play(Sfx.TANK_HIT);</code>
 	 * @param soundEffect the sound effect to play.
 	 */
-	public static void play(Sfx soundEffect)
+	public static void play(Sfx soundEffect, float x, float y)
 	{
 		if (initialized) {
 			Sound sound = getSoundEffect(soundEffect);
 			long id = sound.play(soundEffectVolume * soundEffect.volumeAdjustment);
-			sound.setPitch(id, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
+			// Ensure that the sound was played.
+			if (id != -1) {
+				sound.setPitch(id, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
+				int sourceId = (int) id;
+				AL10.alSourcef(sourceId, AL10.AL_ROLLOFF_FACTOR, rolloffFactor);
+				AL10.alSourcef(sourceId, AL10.AL_REFERENCE_DISTANCE, referenceDistance);
+				AL10.alSource3f(sourceId, AL_POSITION, x, y, 2f);
+			}
 		} else {
 			logger.warning("Audio.play called before audio system was initialized.");
 		}

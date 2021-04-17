@@ -44,7 +44,7 @@ public class Bullet extends ActorEntity {
 		super(args, width, height);
 		updateBounds();
 
-		Audio.play(Sfx.CannonFired);
+		Audio.play(Sfx.CannonFired, args.x(), args.y());
 	}
 
 	@Override

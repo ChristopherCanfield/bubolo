@@ -132,10 +132,8 @@ public class Graphics implements EntityCreationObserver
 	/**
 	 * Creates the graphics system.
 	 *
-	 * @param windowWidth
-	 *            the width of the window, in pixels.
-	 * @param windowHeight
-	 *            the height of the window, in pixels.
+	 * @param windowWidth the width of the window, in pixels.
+	 * @param windowHeight the height of the window, in pixels.
 	 */
 	public Graphics(int windowWidth, int windowHeight)
 	{
