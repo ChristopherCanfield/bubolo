@@ -82,8 +82,8 @@ public class Audio implements Music.OnCompletionListener
 	{
 		if (initialized) {
 			Sound sound = getSoundEffect(soundEffect);
-			long id = sound.play(soundEffectVolume);
-			sound.setPitch(id, getRandomPitch(0.6f, 1.4f));
+			long id = sound.play(soundEffectVolume * soundEffect.volumeAdjustment);
+			sound.setPitch(id, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
 		} else {
 			logger.warning("Audio.play called before audio system was initialized.");
 		}
@@ -243,13 +243,13 @@ public class Audio implements Music.OnCompletionListener
 	 * Preloads the core sound effects, to prevent slight hickups that can occur when a sound is first used.
 	 */
 	private static void preloadCoreSoundEffects() {
-		getSoundEffect(Sfx.CANNON_FIRED);
-		getSoundEffect(Sfx.MINE_EXPLOSION);
-		getSoundEffect(Sfx.TANK_EXPLOSION);
-		getSoundEffect(Sfx.PILLBOX_HIT);
-		getSoundEffect(Sfx.TREE_HIT);
-		getSoundEffect(Sfx.WALL_HIT);
-		getSoundEffect(Sfx.TANK_HIT);
+		getSoundEffect(Sfx.CannonFired);
+		getSoundEffect(Sfx.MineExplosion);
+		getSoundEffect(Sfx.TankExplosion);
+		getSoundEffect(Sfx.PillboxHit);
+		getSoundEffect(Sfx.TreeHit);
+		getSoundEffect(Sfx.WallHit);
+		getSoundEffect(Sfx.TankHit);
 	}
 
 	/**

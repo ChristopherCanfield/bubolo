@@ -12,17 +12,25 @@ package bubolo.audio;
  */
 public enum Sfx
 {
-	CANNON_FIRED("cannon_fired.ogg"),
-	MINE_EXPLOSION("mine_explosion.wav"),
-	TANK_EXPLOSION("tank_explosion.wav"),
-	TANK_HIT("tank_explosion.wav"),
-	PILLBOX_HIT("pillbox_hit.wav"),
-	TREE_HIT("tree_hit.wav"),
-	WALL_HIT("wall_hit.wav");
+	CannonFired("cannon_fired.ogg", 1, 0.75f, 1.25f),
+	MineExplosion("mine_explosion.ogg", 1, 0.75f, 1.25f),
+	TankExplosion("tank_explosion.wav", 1, 0.75f, 1.25f),
+	TankHit("tank_explosion.wav", 1, 0.75f, 1.25f),
+	TankDrowned("bubbles.ogg", 1, 1, 1),
+	PillboxHit("pillbox_hit.ogg", 1, 0.75f, 1.25f),
+	TreeHit("tree_hit.ogg", 1, 0.75f, 1.25f),
+	WallHit("wall_hit.ogg", 1, 0.75f, 1.25f);
 
 	final String fileName;
+	// Multiplied by the main volume.
+	final float volumeAdjustment;
+	final float pitchRangeMin;
+	final float pitchRangeMax;
 
-	private Sfx(String fileName) {
+	private Sfx(String fileName, float volumeAdjustment, float pitchRangeMin, float pitchRangeMax) {
 		this.fileName = fileName;
+		this.volumeAdjustment = volumeAdjustment;
+		this.pitchRangeMin = pitchRangeMin;
+		this.pitchRangeMax = pitchRangeMax;
 	}
 }

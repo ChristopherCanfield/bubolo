@@ -156,7 +156,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 	@Override
 	public void onUpdate(World world) {
-		if (!isAlive()) {
+		if (!isAlive() || checkForDrowned(world)) {
 			respawn(world);
 			return;
 		}
@@ -340,6 +340,22 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
+	 * Checks if the tank has drowned.
+	 *
+	 * @param world reference to the game world.
+	 * @return true if the tank has drowned.
+	 */
+	private boolean checkForDrowned(World world) {
+		var terrain = world.getTerrain(tileColumn(), tileRow());
+		if (terrain instanceof DeepWater) {
+			Audio.play(Sfx.TankDrowned);
+			onDeath();
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Updates the tank's max speed and acceleration for the underlying terrain.
 	 *
 	 * @param world reference to the game world.
@@ -470,9 +486,10 @@ public class Tank extends ActorEntity implements Damageable {
 			hitPoints -= damagePoints;
 
 			notifyNetwork();
-			sfxPlayer.play(Sfx.TANK_HIT);
+			sfxPlayer.play(Sfx.TankHit);
 
 			if (hitPoints <= 0) {
+				Audio.play(Sfx.TankExplosion);
 				onDeath();
 			}
 		}
@@ -482,7 +499,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Called when the tank dies.
 	 */
 	private void onDeath() {
-		Audio.play(Sfx.TANK_EXPLOSION);
+		hitPoints = 0;
 		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
 	}
 

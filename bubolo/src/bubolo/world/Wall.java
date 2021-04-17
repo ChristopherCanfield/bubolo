@@ -81,7 +81,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	public void receiveDamage(float damagePoints, World world) {
 		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
-		sfxPlayer.play(Sfx.WALL_HIT);
+		sfxPlayer.play(Sfx.WallHit);
 
 		if (hitPoints <= 0) {
 			// When the wall is destroyed, replace it with rubble.
