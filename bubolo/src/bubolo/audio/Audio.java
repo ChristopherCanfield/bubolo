@@ -1,6 +1,5 @@
 package bubolo.audio;
 
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.lwjgl.openal.AL10.AL_GAIN;
 import static org.lwjgl.openal.AL10.AL_PITCH;
@@ -26,14 +25,12 @@ import bubolo.Config;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class Audio
-{
+public class Audio {
 	private static final Logger logger = Logger.getLogger(Config.AppProgramaticTitle);
 
-	/**
-	 * Instances of this class should not be directly constructed.
-	 */
-	private Audio() {}
+	/** Instances of this class should not be directly constructed. */
+	private Audio() {
+	}
 
 	/** The path to the sound effect files. */
 	private static final String sfxPath = "res/sfx/";
@@ -54,6 +51,10 @@ public class Audio
 	private static float listenerX;
 	private static float listenerY;
 
+	/* The z position is set high so that cannon fire sounds from the tank's own cannon sound like it is coming from the tank itself,
+		rather than from the east or west. */
+	private static final float sourceZPosition = 100.0f;
+
 	/**
 	 * Initializes the sound system.
 	 *
@@ -65,7 +66,7 @@ public class Audio
 	public static void initialize(float worldWidth, float worldHeight, float viewportWidth, float viewportHeight) {
 		initialized = true;
 
-		sources = new AudioSources(100);
+		sources = new AudioSources(125);
 		buffers = new AudioBuffers();
 		loadSoundEffects();
 
@@ -81,7 +82,8 @@ public class Audio
 	}
 
 	/**
-	 * Plays a sound effect. This should be called in the following way:<br><br>
+	 * Plays a sound effect. This should be called in the following way:<br>
+	 * <br>
 	 * <code>Audio.play(Sfx.TankExplosion);<br>
 	 * Audio.play(Sfx.TankHit);</code>
 	 *
@@ -89,8 +91,7 @@ public class Audio
 	 * @param x the source's x world position.
 	 * @param y the source's y world position.
 	 */
-	public static void play(Sfx soundEffect, float x, float y)
-	{
+	public static void play(Sfx soundEffect, float x, float y) {
 		if (initialized) {
 			alListener3f(AL_POSITION, listenerX, listenerY, 0f);
 
@@ -99,7 +100,8 @@ public class Audio
 
 			alSourcef(sourceId, AL_GAIN, soundEffectVolume * soundEffect.volumeAdjustment);
 			alSourcef(sourceId, AL_PITCH, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
-			alSource3f(sourceId, AL_POSITION, x, y, 1f);
+
+			alSource3f(sourceId, AL_POSITION, x, y, sourceZPosition);
 			alSourcef(sourceId, AL_ROLLOFF_FACTOR, rolloffFactor);
 			alSourcef(sourceId, AL_REFERENCE_DISTANCE, referenceDistance);
 
@@ -120,11 +122,11 @@ public class Audio
 
 	/**
 	 * Sets the sound effect volume, from 0 (mute) to 1 (max volume).
+	 *
 	 * @param volume the new sound effect volume, ranging from 0 to 1.
 	 * @throws IllegalArgumentException if volume is less than 0 or greater than 1.
 	 */
-	public static void setSoundEffectVolume(float volume)
-	{
+	public static void setSoundEffectVolume(float volume) {
 		checkArgument(volume >= 0, "Sound effect volume was less than zero: %s", volume);
 		checkArgument(volume <= 1, "Sound effect volume was greater than one: %s", volume);
 
@@ -133,10 +135,10 @@ public class Audio
 
 	/**
 	 * Gets the sound effect volume, in the range [0, 1].
+	 *
 	 * @return the sound effect volume.
 	 */
-	public static float getSoundEffectVolume()
-	{
+	public static float soundEffectVolume() {
 		return soundEffectVolume;
 	}
 
@@ -153,9 +155,9 @@ public class Audio
 	/**
 	 * Shuts down and cleans up the audio system.
 	 */
-	public static void dispose()
-	{
+	public static void dispose() {
 		sources.dispose();
 		buffers.dispose();
+		initialized = false;
 	}
 }

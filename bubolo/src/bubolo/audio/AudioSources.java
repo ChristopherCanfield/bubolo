@@ -42,6 +42,9 @@ class AudioSources {
 		}
 	}
 
+	/**
+	 * @return the next OpenAL source ID that is in either the AL_STOPPED or AL_INITIAL state.
+	 */
 	int nextId() {
 		final int maxAttempts = sources.length;
 		int attempts = 0;
