@@ -1,10 +1,19 @@
 package bubolo.audio;
 
+import static org.lwjgl.openal.AL10.AL_INITIAL;
+import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
+import static org.lwjgl.openal.AL10.AL_STOPPED;
 import static org.lwjgl.openal.AL10.alGenSources;
 import static org.lwjgl.openal.AL10.alGetError;
+import static org.lwjgl.openal.AL10.alGetSourcei;
 
 import org.lwjgl.openal.AL10;
 
+/**
+ * Loads and manages OpenAL audio sources. Call nextId() to get the next available audio source ID.
+ *
+ * @author Christopher D. Canfield
+ */
 class AudioSources {
 	private int[] sources;
 	private int nextIndex;
@@ -34,9 +43,27 @@ class AudioSources {
 	}
 
 	int nextId() {
-		int index = sources[nextIndex++];
-		nextIndex = nextIndex >= sources.length ? 0 : nextIndex;
-		return index;
+		final int maxAttempts = sources.length;
+		int attempts = 0;
+
+		int id = -1;
+		do {
+			id = sources[nextIndex++];
+			nextIndex = nextIndex >= sources.length ? 0 : nextIndex;
+			attempts++;
+
+			// Ensure that the source is either in the initial or stopped state.
+			var sourceState = alGetSourcei(id, AL_SOURCE_STATE);
+			if (sourceState != AL_STOPPED && sourceState != AL_INITIAL) {
+				id = -1;
+			}
+
+			if (attempts > maxAttempts) {
+				throw new GameAudioException("AudioSource.nextId: No available ID found.");
+			}
+		} while (id == -1);
+
+		return id;
 	}
 
 	void dispose() {
