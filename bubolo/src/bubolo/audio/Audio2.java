@@ -2,8 +2,16 @@ package bubolo.audio;
 
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.AL_PITCH;
 import static org.lwjgl.openal.AL10.AL_POSITION;
+import static org.lwjgl.openal.AL10.AL_REFERENCE_DISTANCE;
+import static org.lwjgl.openal.AL10.AL_ROLLOFF_FACTOR;
 import static org.lwjgl.openal.AL10.alDistanceModel;
+import static org.lwjgl.openal.AL10.alListener3f;
+import static org.lwjgl.openal.AL10.alSource3f;
+import static org.lwjgl.openal.AL10.alSourcePlay;
+import static org.lwjgl.openal.AL10.alSourcef;
 
 import java.io.File;
 import java.util.Random;
@@ -36,6 +44,8 @@ public class Audio2
 
 	private static boolean initialized = false;
 
+	private static AudioSources sources;
+	private static AudioBuffers buffers;
 
 	// The sound effects volume. The default is 100%.
 	private static float soundEffectVolume = 1.0f;
@@ -58,7 +68,9 @@ public class Audio2
 	 */
 	public static void initialize(float worldWidth, float worldHeight, float viewportWidth, float viewportHeight) {
 		initialized = true;
-		preloadCoreSoundEffects();
+
+		sources = new AudioSources(100);
+		buffers = new AudioBuffers();
 
 		alDistanceModel(AL10.AL_INVERSE_DISTANCE);
 
@@ -83,28 +95,18 @@ public class Audio2
 	public static void play(Sfx soundEffect, float x, float y)
 	{
 		if (initialized) {
+			alListener3f(AL_POSITION, listenerX, listenerY, 0f);
 
+			int sourceId = sources.nextId();
+			buffers.attachBufferToSource(soundEffect, sourceId);
 
-				AL10.alListener3f(AL_POSITION, listenerX, listenerY, 0f);
-				System.out.println("Error1: " + AL10.alGetError());
+			alSourcef(sourceId, AL_GAIN, soundEffectVolume * soundEffect.volumeAdjustment);
+			alSourcef(sourceId, AL_PITCH, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
+			alSource3f(sourceId, AL_POSITION, x, y, 1f);
+			alSourcef(sourceId, AL_ROLLOFF_FACTOR, rolloffFactor);
+			alSourcef(sourceId, AL_REFERENCE_DISTANCE, referenceDistance);
 
-				int sourceId = (int) id;
-				AL10.alSourcef(sourceId, AL10.AL_PITCH, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
-				System.out.println("Error2: " + AL10.alGetError());
-				AL10.alSource3f(sourceId, AL_POSITION, x, y, 1f);
-				System.out.println("Error3: " + AL10.alGetError());
-				AL10.alSourcef(sourceId, AL10.AL_ROLLOFF_FACTOR, rolloffFactor);
-				System.out.println("Error4: " + AL10.alGetError());
-				AL10.alSourcef(sourceId, AL10.AL_REFERENCE_DISTANCE, referenceDistance);
-				System.out.println("Error5: " + AL10.alGetError());
-				System.out.printf("Setting alSource3f AL_POSITION: %f,%f%n", x, y);
-
-				float[] l1 = new float[1];
-				float[] l2 = new float[1];
-				float[] l3 = new float[1];
-				AL10.alGetListener3f(AL_POSITION, l1, l2, l3);
-				System.out.printf("Listener location: %f,%f,%f%n", l1[0], l2[0], l3[0]);
-//				AL10.alSourcePlay(sourceId);
+			alSourcePlay(sourceId);
 		} else {
 			logger.warning("Audio.play called before audio system was initialized.");
 		}

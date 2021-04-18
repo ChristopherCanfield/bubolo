@@ -15,7 +15,7 @@ import org.lwjgl.openal.AL10;
  * @author Christopher D. Canfield
  */
 class AudioSources {
-	private int[] sources;
+	private final int[] sources;
 	private int nextIndex;
 
 	/**
