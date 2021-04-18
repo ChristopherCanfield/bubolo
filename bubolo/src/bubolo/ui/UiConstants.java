@@ -31,16 +31,6 @@ public abstract class UiConstants
 	public static final float SFXVOL_DEFAULT = Audio.getSoundEffectVolume();
 
 	/**
-	 * Music Volume Default
-	 */
-	public static final float MFXVOL_DEFAULT = Audio.getMusicVolume();
-
-	/**
-	 * Screen Size Default
-	 */
-	public static final int SCREENSIZE_DEFAULT = 2;
-
-	/**
 	 * The game icon
 	 */
 	public static ImageIcon gameIcon = new ImageIcon(ICONS_PATH + "tank_icon.png");

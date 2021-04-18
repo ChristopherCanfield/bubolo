@@ -2,26 +2,23 @@ package bubolo.audio;
 
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.AL_PITCH;
 import static org.lwjgl.openal.AL10.AL_POSITION;
+import static org.lwjgl.openal.AL10.AL_REFERENCE_DISTANCE;
+import static org.lwjgl.openal.AL10.AL_ROLLOFF_FACTOR;
 import static org.lwjgl.openal.AL10.alDistanceModel;
+import static org.lwjgl.openal.AL10.alListener3f;
+import static org.lwjgl.openal.AL10.alSource3f;
+import static org.lwjgl.openal.AL10.alSourcePlay;
+import static org.lwjgl.openal.AL10.alSourcef;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import org.lwjgl.openal.AL10;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
-
 import bubolo.Config;
-import bubolo.util.GameLogicException;
 
 /**
  * The top-level class for the Sound system.
@@ -29,7 +26,7 @@ import bubolo.util.GameLogicException;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class Audio implements Music.OnCompletionListener
+public class Audio
 {
 	private static final Logger logger = Logger.getLogger(Config.AppProgramaticTitle);
 
@@ -38,30 +35,16 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	private Audio() {}
 
-	/** The path to the music files. */
-	public static final String MUSIC_PATH = "res/music/";
-
 	/** The path to the sound effect files. */
-	public static final String SFX_PATH = "res/sfx/";
-
-	// The sound effects volume. The default is 75%.
-	private static float soundEffectVolume = 0.75f;
-	// The music volume. The default is 75%.
-	private static float musicVolume = 0.75f;
-
-	// A list of all music files.
-	private static List<Music> music;
-	// The index of the currently playing music file, or -1 if no music is playing.
-	private static int currentMusicFile = -1;
-
-	// The music on completion listener. This is used when a song has finished playing.
-	private static Music.OnCompletionListener musicOnCompletionListener = new Audio();
-
-	private static final Map<Sfx, Sound> soundEffects = new HashMap<>();
+	private static final String sfxPath = "res/sfx/";
 
 	private static boolean initialized = false;
 
-	private static final Random random = new Random();
+	private static AudioSources sources;
+	private static AudioBuffers buffers;
+
+	// The sound effects volume. The default is 100%.
+	private static float soundEffectVolume = 1.0f;
 
 	// OpenAL reference distance: the distance that the sound is played at its highest volume.
 	private static float referenceDistance;
@@ -81,7 +64,10 @@ public class Audio implements Music.OnCompletionListener
 	 */
 	public static void initialize(float worldWidth, float worldHeight, float viewportWidth, float viewportHeight) {
 		initialized = true;
-		preloadCoreSoundEffects();
+
+		sources = new AudioSources(100);
+		buffers = new AudioBuffers();
+		loadSoundEffects();
 
 		alDistanceModel(AL10.AL_INVERSE_DISTANCE);
 
@@ -96,149 +82,40 @@ public class Audio implements Music.OnCompletionListener
 
 	/**
 	 * Plays a sound effect. This should be called in the following way:<br><br>
-	 * <code>Audio.play(Sfx.EXPLOSION);<br>
-	 * Audio.play(Sfx.TANK_HIT);</code>
+	 * <code>Audio.play(Sfx.TankExplosion);<br>
+	 * Audio.play(Sfx.TankHit);</code>
+	 *
 	 * @param soundEffect the sound effect to play.
+	 * @param x the source's x world position.
+	 * @param y the source's y world position.
 	 */
 	public static void play(Sfx soundEffect, float x, float y)
 	{
 		if (initialized) {
-			Sound sound = getSoundEffect(soundEffect);
-			long id = sound.play(soundEffectVolume * soundEffect.volumeAdjustment);
-			// Ensure that the sound was played.
-			if (id != -1) {
-				AL10.alListener3f(AL_POSITION, listenerX, listenerY, 0f);
-				System.out.println("Error1: " + AL10.alGetError());
+			alListener3f(AL_POSITION, listenerX, listenerY, 0f);
 
-				int sourceId = (int) id;
-				AL10.alSourcef(sourceId, AL10.AL_PITCH, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
-				System.out.println("Error2: " + AL10.alGetError());
-				AL10.alSource3f(sourceId, AL_POSITION, x, y, 1f);
-				System.out.println("Error3: " + AL10.alGetError());
-				AL10.alSourcef(sourceId, AL10.AL_ROLLOFF_FACTOR, rolloffFactor);
-				System.out.println("Error4: " + AL10.alGetError());
-				AL10.alSourcef(sourceId, AL10.AL_REFERENCE_DISTANCE, referenceDistance);
-				System.out.println("Error5: " + AL10.alGetError());
-				System.out.printf("Setting alSource3f AL_POSITION: %f,%f%n", x, y);
+			int sourceId = sources.nextId();
+			buffers.attachBufferToSource(soundEffect, sourceId);
 
-				float[] l1 = new float[1];
-				float[] l2 = new float[1];
-				float[] l3 = new float[1];
-				AL10.alGetListener3f(AL_POSITION, l1, l2, l3);
-				System.out.printf("Listener location: %f,%f,%f%n", l1[0], l2[0], l3[0]);
-//				AL10.alSourcePlay(sourceId);
-			}
+			alSourcef(sourceId, AL_GAIN, soundEffectVolume * soundEffect.volumeAdjustment);
+			alSourcef(sourceId, AL_PITCH, getRandomPitch(soundEffect.pitchRangeMin, soundEffect.pitchRangeMax));
+			alSource3f(sourceId, AL_POSITION, x, y, 1f);
+			alSourcef(sourceId, AL_ROLLOFF_FACTOR, rolloffFactor);
+			alSourcef(sourceId, AL_REFERENCE_DISTANCE, referenceDistance);
+
+			alSourcePlay(sourceId);
 		} else {
 			logger.warning("Audio.play called before audio system was initialized.");
 		}
 	}
+
+	private static final Random random = new Random();
 
 	private static float getRandomPitch(float min, float max) {
 		float adjustment = random.nextFloat() * (max - min);
 		float pitch = max - adjustment;
 		assert pitch >= 0.5f && pitch <= 2.0f;
 		return max - adjustment;
-	}
-
-	/**
-	 * Starts the music. The audio system will continuously loop through all songs
-	 * until <code>Audio.stopMusic()</code> is called.
-	 */
-	public static void startMusic()
-	{
-		if (initialized) {
-			if (music == null)
-			{
-				loadMusic();
-				if (music.size() < 2)
-				{
-					throw new GameLogicException("At least two songs must be specified.");
-				}
-			}
-
-			currentMusicFile = 0;
-			music.get(currentMusicFile).setVolume(musicVolume);
-			music.get(currentMusicFile).play();
-			music.get(currentMusicFile).setOnCompletionListener(musicOnCompletionListener);
-		} else {
-			logger.warning("Audio.startMusic called before audio system was initialized.");
-		}
-	}
-
-	/**
-	 * Loads all music files. Note that music files aren't actually stored in memory, unlike
-	 * sound effect files. Instead, they are streamed from disk as needed.
-	 */
-	private static void loadMusic()
-	{
-		music = new ArrayList<Music>();
-
-		try
-		{
-			music.add(Gdx.audio.newMusic(new FileHandle(new File(MUSIC_PATH + "Lessons-8bit.mp3"))));
-			music.add(Gdx.audio.newMusic(new FileHandle(new File(MUSIC_PATH + "bolo_menu.mp3"))));
-		}
-		catch (Exception e)
-		{
-
-			System.out.println(e);
-			e.printStackTrace();
-			throw e;
-		}
-	}
-
-	/**
-	 * ***Testing only***
-	 * Provides a hook to the Music OnCompletionListener for testing.
-	 */
-	static void testMusicOnCompletionListener()
-	{
-		if (music == null)
-		{
-			loadMusic();
-		}
-
-		musicOnCompletionListener.onCompletion(null);
-	}
-
-	/**
-	 * Callback that is invoked when a music stream has completed.
-	 */
-	@Override
-	public void onCompletion(Music completedMusic)
-	{
-		// Plays a randomly selected next song. The completed song will not be played multiple
-		// times in a row. Note that this will not work with only one song.
-		int nextSong = -1;
-		while (nextSong == -1 || nextSong == currentMusicFile)
-		{
-			nextSong = (new Random()).nextInt(music.size());
-		}
-
-		music.get(nextSong).setVolume(musicVolume / 100.f);
-		music.get(nextSong).play();
-
-		setMusicFileIndex(nextSong);
-	}
-
-	private static void setMusicFileIndex(int index)
-	{
-		checkArgument(index >= 0, "Song index must be greater than zero: %s", index);
-		checkArgument(index < music.size(), "song index exceeds music file count: %s", index);
-
-		currentMusicFile = index;
-	}
-
-	/**
-	 * Stops the music. There is no effect is no music is currently being played.
-	 */
-	public static void stopMusic()
-	{
-		if (music != null && currentMusicFile != -1)
-		{
-			music.get(currentMusicFile).stop();
-			currentMusicFile = -1;
-		}
 	}
 
 	/**
@@ -264,76 +141,21 @@ public class Audio implements Music.OnCompletionListener
 	}
 
 	/**
-	 * Sets the music volume, from 0 (mute) to 1 (max volume).
-	 * @param volume the new music volume, ranging from 0 to 1.
-	 * @throws IllegalArgumentException if volume is less than 0 or greater than 1.
+	 * Loads all sound effects.
 	 */
-	public static void setMusicVolume(float volume)
-	{
-		checkArgument(volume >= 0, "Music volume was less than zero: %s", volume);
-		checkArgument(volume <= 1, "Music volume was greater than one: %s", volume);
-
-		musicVolume = volume;
-	}
-
-	/**
-	 * Gets the music volume, in the range [0, 1].
-	 * @return the music volume.
-	 */
-	public static float getMusicVolume()
-	{
-		return musicVolume;
-	}
-
-	/**
-	 * Preloads the core sound effects, to prevent slight hickups that can occur when a sound is first used.
-	 */
-	private static void preloadCoreSoundEffects() {
-		getSoundEffect(Sfx.CannonFired);
-		getSoundEffect(Sfx.MineExplosion);
-		getSoundEffect(Sfx.TankExplosion);
-		getSoundEffect(Sfx.PillboxHit);
-		getSoundEffect(Sfx.TreeHit);
-		getSoundEffect(Sfx.WallHit);
-		getSoundEffect(Sfx.TankHit);
-	}
-
-	/**
-	 * Gets the specified sound effect. Loads the sound file and stores it in memory if needed.
-	 * @param sfx the sound effect to get.
-	 * @return reference to the loaded sound effect.
-	 */
-	private static Sound getSoundEffect(Sfx sfx) {
-		Sound soundEffect = soundEffects.get(sfx);
-		if (soundEffect == null) {
-			soundEffect = loadSoundEffect(sfx);
-			soundEffects.put(sfx, soundEffect);
+	private static void loadSoundEffects() {
+		var soundEffects = Sfx.values();
+		for (Sfx sfx : soundEffects) {
+			buffers.loadOgg(sfx, sfxPath);
 		}
-		return soundEffect;
-	}
-
-	private static Sound loadSoundEffect(Sfx sfx) {
-		FileHandle soundFile = new FileHandle(new File(Audio.SFX_PATH + sfx.fileName));
-		Sound sound = Gdx.audio.newSound(soundFile);
-		return sound;
 	}
 
 	/**
-	 * Disposes all sound effects and music files.
+	 * Shuts down and cleans up the audio system.
 	 */
 	public static void dispose()
 	{
-		for (Sound soundEffect : soundEffects.values()) {
-			soundEffect.dispose();
-		}
-
-		if (music != null)
-		{
-			for (Music m : music)
-			{
-				m.stop();
-				m.dispose();
-			}
-		}
+		sources.dispose();
+		buffers.dispose();
 	}
 }
