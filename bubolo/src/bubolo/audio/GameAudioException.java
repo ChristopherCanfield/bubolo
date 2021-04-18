@@ -13,4 +13,8 @@ public class GameAudioException extends GameRuntimeException {
 	GameAudioException(String message) {
 		super(message);
 	}
+
+	GameAudioException(Throwable throwable) {
+		super(throwable);
+	}
 }

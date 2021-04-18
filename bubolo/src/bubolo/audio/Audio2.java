@@ -13,14 +13,10 @@ import static org.lwjgl.openal.AL10.alSource3f;
 import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourcef;
 
-import java.io.File;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import org.lwjgl.openal.AL10;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 
 import bubolo.Config;
 
@@ -71,6 +67,7 @@ public class Audio2
 
 		sources = new AudioSources(100);
 		buffers = new AudioBuffers();
+		loadSoundEffects();
 
 		alDistanceModel(AL10.AL_INVERSE_DISTANCE);
 
@@ -144,36 +141,13 @@ public class Audio2
 	}
 
 	/**
-	 * Preloads the core sound effects, to prevent slight hickups that can occur when a sound is first used.
+	 * Loads all sound effects.
 	 */
-	private static void preloadCoreSoundEffects() {
-		getSoundEffect(Sfx.CannonFired);
-		getSoundEffect(Sfx.MineExplosion);
-		getSoundEffect(Sfx.TankExplosion);
-		getSoundEffect(Sfx.PillboxHit);
-		getSoundEffect(Sfx.TreeHit);
-		getSoundEffect(Sfx.WallHit);
-		getSoundEffect(Sfx.TankHit);
-	}
-
-	/**
-	 * Gets the specified sound effect. Loads the sound file and stores it in memory if needed.
-	 * @param sfx the sound effect to get.
-	 * @return reference to the loaded sound effect.
-	 */
-	private static Sound getSoundEffect(Sfx sfx) {
-		Sound soundEffect = soundEffects.get(sfx);
-		if (soundEffect == null) {
-			soundEffect = loadSoundEffect(sfx);
-			soundEffects.put(sfx, soundEffect);
+	private static void loadSoundEffects() {
+		var soundEffects = Sfx.values();
+		for (Sfx sfx : soundEffects) {
+			buffers.loadOgg(sfx, sfxPath);
 		}
-		return soundEffect;
-	}
-
-	private static Sound loadSoundEffect(Sfx sfx) {
-		FileHandle soundFile = new FileHandle(new File(Audio2.sfxPath + sfx.fileName));
-		Sound sound = Gdx.audio.newSound(soundFile);
-		return sound;
 	}
 
 	/**
@@ -181,5 +155,7 @@ public class Audio2
 	 */
 	public static void dispose()
 	{
+		sources.dispose();
+		buffers.dispose();
 	}
 }

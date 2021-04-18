@@ -14,8 +14,8 @@ public enum Sfx
 {
 	CannonFired("cannon_fired.ogg", 1, 0.75f, 1.25f),
 	MineExplosion("mine_explosion.ogg", 1, 0.75f, 1.25f),
-	TankExplosion("tank_explosion.wav", 1, 0.75f, 1.25f),
-	TankHit("tank_explosion.wav", 1, 0.75f, 1.25f),
+	TankExplosion("tank_explosion.ogg", 1, 0.75f, 1.25f),
+	TankHit("tank_explosion.ogg", 1, 0.75f, 1.25f),
 	TankDrowned("bubbles.ogg", 1, 1, 1),
 	PillboxHit("pillbox_hit.ogg", 1, 0.75f, 1.25f),
 	TreeHit("tree_hit.ogg", 1, 0.75f, 1.25f),
