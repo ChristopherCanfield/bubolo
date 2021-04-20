@@ -50,11 +50,7 @@ public class KeyboardTankController implements Controller {
 
 	private static void processCannon(Tank tank, World world) {
 		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
-			float tankCenterX = tank.x();
-			float tankCenterY = tank.y();
-
-			tank.fireCannon(world, tankCenterX + 18 * (float) Math.cos(tank.rotation()),
-					tankCenterY + 18 * (float) Math.sin(tank.rotation()));
+			tank.fireCannon(world);
 		}
 	}
 

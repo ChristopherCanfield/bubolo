@@ -1,16 +1,19 @@
 package bubolo.controllers.input;
 
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
+import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWGamepadState;
+import java.nio.FloatBuffer;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
+import org.lwjgl.glfw.GLFWGamepadState;
 
 import bubolo.controllers.ActorEntityController;
 import bubolo.world.Tank;
@@ -37,44 +40,48 @@ public class GamepadTankController extends ActorEntityController<Tank> {
 	public void update(World world) {
 		if (glfwJoystickPresent(GLFW_JOYSTICK_1)) {
 			var tank = parent();
-			processMovement(tank);
-			processCannon(tank, world);
+
+			var axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1);
+			glfwGetGamepadState(GLFW_JOYSTICK_1, gamepadState);
+
+			processMovement(tank, axes);
+			processCannon(tank, axes, world);
+			processMineLaying(tank, axes, world);
 		}
-
-
-//		processCannon(tank, world);
-//		processMineLaying(tank, world);
 	}
 
-	private static void processMovement(Tank tank) {
-		var axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1);
-
+	private static void processMovement(Tank tank, FloatBuffer axes) {
 		if (axes.get(GLFW_GAMEPAD_AXIS_LEFT_Y) < -0.15f) {
 			tank.accelerate();
 		} else if (axes.get(GLFW_GAMEPAD_AXIS_LEFT_Y) > 0.15f) {
 			tank.decelerate();
 		}
 
-		if (axes.get(GLFW_GAMEPAD_AXIS_LEFT_X) < -0.15f) {
+		if (axes.get(GLFW_GAMEPAD_AXIS_LEFT_X) < -0.5f) {
 			tank.rotateRight();
-		} else if (axes.get(GLFW_GAMEPAD_AXIS_LEFT_X) > 0.15f) {
+		} else if (axes.get(GLFW_GAMEPAD_AXIS_LEFT_X) > 0.5f) {
 			tank.rotateLeft();
 		}
 	}
 
-	private void processCannon(Tank tank, World world) {
-		GLFW.glfwGetGamepadState(GLFW_JOYSTICK_1, gamepadState);
-		if (gamepadState.buttons(GLFW.GLFW_GAMEPAD_BUTTON_A) != 0) {
-			float tankCenterX = tank.x();
-			float tankCenterY = tank.y();
+	private void processCannon(Tank tank, FloatBuffer axes, World world) {
+		boolean rightTriggerActivated = false;
+		if (axes.limit() > GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER) {
+			rightTriggerActivated = axes.get(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER) > 0.05;
+		}
 
-			tank.fireCannon(world, tankCenterX + 18 * (float) Math.cos(tank.rotation()),
-					tankCenterY + 18 * (float) Math.sin(tank.rotation()));
+		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_A) != 0 || rightTriggerActivated) {
+			tank.fireCannon(world);
 		}
 	}
 
-	private static void processMineLaying(Tank tank, World world) {
-		if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
+	private void processMineLaying(Tank tank, FloatBuffer axes, World world) {
+		boolean leftTriggerActivated = false;
+		if (axes.limit() > GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER) {
+			leftTriggerActivated = axes.get(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER) > 0.05;
+		}
+
+		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_B) != 0 || leftTriggerActivated) {
 			tank.placeMine(world);
 		}
 	}
