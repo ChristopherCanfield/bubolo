@@ -28,17 +28,7 @@ public abstract class UiConstants
 	/**
 	 * Sound Effects Volume Default
 	 */
-	public static final float SFXVOL_DEFAULT = Audio.getSoundEffectVolume();
-
-	/**
-	 * Music Volume Default
-	 */
-	public static final float MFXVOL_DEFAULT = Audio.getMusicVolume();
-
-	/**
-	 * Screen Size Default
-	 */
-	public static final int SCREENSIZE_DEFAULT = 2;
+	public static final float SFXVOL_DEFAULT = Audio.soundEffectVolume();
 
 	/**
 	 * The game icon

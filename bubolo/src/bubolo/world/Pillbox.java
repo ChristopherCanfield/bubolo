@@ -166,7 +166,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	public void receiveDamage(float damagePoints, World world) {
 		assert damagePoints >= 0;
 
-		sfxPlayer.play(Sfx.PillboxHit);
+		sfxPlayer.play(Sfx.PillboxHit, x(), y());
 		hitPoints -= damagePoints;
 
 		if (hitPoints < 0) {

@@ -1,5 +1,9 @@
 package bubolo;
 
+import static bubolo.Config.DefaultPixelsPerWorldUnit;
+import static bubolo.Config.TargetWindowHeight;
+import static bubolo.Config.TargetWindowWidth;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -95,7 +99,6 @@ public class BuboloApplication extends AbstractGameApplication
 	{
 		initializeLogger();
 
-		Audio.initialize();
 		graphics = new Graphics(windowWidth, windowHeight);
 		network = NetworkSystem.getInstance();
 
@@ -178,6 +181,9 @@ public class BuboloApplication extends AbstractGameApplication
 		case NET_GAME: {
 			screen.dispose();
 
+			Audio.initialize(world.getWidth(), world.getHeight(),
+					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
+
 			Entity.ConstructionArgs args;
 			Vector2 spawnLocation = getRandomSpawn(world);
 			args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
@@ -194,6 +200,9 @@ public class BuboloApplication extends AbstractGameApplication
 			if (screen != null) {
 				screen.dispose();
 			}
+
+			Audio.initialize(world.getWidth(), world.getHeight(),
+					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			Vector2 spawnLocation = getRandomSpawn(world);
 			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);

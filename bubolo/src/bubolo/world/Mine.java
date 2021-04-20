@@ -46,7 +46,7 @@ public class Mine extends ActorEntity {
 
 	@Override
 	protected void onDispose() {
-		Audio.play(Sfx.MineExplosion);
+		Audio.play(Sfx.MineExplosion, x(), y());
 	}
 
 	@Override

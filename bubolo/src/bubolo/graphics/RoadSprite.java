@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import bubolo.world.Road;
 
 /**
- * The graphical representation of a Road
+ * The graphical representation of a Road.
  *
  * @author BU673 - Clone Industries
  */
@@ -17,15 +17,14 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	private static final String TEXTURE_FILE = "road.png";
 
 	/**
-	 * Constructor for the RoadSprite. This is Package-private because sprites should not
+	 * Constructs a RoadSprite. This is Package-private because sprites should not
 	 * be directly created outside of the graphics system.
 	 *
-	 * @param road
-	 *            Reference to the road that this RoadSprite represents.
+	 * @param road reference to the road that this RoadSprite represents.
 	 */
 	RoadSprite(Road road)
 	{
-		super(DrawLayer.TERRAIN, road);
+		super(DrawLayer.TERRAIN_IMPROVEMENTS, road);
 
 		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
 	}

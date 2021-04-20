@@ -43,7 +43,8 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 	 */
 	PillboxSprite(Pillbox pillbox)
 	{
-		super(DrawLayer.TERRAIN_IMPROVEMENTS, pillbox);
+		// Drawn in mines layer, because roads need to be drawn above other terrains.
+		super(DrawLayer.MINES, pillbox);
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
 	}

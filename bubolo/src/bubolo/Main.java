@@ -24,18 +24,18 @@ public class Main {
 		Runnable serverApplication = () -> {
 			var cfg = defaultLwjglAppConfig();
 			new Lwjgl3Application(
-					new BuboloApplication(Config.InitialWindowWidth, Config.InitialWindowHeight, PlayerType.Host, args), cfg);
+					new BuboloApplication(Config.TargetWindowWidth, Config.TargetWindowHeight, PlayerType.Host, args), cfg);
 		};
 
 		Runnable clientApplication = () -> {
 			var cfg = defaultLwjglAppConfig();
 			new Lwjgl3Application(
-					new BuboloApplication(Config.InitialWindowWidth, Config.InitialWindowHeight, PlayerType.Client, args), cfg);
+					new BuboloApplication(Config.TargetWindowWidth, Config.TargetWindowHeight, PlayerType.Client, args), cfg);
 		};
 
 		Runnable singlePlayerApplication = () -> {
 			var cfg = defaultLwjglAppConfig();
-			new Lwjgl3Application(new BuboloApplication(Config.InitialWindowWidth, Config.InitialWindowHeight,
+			new Lwjgl3Application(new BuboloApplication(Config.TargetWindowWidth, Config.TargetWindowHeight,
 					PlayerType.LocalSinglePlayer, args), cfg);
 		};
 
@@ -46,7 +46,7 @@ public class Main {
 	private static Lwjgl3ApplicationConfiguration defaultLwjglAppConfig() {
 		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
 		cfg.setTitle(Config.AppTitle);
-		cfg.setWindowedMode(Config.InitialWindowWidth, Config.InitialWindowHeight);
+		cfg.setWindowedMode(Config.TargetWindowWidth, Config.TargetWindowHeight);
 		cfg.setForegroundFPS(Config.FPS);
 		return cfg;
 	}
