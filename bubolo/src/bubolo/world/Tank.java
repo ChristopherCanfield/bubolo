@@ -2,6 +2,7 @@ package bubolo.world;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
+import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateBullet;
@@ -107,6 +109,8 @@ public class Tank extends ActorEntity implements Damageable {
 	private static final int height = 20;
 
 	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
+
+	private final List<Controller> controllers = new ArrayList<>();
 
 	/**
 	 * Constructs a Tank.
@@ -290,7 +294,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady() {
-		return (System.currentTimeMillis() - cannonReadyTime > cannonReloadSpeed) && isAlive();
+		return (System.currentTimeMillis() - cannonReadyTime > cannonReloadSpeed) && ammoCount > 0 && isAlive();
 	}
 
 	/**
@@ -303,7 +307,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
 	public Bullet fireCannon(World world, float startX, float startY) {
-		if ((ammoCount > 0) && (cannonReadyTime - System.currentTimeMillis() < 0)) {
+		if (isCannonReady()) {
 			cannonReadyTime = System.currentTimeMillis();
 
 			var args = new Entity.ConstructionArgs(UUID.randomUUID(), startX, startY, rotation());
@@ -621,5 +625,20 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	public boolean isSolid() {
 		return true;
+	}
+
+	/**
+	 * Attaches a controller to this tank. Tanks can have multiple attached controllers.
+	 *
+	 * @param c the controller to add.
+	 */
+	@Override
+	public void attachController(Controller c) {
+		controllers.add(c);
+	}
+
+	@Override
+	protected void updateControllers(World world) {
+		controllers.forEach(controller -> controller.update(world));
 	}
 }

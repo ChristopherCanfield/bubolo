@@ -8,7 +8,7 @@ import bubolo.world.Tank;
 import bubolo.world.World;
 
 /**
- * A controller for the local tank. This controller maps keyboard inputs to tank commands.
+ * Controls the tank using the keyboard.
  *
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
@@ -49,7 +49,7 @@ public class KeyboardTankController implements Controller {
 	}
 
 	private static void processCannon(Tank tank, World world) {
-		if (Gdx.input.isKeyPressed(Keys.SPACE) && tank.isCannonReady() && (tank.ammoCount() > 0)) {
+		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
 			float tankCenterX = tank.x();
 			float tankCenterY = tank.y();
 
@@ -59,8 +59,7 @@ public class KeyboardTankController implements Controller {
 	}
 
 	private static void processMineLaying(Tank tank, World world) {
-		if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)
-				|| Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT) && (tank.mineCount() > 0)) {
+		if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
 			tank.placeMine(world);
 		}
 	}
