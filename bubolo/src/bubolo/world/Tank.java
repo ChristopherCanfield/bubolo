@@ -2,6 +2,7 @@ package bubolo.world;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
+import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateBullet;
@@ -51,13 +53,16 @@ public class Tank extends ActorEntity implements Damageable {
 	// The tank's rate of rotation per tick.
 	private static final float rotationRate = 0.03f;
 
-	// Specifies whether the tank accelerated this tick.
+	// Whether the tank accelerated this tick.
 	private boolean accelerated;
 
-	// Specifies whether the tank decelerated this tick.
+	// Whether the tank decelerated this tick.
 	private boolean decelerated;
 
-	// Specifies whether the tank is hidden in trees
+	// Whether the tank rotated this tick.
+	private boolean rotated;
+
+	// Whether the tank is hidden.
 	private boolean hidden;
 
 	// The reload speed of the tank's cannon, in milliseconds.
@@ -108,6 +113,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
 
+	private final List<Controller> controllers = new ArrayList<>();
+
 	/**
 	 * Constructs a Tank.
 	 *
@@ -147,6 +154,7 @@ public class Tank extends ActorEntity implements Damageable {
 			adjustedMaxSpeed = maxSpeed;
 			accelerated = false;
 			decelerated = false;
+			rotated = false;
 			hidden = false;
 
 			notifyNetwork();
@@ -173,6 +181,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 		decelerated = false;
 		accelerated = false;
+		rotated = false;
 
 		if (isOwnedByLocalPlayer()) {
 			Audio.setListenerPosition(x(), y());
@@ -272,16 +281,22 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Rotates the tank clockwise.
 	 */
 	public void rotateRight() {
-		setRotation(rotation() + rotationRate);
-		notifyNetwork();
+		if (!rotated) {
+			rotated = true;
+			setRotation(rotation() + rotationRate);
+			notifyNetwork();
+		}
 	}
 
 	/**
 	 * Rotates the tank counter-clockwise.
 	 */
 	public void rotateLeft() {
-		setRotation(rotation() - rotationRate);
-		notifyNetwork();
+		if (!rotated) {
+			rotated = true;
+			setRotation(rotation() - rotationRate);
+			notifyNetwork();
+		}
 	}
 
 	/**
@@ -290,23 +305,26 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return true if the cannon is ready to fire.
 	 */
 	public boolean isCannonReady() {
-		return (System.currentTimeMillis() - cannonReadyTime > cannonReloadSpeed) && isAlive();
+		return (System.currentTimeMillis() - cannonReadyTime > cannonReloadSpeed) && ammoCount > 0 && isAlive();
 	}
 
 	/**
-	 * Fires the tank's cannon, which adds a bullet to the world and initiates a cannon reload.
+	 * Fires the tank's cannon, if the cannon is ready.
 	 *
 	 * @param world  reference to the world.
-	 * @param startX the bullet's start x position.
-	 * @param startY the bullet's start y position.
 	 *
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
-	public Bullet fireCannon(World world, float startX, float startY) {
-		if ((ammoCount > 0) && (cannonReadyTime - System.currentTimeMillis() < 0)) {
+	public Bullet fireCannon(World world) {
+		if (isCannonReady()) {
 			cannonReadyTime = System.currentTimeMillis();
 
-			var args = new Entity.ConstructionArgs(UUID.randomUUID(), startX, startY, rotation());
+			float tankHalfWidth = width() / 2.0f;
+			float tankHalfHeight = height() / 1.5f;
+			float bulletX = x() + tankHalfWidth * (float) Math.cos(rotation());
+			float bulletY = y() + tankHalfHeight * (float) Math.sin(rotation());
+
+			var args = new Entity.ConstructionArgs(UUID.randomUUID(), bulletX, bulletY, rotation());
 			Bullet bullet = world.addEntity(Bullet.class, args);
 			bullet.setOwner(this);
 
@@ -621,5 +639,20 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	public boolean isSolid() {
 		return true;
+	}
+
+	/**
+	 * Attaches a controller to this tank. Tanks can have multiple attached controllers.
+	 *
+	 * @param c the controller to add.
+	 */
+	@Override
+	public void attachController(Controller c) {
+		controllers.add(c);
+	}
+
+	@Override
+	protected void updateControllers(World world) {
+		controllers.forEach(controller -> controller.update(world));
 	}
 }

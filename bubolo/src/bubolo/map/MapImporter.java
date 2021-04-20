@@ -313,10 +313,10 @@ public class MapImporter {
 					// The game world is flipped from json map indexes (zero is the top in the map file, but the bottom in the world map).
 					int posY = (world.getTileRows() - row - 1) * Coords.TileToWorldScale;
 					int posX = col * Coords.TileToWorldScale;
-					double rotation = Math.PI / 2.0;
+					float rotation = 0;
 
 					// The x and y coords are flipped in the map.
-					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, (float) rotation);
+					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, rotation);
 					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world, args);
 
 					diagnostics.typesImported.add(entity.getClass().getSimpleName());

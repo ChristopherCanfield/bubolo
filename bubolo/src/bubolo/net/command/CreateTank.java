@@ -38,7 +38,7 @@ public class CreateTank extends CreateEntity
 					@Override
 					public void create(ActorEntity entity)
 					{
-						entity.setController(new NetworkTankController());
+						entity.attachController(new NetworkTankController());
 					}
 				});
 

@@ -71,11 +71,11 @@ public abstract class Entity {
 	}
 
 	/**
-	 * @return The object's x position in world units.
+	 * @return The object's left x position in world units.
 	 */
 	public abstract float x();
 	/**
-	 * @return The object's y position in world units.
+	 * @return The object's bottom y position in world units.
 	 */
 	public abstract float y();
 

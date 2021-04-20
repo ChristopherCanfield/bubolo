@@ -7,10 +7,9 @@ import bubolo.controllers.Controller;
 /**
  * Game objects that may move, and that may have update logic.
  *
- * The primary differences between ActorEntities and StaticEntities are:
- * - Unlike StaticEntities, ActorEntities can be moved after construction.
- * - ActorEntities have a public update method that is called by the world each game tick.
- * - ActorEntities are always Collidable, though they may not be solid.
+ * The primary differences between ActorEntities and StaticEntities are: - Unlike StaticEntities, ActorEntities can be moved after
+ * construction. - ActorEntities have a public update method that is called by the world each game tick. - ActorEntities are
+ * always Collidable, though they may not be solid.
  *
  * @author Christopher D. Canfield
  * @since 0.4.0
@@ -26,7 +25,8 @@ public abstract class ActorEntity extends Entity implements Collidable {
 
 	private final BoundingBox boundingBox;
 
-	private static final Controller nullController = world -> {};
+	private static final Controller nullController = world -> {
+	};
 
 	private Controller controller = nullController;
 
@@ -97,8 +97,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	}
 
 	/**
-	 * Called when the ActorEntity receives a new owner. Derived classes can override this method to be notified
-	 * of owner changes.
+	 * Called when the ActorEntity receives a new owner. Derived classes can override this method to be notified of owner changes.
 	 *
 	 * @param newOwner the actor's new owner.
 	 */
@@ -139,8 +138,8 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	}
 
 	/**
-	 * Called once per tick, after any attached controllers have been updated. Derived classes can override
-	 * this to perform updates, if needed.
+	 * Called once per tick, after any attached controllers have been updated. Derived classes can override this to perform
+	 * updates, if needed.
 	 *
 	 * @param world reference to the game world.
 	 */
@@ -158,12 +157,11 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	}
 
 	/**
-	 * This this actors controller.
+	 * Attaches a controller to the actor. Most actors can only have a single controller attached.
 	 *
 	 * @param c the controller to add.
 	 */
-	public void setController(Controller c)
-	{
+	public void attachController(Controller c) {
 		controller = c;
 	}
 
@@ -172,8 +170,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	 *
 	 * @param world reference to the World.
 	 */
-	protected void updateControllers(World world)
-	{
+	protected void updateControllers(World world) {
 		controller.update(world);
 	}
 }
