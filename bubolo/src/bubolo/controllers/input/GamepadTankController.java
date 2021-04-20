@@ -77,7 +77,7 @@ public class GamepadTankController extends ActorEntityController<Tank> {
 
 	private void processMineLaying(Tank tank, FloatBuffer axes, World world) {
 		boolean leftTriggerActivated = false;
-		if (axes.limit() > GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER) {
+		if (axes.limit() > GLFW_GAMEPAD_AXIS_LEFT_TRIGGER) {
 			leftTriggerActivated = axes.get(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER) > 0.05;
 		}
 
