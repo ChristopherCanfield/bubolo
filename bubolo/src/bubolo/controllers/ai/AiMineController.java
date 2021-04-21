@@ -1,64 +1,132 @@
 package bubolo.controllers.ai;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.badlogic.gdx.math.Intersector;
 
 import bubolo.controllers.ActorEntityController;
 import bubolo.world.Crater;
+import bubolo.world.DeepWater;
 import bubolo.world.Entity;
 import bubolo.world.Mine;
 import bubolo.world.MineExplosion;
 import bubolo.world.Tank;
+import bubolo.world.Water;
 import bubolo.world.World;
 
-
 /**
- * A controller for Mines. Checks for collisions with tanks,  and explodes the mine on detection
+ * A controller for Mines. Checks for collisions with tanks, and explodes the mine on detection
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class AiMineController extends ActorEntityController<Mine>
-{
+public class AiMineController extends ActorEntityController<Mine> {
 	/**
 	 * Constructs an AI Mine controller.
 	 *
-	 * @param mine
-	 *            the mine this controller controls.
+	 * @param mine the mine this controller controls.
 	 */
 	public AiMineController(Mine mine) {
 		super(mine);
 	}
 
 	@Override
-	public void update(World world)
-	{
+	public void update(World world) {
 		var mine = parent();
 
 		if (mine.isArmed()) {
 			// Check if any tanks are touching this mine. If they are, explode the mine.
-			for(Tank tank : world.getTanks()) {
+			for (Tank tank : world.getTanks()) {
 				if (Intersector.overlapConvexPolygons(tank.bounds(), mine.bounds())) {
 					mine.dispose();
 
-					{
-						// Add the explosion.
-						var args = new Entity.ConstructionArgs(UUID.randomUUID(), mine.x(), mine.y(), 0);
-						world.addEntity(MineExplosion.class, args);
-					}
-					{
-						var terrainImprovement = world.getTerrainImprovement(mine.tileColumn(), mine.tileRow());
-						if (terrainImprovement != null) {
-							terrainImprovement.dispose();
-						}
+					var x = mine.x();
+					var y = mine.y();
 
-						// Add the crater.
-						var args = new Entity.ConstructionArgs(UUID.randomUUID(), mine.x(), mine.y(), 0);
-						world.addEntity(Crater.class, args);
-					}
+					addExplosion(world, x, y);
+					removeTerrainImprovement(world, mine.tileColumn(), mine.tileRow());
+					var crater = addCrater(world, x, y);
+					floodCraterIfAdjacentToWater(world, crater);
 
 					return;
 				}
+			}
+		}
+	}
+
+	private static void addExplosion(World world, float x, float y) {
+		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
+		world.addEntity(MineExplosion.class, args);
+	}
+
+	private static void removeTerrainImprovement(World world, int tileColumn, int tileRow) {
+		var terrainImprovement = world.getTerrainImprovement(tileColumn, tileRow);
+		if (terrainImprovement != null) {
+			terrainImprovement.dispose();
+		}
+	}
+
+	private static Crater addCrater(World world, float x, float y) {
+		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
+		return world.addEntity(Crater.class, args);
+	}
+
+	private static void floodCraterIfAdjacentToWater(World world, Crater crater) {
+		if (isAdjacentToWater(world, crater.tileColumn(), crater.tileRow())) {
+			world.timer().scheduleSeconds(4, w -> {
+				crater.dispose();
+
+				var terrain = world.getTerrain(crater.tileColumn(), crater.tileRow());
+				terrain.dispose();
+
+				var args = new Entity.ConstructionArgs(UUID.randomUUID(), crater.x(), crater.y(), 0);
+				world.addEntity(Water.class, args);
+
+				// TODO: (Move crater flooding functionality into the World): check for adjacent craters, and flood them if necessary.
+			});
+		}
+	}
+
+	private static boolean isAdjacentToWater(World world, int tileX, int tileY) {
+		boolean adjacentToWater = false;
+		if (world.isValidTile(tileX - 1, tileY)) {
+			adjacentToWater = adjacentToWater || isWater(world, tileX - 1, tileY);
+		}
+		if (world.isValidTile(tileX + 1, tileY)) {
+			adjacentToWater = adjacentToWater || isWater(world, tileX + 1, tileY);
+		}
+
+		if (world.isValidTile(tileY - 1, tileY)) {
+			adjacentToWater = adjacentToWater || isWater(world, tileX, tileY - 1);
+		}
+		if (world.isValidTile(tileY + 1, tileY)) {
+			adjacentToWater = adjacentToWater || isWater(world, tileX, tileY + 1);
+		}
+
+		return adjacentToWater;
+	}
+
+	private static boolean isWater(World world, int tileX, int tileY) {
+		var terrain = world.getTerrain(tileX, tileY);
+		return terrain instanceof Water || terrain instanceof DeepWater;
+	}
+
+	private static ArrayList<Crater> adjacentCraters(World world, int tileX, int tileY) {
+		var craters = new ArrayList<Crater>(0);
+		addIfCrater(craters, world, tileX - 1, tileY);
+		addIfCrater(craters, world, tileX + 1, tileY);
+		addIfCrater(craters, world, tileX, tileY - 1);
+		addIfCrater(craters, world, tileX, tileY + 1);
+		return craters;
+	}
+
+	private static void addIfCrater(List<Crater> craters, World world, int tileX, int tileY) {
+		if (world.isValidTile(tileX, tileY)) {
+			var terrain = world.getTerrainImprovement(tileX, tileY);
+			if (terrain instanceof Crater crater) {
+				craters.add(crater);
 			}
 		}
 	}

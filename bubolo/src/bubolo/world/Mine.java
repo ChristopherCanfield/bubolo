@@ -14,7 +14,7 @@ public class Mine extends ActorEntity {
 	/** Amount of time before mine becomes active, in milliseconds */
 	private static final int fuseTimeTicks = Time.secondsToTicks(5);
 
-	/** Time the mine was created in milliseconds. */
+	/** Whether the mine is currently armed. Only armed mines explode. */
 	private boolean armed;
 
 	private static final int width = 25;
