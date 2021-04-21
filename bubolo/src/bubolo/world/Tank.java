@@ -540,8 +540,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 *
 	 * @param healPoints the amount of health the tank will receive.
 	 */
-	@Override
-	public void heal(float healPoints) {
+	private void heal(float healPoints) {
 		if (hitPoints + Math.abs(healPoints) < maxHitPoints) {
 			hitPoints += Math.abs(healPoints);
 		} else {

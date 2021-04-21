@@ -36,13 +36,6 @@ public interface Damageable
 	public void receiveDamage(float damage, World world);
 
 	/**
-	 * Increases the entity's current health.
-	 *
-	 * @param healPoints the amount of health that is restored. Must be >= 0.
-	 */
-	public void heal(float healPoints);
-
-	/**
 	 * Whether the entity is alive or not.
 	 *
 	 * @return true if the entity is alive.

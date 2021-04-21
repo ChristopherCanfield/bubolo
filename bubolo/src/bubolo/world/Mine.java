@@ -10,15 +10,15 @@ import bubolo.util.Time;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class Mine extends ActorEntity {
+public class Mine extends ActorEntity implements Damageable {
 	/** Amount of time before mine becomes active, in milliseconds */
 	private static final int fuseTimeTicks = Time.secondsToTicks(5);
 
 	/** Whether the mine is currently armed. Only armed mines explode. */
 	private boolean armed;
 
-	private static final int width = 25;
-	private static final int height = 25;
+	private static final int width = 20;
+	private static final int height = 20;
 
 	/**
 	 * Constructs a new Mine.
@@ -52,5 +52,19 @@ public class Mine extends ActorEntity {
 	@Override
 	public boolean isSolid() {
 		return false;
+	}
+
+	@Override
+	public float hitPoints() {
+		return 0;
+	}
+
+	@Override
+	public int maxHitPoints() {
+		return 0;
+	}
+
+	@Override
+	public void receiveDamage(float damage, World world) {
 	}
 }

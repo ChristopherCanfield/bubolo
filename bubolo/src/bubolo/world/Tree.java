@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
-import bubolo.util.GameLogicException;
 
 /**
  * Trees hide tanks that drive over them, and can spread over time.
@@ -73,14 +72,6 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 		if (hitPoints <= 0) {
 			dispose();
 		}
-	}
-
-	/**
-	 * Not implemented for trees.
-	 */
-	@Override
-	public void heal(float healPoints) {
-		throw new GameLogicException("Trees cannot be healed.");
 	}
 
 	@Override
