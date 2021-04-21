@@ -7,9 +7,12 @@ import bubolo.controllers.Controller;
 /**
  * Game objects that may move, and that may have update logic.
  *
- * The primary differences between ActorEntities and StaticEntities are: - Unlike StaticEntities, ActorEntities can be moved after
- * construction. - ActorEntities have a public update method that is called by the world each game tick. - ActorEntities are
- * always Collidable, though they may not be solid.
+ * The primary differences between ActorEntities and StaticEntities are:
+ * <ul>
+ * 	<li>Unlike StaticEntities, ActorEntities can be moved after construction.</li>
+ * 	<li>ActorEntities have a public update method that is called by the world each game tick.</li>
+ * 	<li>ActorEntities are always Collidable, though they may not be solid.</li>
+ * </ul>
  *
  * @author Christopher D. Canfield
  * @since 0.4.0

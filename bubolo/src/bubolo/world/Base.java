@@ -224,8 +224,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	 *
 	 * @param healPoints the amount that the base's health will be increased.
 	 */
-	@Override
-	public void heal(float healPoints) {
+	private void heal(float healPoints) {
 		assert (healPoints >= 0);
 		hitPoints += healPoints;
 		if (hitPoints > maxHitPoints) {

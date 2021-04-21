@@ -36,4 +36,12 @@ public class Terrain extends StaticEntity {
 	public boolean isValidBuildTarget() {
 		return true;
 	}
+
+	/**
+	 * @param terrain a terrain object.
+	 * @return true if the terrain is a water type.
+	 */
+	public static boolean isWater(Terrain terrain) {
+		return terrain instanceof Water || terrain instanceof DeepWater;
+	}
 }

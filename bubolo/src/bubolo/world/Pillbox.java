@@ -192,8 +192,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *
 	 * @param healPoints the number of hit points the pillbox will gain. Must be >= 0.
 	 */
-	@Override
-	public void heal(float healPoints) {
+	private void heal(float healPoints) {
 		assert healPoints >= 0;
 
 		hitPoints += healPoints;

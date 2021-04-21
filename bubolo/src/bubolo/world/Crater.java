@@ -1,11 +1,14 @@
 package bubolo.world;
 
+import java.util.UUID;
+
 import bubolo.util.TileUtil;
 
 /**
- * Craters are created when a mine explodes. They reduce Tank movement speed.
+ * Craters are created when a mine explodes. They reduce Tank movement speed, and will flood if adjacent to water.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 public class Crater extends StaticEntity implements TerrainImprovement, Adaptable {
 	private byte tilingState = 0;
@@ -43,5 +46,23 @@ public class Crater extends StaticEntity implements TerrainImprovement, Adaptabl
 	@Override
 	public byte getTilingState() {
 		return tilingState;
+	}
+
+	/**
+	 * Disposes the crater, and replaces it and its underlying terrain with a water tile. If the crater is already
+	 * disposed, this is a no-op.
+	 *
+	 * @param world reference to the game world.
+	 */
+	public void replaceWithWater(World world) {
+		if (!isDisposed()) {
+			dispose();
+
+			var terrain = world.getTerrain(tileColumn(), tileRow());
+			terrain.dispose();
+
+			var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), 0);
+			world.addEntity(Water.class, args);
+		}
 	}
 }

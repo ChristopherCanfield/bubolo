@@ -21,20 +21,18 @@ import bubolo.util.Nullable;
 import bubolo.util.Timer;
 
 /**
- * The concrete implementation of the World interface. GameWorld is the sole owner of Entity
- * objects.
+ * The concrete implementation of the World interface. GameWorld is the sole owner of Entity objects.
  *
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class GameWorld implements World
-{
-	 /**
-	  * A tile address on the game map.
-	  *
-	  * @author Christopher D. Canfield
-	  * @since 0.4.0
-	  */
+public class GameWorld implements World {
+	/**
+	 * A tile address on the game map.
+	 *
+	 * @author Christopher D. Canfield
+	 * @since 0.4.0
+	 */
 	private static record Tile(int column, int row) {
 		Tile {
 			assert column >= 0;
@@ -69,17 +67,19 @@ public class GameWorld implements World
 	// being iterated over.
 	private final List<Entity> entitiesToAdd = new ArrayList<>();
 
-	// list of world controllers
+	// The craters that will be flooded.
+	private final Set<Crater> cratersToFlood = new HashSet<>(4);
+
+	// List of world controllers.
 	private final List<Controller> worldControllers = new ArrayList<>();
 
 	private final Timer timer = new Timer(20);
 
-	// These are used to only update the tiling state of adaptables when necessary, rather than every tick.
+	// This is used to update the tiling state of adaptables only when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
 	// and reduced total memory usage (primarily by reducing a large number of boolean[] allocations).
 	private List<Adaptable> adaptables = new ArrayList<Adaptable>();
-	private boolean adaptableRemovedThisTick = false;
-	private boolean adaptableAddedThisTick = false;
+	private boolean adaptableTileModified = false;
 
 	// Width in world units.
 	private final int width;
@@ -92,8 +92,7 @@ public class GameWorld implements World
 	 * @param worldTileColumns the width of the game world map, in tiles. > 0 && <= Config.MaxWorldColumns.
 	 * @param worldTileRows the height of the game world map, in tiles. > 0 && <= Config.MaxWorldRows.
 	 */
-	public GameWorld(int worldTileColumns, int worldTileRows)
-	{
+	public GameWorld(int worldTileColumns, int worldTileRows) {
 		assert worldTileColumns > 0;
 		assert worldTileColumns <= Config.MaxWorldColumns;
 		assert worldTileRows > 0;
@@ -104,7 +103,7 @@ public class GameWorld implements World
 		width = worldTileColumns * Coords.TileToWorldScale;
 		height = worldTileRows * Coords.TileToWorldScale;
 
-		//addController(AiTreeController.class);
+		// addController(AiTreeController.class);
 	}
 
 	@Override
@@ -113,24 +112,24 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException
-	{
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException {
 		return addEntity(c, args, null);
 	}
 
 	@Override
-	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, ControllerFactory controllerFactory) throws GameLogicException, IllegalStateException
-	{
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, ControllerFactory controllerFactory)
+			throws GameLogicException, IllegalStateException {
 		if (entityMap.containsKey(args.id())) {
-			throw new GameLogicException("The specified entity already exists. Entity id: " + args.id()
-					+ ". Entity type: " + entityMap.get(args.id()).getClass().getName());
+			throw new GameLogicException("The specified entity already exists. Entity id: " + args.id() + ". Entity type: "
+					+ entityMap.get(args.id()).getClass().getName());
 		}
 
 		T entity;
 		try {
 			var constructor = c.getDeclaredConstructor(Entity.ConstructionArgs.class, World.class);
 			entity = constructor.newInstance(args, this);
-		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
+				| IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 			String cause = (e.getCause() != null) ? e.getCause().toString() : "No cause reported.";
 			throw new GameLogicException(String.format("%s: \n%s", e.toString(), cause));
@@ -179,7 +178,7 @@ public class GameWorld implements World
 	private void processNewAdaptable(Entity entity) {
 		if (entity instanceof Adaptable adaptable) {
 			adaptables.add(adaptable);
-			adaptableAddedThisTick = true;
+			adaptableTileModified = true;
 		}
 	}
 
@@ -188,15 +187,39 @@ public class GameWorld implements World
 			Terrain existingTerrain = terrain[t.tileColumn()][t.tileRow()];
 			if (existingTerrain != null) {
 				assert existingTerrain.isDisposed()
-					: String.format("Terrain %s added to tile (%d,%d), which already has a terrain: %s",
-							t.getClass().getName(),
-							t.tileColumn(), t.tileRow(),
-							existingTerrain.getClass().getName());
+						: String.format("Terrain %s added to tile (%d,%d), which already has a terrain: %s",
+								t.getClass().getName(), t.tileColumn(), t.tileRow(), existingTerrain.getClass().getName());
 			}
 
 			terrain[t.tileColumn()][t.tileRow()] = t;
+
+			markCratersAdjacentToWaterForFlooding(t);
 		}
 	}
+
+	private void markCratersAdjacentToWaterForFlooding(Entity entity) {
+		if (entity instanceof Water || entity instanceof DeepWater) {
+			// Check adjacent columns.
+			for (int column = entity.tileColumn() - 1; column < entity.tileColumn() + 2; column += 2) {
+				addIfCrater(cratersToFlood, column, entity.tileRow());
+			}
+
+			// Check adjacent rows.
+			for (int row = entity.tileRow() - 1; row < entity.tileRow() + 2; row += 2) {
+				addIfCrater(cratersToFlood, entity.tileColumn(), row);
+			}
+		}
+	}
+
+	private void addIfCrater(Set<Crater> craters, int column, int row) {
+		if (isValidTile(column, row)) {
+			var terrainImprovement = getTerrainImprovement(column, row);
+			if (terrainImprovement instanceof Crater crater) {
+				craters.add(crater);
+			}
+		}
+	}
+
 
 	private void processNewTerrainImprovement(Entity entity) {
 		if (entity instanceof TerrainImprovement terrainImprovement) {
@@ -214,10 +237,9 @@ public class GameWorld implements World
 			TerrainImprovement existingTerrainImprovement = terrainImprovements.get(tile);
 			if (existingTerrainImprovement != null) {
 				assert ((Entity) existingTerrainImprovement).isDisposed()
-					: String.format("TerrainImprovement %s added to tile (%d,%d), which already has an improvement: %s",
-							terrainImprovement.getClass().getName(),
-							entity.tileColumn(), entity.tileRow(),
-							existingTerrainImprovement.getClass().getName());
+						: String.format("TerrainImprovement %s added to tile (%d,%d), which already has an improvement: %s",
+								terrainImprovement.getClass().getName(), entity.tileColumn(), entity.tileRow(),
+								existingTerrainImprovement.getClass().getName());
 			}
 			terrainImprovements.put(tile, terrainImprovement);
 		}
@@ -229,7 +251,8 @@ public class GameWorld implements World
 			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
 			Mine existingMine = mines.get(tile);
 			if (existingMine != null) {
-				assert mine.isDisposed() : String.format("Mine added to tile (%d,%d), which already has a mine.", mine.tileColumn(), mine.tileRow());
+				assert mine.isDisposed() : String.format("Mine added to tile (%d,%d), which already has a mine.",
+						mine.tileColumn(), mine.tileRow());
 			}
 			mines.put(tile, mine);
 		}
@@ -251,8 +274,8 @@ public class GameWorld implements World
 
 	@Override
 	public Terrain getTerrain(int column, int row) {
-		assert column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows() :
-				String.format( "Invalid terrain: %d,%d; max terrain is %d,%d.", column, row, getTileColumns(), getTileRows());
+		assert column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows()
+				: String.format("Invalid terrain: %d,%d; max terrain is %d,%d.", column, row, getTileColumns(), getTileRows());
 
 		return terrain[column][row];
 	}
@@ -273,14 +296,12 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public int getWidth()
-	{
+	public int getWidth() {
 		return width;
 	}
 
 	@Override
-	public int getHeight()
-	{
+	public int getHeight() {
 		return height;
 	}
 
@@ -295,8 +316,7 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public void update()
-	{
+	public void update() {
 		timer.update(this);
 
 		// Update all world controllers
@@ -312,24 +332,16 @@ public class GameWorld implements World
 		}
 
 		// Check for disposed entities.
-		entitiesToRemove.addAll(entities.stream()
-				.filter(e -> e.isDisposed())
-				.toList()
-		);
+		entitiesToRemove.addAll(entities.stream().filter(e -> e.isDisposed()).toList());
 
 		removeEntities(entitiesToRemove);
 		entitiesToRemove.clear();
 
-		// Update the tiling state of each entity to add, if applicable.
-		if (adaptableRemovedThisTick) {
-			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
-		}
-		adaptableRemovedThisTick = false;
-
 		if (!entitiesToAdd.isEmpty()) {
 			entities.addAll(entitiesToAdd);
 			// Sort by type.
-			entities.sort((leftEntity, rightEntity) -> leftEntity.getClass().getName().compareTo(rightEntity.getClass().getName()));
+			entities.sort(
+					(leftEntity, rightEntity) -> leftEntity.getClass().getName().compareTo(rightEntity.getClass().getName()));
 
 			for (Entity entity : entitiesToAdd) {
 				processNewTank(entity);
@@ -339,19 +351,26 @@ public class GameWorld implements World
 				processNewTerrainImprovement(entity);
 				processNewMine(entity);
 			}
-
 			entitiesToAdd.clear();
 		}
 
-		if (adaptableAddedThisTick) {
+		// Add timers for any craters that may flood.
+		for (Crater crater : cratersToFlood) {
+			timer().scheduleSeconds(4, w -> {
+				crater.replaceWithWater(w);
+			});
+		}
+		cratersToFlood.clear();
+
+		if (adaptableTileModified) {
 			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
 		}
-		adaptableAddedThisTick = false;
+		adaptableTileModified = false;
 	}
 
 	/**
-	 * Removes a collection of entities from the game world. Must not be called during iteration of
-	 * the entities, tanks, actors, spawns, or adaptables lists.
+	 * Removes a collection of entities from the game world. Must not be called during iteration of the entities, tanks, actors,
+	 * spawns, or adaptables lists.
 	 *
 	 * @param markedForRemoval a collection of entities to remove.
 	 */
@@ -368,47 +387,38 @@ public class GameWorld implements World
 			spawns.removeAll(markedForRemoval);
 			mines.values().removeAll(markedForRemoval);
 
-			var adaptablesToRemove = markedForRemoval.stream()
-					.filter(e -> e instanceof Adaptable)
-					.map(e -> (Adaptable) e)
+			var adaptablesToRemove = markedForRemoval.stream().filter(e -> e instanceof Adaptable).map(e -> (Adaptable) e)
 					.toList();
-			adaptableRemovedThisTick = adaptables.removeAll(adaptablesToRemove);
+			adaptableTileModified = adaptableTileModified || adaptables.removeAll(adaptablesToRemove);
 		}
 	}
 
 	@Override
-	public Entity getEntity(UUID id) throws GameLogicException
-	{
+	public Entity getEntity(UUID id) throws GameLogicException {
 		Entity entity = entityMap.get(id);
-		if (entity == null)
-		{
-			throw new GameLogicException(
-					"The specified entity does not exist in the game world. Entity id: " + id);
+		if (entity == null) {
+			throw new GameLogicException("The specified entity does not exist in the game world. Entity id: " + id);
 		}
 		return entity;
 	}
 
 	@Override
-	public List<Entity> getEntities()
-	{
+	public List<Entity> getEntities() {
 		return entitiesUnmodifiableView;
 	}
 
 	@Override
-	public List<Tank> getTanks()
-	{
+	public List<Tank> getTanks() {
 		return tanksUnmodifiableView;
 	}
 
 	@Override
-	public List<ActorEntity> getActors()
-	{
+	public List<ActorEntity> getActors() {
 		return actorsUnmodifiableView;
 	}
 
 	@Override
-	public List<Spawn> getSpawns()
-	{
+	public List<Spawn> getSpawns() {
 		return spawnsUnmodifiableView;
 	}
 
@@ -424,7 +434,8 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, int tileMaxDistance, @Nullable Class<?> typeFilter) {
+	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
+			@Nullable Class<?> typeFilter) {
 		assert tileMaxDistance >= 0;
 
 		final int startTileColumn = targetEntity.tileColumn() - tileMaxDistance;
@@ -458,10 +469,10 @@ public class GameWorld implements World
 		return nearbyCollidables;
 	}
 
-	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
+	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects,
+			@Nullable Class<?> typeFilter) {
 		if (e instanceof Collidable c) {
-			var result =  (!onlyIncludeSolidObjects || c.isSolid())
-					&& (typeFilter == null || typeFilter.isInstance(c));
+			var result = (!onlyIncludeSolidObjects || c.isSolid()) && (typeFilter == null || typeFilter.isInstance(c));
 			return result;
 		}
 		return false;
@@ -479,8 +490,7 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public void addController(Class<? extends Controller> controllerType)
-	{
+	public void addController(Class<? extends Controller> controllerType) {
 		for (Controller c : worldControllers) {
 			if (c.getClass() == controllerType) {
 				return;
@@ -489,14 +499,14 @@ public class GameWorld implements World
 
 		try {
 			worldControllers.add(controllerType.getConstructor().newInstance());
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
 			throw new GameLogicException(e);
 		}
 	}
 
 	@Override
-	public void removeController(Class<? extends Controller> controllerType)
-	{
+	public void removeController(Class<? extends Controller> controllerType) {
 		for (Controller c : worldControllers) {
 			if (c.getClass() == controllerType) {
 				worldControllers.remove(c);
@@ -506,8 +516,7 @@ public class GameWorld implements World
 	}
 
 	@Override
-	public int getControllerCount()
-	{
+	public int getControllerCount() {
 		return worldControllers.size();
 	}
 }

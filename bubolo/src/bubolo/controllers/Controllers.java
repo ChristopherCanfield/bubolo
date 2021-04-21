@@ -3,13 +3,11 @@ package bubolo.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
-import bubolo.controllers.ai.AiMineController;
 import bubolo.controllers.ai.AiPillboxController;
 import bubolo.controllers.input.GamepadTankController;
 import bubolo.controllers.input.KeyboardTankController;
 import bubolo.util.Nullable;
 import bubolo.world.ActorEntity;
-import bubolo.world.Mine;
 import bubolo.world.Pillbox;
 import bubolo.world.Tank;
 
@@ -89,15 +87,6 @@ public class Controllers {
 			@Override
 			public void create(ActorEntity entity) {
 				entity.attachController(new AiPillboxController((Pillbox) entity));
-			}
-		});
-
-		factories.put(Mine.class, new ControllerFactory() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void create(ActorEntity entity) {
-				entity.attachController(new AiMineController((Mine) entity));
 			}
 		});
 

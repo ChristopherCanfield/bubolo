@@ -540,8 +540,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 *
 	 * @param healPoints the amount of health the tank will receive.
 	 */
-	@Override
-	public void heal(float healPoints) {
+	private void heal(float healPoints) {
 		if (hitPoints + Math.abs(healPoints) < maxHitPoints) {
 			hitPoints += Math.abs(healPoints);
 		} else {
@@ -549,6 +548,13 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	/**
+	 * Refuels the tank.
+	 *
+	 * @param healPoints the amount to heal the tank. >= 0.
+	 * @param ammo the amount of ammo to add to the tank's stores. >= 0.
+	 * @param mines the number of mines to add to the tank's stores. >= 0.
+	 */
 	public void refuel(float healPoints, int ammo, int mines) {
 		heal(healPoints);
 		refuelAmmo(ammo);
@@ -591,8 +597,10 @@ public class Tank extends ActorEntity implements Damageable {
 		if (canPlaceMineHere(world)) {
 			mineReadyTime = System.currentTimeMillis() + mineLayingSpeedMillis;
 
-			float mineX = x();
-			float mineY = y();
+			int tileX = Math.round(x() / Coords.TileToWorldScale);
+			int tileY = Math.round(y() / Coords.TileToWorldScale);
+			int mineX = tileX * Coords.TileToWorldScale;
+			int mineY = tileY * Coords.TileToWorldScale;
 
 			var args = new Entity.ConstructionArgs(UUID.randomUUID(), mineX, mineY, 0);
 			Mine mine = world.addEntity(Mine.class, args);
@@ -609,8 +617,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private boolean canPlaceMineHere(World world) {
 		if (mineReadyTime < System.currentTimeMillis() && mineCount > 0) {
-			int tileX = (int) x() / Coords.TileToWorldScale;
-			int tileY = (int) y() / Coords.TileToWorldScale;
+			int tileX = Math.round(x() / Coords.TileToWorldScale);
+			int tileY = Math.round(y() / Coords.TileToWorldScale);
 
 			Terrain terrain = world.getTerrain(tileX, tileY);
 			if (terrain.isValidBuildTarget() && world.getMine(tileX, tileY) == null) {

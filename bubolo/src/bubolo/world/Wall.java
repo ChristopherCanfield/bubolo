@@ -92,21 +92,6 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 		}
 	}
 
-	/**
-	 * Increments the pillbox's health by a given amount
-	 *
-	 * @param healPoints - how many points the wall is given
-	 */
-	@Override
-	public void heal(float healPoints) {
-		assert (healPoints >= 0);
-		if (hitPoints + healPoints < maxHitPoints) {
-			hitPoints += healPoints;
-		} else {
-			hitPoints = maxHitPoints;
-		}
-	}
-
 	@Override
 	public boolean isSolid() {
 		return true;
