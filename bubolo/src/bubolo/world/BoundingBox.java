@@ -22,7 +22,7 @@ public class BoundingBox {
 	public void updateBounds(Entity entity) {
 		updateBounds(entity.x(), entity.y(), entity.height(), entity.width());
 	}
-	
+
 	public void updateBounds(float x, float y, int width, int height) {
 		float w = width;
 		float h = height;
