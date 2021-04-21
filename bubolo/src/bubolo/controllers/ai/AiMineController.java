@@ -1,7 +1,5 @@
 package bubolo.controllers.ai;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import com.badlogic.gdx.math.Intersector;
@@ -76,15 +74,7 @@ public class AiMineController extends ActorEntityController<Mine> {
 	private static void floodCraterIfAdjacentToWater(World world, Crater crater) {
 		if (isAdjacentToWater(world, crater.tileColumn(), crater.tileRow())) {
 			world.timer().scheduleSeconds(4, w -> {
-				crater.dispose();
-
-				var terrain = world.getTerrain(crater.tileColumn(), crater.tileRow());
-				terrain.dispose();
-
-				var args = new Entity.ConstructionArgs(UUID.randomUUID(), crater.x(), crater.y(), 0);
-				world.addEntity(Water.class, args);
-
-				// TODO: (Move crater flooding functionality into the World): check for adjacent craters, and flood them if necessary.
+				crater.replaceWithWater(world);
 			});
 		}
 	}
@@ -111,23 +101,5 @@ public class AiMineController extends ActorEntityController<Mine> {
 	private static boolean isWater(World world, int tileX, int tileY) {
 		var terrain = world.getTerrain(tileX, tileY);
 		return terrain instanceof Water || terrain instanceof DeepWater;
-	}
-
-	private static ArrayList<Crater> adjacentCraters(World world, int tileX, int tileY) {
-		var craters = new ArrayList<Crater>(0);
-		addIfCrater(craters, world, tileX - 1, tileY);
-		addIfCrater(craters, world, tileX + 1, tileY);
-		addIfCrater(craters, world, tileX, tileY - 1);
-		addIfCrater(craters, world, tileX, tileY + 1);
-		return craters;
-	}
-
-	private static void addIfCrater(List<Crater> craters, World world, int tileX, int tileY) {
-		if (world.isValidTile(tileX, tileY)) {
-			var terrain = world.getTerrainImprovement(tileX, tileY);
-			if (terrain instanceof Crater crater) {
-				craters.add(crater);
-			}
-		}
 	}
 }

@@ -67,7 +67,10 @@ public class GameWorld implements World {
 	// being iterated over.
 	private final List<Entity> entitiesToAdd = new ArrayList<>();
 
-	// list of world controllers
+	// The craters that will be flooded.
+	private final Set<Crater> cratersToFlood = new HashSet<>(4);
+
+	// List of world controllers.
 	private final List<Controller> worldControllers = new ArrayList<>();
 
 	private final Timer timer = new Timer(20);
@@ -189,8 +192,34 @@ public class GameWorld implements World {
 			}
 
 			terrain[t.tileColumn()][t.tileRow()] = t;
+
+			markCratersAdjacentToWaterForFlooding(t);
 		}
 	}
+
+	private void markCratersAdjacentToWaterForFlooding(Entity entity) {
+		if (entity instanceof Water || entity instanceof DeepWater) {
+			// Check adjacent columns.
+			for (int column = entity.tileColumn() - 1; column < entity.tileColumn() + 2; column += 2) {
+				addIfCrater(cratersToFlood, column, entity.tileRow());
+			}
+
+			// Check adjacent rows.
+			for (int row = entity.tileRow() - 1; row < entity.tileRow() + 2; row += 2) {
+				addIfCrater(cratersToFlood, entity.tileColumn(), row);
+			}
+		}
+	}
+
+	private void addIfCrater(Set<Crater> craters, int column, int row) {
+		if (isValidTile(column, row)) {
+			var terrainImprovement = getTerrainImprovement(column, row);
+			if (terrainImprovement instanceof Crater crater) {
+				craters.add(crater);
+			}
+		}
+	}
+
 
 	private void processNewTerrainImprovement(Entity entity) {
 		if (entity instanceof TerrainImprovement terrainImprovement) {
@@ -322,9 +351,16 @@ public class GameWorld implements World {
 				processNewTerrainImprovement(entity);
 				processNewMine(entity);
 			}
-
 			entitiesToAdd.clear();
 		}
+
+		// Add timers for any craters that may flood.
+		for (Crater crater : cratersToFlood) {
+			timer().scheduleSeconds(4, w -> {
+				crater.replaceWithWater(w);
+			});
+		}
+		cratersToFlood.clear();
 
 		if (adaptableTileModified) {
 			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
