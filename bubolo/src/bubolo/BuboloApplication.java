@@ -85,7 +85,7 @@ public class BuboloApplication extends AbstractGameApplication
 	@Override
 	public void setWorld(World world) {
 		super.setWorld(world);
-		world.setEntityCreationObserver(graphics);
+		world.addEntityLifetimeObserver(graphics);
 	}
 
 	/**

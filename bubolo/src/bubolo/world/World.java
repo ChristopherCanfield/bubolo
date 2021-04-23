@@ -104,12 +104,12 @@ public interface World
 	public <T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType);
 
 	/**
-	 * Attaches an entity creation observer to this world. The entity creation observer is notified whenever an entity
-	 * is added to the world. Only one observer can be attached to the world at a time.
+	 * Adds an entity lifetime observer to this world. The entity lifetime observer is notified whenever an entity
+	 * is added to or removed from the world.
 	 *
-	 * @param entityCreationObserver the observer to notify when new entities are added to the world.
+	 * @param observer the observer to notify when entities are added to or removed from the world.
 	 */
-	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver);
+	public void addEntityLifetimeObserver(EntityLifetimeObserver observer);
 
 	/**
 	 * Returns the width of the world in world units.

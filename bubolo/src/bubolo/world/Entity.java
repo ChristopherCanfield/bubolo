@@ -7,11 +7,10 @@ import bubolo.util.Coords;
 /**
  * Base class for objects that live in the game world. Entities are created using the World.addEntity method:
  * <p>
- * {@code world.addEntity(EntityType.class, args);}
- * </code>
+ * {@code world.addEntity(EntityType.class, args);} </code>
  * <p>
- * All entities must have a two-argument constructor, which takes an Entity.ConstructionArgs object and a reference
- * to the game world:
+ * All entities must have a two-argument constructor, which takes an Entity.ConstructionArgs object and a reference to the game
+ * world:
  * <p>
  * {@code EntityType(Entity.ConstructionArgs args, World world)}
  * </p>
@@ -24,7 +23,8 @@ public abstract class Entity {
 	/** The max size that an entity's height and width can each be. */
 	public static final int EntityMaxSize = Byte.MAX_VALUE;
 
-	public static record ConstructionArgs(UUID id, float x, float y, float rotationRadians) {}
+	public static record ConstructionArgs(UUID id, float x, float y, float rotationRadians) {
+	}
 
 	private final UUID id;
 	private boolean disposed;
@@ -63,6 +63,7 @@ public abstract class Entity {
 	public int width() {
 		return width;
 	}
+
 	/**
 	 * @return The object's height in world units.
 	 */
@@ -74,6 +75,7 @@ public abstract class Entity {
 	 * @return The object's left x position in world units.
 	 */
 	public abstract float x();
+
 	/**
 	 * @return The object's bottom y position in world units.
 	 */
@@ -103,8 +105,7 @@ public abstract class Entity {
 	 *
 	 * @return true if the entity should be removed from the game.
 	 */
-	public final boolean isDisposed()
-	{
+	public final boolean isDisposed() {
 		return disposed;
 	}
 
@@ -142,7 +143,7 @@ public abstract class Entity {
 
 	@Override
 	public String toString() {
-		return String.format("%s {position=%f,%f | tile=%d,%d | width=%d | height=%d | isDisposed=%b ",
-				getClass().getName(), x(), y(), tileColumn(), tileRow(), width(), height(), isDisposed());
+		return String.format("%s {position=%f,%f | tile=%d,%d | width=%d | height=%d | isDisposed=%b ", getClass().getName(), x(),
+				y(), tileColumn(), tileRow(), width(), height(), isDisposed());
 	}
 }

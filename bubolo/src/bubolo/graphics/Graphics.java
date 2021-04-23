@@ -25,7 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import bubolo.ui.Screen;
 import bubolo.util.Coords;
 import bubolo.world.Entity;
-import bubolo.world.EntityCreationObserver;
+import bubolo.world.EntityLifetimeObserver;
 import bubolo.world.World;
 
 /**
@@ -33,7 +33,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Graphics implements EntityCreationObserver
+public class Graphics implements EntityLifetimeObserver
 {
 	/**
 	 * Textures file path.
@@ -163,8 +163,13 @@ public class Graphics implements EntityCreationObserver
 	}
 
 	@Override
-	public void onEntityCreated(Entity entity) {
+	public void onEntityAdded(Entity entity) {
 		spriteSystem.createSprite(entity);
+	}
+
+	@Override
+	public void onEntityRemoved(Entity entity) {
+		// Not used.
 	}
 
 	/**

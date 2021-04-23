@@ -40,7 +40,7 @@ public class GameWorld implements World {
 		}
 	}
 
-	private EntityCreationObserver entityCreationObserver;
+	private final List<EntityLifetimeObserver> entityLifetimeObservers = new ArrayList<>();
 
 	private final List<Entity> entities = new ArrayList<>();
 	private final List<Entity> entitiesUnmodifiableView = Collections.unmodifiableList(entities);
@@ -107,8 +107,8 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public void setEntityCreationObserver(EntityCreationObserver entityCreationObserver) {
-		this.entityCreationObserver = entityCreationObserver;
+	public void addEntityLifetimeObserver(EntityLifetimeObserver observer) {
+		entityLifetimeObservers.add(observer);
 	}
 
 	@Override
@@ -150,8 +150,8 @@ public class GameWorld implements World {
 		entitiesToAdd.add(entity);
 		entityMap.put(entity.id(), entity);
 
-		if (entityCreationObserver != null) {
-			entityCreationObserver.onEntityCreated(entity);
+		for (var observer : entityLifetimeObservers) {
+			observer.onEntityAdded(entity);
 		}
 
 		return entity;
@@ -219,7 +219,6 @@ public class GameWorld implements World {
 			}
 		}
 	}
-
 
 	private void processNewTerrainImprovement(Entity entity) {
 		if (entity instanceof TerrainImprovement terrainImprovement) {
@@ -386,6 +385,13 @@ public class GameWorld implements World {
 			actors.removeAll(markedForRemoval);
 			spawns.removeAll(markedForRemoval);
 			mines.values().removeAll(markedForRemoval);
+
+			// Notify the lifetime observers.
+			for (var entity : markedForRemoval) {
+				for (var observer : entityLifetimeObservers) {
+					observer.onEntityRemoved(entity);
+				}
+			}
 
 			var adaptablesToRemove = markedForRemoval.stream().filter(e -> e instanceof Adaptable).map(e -> (Adaptable) e)
 					.toList();
