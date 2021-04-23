@@ -655,7 +655,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param c the controller to add.
 	 */
 	@Override
-	public void attachController(Controller c) {
+	public void addController(Controller c) {
 		controllers.add(c);
 	}
 

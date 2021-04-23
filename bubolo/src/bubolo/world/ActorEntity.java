@@ -164,7 +164,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	 *
 	 * @param c the controller to add.
 	 */
-	public void attachController(Controller c) {
+	public void addController(Controller c) {
 		controller = c;
 	}
 

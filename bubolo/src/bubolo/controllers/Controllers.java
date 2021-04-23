@@ -76,8 +76,8 @@ public class Controllers {
 
 			@Override
 			public void create(ActorEntity entity) {
-				entity.attachController(new KeyboardTankController((Tank) entity));
-				entity.attachController(new GamepadTankController((Tank) entity));
+				entity.addController(new KeyboardTankController((Tank) entity));
+				entity.addController(new GamepadTankController((Tank) entity));
 			}
 		});
 
@@ -86,7 +86,7 @@ public class Controllers {
 
 			@Override
 			public void create(ActorEntity entity) {
-				entity.attachController(new AiPillboxController((Pillbox) entity));
+				entity.addController(new AiPillboxController((Pillbox) entity));
 			}
 		});
 
