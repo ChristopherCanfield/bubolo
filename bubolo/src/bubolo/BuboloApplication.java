@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.audio.Audio;
+import bubolo.controllers.ai.ForestGrowthController;
 import bubolo.graphics.Graphics;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
@@ -107,7 +108,7 @@ public class BuboloApplication extends AbstractGameApplication
 			try {
 				MapImporter importer = new MapImporter();
 				// Import the map.
-				setWorld(importer.importJsonMap(mapPath, graphics));
+				setWorld(importer.importJsonMap(mapPath, graphics, new ForestGrowthController()));
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new GameRuntimeException(e);
