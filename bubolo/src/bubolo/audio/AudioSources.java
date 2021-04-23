@@ -7,7 +7,12 @@ import static org.lwjgl.openal.AL10.alGenSources;
 import static org.lwjgl.openal.AL10.alGetError;
 import static org.lwjgl.openal.AL10.alGetSourcei;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.lwjgl.openal.AL10;
+
+import bubolo.Config;
 
 /**
  * Loads and manages OpenAL audio sources. Call nextId() to get the next available audio source ID.
@@ -62,7 +67,10 @@ class AudioSources {
 			}
 
 			if (attempts > maxAttempts) {
-				throw new GameAudioException("AudioSource.nextId: No available ID found.");
+				// If no source was found, log a warning and don't play the sound.
+				Logger.getLogger(Config.AppProgramaticTitle).logp(Level.WARNING, getClass().getSimpleName(),
+						"nextId", "Exceeded the maximum number of concurrently playing audio sources. Max sources: " + sources.length);
+				break;
 			}
 		} while (id == -1);
 
