@@ -4,11 +4,14 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.UUID;
 
 import bubolo.controllers.Controller;
+import bubolo.util.Coords;
 import bubolo.world.Entity;
 import bubolo.world.EntityLifetimeObserver;
 import bubolo.world.Grass;
+import bubolo.world.TerrainImprovement;
 import bubolo.world.Tree;
 import bubolo.world.World;
 
@@ -23,6 +26,7 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 	private static final float secondsPerTreeGrowth = 60f / treesPerMinute;
 	
 	private static final byte grassIndicator = 0b0100_0000;
+	private static final byte terrainImprovementIndicator = (byte) 0b1000_0000;
 	
 	// The forest growth for each tile, in column-row order.
 	private byte[][] terrainGrowthScores;
@@ -39,21 +43,36 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 	
 	@Override
 	public void onEntityAdded(Entity entity) {
+		int column = entity.tileColumn();
+		int row = entity.tileRow();
+		
 		if (entity instanceof Tree) {
-			addGrowthFactorToNeighbors(entity.tileColumn(), entity.tileRow(), 1);
+			addGrowthFactorToNeighbors(column, row, 1);
 		} else if (entity instanceof Grass) {
-			terrainGrowthScores[entity.tileColumn()][entity.tileRow()] &= 0b0011_1111;
-			terrainGrowthScores[entity.tileColumn()][entity.tileRow()] |= grassIndicator;
+			terrainGrowthScores[column][row] &= 0b0011_1111;
+			terrainGrowthScores[column][row] |= grassIndicator;
+		}
+		
+		if (entity instanceof TerrainImprovement) {
+			terrainGrowthScores[column][row] |= terrainImprovementIndicator;
 		}
 	}
 
 	@Override
 	public void onEntityRemoved(Entity entity) {
+		int column = entity.tileColumn();
+		int row = entity.tileRow();
+		
 		if (entity instanceof Tree) {
-			addGrowthFactorToNeighbors(entity.tileColumn(), entity.tileRow(), -1);
+			addGrowthFactorToNeighbors(column, row, -1);
 		} else if (entity instanceof Grass) {
-			terrainGrowthScores[entity.tileColumn()][entity.tileRow()] &= 0b1011_1111;
-			terrainGrowthScores[entity.tileColumn()][entity.tileRow()] |= 0b1000_0000;
+			terrainGrowthScores[column][row] &= 0b1011_1111;
+			terrainGrowthScores[column][row] |= 0b1000_0000;
+		}
+		
+		if (entity instanceof TerrainImprovement) {
+			// Remove the terrain improvement indicator from the score.
+			terrainGrowthScores[column][row] &= 0b0111_1111;			
 		}
 	}
 
@@ -108,7 +127,7 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 		for (int column = 0; column < terrainGrowthScores.length; column++) {
 			for (int row = 0; row < terrainGrowthScores[0].length; row++) {
 				byte score = terrainGrowthScores[column][row];
-				if (isGrass(score)) {
+				if (isGrass(score) && score > grassIndicator) {
 					scores.add(new TerrainGrowthScore(column, row, terrainGrowthScores[column][row]));
 				}
 			}
@@ -118,7 +137,7 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 		Collections.shuffle(scores);
 		scores.sort(null);
 
-		int maxNextTargets = (20 < scores.size()) ? 20 : scores.size();
+		int maxNextTargets = (25 < scores.size()) ? 25 : scores.size();
 		for (int targetIndex = scores.size() - 1, targets = 0; targets < maxNextTargets; targetIndex--, targets++) {
 			nextGrowthTargets.add(scores.get(targetIndex));
 		}
@@ -127,15 +146,23 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 	}
 	
 	private static boolean isGrass(byte growthFactorScore) {
-		return (growthFactorScore & grassIndicator) == 1;
+		return (growthFactorScore & grassIndicator) == grassIndicator;
 	}
 	
 	private void growNextTree(World world) {
 		var nextLocation = nextGrowthTargets.pollLast();
+		// If the nextGrowthTargets queue is empty, refill it.
 		if (nextLocation == null) {
-			world.timer().scheduleSeconds(secondsPerTreeGrowth, this::findHighestScores);
+			findHighestScores(world);
 		} else {
-			// TODO: Grow the next tree.
+			if (world.getTerrainImprovement(nextLocation.column, nextLocation.row) == null) {
+				var args = new Entity.ConstructionArgs(UUID.randomUUID(), 
+						nextLocation.column * Coords.TileToWorldScale, 
+						nextLocation.row * Coords.TileToWorldScale,
+						0);
+				world.addEntity(Tree.class, args);
+			}
+
 			world.timer().scheduleSeconds(secondsPerTreeGrowth, this::growNextTree);
 		}
 	}
