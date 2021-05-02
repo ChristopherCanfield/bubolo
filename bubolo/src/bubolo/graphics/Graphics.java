@@ -171,6 +171,11 @@ public class Graphics implements EntityLifetimeObserver
 	public void onEntityRemoved(Entity entity) {
 		// Not used.
 	}
+	
+	@Override
+	public void onObserverAddedToWorld(World world) {
+		// Not used.
+	}
 
 	/**
 	 * Draws the specified screen.

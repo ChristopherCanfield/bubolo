@@ -109,6 +109,7 @@ public class GameWorld implements World {
 	@Override
 	public void addEntityLifetimeObserver(EntityLifetimeObserver observer) {
 		entityLifetimeObservers.add(observer);
+		observer.onObserverAddedToWorld(this);
 	}
 
 	@Override

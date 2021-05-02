@@ -22,7 +22,6 @@ import com.github.cliftonlabs.json_simple.Jsoner;
 
 import bubolo.Config;
 import bubolo.util.Coords;
-import bubolo.util.Nullable;
 import bubolo.world.Base;
 import bubolo.world.Crater;
 import bubolo.world.DeepWater;
@@ -218,22 +217,22 @@ public class MapImporter {
 	 * Imports the json Tiled map, and constructs a world from the data.
 	 *
 	 * @param mapPath path to the json Tiled map file.
-	 * @param entityCreationObserver an observer that will be attached to the world.
+	 * @param entityLifetimeObservers zero or more entity lifetime observers observer that will be attached to the world.
 	 * @return the fully constructed world.
 	 * @throws IOException if the provided path can't be opened.
 	 * @throws InvalidMapException if the json Tiled map is malformed.
 	 */
-	public World importJsonMap(Path mapPath, EntityLifetimeObserver entityCreationObserver) throws IOException {
+	public World importJsonMap(Path mapPath, EntityLifetimeObserver... entityLifetimeObservers) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(mapPath)) {
-			return importMap(reader, entityCreationObserver).world();
+			return importMap(reader, entityLifetimeObservers).world();
 		}
 	}
 
 	public Result importJsonMapWithDiagnostics(Reader mapReader) {
-		return importMap(mapReader, null);
+		return importMap(mapReader);
 	}
 
-	private Result importMap(Reader mapReader, @Nullable EntityLifetimeObserver entityCreationObserver) {
+	private Result importMap(Reader mapReader, EntityLifetimeObserver... entityCreationObservers) {
 		try {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
 			jsonTiledMap.requireKeys(Key.MapHeight, Key.MapWidth, Key.Tilesets, Key.Layers);
@@ -247,7 +246,10 @@ public class MapImporter {
 			final int tileRows = diagnostics.tileHeight = jsonTiledMap.getInteger(Key.MapHeight);
 
 			GameWorld world = new GameWorld(tileColumns, tileRows);
-			world.addEntityLifetimeObserver(entityCreationObserver);
+			// Add the entity lifetime observers to the world.
+			for (var observer : entityCreationObservers) {
+				world.addEntityLifetimeObserver(observer);
+			}
 
 			JsonArray layers = (JsonArray) jsonTiledMap.get(Key.Layers.getKey());
 			diagnostics.layerCount = layers.size();

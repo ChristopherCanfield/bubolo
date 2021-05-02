@@ -9,6 +9,13 @@ package bubolo.world;
  */
 public interface EntityLifetimeObserver {
 	/**
+	 * Called once, when the observer is added to the world.
+	 * 
+	 * @param world reference to the game world.
+	 */
+	void onObserverAddedToWorld(World world);
+	
+	/**
 	 * Called when an entity is added to the world.
 	 *
 	 * @param entity the entity that was added.
