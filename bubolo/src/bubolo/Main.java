@@ -19,7 +19,6 @@ public class Main {
 	 *
 	 * @param args command line arguments are passed to the application on startup.
 	 */
-	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		Runnable serverApplication = () -> {
 			var cfg = defaultLwjglAppConfig();

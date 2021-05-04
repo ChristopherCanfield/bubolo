@@ -59,22 +59,4 @@ public class TileUtilTest
 	{
 		assertEquals("Tile (1,0) has the wrong tiling state!", 9, TileUtil.getTilingState(tiles[0][0], world, new Class[] { Grass.class }));
 	}
-
-	@Test
-	public void getClosestTile(){
-		int i = TileUtil.getClosestTileX(31);
-		int j = TileUtil.getClosestTileY(42);
-		assertEquals("Returned incorrect tile index for x float value.", 0, i);
-		assertEquals("Returned incorrect tile index for x float value.", 1, j);
-
-	}
-
-	@Test
-	public void getEntityTile()
-	{
-		OldEntity entity = new Tank().setTransform(31, 42, 0);
-		Tile tile = TileUtil.getEntityTile(entity, world);
-		assertEquals("returned incorrect tile", 0, tile.getGridX());
-		assertEquals("returned incorrect tile", 1, tile.getGridY());
-	}
 }
