@@ -32,12 +32,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater> {
 	@Override
 	public void draw(Graphics graphics) {
 		int currentState = getEntity().getTilingState();
-
-		if (isDisposed()) {
-			graphics.sprites().removeSprite(this);
-		} else {
-			drawTexture(graphics, frames[currentState]);
-		}
+		drawTexture(graphics, frames[currentState]);
 
 		boolean[] corners = this.getEntity().getCornerMatches();
 
