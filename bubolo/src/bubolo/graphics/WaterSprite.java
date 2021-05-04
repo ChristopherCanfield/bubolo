@@ -39,7 +39,6 @@ class WaterSprite extends AbstractEntitySprite<Water>
 		if (isDisposed())
 		{
 			graphics.sprites().removeSprite(this);
-
 		}
 		else
 		{
