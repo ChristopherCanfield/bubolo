@@ -33,6 +33,13 @@ public abstract class TileUtil
 
 	private static final boolean[] tilingStateArray = new boolean[4];
 
+	private enum Edge {
+		North,
+		South,
+		West,
+		East;
+	}
+	
 	/**
 	 * Returns the adaptive tiling state of an object located at the specified tile, given
 	 * the list of Classes that the algorithm should consider 'matches'.
@@ -58,22 +65,22 @@ public abstract class TileUtil
 		boolean[] edges = tilingStateArray;
 
 		// Match above
-		if (edges[0]) {
+		if (edges[Edge.North.ordinal()]) {
 			stateSum += 1;
 		}
 
 		// Match below
-		if (edges[1]) {
+		if (edges[Edge.South.ordinal()]) {
 			stateSum += 2;
 		}
 
 		// Match left
-		if (edges[2]) {
+		if (edges[Edge.West.ordinal()]) {
 			stateSum += 4;
 		}
 
 		// Match right
-		if (edges[3]) {
+		if (edges[Edge.East.ordinal()]) {
 			stateSum += 8;
 		}
 

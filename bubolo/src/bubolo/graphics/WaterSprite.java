@@ -34,6 +34,7 @@ class WaterSprite extends AbstractEntitySprite<Water> {
 	@Override
 	public void draw(Graphics graphics) {
 		int currentState = this.getEntity().getTilingState();
+		// Draw beach/river edges.
 		drawTexture(graphics, frames[currentState]);
 
 		boolean[] corners = this.getEntity().getCornerMatches();
@@ -56,8 +57,10 @@ class WaterSprite extends AbstractEntitySprite<Water> {
 
 		if (currentState == 15 || currentState == 14 || currentState == 6 || currentState == 7) {
 			if (!corners[2]) {
+				// Northwest bend.
 				drawTexture(graphics, frames[18]);
 			} else {
+				// Surrounded by water.
 				drawTexture(graphics, frames[22]);
 			}
 
