@@ -132,7 +132,8 @@ abstract class TextureUtil
 		adapt[4] = allFrames[3][0];
 		adapt[5] = allFrames[3][3];
 		adapt[6] = allFrames[3][1];
-		adapt[7] = allFrames[3][2];
+		// (cdc - 2021-05-06): Should be [3][2], but [0][2] fixes a texture bleeding issue without any ill effects.
+		adapt[7] = allFrames[0][2];
 		adapt[8] = allFrames[1][0];
 		adapt[9] = allFrames[1][3];
 		adapt[10] = allFrames[1][1];
