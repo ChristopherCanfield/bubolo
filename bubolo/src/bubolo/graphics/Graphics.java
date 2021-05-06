@@ -19,11 +19,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import bubolo.ui.Screen;
-import bubolo.util.Coords;
 import bubolo.world.Entity;
 import bubolo.world.EntityLifetimeObserver;
 import bubolo.world.World;
@@ -59,8 +57,6 @@ public class Graphics implements EntityLifetimeObserver
 			.thenComparing(s -> s.getClass().getSimpleName());
 
 	private List<Sprite> spritesInView = new ArrayList<Sprite>();
-
-	private BackgroundSprite[][] background;
 
 	/**
 	 * Returns a texture from a file name. Ensures that the same texture isn't stored multiple times.
@@ -224,9 +220,6 @@ public class Graphics implements EntityLifetimeObserver
 			}
 		}
 
-		// Draw the background layer.
-		drawBackground(world);
-
 		// Render sprites.
 		drawSpritesByLayer(spritesInView);
 		drawTankUiElements(spritesInView);
@@ -305,42 +298,6 @@ public class Graphics implements EntityLifetimeObserver
 
 			if (sprite instanceof UiDrawable uiDrawable) {
 				uiDrawable.drawUiElements(this);
-			}
-		}
-	}
-
-	/**
-	 * Draws the background layer. This is needed to fill in visual gaps related to the adaptable tiling system.
-	 */
-	private void drawBackground(World world)
-	{
-		if (background == null) {
-			initializeBackground();
-		}
-
-		batch.begin();
-		for (int row = 0; row < background.length; row++) {
-			for (int col = 0; col < background[0].length; col++) {
-				var sprite = background[row][col];
-				var position = Coords.cameraToWorld(camera,
-						new Vector2(col * Coords.TileToWorldScale, row * Coords.TileToWorldScale));
-				// Change the positions of the background sprites so they are always on screen.
-				sprite.x = (int) position.x;
-				sprite.y = (int) position.y;
-				sprite.draw(this);
-			}
-		}
-		batch.end();
-	}
-
-	private void initializeBackground() {
-		int rows = Math.round(camera.viewportHeight / Coords.TileToWorldScale) + 1;
-		int columns = Math.round(camera.viewportWidth / Coords.TileToWorldScale) + 1;
-		background = new BackgroundSprite[rows][columns];
-
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < columns; col++) {
-				background[row][col] = new BackgroundSprite(col * BackgroundSprite.WIDTH, row * BackgroundSprite.HEIGHT);
 			}
 		}
 	}
