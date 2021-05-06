@@ -10,7 +10,7 @@ import bubolo.util.Coords;
  *
  * @author BU CS673 - Clone Productions
  */
-public abstract class TextureUtil
+abstract class TextureUtil
 {
 	/**
 	 * Split a sprite texture up into discrete frames, using the standardized height and

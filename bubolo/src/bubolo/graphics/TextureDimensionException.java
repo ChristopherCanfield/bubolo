@@ -9,7 +9,7 @@ import bubolo.util.GameException;
  *
  * @author BU CS673 - Clone Productions
  */
-public class TextureDimensionException extends GameException
+class TextureDimensionException extends GameException
 {
 
 	/**

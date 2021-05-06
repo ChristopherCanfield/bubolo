@@ -28,7 +28,7 @@ import bubolo.world.Water;
  *
  * @author BU CS673 - Clone Productions
  */
-public class SpriteSystem
+class SpriteSystem
 {
 	private Map<Class<? extends Entity>, SpriteFactory> spriteFactories;
 

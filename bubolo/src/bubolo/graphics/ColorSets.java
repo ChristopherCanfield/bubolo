@@ -6,7 +6,7 @@ package bubolo.graphics;
  * to use in sprite display.
  * 
  */
-public class ColorSets
+class ColorSets
 {
 	/**
 	 * Index used for the main character color, blue, indicating that it appears in the
