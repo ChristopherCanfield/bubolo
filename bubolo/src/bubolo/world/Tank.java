@@ -4,7 +4,6 @@ import static com.badlogic.gdx.math.MathUtils.clamp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import com.badlogic.gdx.math.Circle;
@@ -106,8 +105,6 @@ public class Tank extends ActorEntity implements Damageable {
 	private static final int maxMines = 10;
 	private int mineCount = maxMines;
 
-	private static final Random randomGenerator = new Random();
-
 	private static final int width = 20;
 	private static final int height = 20;
 
@@ -131,17 +128,13 @@ public class Tank extends ActorEntity implements Damageable {
 	private void respawn(World world) {
 		// Don't allow the tank to respawn until its respawn timer has expired.
 		if (nextRespawnTime < System.currentTimeMillis() && isOwnedByLocalPlayer()) {
-			var spawns = world.getSpawns();
-			// TODO (cdc - 2021-04-13): getSpawns() should guarantee that it returns one or more spawns.
-			if (spawns.size() > 0) {
-				// Loop until a suitable spawn point is found.
-				boolean spawnFound = false;
-				do {
-					Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-					setPosition(spawn.x(), spawn.y());
-					spawnFound = world.getNearbyCollidables(this, true, 4, Tank.class).isEmpty();
-				} while (!spawnFound);
-			}
+			// Loop until a suitable spawn point is found.
+			boolean spawnFound = false;
+			do {
+				Spawn spawn = world.getRandomSpawn();
+				setPosition(spawn.x(), spawn.y());
+				spawnFound = world.getNearbyCollidables(this, true, 4, Tank.class).isEmpty();
+			} while (!spawnFound);
 
 			hitPoints = maxHitPoints;
 			drowned = false;

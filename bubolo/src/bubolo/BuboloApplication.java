@@ -8,14 +8,10 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.badlogic.gdx.math.Vector2;
 
 import bubolo.audio.Audio;
 import bubolo.controllers.ai.ForestGrowthController;
@@ -29,7 +25,6 @@ import bubolo.ui.PlayerInfoScreen;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
 import bubolo.world.Entity;
-import bubolo.world.Spawn;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
@@ -67,7 +62,8 @@ public class BuboloApplication extends AbstractGameApplication
 	 * @param windowWidth the width of the window.
 	 * @param windowHeight the height of the window.
 	 * @param playerType whether this is a local single player, network host, or network client.
-	 * @param commandLineArgs the arguments passed to the application through the command line.
+	 * @param commandLineArgs the arguments passed to the application through the command line. The first argument specifies the map
+	 * 		to use. Any additional arguments are ignored.
 	 */
 	public BuboloApplication(int windowWidth, int windowHeight, PlayerType playerType, String[] commandLineArgs)
 	{
@@ -75,6 +71,7 @@ public class BuboloApplication extends AbstractGameApplication
 		this.windowHeight = windowHeight;
 		this.playerType = playerType;
 
+		// The first command line argument specifies the map to use. If there is no argument, use the default map.
 		if (commandLineArgs.length != 0) {
 			Path argPath = FileSystems.getDefault().getPath("res", "maps/" + commandLineArgs[0]);
 			if (Files.exists(argPath)) {
@@ -108,7 +105,9 @@ public class BuboloApplication extends AbstractGameApplication
 			try {
 				MapImporter importer = new MapImporter();
 				// Import the map.
-				setWorld(importer.importJsonMap(mapPath, graphics, new ForestGrowthController()));
+				var world = importer.importJsonMap(mapPath);
+				setWorld(world);
+				world.addEntityLifetimeObserver(new ForestGrowthController());
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new GameRuntimeException(e);
@@ -185,9 +184,8 @@ public class BuboloApplication extends AbstractGameApplication
 			Audio.initialize(world.getWidth(), world.getHeight(),
 					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
-			Entity.ConstructionArgs args;
-			Vector2 spawnLocation = getRandomSpawn(world);
-			args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
+			var spawn = world.getRandomSpawn();
+			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawn.x(), spawn.y(), 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
 			tank.setPlayerName(network.getPlayerName());
@@ -205,8 +203,8 @@ public class BuboloApplication extends AbstractGameApplication
 			Audio.initialize(world.getWidth(), world.getHeight(),
 					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
-			Vector2 spawnLocation = getRandomSpawn(world);
-			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawnLocation.x, spawnLocation.y, 0);
+			var spawn = world.getRandomSpawn();
+			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawn.x(), spawn.y(), 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
 			tank.setOwnedByLocalPlayer(true);
@@ -230,23 +228,6 @@ public class BuboloApplication extends AbstractGameApplication
 			// TODO (cdc - 2021-03-31): Allow the main menu to be displayed again.
 			break;
 		}
-	}
-
-	/**
-	 * Returns a random spawn point.
-	 *
-	 * @return the location of a random spawn point.
-	 */
-	private static Vector2 getRandomSpawn(World world)
-	{
-		List<Spawn> spawns = world.getSpawns();
-		if (spawns.size() > 0)
-		{
-			Random randomGenerator = new Random();
-			Spawn spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-			return new Vector2(spawn.x(), spawn.y());
-		}
-		return null;
 	}
 
 	@Override

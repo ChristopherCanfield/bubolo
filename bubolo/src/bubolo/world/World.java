@@ -50,6 +50,11 @@ public interface World
 	public List<Spawn> getSpawns();
 
 	/**
+	 * @return a randomly selected spawn location.
+	 */
+	public Spawn getRandomSpawn();
+
+	/**
 	 * Returns an unmodifiable view of all actors in the world.
 	 *
 	 * @return the list of actors.
@@ -106,6 +111,9 @@ public interface World
 	/**
 	 * Adds an entity lifetime observer to this world. The entity lifetime observer is notified whenever an entity
 	 * is added to or removed from the world.
+	 * <p>
+	 * When the observer is first added to observe the world, it receives notifications for all currently alive entities.
+	 * </p>
 	 *
 	 * @param observer the observer to notify when entities are added to or removed from the world.
 	 */

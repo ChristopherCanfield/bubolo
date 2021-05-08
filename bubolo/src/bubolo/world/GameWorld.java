@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -86,6 +87,8 @@ public class GameWorld implements World {
 	// Height in world units.
 	private final int height;
 
+	private final Random randomGenerator = new Random();
+
 	/**
 	 * Constructs a GameWorld object.
 	 *
@@ -108,8 +111,14 @@ public class GameWorld implements World {
 
 	@Override
 	public void addEntityLifetimeObserver(EntityLifetimeObserver observer) {
+		assert !entityLifetimeObservers.contains(observer) : "EntityLifetimeObserver " + observer.toString() + " was already added to the world.";
+
 		entityLifetimeObservers.add(observer);
 		observer.onObserverAddedToWorld(this);
+
+		for (Entity e : entities) {
+			observer.onEntityAdded(e);
+		}
 	}
 
 	@Override
@@ -427,6 +436,12 @@ public class GameWorld implements World {
 	@Override
 	public List<Spawn> getSpawns() {
 		return spawnsUnmodifiableView;
+	}
+
+	@Override
+	public Spawn getRandomSpawn() {
+		assert !spawns.isEmpty();
+		return spawns.get(randomGenerator.nextInt(spawns.size()));
 	}
 
 	@Override
