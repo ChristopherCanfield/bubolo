@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Interpolation;
 import bubolo.util.Time;
 import bubolo.world.Tank;
 
-public class TankSinkingSprite extends Sprite {
+class TankSinkingSprite extends Sprite {
 
 	private float x;
 	private float y;

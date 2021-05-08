@@ -26,7 +26,6 @@ import bubolo.world.Base;
 import bubolo.world.Crater;
 import bubolo.world.DeepWater;
 import bubolo.world.Entity;
-import bubolo.world.EntityLifetimeObserver;
 import bubolo.world.GameWorld;
 import bubolo.world.Grass;
 import bubolo.world.Mine;
@@ -217,14 +216,13 @@ public class MapImporter {
 	 * Imports the json Tiled map, and constructs a world from the data.
 	 *
 	 * @param mapPath path to the json Tiled map file.
-	 * @param entityLifetimeObservers zero or more entity lifetime observers observer that will be attached to the world.
 	 * @return the fully constructed world.
 	 * @throws IOException if the provided path can't be opened.
 	 * @throws InvalidMapException if the json Tiled map is malformed.
 	 */
-	public World importJsonMap(Path mapPath, EntityLifetimeObserver... entityLifetimeObservers) throws IOException {
+	public World importJsonMap(Path mapPath) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(mapPath)) {
-			return importMap(reader, entityLifetimeObservers).world();
+			return importMap(reader).world();
 		}
 	}
 
@@ -232,7 +230,7 @@ public class MapImporter {
 		return importMap(mapReader);
 	}
 
-	private Result importMap(Reader mapReader, EntityLifetimeObserver... entityCreationObservers) {
+	private Result importMap(Reader mapReader) {
 		try {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
 			jsonTiledMap.requireKeys(Key.MapHeight, Key.MapWidth, Key.Tilesets, Key.Layers);
@@ -246,10 +244,6 @@ public class MapImporter {
 			final int tileRows = diagnostics.tileHeight = jsonTiledMap.getInteger(Key.MapHeight);
 
 			GameWorld world = new GameWorld(tileColumns, tileRows);
-			// Add the entity lifetime observers to the world.
-			for (var observer : entityCreationObservers) {
-				world.addEntityLifetimeObserver(observer);
-			}
 
 			JsonArray layers = (JsonArray) jsonTiledMap.get(Key.Layers.getKey());
 			diagnostics.layerCount = layers.size();

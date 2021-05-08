@@ -10,7 +10,7 @@ import bubolo.util.Coords;
  *
  * @author BU CS673 - Clone Productions
  */
-public abstract class TextureUtil
+abstract class TextureUtil
 {
 	/**
 	 * Split a sprite texture up into discrete frames, using the standardized height and
@@ -25,10 +25,10 @@ public abstract class TextureUtil
 	 */
 	public static TextureRegion[][] splitFrames(Texture tex, int frameWidth, int frameHeight)
 	{
-		if (tex.getWidth() % frameWidth != 0 || tex.getHeight() % frameHeight != 0)
-		{
+		if (tex.getWidth() % frameWidth != 0 || tex.getHeight() % frameHeight != 0) {
 			throw new TextureDimensionException("Cannot split texture into frames, wrong size!");
 		}
+		
 		int rows = tex.getHeight() / frameHeight;
 		int columns = tex.getWidth() / frameWidth;
 
@@ -112,8 +112,7 @@ public abstract class TextureUtil
 	private static TextureRegion[] adaptiveSplit_water(Texture tex)
 	{
 		if (tex.getHeight() != Coords.TileToWorldScale * 4
-				&& tex.getWidth() != Coords.TileToWorldScale * 6)
-		{
+				&& tex.getWidth() != Coords.TileToWorldScale * 6) {
 			throw new TextureDimensionException("Cannot split texture into 16x9x9 tiles, wrong size!");
 		}
 
@@ -121,12 +120,11 @@ public abstract class TextureUtil
 
 		// Grab the 34 texture frames for a standard 4x4 + 3x3 + 3x3 layout
 
-		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale,
-				Coords.TileToWorldScale);
+		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale, Coords.TileToWorldScale);
 
 		// Assign each texture frame to the correct index...
 
-		// ex. rivers
+		// rivers
 		adapt[0] = allFrames[0][0];
 		adapt[1] = allFrames[0][3];
 		adapt[2] = allFrames[0][1];
@@ -134,7 +132,8 @@ public abstract class TextureUtil
 		adapt[4] = allFrames[3][0];
 		adapt[5] = allFrames[3][3];
 		adapt[6] = allFrames[3][1];
-		adapt[7] = allFrames[3][2];
+		// (cdc - 2021-05-06): Should be [3][2], but [0][2] fixes a texture bleeding issue without any ill effects.
+		adapt[7] = allFrames[0][2];
 		adapt[8] = allFrames[1][0];
 		adapt[9] = allFrames[1][3];
 		adapt[10] = allFrames[1][1];
@@ -144,7 +143,7 @@ public abstract class TextureUtil
 		adapt[14] = allFrames[2][1];
 		adapt[15] = allFrames[2][2];
 
-		// ex. open water
+		// open water
 		adapt[16] = allFrames[4][0];
 		adapt[17] = allFrames[5][0];
 		adapt[18] = allFrames[4][1];
@@ -152,9 +151,11 @@ public abstract class TextureUtil
 
 		adapt[20] = allFrames[4][2];
 		adapt[21] = allFrames[5][2];
-		adapt[22] = allFrames[4][3];
+//		adapt[22] = allFrames[4][3];
 		adapt[23] = allFrames[5][3];
-
+		
+		// (cdc - 2021-05-06): Hack to fix texture bleeding issue. This could be fixed by resizing the texture, and adding padding around each tile.
+		adapt[22] = new TextureRegion(tex, 4 * Coords.TileToWorldScale + 1, 3 * Coords.TileToWorldScale, Coords.TileToWorldScale, Coords.TileToWorldScale);
 		return adapt;
 	}
 }
