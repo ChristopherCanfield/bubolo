@@ -13,7 +13,7 @@ import bubolo.util.TileUtil;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Wall extends StaticEntity implements TerrainImprovement, Collidable, Adaptable, Damageable {
+public class Wall extends StaticEntity implements TerrainImprovement, Collidable, EdgeMatchable, Damageable {
 	private byte tilingState = 0;
 
 	private static final int maxHitPoints = 100;

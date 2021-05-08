@@ -7,7 +7,7 @@ import bubolo.util.TileUtil;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Water extends Terrain implements Adaptable {
+public class Water extends Terrain implements EdgeMatchable {
 	private byte tilingState = 0;
 
 	private final boolean[] cornerMatches = new boolean[4];

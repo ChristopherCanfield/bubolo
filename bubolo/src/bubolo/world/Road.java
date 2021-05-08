@@ -7,7 +7,7 @@ import bubolo.util.TileUtil;
  *
  * @author BU CS673 - Clone Productions
  */
-public class Road extends Terrain implements Adaptable {
+public class Road extends Terrain implements EdgeMatchable {
 	private byte tilingState = 0;
 
 	/**

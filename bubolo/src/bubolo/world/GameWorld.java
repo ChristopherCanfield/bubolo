@@ -79,7 +79,7 @@ public class GameWorld implements World {
 	// This is used to update the tiling state of adaptables only when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
 	// and reduced total memory usage (primarily by reducing a large number of boolean[] allocations).
-	private List<Adaptable> adaptables = new ArrayList<Adaptable>();
+	private List<EdgeMatchable> adaptables = new ArrayList<EdgeMatchable>();
 	private boolean adaptableTileModified = false;
 
 	// Width in world units.
@@ -105,8 +105,6 @@ public class GameWorld implements World {
 
 		width = worldTileColumns * Coords.TileToWorldScale;
 		height = worldTileRows * Coords.TileToWorldScale;
-
-		// addController(AiTreeController.class);
 	}
 
 	@Override
@@ -186,7 +184,7 @@ public class GameWorld implements World {
 	}
 
 	private void processNewAdaptable(Entity entity) {
-		if (entity instanceof Adaptable adaptable) {
+		if (entity instanceof EdgeMatchable adaptable) {
 			adaptables.add(adaptable);
 			adaptableTileModified = true;
 		}
@@ -403,7 +401,7 @@ public class GameWorld implements World {
 				}
 			}
 
-			var adaptablesToRemove = markedForRemoval.stream().filter(e -> e instanceof Adaptable).map(e -> (Adaptable) e)
+			var adaptablesToRemove = markedForRemoval.stream().filter(e -> e instanceof EdgeMatchable).map(e -> (EdgeMatchable) e)
 					.toList();
 			adaptableTileModified = adaptableTileModified || adaptables.removeAll(adaptablesToRemove);
 		}

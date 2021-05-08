@@ -8,7 +8,7 @@ package bubolo.world;
  *
  * @author BU CS673 - Clone Productions
  */
-public interface Adaptable
+public interface EdgeMatchable
 {
 	/**
 	 * Updates the current adaptive tiling state of this Entity.

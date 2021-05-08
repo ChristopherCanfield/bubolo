@@ -10,7 +10,7 @@ import bubolo.util.TileUtil;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class Crater extends StaticEntity implements TerrainImprovement, Adaptable {
+public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatchable {
 	private byte tilingState = 0;
 
 	/**
