@@ -40,20 +40,13 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
+		TextureRegion[] frames;
+		if (getEntity().hitPoints() == getEntity().maxHitPoints()) {
+			frames = undamagedFrames;
+		} else {
+			frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
 		}
-		else
-		{
-			TextureRegion[] frames;
-			if (getEntity().hitPoints() == getEntity().maxHitPoints()) {
-				frames = undamagedFrames;
-			} else {
-				frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
-			}
-			drawTexture(graphics, frames[getEntity().getTilingState()]);
-		}
+		drawTexture(graphics, frames[getEntity().getTilingState()]);
 	}
 
 	/**

@@ -27,14 +27,6 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 	private static final String TEXTURE_FILE = "pillbox.png";
 
 	/**
-	 * Represents the discrete damaged state that the sprite should be in, calculated from
-	 * the Entity's relative health.
-	 */
-	// TODO (cdc - 3/27/2014): Uncomment the next line once the damaged state
-	// functionality is implemented.
-	//private int damagedState;
-
-	/**
 	 * Constructor for the PillboxSprite. This is Package-private because sprites should
 	 * not be directly created outside of the graphics system.
 	 *
@@ -47,23 +39,6 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 		super(DrawLayer.MINES, pillbox);
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
-	}
-
-	/**
-	 * Returns an integer between 0 and DAMAGED_STATES -1 representing the damaged state
-	 * of this Sprite's Entity. 0 means 0 HP/fully dead!
-	 */
-	private void updateDamagedState()
-	{
-		// Compute the amount of health remaining for this Sprite's Entity as a fraction
-		// of its max HP.
-
-		// TODO (cdc - 3/27/2014): Uncomment the next lines once the damaged state
-		// functionality is implemented.
-
-		//float healthFraction = (float) this.getEntity().getHP() / this.getEntity().getMaxHP();
-		// Convert that fraction to an integer between 0 and DAMAGED_STATES -1.
-		//damagedState = Math.round(healthFraction * DAMAGED_STATES);
 	}
 
 	private void updateColorSet()
@@ -85,7 +60,6 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable
 	@Override
 	public void draw(Graphics graphics)
 	{
-		updateDamagedState();
 		updateColorSet();
 
 		if (isDisposed())

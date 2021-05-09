@@ -39,14 +39,7 @@ class GrassSprite extends AbstractEntitySprite<Grass>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, image);
-		}
+		drawTexture(graphics, image);
 	}
 
 	@Override

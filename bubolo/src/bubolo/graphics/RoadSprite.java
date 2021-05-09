@@ -32,13 +32,6 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, frames[this.getEntity().getTilingState()]);
-		}
+		drawTexture(graphics, frames[this.getEntity().getTilingState()]);
 	}
 }

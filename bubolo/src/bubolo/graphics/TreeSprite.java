@@ -39,14 +39,7 @@ class TreeSprite extends AbstractEntitySprite<Tree>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, image);
-		}
+		drawTexture(graphics, image);
 	}
 
 	@Override

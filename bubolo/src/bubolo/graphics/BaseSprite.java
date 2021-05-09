@@ -80,40 +80,33 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			updateColorSet();
+		updateColorSet();
 
-			if (refuelingAnimationEndTime < System.currentTimeMillis()) {
-				if (getEntity().isRefueling()) {
-					refuelingAnimationEndTime = System.currentTimeMillis() + minRefuelingAnimationTimeMillis;
-				}
+		if (refuelingAnimationEndTime < System.currentTimeMillis()) {
+			if (getEntity().isRefueling()) {
+				refuelingAnimationEndTime = System.currentTimeMillis() + minRefuelingAnimationTimeMillis;
 			}
+		}
 
-			if (refuelingAnimationEndTime < System.currentTimeMillis()) {
-				if (lastAnimationState != 0) {
-					lastAnimationState = 0;
-					frameIndex = 0;
-				}
-				drawTexture(graphics, idleFrames[colorId]);
-			} else {
-				if (lastAnimationState != 1) {
-					lastAnimationState = 1;
-					frameIndex = 0;
-				}
-				drawTexture(graphics, chargingFrames[frameIndex][colorId]);
+		if (refuelingAnimationEndTime < System.currentTimeMillis()) {
+			if (lastAnimationState != 0) {
+				lastAnimationState = 0;
+				frameIndex = 0;
+			}
+			drawTexture(graphics, idleFrames[colorId]);
+		} else {
+			if (lastAnimationState != 1) {
+				lastAnimationState = 1;
+				frameIndex = 0;
+			}
+			drawTexture(graphics, chargingFrames[frameIndex][colorId]);
 
-				// Progress the Base charging animation.
-				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
-				lastFrameTime = System.currentTimeMillis();
-				if (frameTimeRemaining < 0) {
-					frameTimeRemaining = millisPerFrame;
-					frameIndex = (frameIndex == chargingFrames.length - 1) ? 0 : frameIndex + 1;
-				}
+			// Progress the Base charging animation.
+			frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
+			lastFrameTime = System.currentTimeMillis();
+			if (frameTimeRemaining < 0) {
+				frameTimeRemaining = millisPerFrame;
+				frameIndex = (frameIndex == chargingFrames.length - 1) ? 0 : frameIndex + 1;
 			}
 		}
 	}

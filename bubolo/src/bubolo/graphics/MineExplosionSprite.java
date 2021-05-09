@@ -53,21 +53,14 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, frames[frameIndex][0]);
+		drawTexture(graphics, frames[frameIndex][0]);
 
-			frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
-			lastFrameTime = System.currentTimeMillis();
-			if (frameTimeRemaining < 0 && frameIndex < frames.length-1)
-			{
-				frameTimeRemaining = millisPerFrame;
-				frameIndex = frameIndex + 1;
-			}
+		frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
+		lastFrameTime = System.currentTimeMillis();
+		if (frameTimeRemaining < 0 && frameIndex < frames.length-1)
+		{
+			frameTimeRemaining = millisPerFrame;
+			frameIndex = frameIndex + 1;
 		}
 	}
 }

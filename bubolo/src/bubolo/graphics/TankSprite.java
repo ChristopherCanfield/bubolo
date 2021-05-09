@@ -169,9 +169,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 	@Override
 	public void draw(Graphics graphics) {
-		if (isDisposed()) {
-			graphics.sprites().removeSprite(this);
-		} else if (frames == null) {
+		if (frames == null) {
 			initialize(graphics);
 		} else if (!getEntity().isAlive()) {
 			if (!deathAnimationCreated) {

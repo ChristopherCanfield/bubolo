@@ -58,15 +58,8 @@ class BulletExplosionSprite extends Sprite
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, frames[frameIndex][0]);
-			animate();
-		}
+		drawTexture(graphics, frames[frameIndex][0]);
+		animate();
 	}
 
 	private void animate()
