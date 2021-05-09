@@ -79,10 +79,10 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
-	 * Returns a texture region from a path to a texture. Ensures that the same texture region isn't stored multiple
-	 * times. Will create the region if it has not yet been created.
+	 * Returns a texture region from a path that points to a texture. Ensures that the same texture region isn't stored
+	 * multiple times. Will create the region if it has not yet been created.
 	 *
-	 * @param path       the path to the texture file.
+	 * @param path the path to the texture file.
 	 * @param spriteType the class type of the sprite requesting the texture.
 	 * @return the requested texture region.
 	 */
@@ -97,11 +97,31 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
+	 * Returns a texture region from a path that points to a texture. Ensures that the same texture region isn't stored
+	 * multiple times. Will create the region if it has not yet been created.
+	 *
+	 * @param path the path to the texture file.
+	 * @param frames the number of frames in the file.
+	 * @param frameWidth the width of each frame.
+	 * @param paddingWidth the horizontal padding between frames.
+	 * @return reference to the texture region array.
+	 */
+	static TextureRegion[] getTextureRegion1d(String path, int frames, int frameWidth, int paddingWidth) {
+		TextureRegion[] textureRegion = textureRegions1d.get(path);
+		if (textureRegion == null) {
+			Texture texture = getTexture(path);
+			textureRegion = TextureUtil.splitFramesInRow(texture, frames, frameWidth, paddingWidth);
+			textureRegions1d.put(path, textureRegion);
+		}
+		return textureRegion;
+	}
+
+	/**
 	 * Returns a texture region from a path to a texture. Ensures that the same texture region isn't stored multiple
 	 * times. Will create the region if it has not yet been created.
 	 *
-	 * @param path        the path to the texture file.
-	 * @param frameWidth  each frame's width.
+	 * @param path the path to the texture file.
+	 * @param frameWidth each frame's width.
 	 * @param frameHeight each frame's height.
 	 * @return the requested texture region.
 	 */
@@ -128,7 +148,7 @@ public class Graphics implements EntityLifetimeObserver {
 	/**
 	 * Creates the graphics system.
 	 *
-	 * @param windowWidth  the width of the window, in pixels.
+	 * @param windowWidth the width of the window, in pixels.
 	 * @param windowHeight the height of the window, in pixels.
 	 */
 	public Graphics(int windowWidth, int windowHeight) {
@@ -201,7 +221,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * Draws the entities that are within the camera's clipping boundary.
 	 *
 	 * @param world the World Model object.
-	 * @param ui    the game user interface.
+	 * @param ui the game user interface.
 	 */
 	public void draw(World world, Stage ui) {
 		Gdx.gl20.glClearColor(0, 0, 0, 1);

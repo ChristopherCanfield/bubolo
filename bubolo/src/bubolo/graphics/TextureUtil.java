@@ -16,14 +16,15 @@ abstract class TextureUtil {
 	 * Splits a row of images within a texture into frames.
 	 *
 	 * @param texture the texture that contains the frames.
+	 * @param frameCount the number of frames in the file.
 	 * @param frameWidth the width of each frame.
 	 * @param paddingWidth the horizontal padding between each frame.
 	 * @return the frames.
 	 */
-	public static TextureRegion[] splitFramesInRow(Texture texture, int columns, int frameWidth, int paddingWidth) {
-		TextureRegion[] frames = new TextureRegion[columns];
-		for (int col = 0; col < columns; col++) {
-			frames[col] = new TextureRegion(texture, col * frameWidth + (paddingWidth * col), 0,
+	public static TextureRegion[] splitFramesInRow(Texture texture, int frameCount, int frameWidth, int paddingWidth) {
+		TextureRegion[] frames = new TextureRegion[frameCount];
+		for (int frame = 0; frame < frameCount; frame++) {
+			frames[frame] = new TextureRegion(texture, frame * frameWidth + (paddingWidth * frame), 0,
 					frameWidth, texture.getHeight());
 		}
 		return frames;

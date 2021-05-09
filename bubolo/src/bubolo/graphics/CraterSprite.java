@@ -36,8 +36,7 @@ class CraterSprite extends AbstractEntitySprite<Crater> {
 	CraterSprite(Graphics graphics, Crater crater) {
 		super(DrawLayer.TerrainImprovements, crater);
 
-		var texture = Graphics.getTexture(textureFile);
-		frames = TextureUtil.splitFramesInRow(texture, frameCount, frameWidth, framePaddingWidth);
+		frames = Graphics.getTextureRegion1d(textureFile, frameCount, frameWidth, framePaddingWidth);
 	}
 
 	@Override
