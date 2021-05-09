@@ -1,6 +1,6 @@
 package bubolo.world;
 
-import bubolo.Config;
+import bubolo.util.Time;
 
 /**
  * MineExplosions are created when mines blow up. The explosion area is larger than the mine that exploded.
@@ -9,14 +9,11 @@ import bubolo.Config;
  * @author Christopher D. Canfield
  */
 public class MineExplosion extends ActorEntity {
-	/** The explosion's lifetime, in milliseconds */
-	private static final int explosionLifeTicks = (int) (500 / Config.MillisPerFrame);
+	/** The explosion's lifetime, in seconds */
+	public static final float LifetimeSeconds = 0.75f;
 
 	private static final float totalDamage = 25;
-	private static final float damagePerTick = totalDamage / explosionLifeTicks;
-
-	/** The time the explosion will end. */
-	private int framesRemaining = explosionLifeTicks;
+	private static final float damagePerTick = totalDamage / Time.secondsToTicks(LifetimeSeconds);
 
 	private static final int width = 60;
 	private static final int height = 60;
@@ -30,22 +27,19 @@ public class MineExplosion extends ActorEntity {
 	protected MineExplosion(ConstructionArgs args, World world) {
 		super(args, width, height);
 		updateBounds();
+
+		world.timer().scheduleSeconds(LifetimeSeconds, w -> {
+			dispose();
+		});
 	}
 
 	@Override
 	public void onUpdate(World world) {
-		if (framesRemaining == 0) {
-			dispose();
-
-		} else {
-			framesRemaining--;
-
-			for (Collidable collider : world.getNearbyCollidables(this, false, Damageable.class)) {
-				if (overlapsEntity(collider)) {
-					// We know the collider is a damageable, since we filtered to include only Damageables.
-					Damageable damageable = (Damageable) collider;
-					damageable.receiveDamage(damagePerTick, world);
-				}
+		for (Collidable collider : world.getNearbyCollidables(this, false, Damageable.class)) {
+			if (overlapsEntity(collider)) {
+				// We know the collider is a damageable, since we filtered to include only Damageables.
+				Damageable damageable = (Damageable) collider;
+				damageable.receiveDamage(damagePerTick, world);
 			}
 		}
 	}

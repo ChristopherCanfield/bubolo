@@ -2,7 +2,6 @@ package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.Config;
 import bubolo.world.MineExplosion;
 
 /**
@@ -10,57 +9,36 @@ import bubolo.world.MineExplosion;
  *
  * @author BU673 - Clone Industries
  */
-class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
-{
-
-	// The index representing which animation frame will be drawn.
+class MineExplosionSprite extends AbstractEntitySprite<MineExplosion> {
 	private int frameIndex;
+	private final TextureRegion[] frames;
+
+	private static final String textureFileName = "mineExplosion.png";
+	private static final int frameCount = 12;
+	private static final int frameWidth = 60;
+
+	private static final float secondsPerFrame = MineExplosion.LifetimeSeconds / frameCount;
 
 	/**
-	 * A two-sided array of TextureRegions representing the animation frames for this
-	 * MineExplosion.
-	 */
-	private TextureRegion[][] frames;
-
-	// The number of milliseconds per frame.
-	private long millisPerFrame;
-
-	// The amount of time remaining for the current frame.
-	private long frameTimeRemaining;
-
-	// The time of the last frame, in milliseconds.
-	private long lastFrameTime;
-
-	/** The file name of the texture. */
-	static final String TEXTURE_FILE = "mineExplosion.png";
-
-	/**
-	 * Constructs a MineExplosionSprite. This is Package-private because sprites
-	 * should not be directly created outside of the graphics system.
+	 * Constructs a MineExplosionSprite. This is Package-private because sprites should not be directly created outside
+	 * of the graphics system.
 	 *
-	 * @param exp
-	 *            Reference to the MineExplosion that this MineExplosionSprite represents.
+	 * @param exp reference to the MineExplosion that this MineExplosionSprite represents.
 	 */
-	MineExplosionSprite(MineExplosion exp)
-	{
+	MineExplosionSprite(Graphics graphics, MineExplosion exp) {
 		super(DrawLayer.Effects, exp);
 
-		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 60, 60);
+		frames = Graphics.getTextureRegion1d(textureFileName, frameCount, frameWidth, 0);
 
-		millisPerFrame = (int) Config.MillisPerFrame;
+		for (int i = 1; i < frameCount; i++) {
+			graphics.timer().scheduleSeconds(secondsPerFrame * i, g -> {
+				frameIndex++;
+			});
+		}
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
-		drawTexture(graphics, frames[frameIndex][0]);
-
-		frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
-		lastFrameTime = System.currentTimeMillis();
-		if (frameTimeRemaining < 0 && frameIndex < frames.length-1)
-		{
-			frameTimeRemaining = millisPerFrame;
-			frameIndex = frameIndex + 1;
-		}
+	public void draw(Graphics graphics) {
+		drawTexture(graphics, frames[frameIndex]);
 	}
 }
