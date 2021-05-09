@@ -510,6 +510,31 @@ public class GameWorld implements World {
 	}
 
 	@Override
+	public boolean isTileAdjacentToWater(int column, int row) {
+		boolean adjacentToWater = false;
+		if (isValidTile(column - 1, row)) {
+			adjacentToWater = adjacentToWater || isWater(column - 1, row);
+		}
+		if (isValidTile(column + 1, row)) {
+			adjacentToWater = adjacentToWater || isWater(column + 1, row);
+		}
+
+		if (isValidTile(column, row - 1)) {
+			adjacentToWater = adjacentToWater || isWater(column, row - 1);
+		}
+		if (isValidTile(column, row + 1)) {
+			adjacentToWater = adjacentToWater || isWater(column, row + 1);
+		}
+
+		return adjacentToWater;
+	}
+
+	private boolean isWater(int column, int row) {
+		Terrain terrain = getTerrain(column, row);
+		return Terrain.isWater(terrain);
+	}
+
+	@Override
 	public void addController(Class<? extends Controller> controllerType) {
 		for (Controller c : worldControllers) {
 			if (c.getClass() == controllerType) {

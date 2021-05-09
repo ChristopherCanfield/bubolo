@@ -35,7 +35,7 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 	static final String TEXTURE_FILE = "mineExplosion.png";
 
 	/**
-	 * Constructor for the MineExplosionSprite. This is Package-private because sprites
+	 * Constructs a MineExplosionSprite. This is Package-private because sprites
 	 * should not be directly created outside of the graphics system.
 	 *
 	 * @param exp

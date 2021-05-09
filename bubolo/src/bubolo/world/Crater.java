@@ -17,7 +17,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 	 * An array containing the classes that result in a valid match when determining adaptive tiling state.
 	 * TODO (cdc - 2021-04-05): This affects only the visualization, and probably should not be in this class.
 	 */
-	private Class<?>[] matchingTypes = new Class[] { Crater.class, Water.class };
+	private static final Class<?>[] matchingTypes = new Class[] { Crater.class, Water.class };
 
 	private static final TerrainTravelSpeed terrainTravelSpeed = TerrainTravelSpeed.VerySlow;
 
@@ -26,6 +26,12 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 
 	protected Crater(ConstructionArgs args, World world) {
 		super(args, width, height);
+
+		if (world.isTileAdjacentToWater(tileColumn(), tileRow())) {
+			world.timer().scheduleSeconds(3, w -> {
+				replaceWithWater(world);
+			});
+		}
 	}
 
 	@Override

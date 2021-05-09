@@ -99,8 +99,7 @@ public class Mine extends ActorEntity implements Damageable {
 
 		addExplosion(world, x(), y());
 		removeTerrainImprovement(world, tileColumn(), tileRow());
-		var crater = addCrater(world, x(), y());
-		floodCraterIfAdjacentToWater(world, crater);
+		addCrater(world, x(), y());
 	}
 
 	private static void addExplosion(World world, float x, float y) {
@@ -118,37 +117,5 @@ public class Mine extends ActorEntity implements Damageable {
 	private static Crater addCrater(World world, float x, float y) {
 		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
 		return world.addEntity(Crater.class, args);
-	}
-
-	private static void floodCraterIfAdjacentToWater(World world, Crater crater) {
-		if (isAdjacentToWater(world, crater.tileColumn(), crater.tileRow())) {
-			world.timer().scheduleSeconds(4, w -> {
-				crater.replaceWithWater(world);
-			});
-		}
-	}
-
-	private static boolean isAdjacentToWater(World world, int tileX, int tileY) {
-		boolean adjacentToWater = false;
-		if (world.isValidTile(tileX - 1, tileY)) {
-			adjacentToWater = adjacentToWater || isWater(world, tileX - 1, tileY);
-		}
-		if (world.isValidTile(tileX + 1, tileY)) {
-			adjacentToWater = adjacentToWater || isWater(world, tileX + 1, tileY);
-		}
-
-		if (world.isValidTile(tileY - 1, tileY)) {
-			adjacentToWater = adjacentToWater || isWater(world, tileX, tileY - 1);
-		}
-		if (world.isValidTile(tileY + 1, tileY)) {
-			adjacentToWater = adjacentToWater || isWater(world, tileX, tileY + 1);
-		}
-
-		return adjacentToWater;
-	}
-
-	private static boolean isWater(World world, int column, int row) {
-		Terrain terrain = world.getTerrain(column, row);
-		return Terrain.isWater(terrain);
 	}
 }
