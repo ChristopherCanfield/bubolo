@@ -24,7 +24,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 	private static final int width = 32;
 	private static final int height = 32;
 
-	public static final int FloodTimeSeconds = 5;
+	public static final float FloodTimeSeconds = 6;
 
 	private boolean flooding;
 
