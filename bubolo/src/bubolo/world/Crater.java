@@ -24,13 +24,15 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 	private static final int width = 32;
 	private static final int height = 32;
 
+	public static final int FloodTimeSeconds = 5;
+
+	private boolean flooding;
+
 	protected Crater(ConstructionArgs args, World world) {
 		super(args, width, height);
 
 		if (world.isTileAdjacentToWater(tileColumn(), tileRow())) {
-			world.timer().scheduleSeconds(3, w -> {
-				replaceWithWater(world);
-			});
+			flood(world);
 		}
 	}
 
@@ -70,5 +72,16 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 			var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), 0);
 			world.addEntity(Water.class, args);
 		}
+	}
+
+	public boolean isFlooding() {
+		return flooding;
+	}
+
+	public void flood(World world) {
+		flooding = true;
+		world.timer().scheduleSeconds(FloodTimeSeconds, w -> {
+			replaceWithWater(world);
+		});
 	}
 }

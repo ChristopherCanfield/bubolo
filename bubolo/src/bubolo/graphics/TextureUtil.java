@@ -9,9 +9,26 @@ import bubolo.util.Coords;
  * Used for processing standard format textures of different kinds for use in adaptive tiling and animations.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-abstract class TextureUtil
-{
+abstract class TextureUtil {
+	/**
+	 * Splits a row of images within a texture into frames.
+	 *
+	 * @param texture the texture that contains the frames.
+	 * @param frameWidth the width of each frame.
+	 * @param paddingWidth the horizontal padding between each frame.
+	 * @return the frames.
+	 */
+	public static TextureRegion[] splitFramesInRow(Texture texture, int columns, int frameWidth, int paddingWidth) {
+		TextureRegion[] frames = new TextureRegion[columns];
+		for (int col = 0; col < columns; col++) {
+			frames[col] = new TextureRegion(texture, col * frameWidth + (paddingWidth * col), 0,
+					frameWidth, texture.getHeight());
+		}
+		return frames;
+	}
+
 	/**
 	 * Split a sprite texture up into discrete frames, using the standardized height and
 	 * width of each frame to determine start and end points of each frame. Used for
@@ -28,7 +45,7 @@ abstract class TextureUtil
 		if (tex.getWidth() % frameWidth != 0 || tex.getHeight() % frameHeight != 0) {
 			throw new TextureDimensionException("Cannot split texture into frames, wrong size!");
 		}
-		
+
 		int rows = tex.getHeight() / frameHeight;
 		int columns = tex.getWidth() / frameWidth;
 
@@ -153,8 +170,8 @@ abstract class TextureUtil
 		adapt[21] = allFrames[5][2];
 //		adapt[22] = allFrames[4][3];
 		adapt[23] = allFrames[5][3];
-		
-		// (cdc - 2021-05-06): Hack to fix texture bleeding issue. This could be fixed by resizing the texture, and adding padding around each tile.
+
+		// @Hack (cdc 2021-05-06): Hack to fix texture bleeding issue. This could be fixed by resizing the texture, and adding padding around each tile.
 		adapt[22] = new TextureRegion(tex, 4 * Coords.TileToWorldScale + 1, 3 * Coords.TileToWorldScale, Coords.TileToWorldScale, Coords.TileToWorldScale);
 		return adapt;
 	}

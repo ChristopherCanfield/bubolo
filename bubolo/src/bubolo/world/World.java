@@ -61,7 +61,7 @@ public interface World
 	 */
 	public List<ActorEntity> getActors();
 
-	public Timer timer();
+	public Timer<World> timer();
 
 	/**
 	 * Constructs and adds an entity to the world, and returns a reference to the newly constructed entity.
