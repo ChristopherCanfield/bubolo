@@ -56,9 +56,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	 */
 	BaseSprite(Base base)
 	{
-		/* @HACK (cdc 2021-05-06): Base is drawn in the mine layer, since it needs to be above roads, and mines
-		 							can't be placed onto bases. */
-		super(DrawLayer.MINES, base);
+		super(DrawLayer.TerrainImprovements, base);
 
 		allFrames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
 		chargingFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2],

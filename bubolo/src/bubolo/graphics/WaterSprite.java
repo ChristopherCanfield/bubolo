@@ -22,11 +22,7 @@ class WaterSprite extends AbstractEntitySprite<Water> {
 	 * @param water Reference to the Water that this WaterSprite represents.
 	 */
 	WaterSprite(Water water) {
-		/*
-		 * @HACK (cdc - 2021-04-06): Water is drawn in the terrain improvements layer in order to ensure that it is drawn
-		 * above craters. This is a hack, and will need to change if bridges are implemented.
-		 */
-		super(DrawLayer.TERRAIN_IMPROVEMENTS, water);
+		super(DrawLayer.TerrainLevel1, water);
 
 		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
 	}

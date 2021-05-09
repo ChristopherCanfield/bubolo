@@ -22,7 +22,7 @@ class CraterSprite extends AbstractEntitySprite<Crater> {
 	 ** @param crater Reference to the crater that this CraterSprite represents.
 	 */
 	CraterSprite(Crater crater) {
-		super(DrawLayer.TERRAIN_IMPROVEMENTS, crater);
+		super(DrawLayer.TerrainImprovements, crater);
 
 		texture = Graphics.getTexture(textureFile);
 	}

@@ -46,7 +46,6 @@ public class Mine extends ActorEntity implements Damageable {
 			for (Tank tank : world.getTanks()) {
 				if (tank.overlapsEntity(this)) {
 					explode(world);
-
 					return;
 				}
 			}
@@ -99,6 +98,7 @@ public class Mine extends ActorEntity implements Damageable {
 
 		addExplosion(world, x(), y());
 		removeTerrainImprovement(world, tileColumn(), tileRow());
+//		replaceRoad(world, tileColumn(), tileRow());
 		addCrater(world, x(), y());
 	}
 
@@ -111,6 +111,14 @@ public class Mine extends ActorEntity implements Damageable {
 		var terrainImprovement = world.getTerrainImprovement(tileColumn, tileRow);
 		if (terrainImprovement != null) {
 			terrainImprovement.dispose();
+		}
+	}
+
+	private static void replaceRoad(World world, int tileColumn, int tileRow) {
+		var terrain = world.getTerrain(tileColumn, tileRow);
+		if (terrain instanceof Road) {
+			terrain.dispose();
+			world.addEntity(Swamp.class, new Entity.ConstructionArgs(UUID.randomUUID(), terrain.x(), terrain.y(), 0));
 		}
 	}
 

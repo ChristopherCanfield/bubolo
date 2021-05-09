@@ -44,7 +44,7 @@ class TankExplosionSprite extends Sprite
 	 */
 	TankExplosionSprite(int x, int y)
 	{
-		super(DrawLayer.TOP);
+		super(DrawLayer.Top);
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, WIDTH, HEIGHT);
 

@@ -71,7 +71,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	 * @param tank Reference to the tank that this TankSprite represents.
 	 */
 	TankSprite(Tank tank) {
-		super(DrawLayer.TANKS, tank);
+		super(DrawLayer.Tanks, tank);
 
 		bulletTexture = Graphics.getTexture(BULLET_TEXTURE_FILE);
 		mineTexture = Graphics.getTexture(MINE_TEXTURE_FILE);

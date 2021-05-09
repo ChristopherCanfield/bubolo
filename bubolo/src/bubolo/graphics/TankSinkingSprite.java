@@ -26,7 +26,7 @@ class TankSinkingSprite extends Sprite {
 	 * @param tank the tank that is drowning.
 	 */
 	TankSinkingSprite(Tank tank) {
-		super(DrawLayer.EFFECTS);
+		super(DrawLayer.Effects);
 
 		this.x = tank.x();
 		this.y = tank.y();

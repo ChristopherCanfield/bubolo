@@ -8,40 +8,38 @@ package bubolo.graphics;
  */
 enum DrawLayer
 {
+	/**
+	 * The lowest sprite draw layer. Intended for use with most terrain.
+	 */
+	TerrainLevel1,
 
 	/**
-	 * The background layer. Using this in anything except for the background layer will result in the
-	 * sprite never being drawn.
+	 * Used for terrain that needs to be drawn on top of overlapping terrains, such as roads.
 	 */
-	BACKGROUND,
+	TerrainLevel2,
 
 	/**
-	 * The lowest general sprite draw layer. Intended for use with terrain.
+	 * The third sprite draw layer. Intended for use with terrain improvements.
 	 */
-	TERRAIN,
+	TerrainImprovements,
 
 	/**
-	 * The second sprite draw layer. Intended for use with terrain improvements.
+	 * The fourth sprite draw layer. Intended for use with mines.
 	 */
-	TERRAIN_IMPROVEMENTS,
+	Mines,
 
 	/**
-	 * The third sprite draw layer. Intended for use with mines.
+	 * The fifth sprite draw layer. Intended for use with tanks.
 	 */
-	MINES,
+	Tanks,
 
 	/**
-	 * The fourth sprite draw layer. Intended for use with tanks.
+	 * The sixth sprite draw layer. Intended for use with effects, such as explosions.
 	 */
-	TANKS,
-
-	/**
-	 * The fifth sprite draw layer. Intended for use with effects, such as explosions.
-	 */
-	EFFECTS,
+	Effects,
 
 	/**
 	 * The top sprite draw layer, which is drawn above all other layers.
 	 */
-	TOP
+	Top
 }

@@ -29,7 +29,7 @@ class GrassSprite extends AbstractEntitySprite<Grass>
 	 */
 	GrassSprite(Grass grass)
 	{
-		super(DrawLayer.TERRAIN, grass);
+		super(DrawLayer.TerrainLevel1, grass);
 
 		image = Graphics.getTexture(TEXTURE_FILE);
 		Random rand = new Random();

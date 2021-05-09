@@ -42,7 +42,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	 * @param mine Reference to the Mine that this MineSprite represents.
 	 */
 	MineSprite(Mine mine) {
-		super(DrawLayer.MINES, mine);
+		super(DrawLayer.Mines, mine);
 
 		allFrames = Graphics.getTextureRegion2d(TEXTURE_FILE, 21, 21);
 		idleFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2], allFrames[1] };

@@ -29,7 +29,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	 */
 	WallSprite(Wall wall)
 	{
-		super(DrawLayer.TERRAIN_IMPROVEMENTS, wall);
+		super(DrawLayer.TerrainImprovements, wall);
 
 		undamagedFrames = Graphics.getTextureRegion1d(UNDAMAGED_TEXTURE_FILE, getClass());
 		damagedFrames[0] = Graphics.getTextureRegion1d(MINOR_DAMAGE_TEXTURE_FILE, getClass());

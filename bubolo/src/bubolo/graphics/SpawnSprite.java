@@ -28,7 +28,7 @@ class SpawnSprite extends AbstractEntitySprite<Spawn> {
 	 * @param spawn Reference to the spawn that this SpawnSprite represents.
 	 */
 	SpawnSprite(Spawn spawn) {
-		super(DrawLayer.TOP, spawn);
+		super(DrawLayer.Top, spawn);
 
 		image = Graphics.getTexture(TEXTURE_FILE);
 		frames = TextureUtil.splitFrames(image, 32, 32);
