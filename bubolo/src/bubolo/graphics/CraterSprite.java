@@ -1,6 +1,6 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Texture;
 
 import bubolo.world.Crater;
 
@@ -9,38 +9,26 @@ import bubolo.world.Crater;
  *
  * @author BU673 - Clone Industries
  */
-class CraterSprite extends AbstractEntitySprite<Crater>
-{
-	private TextureRegion[] frames;
-
+class CraterSprite extends AbstractEntitySprite<Crater> {
 	/** The file name of the texture. */
-	private static final String TEXTURE_FILE = "crater.png";
+	private static final String textureFile = "crater.png";
+
+	private final Texture texture;
 
 	/**
-	 * Constructor for the CraterSprite. This is Package-private because sprites should
-	 * not be directly created outside of the graphics system.
+	 * Constructs a CraterSprite. This is Package-private because sprites should not be directly created outside
+	 * of the graphics system.
 	 *
-	 ** @param crater
-	 *            Reference to the crater that this CraterSprite represents.
+	 ** @param crater Reference to the crater that this CraterSprite represents.
 	 */
-	CraterSprite(Crater crater)
-	{
+	CraterSprite(Crater crater) {
 		super(DrawLayer.TERRAIN_IMPROVEMENTS, crater);
 
-		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
+		texture = Graphics.getTexture(textureFile);
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, frames[this.getEntity().getTilingState()]);
-		}
-
+	public void draw(Graphics graphics) {
+		drawTexture(graphics, texture);
 	}
 }
