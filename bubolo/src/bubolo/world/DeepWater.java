@@ -21,7 +21,7 @@ public class DeepWater extends Terrain implements EdgeMatchable {
 	 * An array containing the classes that result in a valid match when determining adaptive tiling state.
 	 * TODO (cdc - 2021-04-05): This affects only the visualization, and probably should not be in this class.
 	 */
-	private Class<?>[] matchingTypes = new Class[] { Water.class };
+	private static final Class<?>[] matchingTypes = new Class[] { Water.class };
 
 	protected DeepWater(ConstructionArgs args, World world) {
 		super(args, width, height, terrainTravelSpeed.speedModifier);
