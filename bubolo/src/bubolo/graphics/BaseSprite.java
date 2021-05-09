@@ -56,9 +56,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	 */
 	BaseSprite(Base base)
 	{
-		/* @HACK (cdc 2021-05-06): Base is drawn in the mine layer, since it needs to be above roads, and mines
-		 							can't be placed onto bases. */
-		super(DrawLayer.MINES, base);
+		super(DrawLayer.TerrainImprovements, base);
 
 		allFrames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
 		chargingFrames = new TextureRegion[][] { allFrames[0], allFrames[1], allFrames[2],
@@ -80,40 +78,33 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			updateColorSet();
+		updateColorSet();
 
-			if (refuelingAnimationEndTime < System.currentTimeMillis()) {
-				if (getEntity().isRefueling()) {
-					refuelingAnimationEndTime = System.currentTimeMillis() + minRefuelingAnimationTimeMillis;
-				}
+		if (refuelingAnimationEndTime < System.currentTimeMillis()) {
+			if (getEntity().isRefueling()) {
+				refuelingAnimationEndTime = System.currentTimeMillis() + minRefuelingAnimationTimeMillis;
 			}
+		}
 
-			if (refuelingAnimationEndTime < System.currentTimeMillis()) {
-				if (lastAnimationState != 0) {
-					lastAnimationState = 0;
-					frameIndex = 0;
-				}
-				drawTexture(graphics, idleFrames[colorId]);
-			} else {
-				if (lastAnimationState != 1) {
-					lastAnimationState = 1;
-					frameIndex = 0;
-				}
-				drawTexture(graphics, chargingFrames[frameIndex][colorId]);
+		if (refuelingAnimationEndTime < System.currentTimeMillis()) {
+			if (lastAnimationState != 0) {
+				lastAnimationState = 0;
+				frameIndex = 0;
+			}
+			drawTexture(graphics, idleFrames[colorId]);
+		} else {
+			if (lastAnimationState != 1) {
+				lastAnimationState = 1;
+				frameIndex = 0;
+			}
+			drawTexture(graphics, chargingFrames[frameIndex][colorId]);
 
-				// Progress the Base charging animation.
-				frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
-				lastFrameTime = System.currentTimeMillis();
-				if (frameTimeRemaining < 0) {
-					frameTimeRemaining = millisPerFrame;
-					frameIndex = (frameIndex == chargingFrames.length - 1) ? 0 : frameIndex + 1;
-				}
+			// Progress the Base charging animation.
+			frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
+			lastFrameTime = System.currentTimeMillis();
+			if (frameTimeRemaining < 0) {
+				frameTimeRemaining = millisPerFrame;
+				frameIndex = (frameIndex == chargingFrames.length - 1) ? 0 : frameIndex + 1;
 			}
 		}
 	}

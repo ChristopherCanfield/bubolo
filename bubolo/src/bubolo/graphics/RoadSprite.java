@@ -24,7 +24,7 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	 */
 	RoadSprite(Road road)
 	{
-		super(DrawLayer.TERRAIN_IMPROVEMENTS, road);
+		super(DrawLayer.TerrainLevel2, road);
 
 		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
 	}
@@ -32,13 +32,6 @@ class RoadSprite extends AbstractEntitySprite<Road>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, frames[this.getEntity().getTilingState()]);
-		}
+		drawTexture(graphics, frames[this.getEntity().getTilingState()]);
 	}
 }

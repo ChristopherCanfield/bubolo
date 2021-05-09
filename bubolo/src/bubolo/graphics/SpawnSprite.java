@@ -10,8 +10,7 @@ import bubolo.world.Spawn;
  *
  * @author BU673 - Clone Industries
  */
-class SpawnSprite extends AbstractEntitySprite<Spawn>
-{
+class SpawnSprite extends AbstractEntitySprite<Spawn> {
 	private final Texture image;
 
 	private TextureRegion[][] frames;
@@ -23,29 +22,21 @@ class SpawnSprite extends AbstractEntitySprite<Spawn>
 	private static final String TEXTURE_FILE = "spawn.png";
 
 	/**
-	 * Constructor for the SpawnSprite. This is Package-private because sprites should not be
-	 * directly created outside of the graphics system.
+	 * Constructor for the SpawnSprite. This is Package-private because sprites should not be directly created outside
+	 * of the graphics system.
 	 *
-	 * @param spawn
-	 *            Reference to the spawn that this SpawnSprite represents.
+	 * @param spawn Reference to the spawn that this SpawnSprite represents.
 	 */
-	SpawnSprite(Spawn spawn)
-	{
-		super(DrawLayer.TOP, spawn);
+	SpawnSprite(Spawn spawn) {
+		super(DrawLayer.Top, spawn);
 
 		image = Graphics.getTexture(TEXTURE_FILE);
 		frames = TextureUtil.splitFrames(image, 32, 32);
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else if (visible)
-		{
+	public void draw(Graphics graphics) {
+		if (visible) {
 			drawTexture(graphics, frames[0][0]);
 		}
 	}
@@ -53,20 +44,18 @@ class SpawnSprite extends AbstractEntitySprite<Spawn>
 	/**
 	 * Specifies whether the spawn sprite should be visible. The default is false.
 	 *
-	 * @param visible
-	 *            true if the spawn sprite should be visible, or false otherwise.
+	 * @param visible true if the spawn sprite should be visible, or false otherwise.
 	 */
-	void setVisible(boolean visible)
-	{
+	void setVisible(boolean visible) {
 		this.visible = visible;
 	}
 
 	/**
 	 * Specifies whether the spawn sprite is visible.
+	 *
 	 * @return true if the spawn sprite is visible, or false otherwise.
 	 */
-	boolean getVisible()
-	{
+	boolean getVisible() {
 		return visible;
 	}
 }

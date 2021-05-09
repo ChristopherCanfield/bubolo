@@ -29,7 +29,7 @@ class TreeSprite extends AbstractEntitySprite<Tree>
 	 */
 	TreeSprite(Tree tree)
 	{
-		super(DrawLayer.TERRAIN_IMPROVEMENTS, tree);
+		super(DrawLayer.TerrainImprovements, tree);
 
 		image = Graphics.getTexture(TEXTURE_FILE);
 		Random rand = new Random();
@@ -39,14 +39,7 @@ class TreeSprite extends AbstractEntitySprite<Tree>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, image);
-		}
+		drawTexture(graphics, image);
 	}
 
 	@Override

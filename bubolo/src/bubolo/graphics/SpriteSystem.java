@@ -27,6 +27,7 @@ import bubolo.world.Water;
  * Contains methods for adding new sprites.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 class SpriteSystem
 {
@@ -53,11 +54,11 @@ class SpriteSystem
 	/**
 	 * Creates a new sprite based on the type of entity provided.
 	 *
-	 * @param entity
-	 *            reference to an entity.
+	 * @param graphics reference to the graphics system.
+	 * @param entity reference to an entity.
 	 * @return reference to the new sprite.
 	 */
-	public Sprite createSprite(Entity entity)
+	public Sprite createSprite(Graphics graphics, Entity entity)
 	{
 		if (!spriteFactories.containsKey(entity.getClass()))
 		{
@@ -66,7 +67,7 @@ class SpriteSystem
 							+ entity.getClass().getName() + " because no factory exists.");
 		}
 
-		Sprite sprite = spriteFactories.get(entity.getClass()).create(entity);
+		Sprite sprite = spriteFactories.get(entity.getClass()).create(graphics, entity);
 		sprites.add(sprite);
 		return sprite;
 	}
@@ -101,11 +102,11 @@ class SpriteSystem
 		/**
 		 * Executes the sprite creation function.
 		 *
-		 * @param e
-		 *            reference to the entity that the sprite represents.
+		 * @param graphics reference to the graphics system.
+		 * @param e reference to the entity that the sprite represents.
 		 * @return reference to the new sprite.
 		 */
-		Sprite create(Entity e);
+		Sprite create(Graphics graphics, Entity e);
 	}
 
 	/**
@@ -119,7 +120,7 @@ class SpriteSystem
 
 		factories.put(Base.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new BaseSprite((Base) e);
 			}
@@ -127,7 +128,7 @@ class SpriteSystem
 
 		factories.put(Bullet.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new BulletSprite((Bullet) e);
 			}
@@ -135,15 +136,15 @@ class SpriteSystem
 
 		factories.put(Crater.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
-				return new CraterSprite((Crater) e);
+				return new CraterSprite(graphics, (Crater) e);
 			}
 		});
 
 		factories.put(DeepWater.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new DeepWaterSprite((DeepWater) e);
 			}
@@ -151,7 +152,7 @@ class SpriteSystem
 
 		factories.put(Grass.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new GrassSprite((Grass) e);
 			}
@@ -159,7 +160,7 @@ class SpriteSystem
 
 		factories.put(Mine.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new MineSprite((Mine) e);
 			}
@@ -167,7 +168,7 @@ class SpriteSystem
 
 		factories.put(MineExplosion.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new MineExplosionSprite((MineExplosion) e);
 			}
@@ -175,7 +176,7 @@ class SpriteSystem
 
 		factories.put(Pillbox.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new PillboxSprite((Pillbox) e);
 			}
@@ -183,7 +184,7 @@ class SpriteSystem
 
 		factories.put(Road.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new RoadSprite((Road) e);
 			}
@@ -191,7 +192,7 @@ class SpriteSystem
 
 		factories.put(Rubble.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new RubbleSprite((Rubble) e);
 			}
@@ -199,7 +200,7 @@ class SpriteSystem
 
 		factories.put(Swamp.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new SwampSprite((Swamp) e);
 			}
@@ -207,7 +208,7 @@ class SpriteSystem
 
 		factories.put(Tank.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new TankSprite((Tank) e);
 			}
@@ -215,7 +216,7 @@ class SpriteSystem
 
 		factories.put(Tree.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new TreeSprite((Tree) e);
 			}
@@ -223,7 +224,7 @@ class SpriteSystem
 
 		factories.put(Wall.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new WallSprite((Wall) e);
 			}
@@ -231,7 +232,7 @@ class SpriteSystem
 
 		factories.put(Water.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new WaterSprite((Water) e);
 			}
@@ -240,7 +241,7 @@ class SpriteSystem
 
 		factories.put(Spawn.class, new SpriteFactory() {
 			@Override
-			public Sprite create(Entity e)
+			public Sprite create(Graphics graphics, Entity e)
 			{
 				return new SpawnSprite((Spawn) e);
 			}

@@ -29,7 +29,7 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	 */
 	WallSprite(Wall wall)
 	{
-		super(DrawLayer.TERRAIN_IMPROVEMENTS, wall);
+		super(DrawLayer.TerrainImprovements, wall);
 
 		undamagedFrames = Graphics.getTextureRegion1d(UNDAMAGED_TEXTURE_FILE, getClass());
 		damagedFrames[0] = Graphics.getTextureRegion1d(MINOR_DAMAGE_TEXTURE_FILE, getClass());
@@ -40,20 +40,13 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
+		TextureRegion[] frames;
+		if (getEntity().hitPoints() == getEntity().maxHitPoints()) {
+			frames = undamagedFrames;
+		} else {
+			frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
 		}
-		else
-		{
-			TextureRegion[] frames;
-			if (getEntity().hitPoints() == getEntity().maxHitPoints()) {
-				frames = undamagedFrames;
-			} else {
-				frames = damagedFrames[calculateDamagedFramesIndex(getEntity())];
-			}
-			drawTexture(graphics, frames[getEntity().getTilingState()]);
-		}
+		drawTexture(graphics, frames[getEntity().getTilingState()]);
 	}
 
 	/**

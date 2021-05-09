@@ -3,8 +3,6 @@ package bubolo.util;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-import bubolo.world.World;
-
 /**
  * An efficient mechanism for scheduling actions, which are executed when their scheduled time is reached.
  * All times are internally converted to game ticks, to better support pausing and testing.
@@ -12,9 +10,9 @@ import bubolo.world.World;
  * @author Christopher D. Canfield
  * @since 0.4.0
  */
-public class Timer {
+public class Timer<T> {
 	private int[] alarms;
-	private Consumer<World>[] actions;
+	private Consumer<T>[] actions;
 	private int size;
 
 	private int nextAlarmIndex = 0;
@@ -33,7 +31,7 @@ public class Timer {
 	 * @param action the action to fire once the specified time has been reached.
 	 * @return the scheduled action's id.
 	 */
-	public int scheduleSeconds(float seconds, Consumer<World> action) {
+	public int scheduleSeconds(float seconds, Consumer<T> action) {
 		return scheduleTicks(Time.secondsToTicks(seconds), action);
 	}
 
@@ -44,7 +42,7 @@ public class Timer {
 	 * @param action the action to fire once the specified time has been reached.
 	 * @return the scheduled action's id.
 	 */
-	public int scheduleTicks(int ticks, Consumer<World> action) {
+	public int scheduleTicks(int ticks, Consumer<T> action) {
 		int scheduledTicks = (ticks > 0) ? ticks : 1;
 
 		int id = nextAlarmIndex;
@@ -116,7 +114,7 @@ public class Timer {
 		return previousSize;
 	}
 
-	public void update(World world) {
+	public void update(T world) {
 		// Decrement all scheduled alarms.
 		for (int i = 0; i < size; i++) {
 			alarms[i]--;

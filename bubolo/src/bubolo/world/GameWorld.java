@@ -74,7 +74,7 @@ public class GameWorld implements World {
 	// List of world controllers.
 	private final List<Controller> worldControllers = new ArrayList<>();
 
-	private final Timer timer = new Timer(20);
+	private final Timer<World> timer = new Timer<World>(20);
 
 	// This is used to update the tiling state of adaptables only when necessary, rather than every tick.
 	// Reducing the number of calls to updateTilingState significantly reduced the time that update takes,
@@ -298,7 +298,7 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public Timer timer() {
+	public Timer<World> timer() {
 		return timer;
 	}
 
@@ -507,6 +507,31 @@ public class GameWorld implements World {
 	@Override
 	public boolean isValidTile(int column, int row) {
 		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
+	}
+
+	@Override
+	public boolean isTileAdjacentToWater(int column, int row) {
+		boolean adjacentToWater = false;
+		if (isValidTile(column - 1, row)) {
+			adjacentToWater = adjacentToWater || isWater(column - 1, row);
+		}
+		if (isValidTile(column + 1, row)) {
+			adjacentToWater = adjacentToWater || isWater(column + 1, row);
+		}
+
+		if (isValidTile(column, row - 1)) {
+			adjacentToWater = adjacentToWater || isWater(column, row - 1);
+		}
+		if (isValidTile(column, row + 1)) {
+			adjacentToWater = adjacentToWater || isWater(column, row + 1);
+		}
+
+		return adjacentToWater;
+	}
+
+	private boolean isWater(int column, int row) {
+		Terrain terrain = getTerrain(column, row);
+		return Terrain.isWater(terrain);
 	}
 
 	@Override

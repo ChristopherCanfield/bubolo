@@ -61,7 +61,7 @@ public interface World
 	 */
 	public List<ActorEntity> getActors();
 
-	public Timer timer();
+	public Timer<World> timer();
 
 	/**
 	 * Constructs and adds an entity to the world, and returns a reference to the newly constructed entity.
@@ -157,7 +157,21 @@ public interface World
 	 */
 	public int getTileRows();
 
+	/**
+	 * @param column the column to check.
+	 * @param row the row to check.
+	 * @return true if column is >= 0 and less than getTileColumns() and row is >= 0 and less than getTileRows().
+	 */
 	public boolean isValidTile(int column, int row);
+
+	/**
+	 * Whether the target tile is adjacent to water.
+	 *
+	 * @param column the tile's column.
+	 * @param row the tile's row.
+	 * @return true if the target tile is adjacent to water.
+	 */
+	public boolean isTileAdjacentToWater(int column, int row);
 
 	/**
 	 * Updates the game world. Must be called once per game tick.

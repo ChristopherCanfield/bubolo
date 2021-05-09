@@ -35,7 +35,7 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 	static final String TEXTURE_FILE = "mineExplosion.png";
 
 	/**
-	 * Constructor for the MineExplosionSprite. This is Package-private because sprites
+	 * Constructs a MineExplosionSprite. This is Package-private because sprites
 	 * should not be directly created outside of the graphics system.
 	 *
 	 * @param exp
@@ -43,7 +43,7 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 	 */
 	MineExplosionSprite(MineExplosion exp)
 	{
-		super(DrawLayer.EFFECTS, exp);
+		super(DrawLayer.Effects, exp);
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 60, 60);
 
@@ -53,21 +53,14 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion>
 	@Override
 	public void draw(Graphics graphics)
 	{
-		if (isDisposed())
-		{
-			graphics.sprites().removeSprite(this);
-		}
-		else
-		{
-			drawTexture(graphics, frames[frameIndex][0]);
+		drawTexture(graphics, frames[frameIndex][0]);
 
-			frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
-			lastFrameTime = System.currentTimeMillis();
-			if (frameTimeRemaining < 0 && frameIndex < frames.length-1)
-			{
-				frameTimeRemaining = millisPerFrame;
-				frameIndex = frameIndex + 1;
-			}
+		frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
+		lastFrameTime = System.currentTimeMillis();
+		if (frameTimeRemaining < 0 && frameIndex < frames.length-1)
+		{
+			frameTimeRemaining = millisPerFrame;
+			frameIndex = frameIndex + 1;
 		}
 	}
 }

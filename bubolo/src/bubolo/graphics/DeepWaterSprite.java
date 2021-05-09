@@ -24,7 +24,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater> {
 	 * @param deepWater Reference to the DeepWater that this DeepWaterSprite represents.
 	 */
 	DeepWaterSprite(DeepWater deepWater) {
-		super(DrawLayer.TERRAIN, deepWater);
+		super(DrawLayer.TerrainLevel1, deepWater);
 
 		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
 	}
