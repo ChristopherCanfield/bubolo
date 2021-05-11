@@ -7,6 +7,8 @@ import java.util.function.Consumer;
  * An efficient mechanism for scheduling actions, which are executed when their scheduled time is reached.
  * All times are internally converted to game ticks, to better support pausing and testing.
  *
+ * @param <T> the type that the timer's action consumes.
+ *
  * @author Christopher D. Canfield
  * @since 0.4.0
  */
