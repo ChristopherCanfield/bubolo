@@ -100,7 +100,9 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	public void drawUiElements(Graphics graphics) {
 		var tank = getEntity();
 		if (tank.isOwnedByLocalPlayer()) {
-			StatusBarRenderer.drawHealthBar(tank, graphics.shapeRenderer(), graphics.camera());
+			if (tank.isAlive()) {
+				StatusBarRenderer.drawHealthBar(tank, graphics.shapeRenderer(), graphics.camera());
+			}
 			drawTankAmmo(tank, graphics);
 		}
 	}
