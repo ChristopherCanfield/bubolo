@@ -2,7 +2,6 @@
 
 # Bubolo-specific
 Prefs.bolo
-
 dist/
 
 # Package Files #
@@ -49,3 +48,8 @@ $RECYCLE.BIN/
 
 # Mac custom attributes
 .DS_Store
+
+# Misc
+*.ods#
+
+

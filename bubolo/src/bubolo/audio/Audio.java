@@ -45,7 +45,7 @@ public class Audio {
 
 	// OpenAL reference distance: the distance that the sound is played at its highest volume.
 	private static float referenceDistance;
-	// OpenAL rolloff factor.
+	// OpenAL rolloff factor: how quickly a sound fades out as its distance increases.
 	private static float rolloffFactor;
 
 	private static float listenerX;
@@ -72,7 +72,7 @@ public class Audio {
 
 		alDistanceModel(AL10.AL_INVERSE_DISTANCE);
 
-		referenceDistance = Math.max(viewportWidth, viewportHeight) * 0.5f;
+		referenceDistance = Math.max(viewportWidth, viewportHeight) * 0.4f;
 		rolloffFactor = Math.min(worldWidth / viewportWidth, worldHeight / viewportHeight);
 	}
 
