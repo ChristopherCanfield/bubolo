@@ -4,7 +4,6 @@ import static com.badlogic.gdx.math.MathUtils.clamp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -317,7 +316,7 @@ public class Tank extends ActorEntity implements Damageable {
 			float bulletX = x() + tankHalfWidth * (float) Math.cos(rotation());
 			float bulletY = y() + tankHalfHeight * (float) Math.sin(rotation());
 
-			var args = new Entity.ConstructionArgs(UUID.randomUUID(), bulletX, bulletY, rotation());
+			var args = new Entity.ConstructionArgs(Entity.nextId(), bulletX, bulletY, rotation());
 			Bullet bullet = world.addEntity(Bullet.class, args);
 			bullet.setOwner(this);
 
@@ -595,7 +594,7 @@ public class Tank extends ActorEntity implements Damageable {
 			int mineX = tileX * Coords.TileToWorldScale;
 			int mineY = tileY * Coords.TileToWorldScale;
 
-			var args = new Entity.ConstructionArgs(UUID.randomUUID(), mineX, mineY, 0);
+			var args = new Entity.ConstructionArgs(Entity.nextId(), mineX, mineY, 0);
 			Mine mine = world.addEntity(Mine.class, args);
 
 			mineCount--;

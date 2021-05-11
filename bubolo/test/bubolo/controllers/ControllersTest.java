@@ -4,10 +4,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.UUID;
-
 import org.junit.Test;
 
+import bubolo.world.Entity;
 import bubolo.world.Entity.ConstructionArgs;
 import bubolo.world.GameWorld;
 import bubolo.world.MineExplosion;
@@ -29,7 +28,7 @@ public class ControllersTest
 		World world = new GameWorld(10, 10);
 		Controllers controllerSystem = Controllers.getInstance();
 		// Pass mine explosion, since it does not have any controllers normally.
-		var mineExplosion = world.addEntity(MineExplosion.class, new ConstructionArgs(UUID.randomUUID(), 0, 0, 0));
+		var mineExplosion = world.addEntity(MineExplosion.class, new ConstructionArgs(Entity.nextId(), 0, 0, 0));
 		assertFalse(controllerSystem.createController(mineExplosion, null));
 	}
 
@@ -38,7 +37,7 @@ public class ControllersTest
 	{
 		World world = new GameWorld(10, 10);
 		Controllers controllerSystem = Controllers.getInstance();
-		Tank tank = world.addEntity(Tank.class, new ConstructionArgs(UUID.randomUUID(), 0, 0, 0));
+		Tank tank = world.addEntity(Tank.class, new ConstructionArgs(Entity.nextId(), 0, 0, 0));
 		assertTrue(controllerSystem.createController(tank, null));
 	}
 

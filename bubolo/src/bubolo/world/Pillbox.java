@@ -1,7 +1,5 @@
 package bubolo.world;
 
-import java.util.UUID;
-
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Config;
@@ -124,7 +122,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		cannonReloaded = false;
 		world.timer().scheduleTicks(cannonReloadSpeedTicks, w -> cannonReloaded = true);
 
-		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), cannonRotation);
+		var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), cannonRotation);
 		Bullet bullet = world.addEntity(Bullet.class, args);
 		bullet.setOwner(this);
 	}

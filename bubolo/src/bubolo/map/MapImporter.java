@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
@@ -312,7 +311,7 @@ public class MapImporter {
 					float rotation = 0;
 
 					// The x and y coords are flipped in the map.
-					var args = new Entity.ConstructionArgs(UUID.randomUUID(), posX, posY, rotation);
+					var args = new Entity.ConstructionArgs(Entity.nextId(), posX, posY, rotation);
 					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world, args);
 
 					diagnostics.typesImported.add(entity.getClass().getSimpleName());

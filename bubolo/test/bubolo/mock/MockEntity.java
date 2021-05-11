@@ -33,7 +33,7 @@ public class MockEntity extends Entity
 	 */
 	public MockEntity()
 	{
-		this(UUID.randomUUID());
+		this(Entity.nextId());
 	}
 
 	@Override

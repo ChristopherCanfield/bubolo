@@ -272,7 +272,7 @@ public class GameWorld implements World {
 				if (terrain[column][row] == null) {
 					float x = column * Coords.TileToWorldScale;
 					float y = row * Coords.TileToWorldScale;
-					var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
+					var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
 					addEntity(terrainType, args);
 				}
 			}

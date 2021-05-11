@@ -1,7 +1,5 @@
 package bubolo.world;
 
-import java.util.UUID;
-
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Sfx;
@@ -85,7 +83,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 
 		if (hitPoints <= 0) {
 			// When the wall is destroyed, replace it with rubble.
-			var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), 0);
+			var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), 0);
 			world.addEntity(Rubble.class, args);
 
 			dispose();

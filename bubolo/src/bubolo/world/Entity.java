@@ -23,6 +23,15 @@ public abstract class Entity {
 	/** The max size that an entity's height and width can each be. */
 	public static final int EntityMaxSize = Byte.MAX_VALUE;
 
+	/**
+	 * Generates and returns the next unique Entity ID.
+	 *
+	 * @return the next unique Entity ID.
+	 */
+	public static UUID nextId() {
+		return UUID.randomUUID();
+	}
+
 	public static record ConstructionArgs(UUID id, float x, float y, float rotationRadians) {
 	}
 

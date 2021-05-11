@@ -11,6 +11,7 @@ import org.junit.Test;
 import bubolo.mock.MockTank;
 import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
+import bubolo.world.Entity;
 import bubolo.world.Tank;
 
 /**
@@ -24,10 +25,10 @@ public class MoveTankTest
 	@Test
 	public void testExecute()
 	{
-		UUID id = UUID.randomUUID();
+		UUID id = Entity.nextId();
 		Tank tank = new MockTank();
 		tank.setId(id);
-		
+
 		NetworkCommand command = new UpdateTankAttributes(tank);
 		MockWorld world = new MockWorld();
 		world.add(tank);

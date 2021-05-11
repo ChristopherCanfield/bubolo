@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -185,7 +184,7 @@ public class BuboloApplication extends AbstractGameApplication
 					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			var spawn = world.getRandomSpawn();
-			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawn.x(), spawn.y(), 0);
+			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
 			tank.setPlayerName(network.getPlayerName());
@@ -204,7 +203,7 @@ public class BuboloApplication extends AbstractGameApplication
 					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			var spawn = world.getRandomSpawn();
-			Entity.ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), spawn.x(), spawn.y(), 0);
+			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
 			tank.setOwnedByLocalPlayer(true);

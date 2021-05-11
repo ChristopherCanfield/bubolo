@@ -1,7 +1,5 @@
 package bubolo.world;
 
-import java.util.UUID;
-
 import bubolo.util.TileUtil;
 
 /**
@@ -69,7 +67,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 			var terrain = world.getTerrain(tileColumn(), tileRow());
 			terrain.dispose();
 
-			var args = new Entity.ConstructionArgs(UUID.randomUUID(), x(), y(), 0);
+			var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), 0);
 			world.addEntity(Water.class, args);
 		}
 	}

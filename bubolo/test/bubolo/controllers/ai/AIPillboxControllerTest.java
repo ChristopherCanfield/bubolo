@@ -1,7 +1,5 @@
 package bubolo.controllers.ai;
 
-import java.util.UUID;
-
 import org.junit.Test;
 
 import bubolo.world.Entity;
@@ -16,7 +14,7 @@ public class AIPillboxControllerTest
 	public void updateTest()
 	{
 		World world = new GameWorld(10, 10);
-		var pillbox = world.addEntity(Pillbox.class, new Entity.ConstructionArgs(UUID.randomUUID(), 0, 0, 0));
+		var pillbox = world.addEntity(Pillbox.class, new Entity.ConstructionArgs(Entity.nextId(), 0, 0, 0));
 		var controller = new AiPillboxController(pillbox);
 		pillbox.addController(controller);
 		controller.update(world);

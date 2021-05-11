@@ -3,13 +3,12 @@ package bubolo.graphics;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.UUID;
-
 import org.junit.Test;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
+import bubolo.world.Entity;
 import bubolo.world.Entity.ConstructionArgs;
 import bubolo.world.GameWorld;
 import bubolo.world.Tank;
@@ -21,7 +20,7 @@ public class TankCameraControllerTest
 	public void testSetCameraHasCamera()
 	{
 		World world = new GameWorld(100, 100);
-		Tank tank = world.addEntity(Tank.class, new ConstructionArgs(UUID.randomUUID(), 0, 0, 0));
+		Tank tank = world.addEntity(Tank.class, new ConstructionArgs(Entity.nextId(), 0, 0, 0));
 		world.update();
 
 		Camera camera = new OrthographicCamera();

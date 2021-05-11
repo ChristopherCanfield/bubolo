@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.UUID;
 
 import bubolo.controllers.Controller;
 import bubolo.util.Coords;
@@ -156,7 +155,7 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 			findHighestScores(world);
 		} else {
 			if (world.getTerrainImprovement(nextLocation.column, nextLocation.row) == null) {
-				var args = new Entity.ConstructionArgs(UUID.randomUUID(),
+				var args = new Entity.ConstructionArgs(Entity.nextId(),
 						nextLocation.column * Coords.TileToWorldScale,
 						nextLocation.row * Coords.TileToWorldScale,
 						0);

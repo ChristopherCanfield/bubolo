@@ -15,7 +15,7 @@ import bubolo.world.Entity.ConstructionArgs;
 
 public class GameWorldTest
 {
-	private final ConstructionArgs args = new Entity.ConstructionArgs(UUID.randomUUID(), 0, 0, 0);
+	private final ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), 0, 0, 0);
 
 	private World world;
 

@@ -15,6 +15,7 @@ import org.junit.Test;
 import bubolo.mock.MockTank;
 import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
+import bubolo.world.Entity;
 import bubolo.world.Grass;
 
 /**
@@ -25,14 +26,14 @@ public class NetworkCommandTest
 	@Test
 	public void testCreateEntityCommand()
 	{
-		NetworkCommand c = new CreateEntity(Grass.class, UUID.randomUUID(), 0, 0, 0);
+		NetworkCommand c = new CreateEntity(Grass.class, Entity.nextId(), 0, 0, 0);
 		c.execute(new MockWorld());
 	}
 
 	@Test
 	public void createEntitygetId()
 	{
-		UUID id = UUID.randomUUID();
+		UUID id = Entity.nextId();
 		NetworkCommand c = new CreateEntity(Grass.class, id, 0, 0, 0);
 		assertEquals(id, ((CreateEntity)c).getId());
 	}

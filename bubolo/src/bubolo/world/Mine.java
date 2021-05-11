@@ -1,7 +1,5 @@
 package bubolo.world;
 
-import java.util.UUID;
-
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.util.Time;
@@ -102,7 +100,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	private static void addExplosion(World world, float x, float y) {
-		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
+		var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
 		world.addEntity(MineExplosion.class, args);
 	}
 
@@ -114,7 +112,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	private static Crater addCrater(World world, float x, float y) {
-		var args = new Entity.ConstructionArgs(UUID.randomUUID(), x, y, 0);
+		var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
 		return world.addEntity(Crater.class, args);
 	}
 }
