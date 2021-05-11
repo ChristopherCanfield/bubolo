@@ -69,7 +69,6 @@ public abstract class Screen
 
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
-		System.out.println("Resize called");
 	}
 
 	/**
