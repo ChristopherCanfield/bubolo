@@ -195,7 +195,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 			drawTexture(graphics, forwardFrames[frameIndex][colorId]);
 			animate(forwardFrames);
 
-			// Tank is idle.
+		// Tank is idle.
 		} else {
 			drawTexture(graphics, idleFrames[colorId]);
 		}

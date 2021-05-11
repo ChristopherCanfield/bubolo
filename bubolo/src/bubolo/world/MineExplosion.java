@@ -1,5 +1,6 @@
 package bubolo.world;
 
+import bubolo.util.Coords;
 import bubolo.util.Time;
 
 /**
@@ -15,8 +16,10 @@ public class MineExplosion extends ActorEntity {
 	private static final float totalDamage = 25;
 	private static final float damagePerTick = totalDamage / Time.secondsToTicks(LifetimeSeconds);
 
-	private static final int width = 60;
-	private static final int height = 60;
+	private static final int width = Coords.TileToWorldScale;
+	private static final int height = Coords.TileToWorldScale;
+
+	private static final int blastRadiusTiles = 1;
 
 	/**
 	 * Constructs a new MineExplosion.
@@ -35,12 +38,10 @@ public class MineExplosion extends ActorEntity {
 
 	@Override
 	public void onUpdate(World world) {
-		for (Collidable collider : world.getNearbyCollidables(this, false, Damageable.class)) {
-			if (overlapsEntity(collider)) {
-				// We know the collider is a damageable, since we filtered to include only Damageables.
-				Damageable damageable = (Damageable) collider;
-				damageable.receiveDamage(damagePerTick, world);
-			}
+		for (Collidable collider : world.getNearbyCollidables (this, false, blastRadiusTiles, Damageable.class)) {
+			// We know the collider is a damageable, since we filtered to include only Damageables.
+			Damageable damageable = (Damageable) collider;
+			damageable.receiveDamage(damagePerTick, world);
 		}
 	}
 
