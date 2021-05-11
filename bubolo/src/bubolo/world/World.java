@@ -15,18 +15,23 @@ import bubolo.util.Timer;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public interface World
-{
+public interface World {
 	/**
-	 * Returns an entity from a user id. Throws a GameLogicException if the entity is not found.
+	 * Returns an entity from an entity ID. Throws a GameLogicException if the entity is not found.
 	 *
-	 * @param id
-	 *            the entity's unique id.
+	 * @param id the entity's unique id.
 	 * @return the requested entity.
-	 * @throws GameLogicException
-	 *             if the entity is not found.
+	 * @throws GameLogicException if the entity is not found.
 	 */
 	public Entity getEntity(UUID id) throws GameLogicException;
+
+	/**
+	 * Returns an entity from an entity ID, or null if the entity does not exist.
+	 *
+	 * @param id the entity's unique id.
+	 * @return the requested entity, or null if the entity does not exist.
+	 */
+	public @Nullable Entity getEntityOrNull(UUID id);
 
 	/**
 	 * Returns an unmodifiable view of all entities in the world.
@@ -74,32 +79,27 @@ public interface World
 	 * <li>One or more Controllers are created and added to the Controllers list.</li>
 	 * </ol>
 	 *
-	 * @param c the entity's class object. For example, to create a new Tank, call this method
-	 *          using the following form: <code>World.addEntity(Tank.class, args).</code>
+	 * @param c the entity's class object. For example, to create a new Tank, call this method using the following form:
+	 *     <code>World.addEntity(Tank.class, args).</code>
 	 * @param args the entity's construction arguments.
 	 * @return reference to the new entity.
-	 * @throws GameLogicException
-	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
-	 *             entity.
+	 * @throws GameLogicException if the entity cannot be instantiated, or if the UUID already belongs to an entity.
 	 */
 	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException;
 
 	/**
 	 * @see World#addEntity(Class, Entity.ConstructionArgs)
-	 * @param c the entity's class object. For example, to create a new Tank, call this method
-	 *          using the following form: <code>World.addEntity(Tank.class, args).</code>
+	 * @param c the entity's class object. For example, to create a new Tank, call this method using the following form:
+	 *     <code>World.addEntity(Tank.class, args).</code>
 	 * @param args the entity's construction arguments.
-	 * @param controllerFactory
-	 *            an object that implements the ControllerFactory interface. This should be used to
-	 *            override the default controller settings. In other words, use a controller factory
-	 *            to set different controller(s) for an entity than the default.
-	 * @return reference to the new entity. Note that the entity has already been added to the
-	 *         World.
-	 * @throws GameLogicException
-	 *             if the entity cannot be instantiated, or if the UUID already belongs to an
-	 *             entity.
+	 * @param controllerFactory an object that implements the ControllerFactory interface. This should be used to override the
+	 *     default controller settings. In other words, use a controller factory to set different controller(s) for an entity than
+	 *     the default.
+	 * @return reference to the new entity. Note that the entity has already been added to the World.
+	 * @throws GameLogicException if the entity cannot be instantiated, or if the UUID already belongs to an entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory) throws GameLogicException;
+	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory)
+			throws GameLogicException;
 
 	/**
 	 * Populates all empty tiles with the specified terrain type.
@@ -109,8 +109,8 @@ public interface World
 	public <T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType);
 
 	/**
-	 * Adds an entity lifetime observer to this world. The entity lifetime observer is notified whenever an entity
-	 * is added to or removed from the world.
+	 * Adds an entity lifetime observer to this world. The entity lifetime observer is notified whenever an entity is added to or
+	 * removed from the world.
 	 * <p>
 	 * When the observer is first added to observe the world, it receives notifications for all currently alive entities.
 	 * </p>
@@ -147,12 +147,14 @@ public interface World
 
 	/**
 	 * The number of tile columns.
+	 *
 	 * @return The number of tile columns.
 	 */
 	public int getTileColumns();
 
 	/**
 	 * The number of tile rows.
+	 *
 	 * @return The number of tile rows.
 	 */
 	public int getTileRows();
@@ -199,7 +201,7 @@ public interface World
 	public TerrainImprovement getTerrainImprovement(int column, int row);
 
 	/**
-	 *Returns the mine located in specified (column, row) tile position, or null if none is.
+	 * Returns the mine located in specified (column, row) tile position, or null if none is.
 	 *
 	 * @param column >= 0 and < getTileColumns().
 	 * @param row >= 0 and < getTileRows().
@@ -209,36 +211,37 @@ public interface World
 	public Mine getMine(int column, int row);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and type.
-	 * The entity that is passed in is not included in the returned list.
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and
+	 * type. The entity that is passed in is not included in the returned list.
 	 *
 	 * @param entity the target entity.
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
-	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
-	 * no type filter is applied.
+	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which
+	 *     case no type filter is applied.
 	 *
 	 * @return a list of nearby collidables.
 	 */
 	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and type.
-	 * The entity that is passed in is not included in the returned list. This overload allows for the max distance, in tiles, to
-	 * be passed in.
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and
+	 * type. The entity that is passed in is not included in the returned list. This overload allows for the max distance, in
+	 * tiles, to be passed in.
 	 *
 	 * @param entity the target entity.
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
-	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which case
-	 * no type filter is applied.
+	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which
+	 *     case no type filter is applied.
 	 *
 	 * @return a list of nearby collidables.
 	 */
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance, @Nullable Class<?> typeFilter);
+	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
+			@Nullable Class<?> typeFilter);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness.
-	 * The entity that is passed in is not included in the returned list.
+	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness. The
+	 * entity that is passed in is not included in the returned list.
 	 *
 	 * @param entity the target entity.
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
@@ -250,16 +253,14 @@ public interface World
 	/**
 	 * Adds a controller of the specified type to the world.
 	 *
-	 * @param controllerType
-	 *            the type of the controller to add.
+	 * @param controllerType the type of the controller to add.
 	 */
 	public void addController(Class<? extends Controller> controllerType);
 
 	/**
 	 * Removes a controller of the specified type to the world.
 	 *
-	 * @param controllerType
-	 *            the type of the controller to remove.
+	 * @param controllerType the type of the controller to remove.
 	 */
 	public void removeController(Class<? extends Controller> controllerType);
 

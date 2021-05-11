@@ -16,6 +16,9 @@ import bubolo.Config;
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
+import bubolo.net.Network;
+import bubolo.net.NetworkSystem;
+import bubolo.net.command.DestroyEntity;
 import bubolo.util.Coords;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
@@ -401,6 +404,12 @@ public class GameWorld implements World {
 				}
 			}
 
+			// Notify the network players.
+			Network network = NetworkSystem.getInstance();
+			for (var entity : markedForRemoval) {
+				network.send(new DestroyEntity(entity.id()));
+			}
+
 			var adaptablesToRemove = markedForRemoval.stream().filter(e -> e instanceof EdgeMatchable).map(e -> (EdgeMatchable) e)
 					.toList();
 			adaptableTileModified = adaptableTileModified || adaptables.removeAll(adaptablesToRemove);
@@ -414,6 +423,11 @@ public class GameWorld implements World {
 			throw new GameLogicException("The specified entity does not exist in the game world. Entity id: " + id);
 		}
 		return entity;
+	}
+
+	@Override
+	public @Nullable Entity getEntityOrNull(UUID id) {
+		return entityMap.get(id);
 	}
 
 	@Override
