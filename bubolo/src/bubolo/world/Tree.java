@@ -69,7 +69,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
 
-		if (hitPoints <= 0) {
+		if (!isDisposed() && hitPoints <= 0) {
 			dispose();
 		}
 	}

@@ -3,6 +3,7 @@ package bubolo.net.command;
 import java.util.UUID;
 
 import bubolo.net.NetworkCommand;
+import bubolo.world.Damageable;
 import bubolo.world.World;
 
 /**
@@ -25,6 +26,10 @@ public class DestroyEntity extends NetworkCommand {
 	protected void execute(World world) {
 		var entityToDestroy = world.getEntityOrNull(id);
 		if (entityToDestroy != null) {
+			if (entityToDestroy instanceof Damageable damageable) {
+				damageable.receiveDamage(damageable.maxHitPoints(), world);
+			}
+
 			entityToDestroy.dispose();
 		}
 	}

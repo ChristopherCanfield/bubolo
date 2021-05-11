@@ -506,7 +506,7 @@ public class Tank extends ActorEntity implements Damageable {
 	public void receiveDamage(float damagePoints, World world) {
 		assert (damagePoints >= 0);
 
-		if (hitPoints > 0) {
+		if (!isDisposed() && hitPoints > 0) {
 			hitPoints -= damagePoints;
 
 			notifyNetwork();

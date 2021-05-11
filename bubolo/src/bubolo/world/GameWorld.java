@@ -406,9 +406,9 @@ public class GameWorld implements World {
 
 			// Notify the network players.
 			Network network = NetworkSystem.getInstance();
-			for (var entity : markedForRemoval) {
-				network.send(new DestroyEntity(entity.id()));
-			}
+			markedForRemoval.stream().filter(e -> !(e instanceof Bullet && !(e instanceof Mine))).forEach(e -> {
+				network.send(new DestroyEntity(e.id()));
+			});
 
 			var adaptablesToRemove = markedForRemoval.stream().filter(e -> e instanceof EdgeMatchable).map(e -> (EdgeMatchable) e)
 					.toList();

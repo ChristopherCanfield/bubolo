@@ -253,7 +253,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	@Override
 	public boolean isSolid() {
-		return (owner() != null && !isOwnedByLocalPlayer());
+		return (hitPoints > 0 && owner() != null && !isOwnedByLocalPlayer());
 	}
 
 	@Override
