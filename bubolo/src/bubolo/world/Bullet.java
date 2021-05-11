@@ -87,7 +87,7 @@ public class Bullet extends ActorEntity {
 	private void processCollisions(World w) {
 		for (Collidable collidable : w.getNearbyCollidables(this, false, Damageable.class)) {
 			Entity e = (Entity) collidable;
-			if (e != owner() && overlapsEntity(collidable)) {
+			if (e != owner() && overlapsEntity(collidable) && !isAlliedBase(e)) {
 				// We know the collision object is Damageable, because we filtered for that in the getNearbyCollidables method.
 				Damageable collisionObject = (Damageable) e;
 				collisionObject.receiveDamage(damage, w);
@@ -95,6 +95,16 @@ public class Bullet extends ActorEntity {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Used to allow bullets to pass over allied bases.
+	 */
+	private boolean isAlliedBase(Entity e) {
+		if (e instanceof Base base) {
+			return base.owner() == owner();
+		}
+		return false;
 	}
 
 	@Override
