@@ -232,8 +232,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	 * @param graphics reference to the graphics system.
 	 */
 	private void initialize(Graphics graphics) {
-		Texture texture = Graphics.getTexture(TEXTURE_FILE);
-		frames = TextureUtil.splitFrames(texture, 32, 32);
+		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
 
 		forwardFrames = new TextureRegion[][] { frames[0], frames[1], frames[2] };
 		idleFrames = frames[0];

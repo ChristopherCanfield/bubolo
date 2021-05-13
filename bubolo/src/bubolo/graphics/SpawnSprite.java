@@ -1,7 +1,6 @@
 package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Spawn;
 
@@ -12,8 +11,6 @@ import bubolo.world.Spawn;
  */
 class SpawnSprite extends AbstractEntitySprite<Spawn> {
 	private final Texture image;
-
-	private TextureRegion[][] frames;
 
 	// Whether the sprite should be drawn.
 	private boolean visible;
@@ -31,13 +28,12 @@ class SpawnSprite extends AbstractEntitySprite<Spawn> {
 		super(DrawLayer.Top, spawn);
 
 		image = Graphics.getTexture(TEXTURE_FILE);
-		frames = TextureUtil.splitFrames(image, 32, 32);
 	}
 
 	@Override
 	public void draw(Graphics graphics) {
 		if (visible) {
-			drawTexture(graphics, frames[0][0]);
+			drawTexture(graphics, image);
 		}
 	}
 

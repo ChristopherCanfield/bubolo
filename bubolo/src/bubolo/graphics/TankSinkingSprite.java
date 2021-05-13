@@ -1,6 +1,5 @@
 package bubolo.graphics;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 
@@ -17,7 +16,6 @@ class TankSinkingSprite extends Sprite {
 	private int ticksRemaining = drownTimeTicks;
 
 	private static final String textureFile = "tank.png";
-	private final Texture texture;
 	private final TextureRegion[] frames;
 
 	/**
@@ -32,8 +30,7 @@ class TankSinkingSprite extends Sprite {
 		this.y = tank.y();
 		this.rotation = tank.rotation();
 
-		this.texture = Graphics.getTexture(textureFile);
-		this.frames = TextureUtil.splitFrames(texture, 32, 32)[0];
+		this.frames = Graphics.getTextureRegion2d(textureFile, 32, 32)[0];
 	}
 
 	@Override

@@ -31,31 +31,43 @@ abstract class TextureUtil {
 	}
 
 	/**
-	 * Split a sprite texture up into discrete frames, using the standardized height and
-	 * width of each frame to determine start and end points of each frame. Used for
-	 * separating ColorSets and animation frames. All frames must be the same
-	 * size, with no padding between frames.
+	 * Splits a column of images within a texture into frames.
+	 *
+	 * @param texture the texture that contains the frames.
+	 * @param frameCount the number of frames in the file.
+	 * @param frameLeftX the left position of the frames.
+	 * @param frameWidth the width of each frame.
+	 * @param frameHeight the height of each frame.
+	 * @return the frames.
+	 */
+	public static TextureRegion[] splitFramesInColumn(Texture texture, int frameCount, int frameLeftX, int frameWidth, int frameHeight) {
+		TextureRegion[] frames = new TextureRegion[frameCount];
+		for (int frame = 0; frame < frameCount; frame++) {
+			frames[frame] = new TextureRegion(texture, frameLeftX, frame * frameHeight, frameWidth, frameHeight);
+		}
+		return frames;
+	}
+
+	/**
+	 * Splits a texture into frames, using the height and width of each frame to determine start and end points of each frame.
+	 * All frames must be the same size.
 	 *
 	 * @param tex the texture to be split into frames.
 	 * @param frameWidth the width of each frame.
 	 * @param frameHeight the height of each frame.
-	 * @return a two-dimensional array of TextureRegions, in [column][row] order. The column represents the color set.
+	 * @param framePaddingWidth the padding width between frames.
+	 * @param framePaddingHeight the padding height between frames.
+	 * @return a two-dimensional array of TextureRegions, in [column][row] order.
 	 */
-	public static TextureRegion[][] splitFrames(Texture tex, int frameWidth, int frameHeight)
+	public static TextureRegion[][] splitFrames(Texture tex, int frameWidth, int frameHeight, int framePaddingWidth, int framePaddingHeight)
 	{
-		if (tex.getWidth() % frameWidth != 0 || tex.getHeight() % frameHeight != 0) {
-			throw new TextureDimensionException("Cannot split texture into frames, wrong size!");
-		}
-
 		int rows = tex.getHeight() / frameHeight;
 		int columns = tex.getWidth() / frameWidth;
 
 		TextureRegion[][] frameSets = new TextureRegion[columns][rows];
-		for (int col = 0; col < columns; col++)
-		{
-			for (int row = 0; row < rows; row++)
-			{
-				frameSets[col][row] = new TextureRegion(tex, col * frameWidth, row * frameHeight,
+		for (int col = 0; col < columns; col++) {
+			for (int row = 0; row < rows; row++) {
+				frameSets[col][row] = new TextureRegion(tex, col * frameWidth + (col * framePaddingWidth), row * frameHeight + (row * framePaddingHeight),
 						frameWidth, frameHeight);
 			}
 		}
@@ -92,8 +104,7 @@ abstract class TextureUtil {
 
 		// Grab the 16 texture frames for a standard 4x4 layout
 
-		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale,
-				Coords.TileToWorldScale);
+		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale, Coords.TileToWorldScale, 0, 0);
 
 		// Assign each texture frame to the correct index
 		adapt[0] = allFrames[0][0];
@@ -138,7 +149,7 @@ abstract class TextureUtil {
 
 		// Grab the 34 texture frames for a standard 4x4 + 3x3 + 3x3 layout
 
-		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale, Coords.TileToWorldScale);
+		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale, Coords.TileToWorldScale, 0, 0);
 
 		// Assign each texture frame to the correct index...
 

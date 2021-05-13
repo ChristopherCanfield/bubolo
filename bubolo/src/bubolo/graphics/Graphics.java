@@ -126,10 +126,14 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @return the requested texture region.
 	 */
 	static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight) {
+		return getTextureRegion2d(path, frameWidth, frameHeight, 0, 0);
+	}
+
+	static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight, int framePaddingWidth, int framePaddingHeight) {
 		TextureRegion[][] textureRegion = textureRegions2d.get(path);
 		if (textureRegion == null) {
 			Texture texture = getTexture(path);
-			textureRegion = TextureUtil.splitFrames(texture, frameWidth, frameHeight);
+			textureRegion = TextureUtil.splitFrames(texture, frameWidth, frameHeight, framePaddingWidth, framePaddingHeight);
 			textureRegions2d.put(path, textureRegion);
 		}
 
