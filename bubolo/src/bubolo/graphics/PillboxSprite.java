@@ -71,11 +71,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 		static DamageState getDamageState(Pillbox pillbox) {
 			var damagePercent = pillbox.hitPoints() / pillbox.maxHitPoints();
-			if (damagePercent >= 0.75F) {
+			if (damagePercent >= 0.85F) {
 				return Undamaged;
-			} else if (damagePercent > 0.30f && damagePercent < 0.75f) {
+			} else if (damagePercent > 0.40f && damagePercent < 0.85f) {
 				return LightlyDamaged;
-			} else if (damagePercent > 0 && damagePercent <= 0.30f) {
+			} else if (damagePercent > 0 && damagePercent <= 0.40f) {
 				return SeverelyDamaged;
 			} else {
 				return OutOfService;
