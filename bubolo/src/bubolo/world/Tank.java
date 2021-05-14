@@ -46,7 +46,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private float adjustedAccelerationRate = accelerationRate;
 
 	// The rate of deceleration, in world units per tick.
-	private static final float decelerationRate = 0.035f;
+	private static final float decelerationRate = 0.05f;
 
 	// The tank's rate of rotation per tick.
 	private static final float rotationRate = 0.03f;
