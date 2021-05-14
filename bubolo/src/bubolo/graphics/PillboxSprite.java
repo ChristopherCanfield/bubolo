@@ -13,7 +13,7 @@ import bubolo.world.Pillbox;
 class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable {
 	private TextureRegion[][] frames;
 
-	private int colorId = ColorSets.NEUTRAL;
+	private int colorIndex = ColorSets.NEUTRAL;
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
@@ -35,11 +35,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	private void updateColorSet() {
 		if (!getEntity().hasOwner()) {
-			colorId = ColorSets.NEUTRAL;
+			colorIndex = ColorSets.NEUTRAL + 1;
 		} else if (getEntity().isOwnedByLocalPlayer()) {
-			colorId = ColorSets.BLUE;
+			colorIndex = ColorSets.BLUE + 1;
 		} else {
-			colorId = ColorSets.RED;
+			colorIndex = ColorSets.RED + 1;
 		}
 	}
 
@@ -51,9 +51,16 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 			graphics.sprites().removeSprite(this);
 			return;
 		} else {
-			drawTexture(graphics, frames[colorColumn][colorId]);
+			// Draw the pillbox.
+			drawTexture(graphics, frames[colorColumn][0]);
 
 			DamageState damageState = DamageState.getDamageState(getEntity());
+			// Draw the lights if the pillbox isn't out of service.
+			if (damageState != DamageState.OutOfService) {
+				drawTexture(graphics, frames[colorColumn][colorIndex]);
+			}
+
+			// Draw damage, if any.
 			if (damageState != DamageState.Undamaged) {
 				drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
 			}
@@ -61,7 +68,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	}
 
 	private enum DamageState {
-		Undamaged(-1), LightlyDamaged(0), SeverelyDamaged(1), OutOfService(2);
+		Undamaged(-1), LightlyDamaged(0), ModeratelyDamaged(1), SeverelyDamaged(2), OutOfService(3);
 
 		final int damageFrameIndex;
 
@@ -71,11 +78,13 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 		static DamageState getDamageState(Pillbox pillbox) {
 			var damagePercent = pillbox.hitPoints() / pillbox.maxHitPoints();
-			if (damagePercent >= 0.85F) {
+			if (damagePercent >= 0.9F) {
 				return Undamaged;
-			} else if (damagePercent > 0.40f && damagePercent < 0.85f) {
+			} else if (damagePercent > 0.60f && damagePercent < 0.85f) {
 				return LightlyDamaged;
-			} else if (damagePercent > 0 && damagePercent <= 0.40f) {
+			} else if (damagePercent > 0.30f && damagePercent < 0.60f) {
+				return ModeratelyDamaged;
+			} else if (damagePercent > 0 && damagePercent <= 0.30f) {
 				return SeverelyDamaged;
 			} else {
 				return OutOfService;
