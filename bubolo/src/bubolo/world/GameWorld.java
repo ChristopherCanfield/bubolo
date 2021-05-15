@@ -526,28 +526,14 @@ public class GameWorld implements World {
 	@Override
 	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maximumDistanceTiles) {
 		for (int distance = 1; distance < maximumDistanceTiles; distance++) {
-			if (isTileDeepWater(tileColumn + distance, tileRow)) {
-				return distance;
-			}
-			if (isTileDeepWater(tileColumn - distance, tileRow)) {
-				return distance;
-			}
-			if (isTileDeepWater(tileColumn + distance, tileRow + distance)) {
-				return distance;
-			}
-			if (isTileDeepWater(tileColumn + distance, tileRow - distance)) {
-				return distance;
-			}
-			if (isTileDeepWater(tileColumn - distance, tileRow + distance)) {
-				return distance;
-			}
-			if (isTileDeepWater(tileColumn - distance, tileRow - distance)) {
-				return distance;
-			}
-			if (isTileDeepWater(tileColumn, tileRow + distance)) {
-				return distance;
-			}
-			if (isTileDeepWater(tileColumn, tileRow - distance)) {
+			if (isTileDeepWater(tileColumn + distance, tileRow)
+					|| isTileDeepWater(tileColumn - distance, tileRow)
+					|| isTileDeepWater(tileColumn + distance, tileRow + distance)
+					|| isTileDeepWater(tileColumn + distance, tileRow - distance)
+					|| isTileDeepWater(tileColumn - distance, tileRow + distance)
+					|| isTileDeepWater(tileColumn - distance, tileRow - distance)
+					|| isTileDeepWater(tileColumn, tileRow + distance)
+					|| isTileDeepWater(tileColumn, tileRow - distance)) {
 				return distance;
 			}
 		}
