@@ -25,6 +25,7 @@ public class UpdateTankAttributes extends NetworkCommand {
 	private final float y;
 	private final float rotation;
 	private final float health;
+	private final boolean drowned;
 
 	/**
 	 * Constructs a Move Tank command.
@@ -38,6 +39,7 @@ public class UpdateTankAttributes extends NetworkCommand {
 		this.y = tank.y();
 		this.rotation = tank.rotation();
 		this.health = tank.hitPoints();
+		this.drowned = tank.drowned();
 	}
 
 	@Override
@@ -46,5 +48,6 @@ public class UpdateTankAttributes extends NetworkCommand {
 		tank.setNetAttributes(new NetTankAttributes(speed, health));
 		tank.setPosition(x, y);
 		tank.setRotation(rotation);
+		tank.setDrowning(drowned);
 	}
 }

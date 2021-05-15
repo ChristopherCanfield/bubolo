@@ -17,7 +17,7 @@ import bubolo.net.NetworkSystem;
  */
 public class ConnectedToServer extends NetworkCommand
 {
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 4L;
 
 	private final String clientName;
 	private final String serverName;

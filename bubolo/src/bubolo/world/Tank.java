@@ -153,6 +153,14 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	/**
+	 * For the network.
+	 * @param drowning true if the tank is drowning.
+	 */
+	public void setDrowning(boolean drowning) {
+		this.drowned = drowning;
+	}
+
 	@Override
 	public void updateBounds() {
 		super.updateBounds();
@@ -525,6 +533,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private void onDeath() {
 		hitPoints = 0;
 		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
+		notifyNetwork();
 	}
 
 	/**
