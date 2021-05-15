@@ -169,6 +169,7 @@ public class Audio {
 	public static void dispose() {
 		sources.dispose();
 		buffers.dispose();
+		ambientSounds.dispose();
 		initialized = false;
 	}
 }
