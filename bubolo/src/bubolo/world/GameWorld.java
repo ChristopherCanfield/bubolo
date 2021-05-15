@@ -524,6 +524,44 @@ public class GameWorld implements World {
 	}
 
 	@Override
+	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maximumDistanceTiles) {
+		for (int distance = 1; distance < maximumDistanceTiles; distance++) {
+			if (isTileDeepWater(tileColumn + distance, tileRow)) {
+				return distance;
+			}
+			if (isTileDeepWater(tileColumn - distance, tileRow)) {
+				return distance;
+			}
+			if (isTileDeepWater(tileColumn + distance, tileRow + distance)) {
+				return distance;
+			}
+			if (isTileDeepWater(tileColumn + distance, tileRow - distance)) {
+				return distance;
+			}
+			if (isTileDeepWater(tileColumn - distance, tileRow + distance)) {
+				return distance;
+			}
+			if (isTileDeepWater(tileColumn - distance, tileRow - distance)) {
+				return distance;
+			}
+			if (isTileDeepWater(tileColumn, tileRow + distance)) {
+				return distance;
+			}
+			if (isTileDeepWater(tileColumn, tileRow - distance)) {
+				return distance;
+			}
+		}
+		return -1;
+	}
+
+	private boolean isTileDeepWater(int tileColumn, int tileRow) {
+		if (isValidTile(tileColumn, tileRow)) {
+			return (getTerrain(tileColumn, tileRow) instanceof DeepWater);
+		}
+		return false;
+	}
+
+	@Override
 	public boolean isTileAdjacentToWater(int column, int row) {
 		boolean adjacentToWater = false;
 		if (isValidTile(column - 1, row)) {

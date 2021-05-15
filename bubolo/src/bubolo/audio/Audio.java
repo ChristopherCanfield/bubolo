@@ -42,6 +42,8 @@ public class Audio {
 
 	// The sound effects volume. The default is 100%.
 	private static float soundEffectVolume = 1.0f;
+	// The ambient sounds volume. The default is 80%.
+	private static float ambientSoundsVolume = 0.8f;
 
 	// OpenAL reference distance: the distance that the sound is played at its highest volume.
 	private static float referenceDistance;
@@ -54,6 +56,8 @@ public class Audio {
 	/* The z position is set high so that cannon fire sounds from the tank's own cannon sound like it is coming from the tank itself,
 		rather than from the east or west. */
 	private static final float sourceZPosition = 100.0f;
+
+	private static AmbientSounds ambientSounds;
 
 	/**
 	 * Initializes the sound system.
@@ -74,11 +78,18 @@ public class Audio {
 
 		referenceDistance = Math.max(viewportWidth, viewportHeight) * 0.4f;
 		rolloffFactor = Math.min(worldWidth / viewportWidth, worldHeight / viewportHeight);
+
+		ambientSounds = new AmbientSounds();
+		ambientSounds.play(ambientSoundsVolume);
 	}
 
 	public static void setListenerPosition(float x, float y) {
 		listenerX = x;
 		listenerY = y;
+	}
+
+	public static void setListenerDistanceToDeepWater(float distanceWorldUnits) {
+		ambientSounds.setListenerDistanceToDeepWater(distanceWorldUnits);
 	}
 
 	/**
