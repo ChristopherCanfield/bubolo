@@ -251,6 +251,16 @@ public interface World {
 	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects);
 
 	/**
+	 * Returns the number of tiles to the nearest deep water, up to the maximum distance.
+	 *
+	 * @param tileColumn the target's column.
+	 * @param tileRow the target's row.
+	 * @param maxDistanceTiles the maximum distance to check, in tiles.
+	 * @return the number of tiles to the nearest deep water, or -1 if not found within the maximum distance.
+	 */
+	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maxDistanceTiles);
+
+	/**
 	 * Adds a controller of the specified type to the world.
 	 *
 	 * @param controllerType the type of the controller to add.

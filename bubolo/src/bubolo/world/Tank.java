@@ -185,6 +185,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 		if (isOwnedByLocalPlayer()) {
 			Audio.setListenerPosition(x(), y());
+			int distanceToDeepWater = world.getTileDistanceToDeepWater(tileColumn(), tileRow(), 15) * Coords.TileToWorldScale;
+			Audio.setListenerDistanceToDeepWater(distanceToDeepWater);
 		}
 	}
 
