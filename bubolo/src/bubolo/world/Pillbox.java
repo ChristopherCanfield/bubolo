@@ -23,7 +23,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private float cannonRotation = 0;
 
 	/** Max range to locate a target. The pillbox will not fire unless there is a tank within this range. */
-	private double range = 300;
+	private float range = 300;
 
 	/** The pillbox's maximum health. */
 	private static final int maxHitPoints = 100;
@@ -35,6 +35,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private static final int captureTimeTicks = Time.secondsToTicks(10);
 	private boolean capturable = false;
 	private int capturableTimerId = -1;
+
+	private boolean beingMoved;
 
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
@@ -81,8 +83,13 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	@Override
 	protected void onUpdate(World world) {
-		if (!capturable) {
-			heal(hpPerTick);
+		if (!isBeingMoved()) {
+			if (!capturable) {
+				heal(hpPerTick);
+			}
+		} else {
+			// @TODO (cdc 2021-05-16): Offset this behind the tank. Needs to change based on the direction of the tank.
+			setPosition(owner().x(), owner().y());
 		}
 	}
 
@@ -93,6 +100,15 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		if (newOwner != null) {
 			hitPoints = 5;
 		}
+	}
+
+	public boolean isBeingMoved() {
+		return beingMoved;
+	}
+
+	public void setIsBeingMoved(boolean beingMoved) {
+		assert hasOwner();
+		this.beingMoved = beingMoved;
 	}
 
 	/**
@@ -130,8 +146,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/**
 	 * @return the distance at which the pillbox will attempt to fire at an enemy
 	 */
-	public double getRange() {
-		return this.range;
+	public float range() {
+		return range;
 	}
 
 	/**

@@ -30,15 +30,18 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	@Override
 	public void update(World world)
 	{
-		// Only fire if cannon is ready.
-		if (parent().isCannonReady()) {
-			Tank target = getTarget(world);
-			if (target != null) {
-				fire(getTargetDirection(target), world);
+		// Don't process updates if the pillbox is being moved.
+		if (!parent().isBeingMoved()) {
+			// Only fire if cannon is ready.
+			if (parent().isCannonReady()) {
+				Tank target = getTarget(world);
+				if (target != null) {
+					fire(getTargetDirection(target), world);
+				}
 			}
-		}
 
-		handleTankCapture(world);
+			handleTankCapture(world);
+		}
 	}
 
 	/**
@@ -107,7 +110,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 		double ydistance = Math.abs(parent().y() - target.y());
 		double distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
 
-		return (distance < parent().getRange());
+		return (distance < parent().range());
 	}
 
 	/**

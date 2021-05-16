@@ -1,5 +1,6 @@
 package bubolo.graphics;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Pillbox;
@@ -20,6 +21,10 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	private static final int colorColumn = 0;
 	private static final int damageColumn = 1;
+
+	private static final Color defaultColor = new Color(Color.WHITE);
+	private static final Color moveColor = new Color(1, 1, 1, 0.5f);
+
 
 	/**
 	 * Constructor for the PillboxSprite. This is Package-private because sprites should not be directly created outside of the
@@ -51,6 +56,12 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 			graphics.sprites().removeSprite(this);
 			return;
 		} else {
+			if (getEntity().isBeingMoved()) {
+				setColor(moveColor);
+			} else {
+				setColor(defaultColor);
+			}
+
 			// Draw the pillbox.
 			drawTexture(graphics, frames[colorColumn][0]);
 
