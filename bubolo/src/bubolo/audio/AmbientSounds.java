@@ -17,6 +17,11 @@ import com.badlogic.gdx.backends.lwjgl3.audio.OpenALMusic;
 import bubolo.util.Coords;
 import bubolo.util.GameRuntimeException;
 
+/**
+ * Plays ambient environmental sounds.
+ *
+ * @author Christopher D. Canfield
+ */
 class AmbientSounds implements Music.OnCompletionListener {
 	private int soundIndex;
 	private final Music ambientSounds[];
