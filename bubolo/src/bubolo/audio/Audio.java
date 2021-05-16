@@ -42,8 +42,8 @@ public class Audio {
 
 	// The sound effects volume. The default is 100%.
 	private static float soundEffectVolume = 1.0f;
-	// The ambient sounds volume. The default is 80%.
-	private static float ambientSoundsVolume = 0.8f;
+	// The ambient sounds volume. The default is 75%.
+	private static float ambientSoundsVolume = 0.75f;
 
 	// OpenAL reference distance: the distance that the sound is played at its highest volume.
 	private static float referenceDistance;
