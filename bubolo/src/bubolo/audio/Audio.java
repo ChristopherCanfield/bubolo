@@ -109,7 +109,6 @@ public class Audio {
 			alListener3f(AL_POSITION, listenerX, listenerY, 0f);
 
 			int sourceId = sources.nextId();
-			System.out.println("Sfx source ID: " + sourceId);
 			buffers.attachBufferToSource(soundEffect, sourceId);
 
 			alSourcef(sourceId, AL_GAIN, soundEffectVolume * soundEffect.volumeAdjustment);

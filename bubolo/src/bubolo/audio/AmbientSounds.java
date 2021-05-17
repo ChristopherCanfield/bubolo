@@ -88,7 +88,6 @@ class AmbientSounds implements Music.OnCompletionListener {
 
 	void play(float volume) {
 		this.volume = volume;
-		System.out.println("ambient sound playing: " + ambientSounds[soundIndex].isPlaying());
 
 		ambientSounds[soundIndex].play();
 		ambientSounds[soundIndex].setVolume(volume);
