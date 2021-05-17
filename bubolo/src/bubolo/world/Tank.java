@@ -266,10 +266,9 @@ public class Tank extends ActorEntity implements Damageable {
 				speed = adjustedMaxSpeed;
 			}
 			accelerated = true;
+			cancelPillboxPackingIfNotPacked();
 		}
 		clampSpeed();
-
-		cancelPillboxPackingIfNotPacked();
 
 		notifyNetwork();
 	}
@@ -281,10 +280,9 @@ public class Tank extends ActorEntity implements Damageable {
 		if (speed > 0 && !decelerated) {
 			speed -= decelerationRate;
 			decelerated = true;
+			cancelPillboxPackingIfNotPacked();
 		}
 		clampSpeed();
-
-		cancelPillboxPackingIfNotPacked();
 
 		notifyNetwork();
 	}
@@ -315,10 +313,9 @@ public class Tank extends ActorEntity implements Damageable {
 		if (!rotated) {
 			rotated = true;
 			setRotation(rotation() - rotationRate);
+			cancelPillboxPackingIfNotPacked();
 			notifyNetwork();
 		}
-
-		cancelPillboxPackingIfNotPacked();
 	}
 
 	/**
@@ -367,16 +364,16 @@ public class Tank extends ActorEntity implements Damageable {
 		if (packingTarget == null) {
 			var pillboxes = world.getNearbyCollidables(this, true, 1, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
-				float maxDistanceWorldUnits = Coords.TileToWorldScale * 0.8f;
+				float maxDistanceWorldUnits = Coords.TileToWorldScale;
 				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
 				float targetLineY = (float) Math.sin(rotation()) * maxDistanceWorldUnits + centerY();
 
 				for (Collidable collidable : pillboxes) {
 					Pillbox pillbox = (Pillbox) collidable;
 					if (pillbox.isOwnedByLocalPlayer() &&
-							Intersector.intersectSegmentPolygon(new Vector2(centerX(), centerY()), new Vector2(targetLineX, targetLineY), bounds())) {
+							Intersector.intersectSegmentPolygon(new Vector2(x(), y()), new Vector2(targetLineX, targetLineY), pillbox.bounds())) {
+
 						packingTarget = (Pillbox) collidable;
-						System.out.println("Packing target found: " + packingTarget);
 						return;
 					}
 				}
