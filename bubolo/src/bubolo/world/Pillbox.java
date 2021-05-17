@@ -36,7 +36,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private boolean capturable = false;
 	private int capturableTimerId = -1;
 
-	private boolean beingMoved;
+	/** The percentage the pillbox is packed, which determines if it can be moved or not. */
+	private float packPct;
+	private static final float packTimeSeconds = 3;
+	private static final float packPctPerTick = 1 / Time.secondsToTicks(packTimeSeconds);
 
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
@@ -99,16 +102,36 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		// so another player can't instantly grab it without needing to reduce its health.
 		if (newOwner != null) {
 			hitPoints = 5;
+			packPct = 0;
 		}
 	}
 
 	public boolean isBeingMoved() {
-		return beingMoved;
+		return hasOwner() && packPct >= 1;
 	}
 
-	public void setIsBeingMoved(boolean beingMoved) {
+	/**
+	 * Increases the packed percentage. Used to pack placed pillboxes so they can be moved.
+	 *
+	 * @precondition the pillbox must have an owner for it to be packed.
+	 */
+	public void packForMovement() {
 		assert hasOwner();
-		this.beingMoved = beingMoved;
+		packPct += packPctPerTick;
+	}
+
+	/**
+	 * Decreases the packed percentage. Used to unpack moved pillboxes so they can be placed.
+	 */
+	public void unpackForPlacement() {
+		packPct -= packPctPerTick;
+	}
+
+	/**
+	 * @return the percent packed this pillbox is, from 0 to 1.
+	 */
+	public float packPct() {
+		return packPct;
 	}
 
 	/**
