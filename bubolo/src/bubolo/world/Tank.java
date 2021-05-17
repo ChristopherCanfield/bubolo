@@ -218,6 +218,14 @@ public class Tank extends ActorEntity implements Damageable {
 		return (int) (y() + height) / Coords.TileToWorldScale;
 	}
 
+	public float centerX() {
+		return x() + (width() / 2.0f);
+	}
+
+	public float centerY() {
+		return y() + (height() / 2.0f);
+	}
+
 	/**
 	 * Returns the tank's speed.
 	 *

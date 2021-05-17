@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Pillbox;
+import bubolo.world.Tank;
 
 /**
  * The graphical representation of a Pillbox
@@ -50,30 +51,28 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	@Override
 	public void draw(Graphics graphics) {
-		updateColorSet();
+		if (!isDisposed()) {
+			updateColorSet();
 
-		if (isDisposed()) {
-			graphics.sprites().removeSprite(this);
-			return;
-		} else {
-			if (getEntity().isBeingMoved()) {
-				setColor(moveColor);
+			if (!getEntity().isBeingMoved()) {
+				// Draw the pillbox.
+				drawTexture(graphics, frames[colorColumn][0]);
+
+				DamageState damageState = DamageState.getDamageState(getEntity());
+				// Draw the lights if the pillbox isn't out of service.
+				if (damageState != DamageState.OutOfService) {
+					drawTexture(graphics, frames[colorColumn][colorIndex]);
+				}
+
+				// Draw damage, if any.
+				if (damageState != DamageState.Undamaged) {
+					drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
+				}
 			} else {
-				setColor(defaultColor);
-			}
+				var tank = (Tank) getEntity().owner();
 
-			// Draw the pillbox.
-			drawTexture(graphics, frames[colorColumn][0]);
-
-			DamageState damageState = DamageState.getDamageState(getEntity());
-			// Draw the lights if the pillbox isn't out of service.
-			if (damageState != DamageState.OutOfService) {
-				drawTexture(graphics, frames[colorColumn][colorIndex]);
-			}
-
-			// Draw damage, if any.
-			if (damageState != DamageState.Undamaged) {
-				drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
+				// Draw the pillbox.
+				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.centerX(), tank.centerY(), 0, 0);
 			}
 		}
 	}

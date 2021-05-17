@@ -112,7 +112,7 @@ abstract class Sprite implements Drawable
 				texture.getHeight(),
 				SCALE,
 				SCALE,
-				(float)(MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)),
+				(float) (MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)),
 				0, 0, texture.getWidth(), texture.getHeight(), false, false);
 	}
 
@@ -120,10 +120,15 @@ abstract class Sprite implements Drawable
 	 * Draws the texture region to the screen. batch.begin() must be called before calling this method.
 	 *
 	 * @param graphics the graphics system.
-	 * @param texture The texture region to draw.
+	 * @param textureRegion The texture region to draw.
 	 */
-	protected final void drawTexture(Graphics graphics, TextureRegion texture) {
-		drawTexture(graphics, texture, SCALE);
+	protected final void drawTexture(Graphics graphics, TextureRegion textureRegion) {
+		drawTexture(graphics, textureRegion, SCALE);
+	}
+
+	protected final void drawTexture(Graphics graphics, TextureRegion textureRegion, float scale) {
+		Vector2 origin = getOrigin(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+		drawTexture(graphics, textureRegion, SCALE, getX() - origin.x, getY() - origin.y, origin.x, origin.y);
 	}
 
 	/**
@@ -132,12 +137,14 @@ abstract class Sprite implements Drawable
 	 * @param graphics the graphics system.
 	 * @param texture The texture region to draw.
 	 * @param scale the scale that the texture region will be drawn.
+	 * @param worldX the world x position.
+	 * @param worldY the world y position.
+	 * @param originX the x offset.
+	 * @param originY the y offset.
 	 */
-	protected final void drawTexture(Graphics graphics, TextureRegion texture, float scale)
+	protected final void drawTexture(Graphics graphics, TextureRegion texture, float scale, float worldX, float worldY, float originX, float originY)
 	{
-		Vector2 origin = getOrigin(texture.getRegionWidth(), texture.getRegionHeight());
-
-		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), new Vector2(getX() - origin.x, getY() - origin.y));
+		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), new Vector2(getX() - originX, getY() - originY));
 
 		var batch = graphics.batch();
 		batch.setColor(color);
@@ -145,13 +152,13 @@ abstract class Sprite implements Drawable
 				texture,
 				cameraCoordinates.x,
 				cameraCoordinates.y,
-				origin.x,
-				origin.y,
+				originX,
+				originY,
 				texture.getRegionWidth(),
 				texture.getRegionHeight(),
 				scale,
 				scale,
-				(float)(MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)));
+				(float) (MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)));
 	}
 
 	/**
