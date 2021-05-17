@@ -31,7 +31,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	public void update(World world)
 	{
 		// Don't process updates if the pillbox is being moved.
-		if (!parent().isBeingMoved()) {
+		if (!parent().isBeingCarried()) {
 			// Only fire if cannon is ready.
 			if (parent().isCannonReady()) {
 				Tank target = getTarget(world);

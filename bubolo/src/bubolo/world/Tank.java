@@ -8,6 +8,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import com.badlogic.gdx.math.Vector2;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
@@ -111,6 +112,9 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private final List<Controller> controllers = new ArrayList<>();
 
+	// The pillbox that is targeted for packing.
+	private Pillbox packingTarget;
+
 	/**
 	 * Constructs a Tank.
 	 *
@@ -177,6 +181,7 @@ public class Tank extends ActorEntity implements Damageable {
 		updateSpeedForTerrain(world);
 		moveTank(world);
 		performCollisionDetection(world);
+		packPillbox(world);
 		hidden = checkIfHidden(world);
 
 		decelerated = false;
@@ -264,6 +269,8 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 		clampSpeed();
 
+		cancelPillboxPackingIfNotPacked();
+
 		notifyNetwork();
 	}
 
@@ -276,6 +283,8 @@ public class Tank extends ActorEntity implements Damageable {
 			decelerated = true;
 		}
 		clampSpeed();
+
+		cancelPillboxPackingIfNotPacked();
 
 		notifyNetwork();
 	}
@@ -294,6 +303,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (!rotated) {
 			rotated = true;
 			setRotation(rotation() + rotationRate);
+			cancelPillboxPackingIfNotPacked();
 			notifyNetwork();
 		}
 	}
@@ -307,6 +317,8 @@ public class Tank extends ActorEntity implements Damageable {
 			setRotation(rotation() - rotationRate);
 			notifyNetwork();
 		}
+
+		cancelPillboxPackingIfNotPacked();
 	}
 
 	/**
@@ -326,6 +338,8 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
 	public Bullet fireCannon(World world) {
+		cancelPillboxPackingIfNotPacked();
+
 		if (isCannonReady()) {
 			cannonReadyTime = System.currentTimeMillis();
 
@@ -346,6 +360,41 @@ public class Tank extends ActorEntity implements Damageable {
 			return bullet;
 		} else {
 			return null;
+		}
+	}
+
+	public void packNearestPillbox(World world) {
+		if (packingTarget == null) {
+			var pillboxes = world.getNearbyCollidables(this, true, 1, Pillbox.class);
+			if (!pillboxes.isEmpty()) {
+				float maxDistanceWorldUnits = Coords.TileToWorldScale * 0.8f;
+				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
+				float targetLineY = (float) Math.sin(rotation()) * maxDistanceWorldUnits + centerY();
+
+				for (Collidable collidable : pillboxes) {
+					Pillbox pillbox = (Pillbox) collidable;
+					if (pillbox.isOwnedByLocalPlayer() &&
+							Intersector.intersectSegmentPolygon(new Vector2(centerX(), centerY()), new Vector2(targetLineX, targetLineY), bounds())) {
+						packingTarget = (Pillbox) collidable;
+						System.out.println("Packing target found: " + packingTarget);
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	public void cancelPillboxPackingIfNotPacked() {
+		if (packingTarget != null && !packingTarget.isBeingCarried()) {
+			packingTarget.cancelPacking();
+			packingTarget = null;
+		}
+	}
+
+	private void packPillbox(World world) {
+		if (packingTarget != null && packingTarget.packPct() < 1.0f) {
+			packingTarget.packForCarrying();
+			System.out.println("Packing pillbox: " + packingTarget.packPct());
 		}
 	}
 

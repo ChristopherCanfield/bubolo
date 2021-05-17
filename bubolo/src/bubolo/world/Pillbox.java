@@ -39,7 +39,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/** The percentage the pillbox is packed, which determines if it can be moved or not. */
 	private float packPct;
 	private static final float packTimeSeconds = 3;
-	private static final float packPctPerTick = 1 / Time.secondsToTicks(packTimeSeconds);
+	private static final float packPctPerTick = 1.0f / Time.secondsToTicks(packTimeSeconds);
+
+	private boolean solid = true;
 
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
@@ -86,12 +88,13 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	@Override
 	protected void onUpdate(World world) {
-		if (!isBeingMoved()) {
+		if (!isBeingCarried()) {
 			if (!capturable) {
 				heal(hpPerTick);
 			}
 		} else {
 			// @TODO (cdc 2021-05-16): Offset this behind the tank. Needs to change based on the direction of the tank.
+
 			setPosition(owner().x(), owner().y());
 		}
 	}
@@ -106,25 +109,36 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		}
 	}
 
-	public boolean isBeingMoved() {
+	/**
+	 * @return whether the pillbox is currently being carried.
+	 */
+	public boolean isBeingCarried() {
 		return hasOwner() && packPct >= 1;
 	}
 
 	/**
-	 * Increases the packed percentage. Used to pack placed pillboxes so they can be moved.
+	 * Increases the packed percentage. Used to pack placed pillboxes so they can be carried and relocated.
 	 *
 	 * @precondition the pillbox must have an owner for it to be packed.
 	 */
-	public void packForMovement() {
+	public void packForCarrying() {
 		assert hasOwner();
 		packPct += packPctPerTick;
+		if (packPct > 1) {
+			packPct = 1;
+			solid = false;
+		}
 	}
 
 	/**
-	 * Decreases the packed percentage. Used to unpack moved pillboxes so they can be placed.
+	 * Decreases the packed percentage. Used to unpack carried pillboxes so they can be placed.
 	 */
 	public void unpackForPlacement() {
 		packPct -= packPctPerTick;
+		if (packPct < 0) {
+			packPct = 0;
+			solid = true;
+		}
 	}
 
 	/**
@@ -132,6 +146,13 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	public float packPct() {
 		return packPct;
+	}
+
+	/**
+	 * Sets the pack percent to zero.
+	 */
+	public void cancelPacking() {
+		packPct = 0;
 	}
 
 	/**
@@ -240,7 +261,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	@Override
 	public boolean isSolid() {
-		return true;
+		return solid;
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import com.badlogic.gdx.math.Vector2;
  */
 abstract class Sprite implements Drawable {
 	// The layer that this sprite is drawn to.
-	private final DrawLayer drawLayer;
+	private DrawLayer drawLayer;
 
 	// The sprite's color. White draws the texture as it appears in the file.
 	private Color color;
@@ -46,6 +46,10 @@ abstract class Sprite implements Drawable {
 	 */
 	protected final DrawLayer getDrawLayer() {
 		return drawLayer;
+	}
+
+	protected final void setDrawLayer(DrawLayer layer) {
+		this.drawLayer = layer;
 	}
 
 	/**

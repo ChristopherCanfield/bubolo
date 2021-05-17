@@ -26,6 +26,9 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	private static final Color defaultColor = new Color(Color.WHITE);
 	private static final Color moveColor = new Color(1, 1, 1, 0.5f);
 
+	private static final DrawLayer defaultDrawLayer = DrawLayer.TerrainImprovements;
+	private static final DrawLayer carriedDrawLayer = DrawLayer.Effects;
+
 
 	/**
 	 * Constructor for the PillboxSprite. This is Package-private because sprites should not be directly created outside of the
@@ -34,7 +37,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	 * @param pillbox Reference to the pillbox that this PillboxSprite represents.
 	 */
 	PillboxSprite(Pillbox pillbox) {
-		super(DrawLayer.TerrainImprovements, pillbox);
+		super(defaultDrawLayer, pillbox);
 
 		frames = Graphics.getTextureRegion2d(textureFileName, 32, 32, 1, 0);
 	}
@@ -54,7 +57,9 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 		if (!isDisposed()) {
 			updateColorSet();
 
-			if (!getEntity().isBeingMoved()) {
+			if (!getEntity().isBeingCarried()) {
+				setDrawLayer(defaultDrawLayer);
+
 				// Draw the pillbox.
 				drawTexture(graphics, frames[colorColumn][0]);
 
@@ -72,7 +77,8 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				var tank = (Tank) getEntity().owner();
 
 				// Draw the pillbox.
-				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.centerX(), tank.centerY(), 0, 0, tank.rotation());
+				setDrawLayer(carriedDrawLayer);
+				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.centerX(), tank.centerY(), tank.width() / 2 + 5, tank.height() / 2 + 25, tank.rotation());
 			}
 		}
 	}
