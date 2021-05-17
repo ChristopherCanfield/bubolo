@@ -72,7 +72,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				var tank = (Tank) getEntity().owner();
 
 				// Draw the pillbox.
-				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.centerX(), tank.centerY(), 0, 0);
+				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.centerX(), tank.centerY(), 0, 0, tank.rotation());
 			}
 		}
 	}

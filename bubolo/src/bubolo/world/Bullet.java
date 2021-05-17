@@ -25,8 +25,8 @@ public class Bullet extends ActorEntity {
 	// The bullet's movement speed, in game world units per tick.
 	private static final float speed = 6.f;
 
-	// The bullet's movement speed.
-	private static final int damage = 10;
+	// The amount of damage the bullet causes.
+	private static final float damage = 10;
 
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
