@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import bubolo.mock.MockTank;
 import bubolo.mock.MockWorld;
+import bubolo.mock.MockWorldOwner;
 import bubolo.net.NetworkCommand;
 import bubolo.world.Entity;
 import bubolo.world.Grass;
@@ -27,7 +28,7 @@ public class NetworkCommandTest
 	public void testCreateEntityCommand()
 	{
 		NetworkCommand c = new CreateEntity(Grass.class, Entity.nextId(), 0, 0, 0);
-		c.execute(new MockWorld());
+		c.execute(new MockWorldOwner());
 	}
 
 	@Test
@@ -42,7 +43,7 @@ public class NetworkCommandTest
 	public void testCreateTankCommand()
 	{
 		NetworkCommand c = new CreateTank(new MockTank());
-		c.execute(new MockWorld());
+		c.execute(new MockWorldOwner());
 	}
 
 	@Test

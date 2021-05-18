@@ -45,11 +45,6 @@ public class MockNetwork implements Network
 	}
 
 	@Override
-	public void update(World world)
-	{
-	}
-
-	@Override
 	public void postToGameThread(NetworkCommand command)
 	{
 	}
@@ -97,5 +92,9 @@ public class MockNetwork implements Network
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void update(WorldOwner worldOwner) {
 	}
 }

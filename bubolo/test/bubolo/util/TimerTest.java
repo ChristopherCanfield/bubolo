@@ -18,12 +18,12 @@ import bubolo.world.World;
  * @author Christopher D. Canfield
  */
 public class TimerTest {
-	private Timer timer;
+	private Timer<World> timer;
 	private World world;
 
 	@BeforeEach
 	public void beforeEach() {
-		timer = new Timer(10);
+		timer = new Timer<World>(10);
 		world = new GameWorld(1, 1);
 	}
 
@@ -38,7 +38,7 @@ public class TimerTest {
 	 */
 	@Test
 	public void timerSize1ThenSchedule() {
-		timer = new Timer(1);
+		timer = new Timer<World>(1);
 		timer.update(world);
 
 		TestAction action = new TestAction();

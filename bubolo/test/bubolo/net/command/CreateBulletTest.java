@@ -6,15 +6,12 @@
 
 package bubolo.net.command;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
 import bubolo.world.Bullet;
 import bubolo.world.Tank;
-import bubolo.world.entity.OldEntity;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -28,14 +25,14 @@ public class CreateBulletTest
 	public void testExecute()
 	{
 		MockWorld world = new MockWorld();
-		
+
 		Bullet bullet = new Bullet();
 		world.add(bullet);
-		
-		OldEntity tank = new Tank();
+
+		Tank tank = new Tank();
 		world.add(tank);
-		
-		NetworkCommand command = new CreateBullet(bullet.getClass(), bullet.getId(), bullet.getX(), 
+
+		NetworkCommand command = new CreateBullet(bullet.getClass(), bullet.getId(), bullet.getX(),
 				bullet.getY(), bullet.getRotation(), tank.getId());
 		command.execute(world);
 	}

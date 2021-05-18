@@ -13,11 +13,6 @@ import bubolo.world.Entity;
 public class MockEntity extends Entity
 {
 	/**
-	 * Used in serialization/de-serialization.
-	 */
-	private static final long serialVersionUID = -2381816338619957177L;
-
-	/**
 	 * Construct a new DummyEntity with the specified UUID.
 	 *
 	 * @param id
