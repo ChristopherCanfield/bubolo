@@ -270,6 +270,15 @@ public interface World {
 	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects);
 
 	/**
+	 * Finds the nearest buildable terrain to the x,y world unit position.
+	 *
+	 * @param x the target x position, in world units.
+	 * @param y the target y position, in world units.
+	 * @return the nearest buildable terrain to the specified position.
+	 */
+	public Terrain getNearestBuildableTerrain(float x, float y);
+
+	/**
 	 * Returns the number of tiles to the nearest deep water, up to the maximum distance.
 	 *
 	 * @param tileColumn the target's column.

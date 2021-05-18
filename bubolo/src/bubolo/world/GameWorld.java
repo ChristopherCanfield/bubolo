@@ -553,6 +553,33 @@ public class GameWorld implements World {
 	}
 
 	@Override
+	public Terrain getNearestBuildableTerrain(float x, float y) {
+		final int tileMaxDistance = 10;
+
+		final int targetColumn = (int) (x / TileToWorldScale);
+		final int targetRow = (int) (y / TileToWorldScale);
+
+		final int startTileColumn = - targetColumn - tileMaxDistance;
+		final int startTileRow = targetRow - tileMaxDistance;
+
+		final int endTileColumn = targetColumn + tileMaxDistance;
+		final int endTileRow = targetRow + tileMaxDistance;
+
+		// @TODO (cdc 2021-05-18): Have this search outwardly from the target's position.
+		for (int column = startTileColumn; column <= endTileColumn; column++) {
+			for (int row = startTileRow; row <= endTileRow; row++) {
+				if (isValidTile(column, row)) {
+					if (isValidTile(column, row) && getTerrain(column, row).isValidBuildTarget()) {
+						var terrainImprovement = getTerrainImprovement(column, row);
+						if (terrainImprovement == null || terrainImprovement.isValidBuildTarget()) {
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
 	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maximumDistanceTiles) {
 		for (int distance = 1; distance < maximumDistanceTiles; distance++) {
 			if (isTileDeepWater(tileColumn + distance, tileRow)

@@ -147,7 +147,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *
 	 * @precondition the pillbox must have an owner for it to be packed.
 	 */
-	public void unbuild() {
+	public void unbuild(World world) {
 		assert hasOwner();
 
 		System.out.println("packForCarrying");
@@ -155,6 +155,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		setBuildStatus(BuildStatus.Unbuilding);
 
 		if (builtPct <= 0) {
+			world.movePillboxOffTileMap(this);
 			setBuildStatus(BuildStatus.Carried);
 		}
 	}
@@ -170,10 +171,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 		builtPct += buildPctPerTick;
 		setBuildStatus(BuildStatus.Building);
-		setPosition(targetX, targetY);
-//		world.moveTerrainImprovement
 
 		if (builtPct >= 1) {
+			setPosition(targetX, targetY);
+			world.movePillboxOntoTileMap(this, tileColumn(), tileRow());
 			setBuildStatus(BuildStatus.Built);
 		}
 	}
@@ -208,7 +209,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	public void dropFromTank(World world) {
 		setOwner(null);
 
-
+		var terrain = world.getNearestBuildableTerrain(x(), y());
+		world.movePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow());
 	}
 
 	private void setBuildStatus(BuildStatus status) {
@@ -235,6 +237,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	/**
 	 * Specifies whether the target location, in world units, is a valid location to place this pillbox.
+	 * @TODO (cdc 2021-05-18): Move this and isValidBuildTile to World.
 	 *
 	 * @param world reference to the game world.
 	 * @param targetX the x position to place this pillbox, in world units.
