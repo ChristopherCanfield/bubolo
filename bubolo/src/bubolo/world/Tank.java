@@ -376,7 +376,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param world reference to the game world.
 	 */
 	public void buildPillbox(World world) {
-		if (isCarryingPillbox()) {
+		if (isCarryingPillbox() && !buildPillbox) {
 			buildPillbox = findBuildLocationForPillbox(world);
 		} else {
 			unbuildNearestFriendlyPillbox(world);
@@ -387,11 +387,18 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Cancels building or unbuilding a pillbox. If no pillbox is being built or unbuilt, no action occurs.
 	 */
 	public void cancelBuildingPillbox() {
-		if (unbuildPillbox) {
-			carriedPillbox.cancelUnbuilding();
-			carriedPillbox = null;
-		} else if (buildPillbox) {
-			carriedPillbox.cancelBuilding();
+		if (carriedPillbox != null) {
+			if (unbuildPillbox) {
+				carriedPillbox.cancelUnbuilding();
+				carriedPillbox = null;
+			} else if (buildPillbox) {
+				if (carriedPillbox.buildStatus() == BuildStatus.Built) {
+					// If the pillbox was built, stop carrying it.
+					carriedPillbox = null;
+				} else {
+					carriedPillbox.cancelBuilding();
+				}
+			}
 		}
 
 		unbuildPillbox = false;
@@ -456,21 +463,29 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Process building or unbuilding a pillbox.
 	 */
 	private void processPillboxBuilding() {
-		processPillboxPacking();
-		processPillboxUnpacking();
+		if (carriedPillbox != null) {
+			if (unbuildPillbox) { processPillboxPacking(); }
+			if (buildPillbox) { processPillboxUnpacking(); }
+		}
 	}
 
 	private void processPillboxPacking() {
 		// Pack the pillbox if it is being packed.
-		if (carriedPillbox != null && carriedPillbox.buildStatus() != BuildStatus.Carried && carriedPillbox.builtPct() > 0) {
+		if (carriedPillbox.buildStatus() != BuildStatus.Carried && carriedPillbox.builtPct() > 0) {
 			carriedPillbox.packForCarrying();
 			System.out.println("Packing pillbox: " + carriedPillbox.builtPct());
+		} else if (carriedPillbox.buildStatus() == BuildStatus.Carried) {
+			unbuildPillbox = false;
 		}
 	}
 
 	private void processPillboxUnpacking() {
-		if (hasPillboxBuildLocationTarget() && carriedPillbox != null && carriedPillbox.buildStatus() != BuildStatus.Built) {
+		if (hasPillboxBuildLocationTarget() && carriedPillbox.buildStatus() != BuildStatus.Built) {
 			carriedPillbox.unpackForPlacement(pillboxBuildLocationX, pillboxBuildLocationY);
+		} else if (carriedPillbox.buildStatus() == BuildStatus.Built) {
+			// If the pillbox was built, stop carrying it.
+			carriedPillbox = null;
+			buildPillbox = false;
 		}
 	}
 
