@@ -93,8 +93,10 @@ public class GamepadTankController extends ActorEntityController<Tank> {
 
 	private void processPillboxBuilding(Tank tank, World world) {
 		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_X) != 0) {
-			pillboxBuildKeyPressed = true;
-			tank.buildPillbox(world);
+			if (!pillboxBuildKeyPressed) {
+				pillboxBuildKeyPressed = true;
+				tank.buildPillbox(world);
+			}
 		} else {
 			if (pillboxBuildKeyPressed) {
 				pillboxBuildKeyPressed = false;

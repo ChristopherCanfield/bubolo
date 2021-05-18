@@ -67,8 +67,10 @@ public class KeyboardTankController implements Controller {
 
 	private void processPillboxBuilding(Tank tank, World world) {
 		if (input.isKeyPressed(Keys.E)) {
-			pillboxBuildKeyPressed = true;
-			tank.buildPillbox(world);
+			if (!pillboxBuildKeyPressed) {
+				pillboxBuildKeyPressed = true;
+				tank.buildPillbox(world);
+			}
 		} else {
 			if (pillboxBuildKeyPressed) {
 				pillboxBuildKeyPressed = false;

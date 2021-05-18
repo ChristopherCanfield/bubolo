@@ -45,12 +45,12 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	public enum BuildStatus {
 		/** The pillbox is built. A pillbox in the built state can enter the Packing state. */
 		Built,
-		/** The pillbox is being packed for carriage on a tank. A pillbox in the Packing state can enter the Built or Packing states. */
-		Packing,
+		/** The pillbox is being packed for carriage on a tank. A pillbox in the Unbuilding state can enter the Built or Carried states. */
+		Unbuilding,
 		/** The pillbox is being carried on a tank. A pillbox in the Carried state can enter any other state. */
 		Carried,
-		/** The pillbox is being unpacked. A pillbox in the Unpacking state can enter the Built or Carried states. */
-		Unpacking
+		/** The pillbox is being unpacked. A pillbox in the Building state can enter the Built or Carried states. */
+		Building
 	}
 
 	// Pillboxes start built.
@@ -147,12 +147,12 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 *
 	 * @precondition the pillbox must have an owner for it to be packed.
 	 */
-	public void packForCarrying() {
+	public void unbuild() {
 		assert hasOwner();
 
 		System.out.println("packForCarrying");
 		builtPct -= buildPctPerTick;
-		setBuildStatus(BuildStatus.Packing);
+		setBuildStatus(BuildStatus.Unbuilding);
 
 		if (builtPct <= 0) {
 			setBuildStatus(BuildStatus.Carried);
@@ -165,11 +165,11 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param targetX a valid x target build location for this pillbox.
 	 * @param targetY a valid y target build location for this pillbox.
 	 */
-	public void unpackForPlacement(float targetX, float targetY) {
+	public void build(float targetX, float targetY) {
 		System.out.println("unpackForPlacement");
 
 		builtPct += buildPctPerTick;
-		setBuildStatus(BuildStatus.Unpacking);
+		setBuildStatus(BuildStatus.Building);
 		setPosition(targetX, targetY);
 
 		if (builtPct >= 1) {
@@ -211,10 +211,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			builtPct = 0;
 			solid = false;
 			break;
-		case Packing:
+		case Unbuilding:
 			solid = true;
 			break;
-		case Unpacking:
+		case Building:
 			solid = true;
 			break;
 		}

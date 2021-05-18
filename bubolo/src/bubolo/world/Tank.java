@@ -376,10 +376,14 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param world reference to the game world.
 	 */
 	public void buildPillbox(World world) {
-		if (isCarryingPillbox() && !buildPillbox) {
-			buildPillbox = findBuildLocationForPillbox(world);
+		if (isCarryingPillbox()) {
+			if (!buildPillbox) {
+				buildPillbox = findBuildLocationForPillbox(world);
+			}
 		} else {
-			unbuildNearestFriendlyPillbox(world);
+			if (!unbuildPillbox) {
+				unbuildPillbox = unbuildNearestFriendlyPillbox(world);
+			}
 		}
 	}
 
@@ -430,8 +434,11 @@ public class Tank extends ActorEntity implements Damageable {
 					}
 				}
 			}
+			// No friendly pillbox found within range.
+			return false;
 		}
-		return false;
+		// Already carrying a pillbox.
+		return true;
 	}
 
 	/**
@@ -441,17 +448,25 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return true if a valid build location was found, or false if one was not found or no pillbox is being carried.
 	 */
 	private boolean findBuildLocationForPillbox(World world) {
-		if (isCarryingPillbox() && !hasPillboxBuildLocationTarget()) {
-			float placementDistanceWorldUnits = Coords.TileToWorldScale;
-			float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
-			float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
+		if (isCarryingPillbox()) {
+			if (!hasPillboxBuildLocationTarget()) {
+				float placementDistanceWorldUnits = Coords.TileToWorldScale;
+				float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
+				float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
 
-			if (carriedPillbox.isValidBuildLocation(world, targetX, targetY)) {
-				pillboxBuildLocationX = targetX;
-				pillboxBuildLocationY = targetY;
-				return true;
+				if (carriedPillbox.isValidBuildLocation(world, targetX, targetY)) {
+					pillboxBuildLocationX = targetX;
+					pillboxBuildLocationY = targetY;
+					return true;
+				} else {
+					// No valid location found.
+					return false;
+				}
 			}
+			// Already has a pillbox placement target.
+			return true;
 		}
+		// Isn't carrying a pillbox.
 		return false;
 	}
 
@@ -470,18 +485,21 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	private void processPillboxPacking() {
+		System.out.println("tank.processPillboxPacking");
 		// Pack the pillbox if it is being packed.
 		if (carriedPillbox.buildStatus() != BuildStatus.Carried && carriedPillbox.builtPct() > 0) {
-			carriedPillbox.packForCarrying();
-			System.out.println("Packing pillbox: " + carriedPillbox.builtPct());
+			carriedPillbox.unbuild();
+			System.out.println("carriedPillbox.unbuild(): " + carriedPillbox.builtPct());
 		} else if (carriedPillbox.buildStatus() == BuildStatus.Carried) {
 			unbuildPillbox = false;
 		}
 	}
 
 	private void processPillboxUnpacking() {
+		System.out.println("tank.processPillboxUnpacking");
 		if (hasPillboxBuildLocationTarget() && carriedPillbox.buildStatus() != BuildStatus.Built) {
-			carriedPillbox.unpackForPlacement(pillboxBuildLocationX, pillboxBuildLocationY);
+			carriedPillbox.build(pillboxBuildLocationX, pillboxBuildLocationY);
+			System.out.println("carriedPillbox.unbuild(): " + carriedPillbox.builtPct());
 		} else if (carriedPillbox.buildStatus() == BuildStatus.Built) {
 			// If the pillbox was built, stop carrying it.
 			carriedPillbox = null;
