@@ -134,6 +134,15 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	}
 
 	/**
+	 * Shorthand for {@code buildStatus() == BuildStatus.Carried}
+	 *
+	 * @return true if the pillbox is being carried.
+	 */
+	public boolean isBeingCarried() {
+		return buildStatus == BuildStatus.Carried;
+	}
+
+	/**
 	 * Decreases the built percentage. Used to pack placed pillboxes onto a tank, so they can be carried and relocated.
 	 *
 	 * @precondition the pillbox must have an owner for it to be packed.

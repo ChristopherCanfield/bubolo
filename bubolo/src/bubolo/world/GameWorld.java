@@ -506,7 +506,12 @@ public class GameWorld implements World {
 	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter) {
 		if (e instanceof Collidable c) {
-			var result = (!onlyIncludeSolidObjects || c.isSolid()) && (typeFilter == null || typeFilter.isInstance(c));
+						// Only include solid objects, if requested.
+			var result = (!onlyIncludeSolidObjects || c.isSolid())
+					// Filter for instances of the passed in type, if any.
+					&& (typeFilter == null || typeFilter.isInstance(c))
+					// Don't include pillboxes that are being carried.
+					&& !(e instanceof Pillbox pillbox && pillbox.isBeingCarried());
 			return result;
 		}
 		return false;
