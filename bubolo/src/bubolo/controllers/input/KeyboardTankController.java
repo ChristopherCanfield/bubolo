@@ -17,8 +17,8 @@ import bubolo.world.World;
 public class KeyboardTankController implements Controller {
 	private final Tank tank;
 
-	private boolean pillboxBeingPacked;
-	private boolean pillboxBeingUnpacked;
+	// Whether the pillbox build key was pressed.
+	private boolean pillboxBuildKeyPressed;
 
 	/**
 	 * Constructs a keyboard tank controller.
@@ -34,7 +34,7 @@ public class KeyboardTankController implements Controller {
 		processMovement(tank);
 		processCannon(tank, world);
 		processMineLaying(tank, world);
-		processPillboxPacking(tank, world);
+		processPillboxBuilding(tank, world);
 	}
 
 	private static void processMovement(Tank tank) {
@@ -65,13 +65,15 @@ public class KeyboardTankController implements Controller {
 		}
 	}
 
-	private void processPillboxPacking(Tank tank, World world) {
+	private void processPillboxBuilding(Tank tank, World world) {
 		if (input.isKeyPressed(Keys.E)) {
-			pillboxBeingPacked = true;
-			tank.packNearestPillbox(world);
-		} else if (pillboxBeingPacked) {
-			pillboxBeingPacked = false;
-			tank.cancelPillboxPackingIfNotPacked();
+			pillboxBuildKeyPressed = true;
+			tank.buildPillbox(world);
+		} else {
+			if (pillboxBuildKeyPressed) {
+				pillboxBuildKeyPressed = false;
+				tank.cancelBuildingPillbox();
+			}
 		}
 	}
 }

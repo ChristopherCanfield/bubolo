@@ -6,6 +6,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
@@ -27,6 +28,9 @@ import bubolo.world.World;
 public class GamepadTankController extends ActorEntityController<Tank> {
 	private final GLFWGamepadState gamepadState = GLFWGamepadState.create();
 
+	// Whether the pillbox build key was pressed.
+	private boolean pillboxBuildKeyPressed;
+
 	/**
 	 * Constructs a gamepad tank controller.
 	 *
@@ -47,6 +51,7 @@ public class GamepadTankController extends ActorEntityController<Tank> {
 			processMovement(tank, axes);
 			processCannon(tank, axes, world);
 			processMineLaying(tank, axes, world);
+			processPillboxBuilding(tank, world);
 		}
 	}
 
@@ -83,6 +88,18 @@ public class GamepadTankController extends ActorEntityController<Tank> {
 
 		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_B) != 0 || leftTriggerActivated) {
 			tank.placeMine(world);
+		}
+	}
+
+	private void processPillboxBuilding(Tank tank, World world) {
+		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_X) != 0) {
+			pillboxBuildKeyPressed = true;
+			tank.buildPillbox(world);
+		} else {
+			if (pillboxBuildKeyPressed) {
+				pillboxBuildKeyPressed = false;
+				tank.cancelBuildingPillbox();
+			}
 		}
 	}
 }

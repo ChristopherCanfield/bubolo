@@ -113,8 +113,10 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private final List<Controller> controllers = new ArrayList<>();
 
-	// The pillbox that is targeted for packing.
-	private Pillbox pillboxCarryTarget;
+	// The pillbox that is being carried, built, or unbuilt (packed).
+	private Pillbox carriedPillbox;
+	private boolean unbuildPillbox;
+	private boolean buildPillbox;
 	private float pillboxBuildLocationX = -1;
 	private float pillboxBuildLocationY = -1;
 
@@ -269,7 +271,7 @@ public class Tank extends ActorEntity implements Damageable {
 				speed = adjustedMaxSpeed;
 			}
 			accelerated = true;
-			cancelPillboxPackingIfNotPacked();
+			cancelBuildingPillbox();
 		}
 		clampSpeed();
 
@@ -283,7 +285,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (speed > 0 && !decelerated) {
 			speed -= decelerationRate;
 			decelerated = true;
-			cancelPillboxPackingIfNotPacked();
+			cancelBuildingPillbox();
 		}
 		clampSpeed();
 
@@ -304,7 +306,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (!rotated) {
 			rotated = true;
 			setRotation(rotation() + rotationRate);
-			cancelPillboxPackingIfNotPacked();
+			cancelBuildingPillbox();
 			notifyNetwork();
 		}
 	}
@@ -316,7 +318,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (!rotated) {
 			rotated = true;
 			setRotation(rotation() - rotationRate);
-			cancelPillboxPackingIfNotPacked();
+			cancelBuildingPillbox();
 			notifyNetwork();
 		}
 	}
@@ -338,7 +340,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
 	public Bullet fireCannon(World world) {
-		cancelPillboxPackingIfNotPacked();
+		cancelBuildingPillbox();
 
 		if (isCannonReady()) {
 			cannonReadyTime = System.currentTimeMillis();
@@ -364,11 +366,47 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	public boolean isCarryingPillbox() {
-		return pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() == BuildStatus.Carried;
+		return carriedPillbox != null && carriedPillbox.buildStatus() == BuildStatus.Carried;
 	}
 
-	public void packNearestPillbox(World world) {
-		if (pillboxCarryTarget == null) {
+	/**
+	 * Builds the carried pillbox, if the tank is carrying one, or unbuilds the nearest friendly pillbox, if one is within range.
+	 * If the tank is not carrying a pillbox, and no friendly pillbox is within range, no action occurs.
+	 *
+	 * @param world reference to the game world.
+	 */
+	public void buildPillbox(World world) {
+		if (isCarryingPillbox()) {
+			buildPillbox = findBuildLocationForPillbox(world);
+		} else {
+			unbuildNearestFriendlyPillbox(world);
+		}
+	}
+
+	/**
+	 * Cancels building or unbuilding a pillbox. If no pillbox is being built or unbuilt, no action occurs.
+	 */
+	public void cancelBuildingPillbox() {
+		if (unbuildPillbox) {
+			carriedPillbox.cancelUnbuilding();
+			carriedPillbox = null;
+		} else if (buildPillbox) {
+			carriedPillbox.cancelBuilding();
+		}
+
+		unbuildPillbox = false;
+		buildPillbox = false;
+		pillboxBuildLocationX = pillboxBuildLocationY = -1;
+	}
+
+	/**
+	 * Starts unbuilding the nearest friendly pillbox, if one is within range.
+	 *
+	 * @param world reference to the game world.
+	 * @return true if a friendly pillbox was found within range.
+	 */
+	private boolean unbuildNearestFriendlyPillbox(World world) {
+		if (carriedPillbox == null) {
 			var pillboxes = world.getNearbyCollidables(this, true, 1, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
 				float maxDistanceWorldUnits = Coords.TileToWorldScale;
@@ -380,46 +418,43 @@ public class Tank extends ActorEntity implements Damageable {
 					if (pillbox.isOwnedByLocalPlayer() &&
 							Intersector.intersectSegmentPolygon(new Vector2(x(), y()), new Vector2(targetLineX, targetLineY), pillbox.bounds())) {
 
-						pillboxCarryTarget = (Pillbox) collidable;
-						return;
+						carriedPillbox = (Pillbox) collidable;
+						return true;
 					}
 				}
 			}
 		}
+		return false;
 	}
 
-	public void cancelPillboxPackingIfNotPacked() {
-		if (pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Carried) {
-			pillboxCarryTarget.cancelPacking();
-			pillboxCarryTarget = null;
-			pillboxBuildLocationX = pillboxBuildLocationY = -1;
-		}
-	}
-
-	public void cancelPillboxBuilding() {
-		if (pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Built) {
-			pillboxCarryTarget.cancelBuilding();
-			pillboxBuildLocationX = pillboxBuildLocationY = -1;
-		}
-	}
-
-	public void unpackPillbox(World world) {
-		if (hasPillboxBuildLocationTarget()) {
+	/**
+	 * Attempts to find a valid build location for the carried pillbox.
+	 *
+	 * @param world reference to the game world.
+	 * @return true if a valid build location was found, or false if one was not found or no pillbox is being carried.
+	 */
+	private boolean findBuildLocationForPillbox(World world) {
+		if (isCarryingPillbox() && !hasPillboxBuildLocationTarget()) {
 			float placementDistanceWorldUnits = Coords.TileToWorldScale;
 			float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
 			float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
 
-			if (pillboxCarryTarget.isValidBuildLocation(world, targetX, targetY)) {
+			if (carriedPillbox.isValidBuildLocation(world, targetX, targetY)) {
 				pillboxBuildLocationX = targetX;
 				pillboxBuildLocationY = targetY;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	private boolean hasPillboxBuildLocationTarget() {
-		return isCarryingPillbox() && pillboxBuildLocationX >= 0 && pillboxBuildLocationY >= 0;
+		return pillboxBuildLocationX >= 0 && pillboxBuildLocationY >= 0;
 	}
 
+	/**
+	 * Process building or unbuilding a pillbox.
+	 */
 	private void processPillboxBuilding() {
 		processPillboxPacking();
 		processPillboxUnpacking();
@@ -427,15 +462,15 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private void processPillboxPacking() {
 		// Pack the pillbox if it is being packed.
-		if (pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Carried && pillboxCarryTarget.builtPct() > 0) {
-			pillboxCarryTarget.packForCarrying();
-			System.out.println("Packing pillbox: " + pillboxCarryTarget.builtPct());
+		if (carriedPillbox != null && carriedPillbox.buildStatus() != BuildStatus.Carried && carriedPillbox.builtPct() > 0) {
+			carriedPillbox.packForCarrying();
+			System.out.println("Packing pillbox: " + carriedPillbox.builtPct());
 		}
 	}
 
 	private void processPillboxUnpacking() {
-		if (hasPillboxBuildLocationTarget() && pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Built) {
-			pillboxCarryTarget.unpackForPlacement(pillboxBuildLocationX, pillboxBuildLocationY);
+		if (hasPillboxBuildLocationTarget() && carriedPillbox != null && carriedPillbox.buildStatus() != BuildStatus.Built) {
+			carriedPillbox.unpackForPlacement(pillboxBuildLocationX, pillboxBuildLocationY);
 		}
 	}
 

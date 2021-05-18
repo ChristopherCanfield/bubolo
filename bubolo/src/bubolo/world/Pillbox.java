@@ -178,7 +178,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/**
 	 * Sets the built percent to 100%.
 	 */
-	public void cancelPacking() {
+	public void cancelUnbuilding() {
 		setBuildStatus(BuildStatus.Built);
 	}
 
