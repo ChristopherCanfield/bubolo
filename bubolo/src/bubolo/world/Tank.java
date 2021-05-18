@@ -156,7 +156,11 @@ public class Tank extends ActorEntity implements Damageable {
 			accelerated = false;
 			decelerated = false;
 			rotated = false;
+
 			hidden = false;
+
+			carriedPillbox = null;
+			pillboxBuildLocationX = pillboxBuildLocationY = 0;
 
 			notifyNetwork();
 		}
@@ -186,7 +190,7 @@ public class Tank extends ActorEntity implements Damageable {
 		updateSpeedForTerrain(world);
 		moveTank(world);
 		performCollisionDetection(world);
-		processPillboxBuilding();
+		processPillboxBuilding(world);
 		hidden = checkIfHidden(world);
 
 		decelerated = false;
@@ -454,7 +458,7 @@ public class Tank extends ActorEntity implements Damageable {
 				float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
 				float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
 
-				if (carriedPillbox.isValidBuildLocation(world, targetX, targetY)) {
+				if (Pillbox.isValidBuildLocationWU(world, targetX, targetY)) {
 					pillboxBuildLocationX = targetX;
 					pillboxBuildLocationY = targetY;
 					return true;
@@ -477,10 +481,10 @@ public class Tank extends ActorEntity implements Damageable {
 	/**
 	 * Process building or unbuilding a pillbox.
 	 */
-	private void processPillboxBuilding() {
+	private void processPillboxBuilding(World world) {
 		if (carriedPillbox != null) {
 			if (unbuildPillbox) { processPillboxPacking(); }
-			if (buildPillbox) { processPillboxUnpacking(); }
+			if (buildPillbox) { processPillboxUnpacking(world); }
 		}
 	}
 
@@ -495,10 +499,10 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
-	private void processPillboxUnpacking() {
+	private void processPillboxUnpacking(World world) {
 		System.out.println("tank.processPillboxUnpacking");
 		if (hasPillboxBuildLocationTarget() && carriedPillbox.buildStatus() != BuildStatus.Built) {
-			carriedPillbox.build(pillboxBuildLocationX, pillboxBuildLocationY);
+			carriedPillbox.build(world, pillboxBuildLocationX, pillboxBuildLocationY);
 			System.out.println("carriedPillbox.unbuild(): " + carriedPillbox.builtPct());
 		} else if (carriedPillbox.buildStatus() == BuildStatus.Built) {
 			// If the pillbox was built, stop carrying it.
@@ -545,7 +549,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (terrain instanceof DeepWater) {
 			drowned = true;
 			Audio.play(Sfx.TankDrowned, x(), y());
-			onDeath();
+			onDeath(world);
 			return true;
 		}
 		return false;
@@ -690,7 +694,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 			if (hitPoints <= 0) {
 				Audio.play(Sfx.TankExplosion, x(), y());
-				onDeath();
+				onDeath(world);
 			}
 		}
 	}
@@ -698,9 +702,12 @@ public class Tank extends ActorEntity implements Damageable {
 	/**
 	 * Called when the tank dies.
 	 */
-	private void onDeath() {
+	private void onDeath(World world) {
 		hitPoints = 0;
 		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
+		if (isCarryingPillbox()) {
+			carriedPillbox.dropFromTank(world);
+		}
 		notifyNetwork();
 	}
 

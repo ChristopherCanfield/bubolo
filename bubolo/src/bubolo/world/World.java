@@ -201,6 +201,25 @@ public interface World {
 	public TerrainImprovement getTerrainImprovement(int column, int row);
 
 	/**
+	 * Moves a pillbox off of the tile map. This is intended to be used when pillboxes are picked up by tanks. Pillboxes
+	 * that are off of the tile map won't be returned using the getTerrainImprovements method.
+	 *
+	 * @param pillbox the pillbox to move.
+	 */
+	public void movePillboxOffTileMap(Pillbox pillbox);
+
+	/**
+	 * Moves a pillbox back onto the tile map. This is intended to be used when a pillbox is placed by a tank. The pillbox's
+	 * setPosition method will be called with the new position. If the tile has a terrain improvement that can be built on, the
+	 * terrain improvement will be disposed.
+	 *
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 * @throws GameLogicException if the specified tile is not a valid build location.
+	 */
+	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row);
+
+	/**
 	 * Returns the mine located in specified (column, row) tile position, or null if none is.
 	 *
 	 * @param column >= 0 and < getTileColumns().

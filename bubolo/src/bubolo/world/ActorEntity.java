@@ -3,6 +3,7 @@ package bubolo.world;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.controllers.Controller;
+import bubolo.util.Nullable;
 
 /**
  * Game objects that may move, and that may have update logic.
@@ -90,7 +91,12 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		return owner != null;
 	}
 
-	public final void setOwner(ActorEntity owner) {
+	/**
+	 * Sets the object's owner. May be null.
+	 *
+	 * @param owner the object's new owner. May be null.
+	 */
+	public final void setOwner(@Nullable ActorEntity owner) {
 		boolean isNewOwner = this.owner != owner;
 		this.owner = owner;
 
@@ -102,9 +108,9 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	/**
 	 * Called when the ActorEntity receives a new owner. Derived classes can override this method to be notified of owner changes.
 	 *
-	 * @param newOwner the actor's new owner.
+	 * @param newOwner the actor's new owner. May be null.
 	 */
-	protected void onOwnerChanged(ActorEntity newOwner) {
+	protected void onOwnerChanged(@Nullable ActorEntity newOwner) {
 	}
 
 	/**

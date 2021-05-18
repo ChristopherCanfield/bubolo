@@ -165,12 +165,13 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param targetX a valid x target build location for this pillbox.
 	 * @param targetY a valid y target build location for this pillbox.
 	 */
-	public void build(float targetX, float targetY) {
+	public void build(World world, float targetX, float targetY) {
 		System.out.println("unpackForPlacement");
 
 		builtPct += buildPctPerTick;
 		setBuildStatus(BuildStatus.Building);
 		setPosition(targetX, targetY);
+//		world.moveTerrainImprovement
 
 		if (builtPct >= 1) {
 			setBuildStatus(BuildStatus.Built);
@@ -196,6 +197,18 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	public void cancelBuilding() {
 		setBuildStatus(BuildStatus.Carried);
+	}
+
+	/**
+	 * Drops the pillbox from a tank. The pillbox is built in the nearest valid location, and becomes neutral. This is used
+	 * when a tank dies while carrying a pillbox.
+	 *
+	 * @param world reference to the game world.
+	 */
+	public void dropFromTank(World world) {
+		setOwner(null);
+
+
 	}
 
 	private void setBuildStatus(BuildStatus status) {
@@ -228,9 +241,13 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param targetY the y position to place this pillbox, in world units.
 	 * @return true if the specified target location is a valid placement location for this pillbox.
 	 */
-	public boolean isValidBuildLocation(World world, float targetX, float targetY) {
+	public static boolean isValidBuildLocationWU(World world, float targetX, float targetY) {
 		int tileX = Math.round(targetX / Coords.TileToWorldScale);
 		int tileY = Math.round(targetY / Coords.TileToWorldScale);
+		return isValidBuildTile(world, tileX, tileY);
+	}
+
+	public static boolean isValidBuildTile(World world, int tileX, int tileY) {
 		if (world.isValidTile(tileX, tileY) && world.getTerrain(tileX, tileY).isValidBuildTarget()) {
 			var terrainImprovement = world.getTerrainImprovement(tileX, tileY);
 			return (terrainImprovement == null || terrainImprovement.isValidBuildTarget());

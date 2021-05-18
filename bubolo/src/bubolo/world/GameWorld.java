@@ -1,5 +1,7 @@
 package bubolo.world;
 
+import static bubolo.util.Coords.TileToWorldScale;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -293,6 +295,28 @@ public class GameWorld implements World {
 	@Override
 	public TerrainImprovement getTerrainImprovement(int column, int row) {
 		return terrainImprovements.get(new Tile(column, row));
+	}
+
+	@Override
+	public void movePillboxOffTileMap(Pillbox pillbox) {
+		assert pillbox.equals(terrainImprovements.get(new Tile(pillbox.tileColumn(), pillbox.tileRow())));
+		terrainImprovements.remove(new Tile(pillbox.tileColumn(), pillbox.tileRow()));
+	}
+
+	@Override
+	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row) {
+		var targetTile = new Tile(column, row);
+		var terrainImprovement = terrainImprovements.get(targetTile);
+		if (terrainImprovement.isValidBuildTarget()) {
+			terrainImprovement.dispose();
+			terrainImprovements.put(targetTile, pillbox);
+			pillbox.setPosition(column * TileToWorldScale, row * TileToWorldScale);
+
+		} else {
+			throw new GameLogicException(String.format("Invalid tile location selected for GameWorld.movePillboxOntoTileMap (%d,%d). " +
+					"It contains a terrain improvement that can't be built on.",
+					column, row));
+		}
 	}
 
 	@Override
