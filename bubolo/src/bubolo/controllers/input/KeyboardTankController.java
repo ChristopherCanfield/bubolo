@@ -18,6 +18,7 @@ public class KeyboardTankController implements Controller {
 	private final Tank tank;
 
 	private boolean pillboxBeingPacked;
+	private boolean pillboxBeingUnpacked;
 
 	/**
 	 * Constructs a keyboard tank controller.
@@ -68,11 +69,9 @@ public class KeyboardTankController implements Controller {
 		if (input.isKeyPressed(Keys.E)) {
 			pillboxBeingPacked = true;
 			tank.packNearestPillbox(world);
-		} else {
-			if (pillboxBeingPacked) {
-				pillboxBeingPacked = false;
-				tank.cancelPillboxPackingIfNotPacked();
-			}
+		} else if (pillboxBeingPacked) {
+			pillboxBeingPacked = false;
+			tank.cancelPillboxPackingIfNotPacked();
 		}
 	}
 }

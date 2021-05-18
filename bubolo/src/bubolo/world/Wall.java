@@ -99,7 +99,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	}
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	public boolean isValidBuildTarget() {
 		return false;
 	}
 

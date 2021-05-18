@@ -247,7 +247,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	public boolean isValidBuildTarget() {
 		return false;
 	}
 

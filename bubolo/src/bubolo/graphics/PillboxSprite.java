@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Pillbox;
+import bubolo.world.Pillbox.BuildStatus;
 import bubolo.world.Tank;
 
 /**
@@ -24,7 +25,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	private static final int damageColumn = 1;
 
 	private static final Color defaultColor = new Color(Color.WHITE);
-	private static final Color moveColor = new Color(1, 1, 1, 0.5f);
+	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
 
 	private static final DrawLayer defaultDrawLayer = DrawLayer.TerrainImprovements;
 	private static final DrawLayer carriedDrawLayer = DrawLayer.Effects;
@@ -57,8 +58,16 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 		if (!isDisposed()) {
 			updateColorSet();
 
-			if (!getEntity().isBeingCarried()) {
+			var pillbox = getEntity();
+			if (pillbox.buildStatus() != BuildStatus.Carried) {
 				setDrawLayer(defaultDrawLayer);
+
+				if (pillbox.buildStatus() == BuildStatus.Built) {
+					setColor(defaultColor);
+				} else {
+					buildingColor.a = Math.min(1.0f, pillbox.builtPct() + 0.2f);
+					setColor(buildingColor);
+				}
 
 				// Draw the pillbox.
 				drawTexture(graphics, frames[colorColumn][0]);
@@ -78,6 +87,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 				// Draw the pillbox above the tank.
 				setDrawLayer(carriedDrawLayer);
+				setColor(defaultColor);
 				// Draw the pillbox.
 				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.x(), tank.y(), tank.width() / 2 + 5, 35, tank.rotation());
 			}
@@ -112,7 +122,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
-		if (e.isOwnedByLocalPlayer()) {
+		if (e.isOwnedByLocalPlayer() && e.buildStatus() == BuildStatus.Built) {
 			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
 		}
 	}

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Polygon;
 import bubolo.Config;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
+import bubolo.util.Coords;
 import bubolo.util.Time;
 
 /**
@@ -36,10 +37,24 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private boolean capturable = false;
 	private int capturableTimerId = -1;
 
-	/** The percentage the pillbox is packed, which determines if it can be moved or not. */
-	private float packPct;
-	private static final float packTimeSeconds = 3;
-	private static final float packPctPerTick = 1.0f / Time.secondsToTicks(packTimeSeconds);
+	/** The percentage the pillbox is built, which determines if it can be moved or not. */
+	private float builtPct = 1;
+	private static final float buildTimeSeconds = 3;
+	private static final float buildPctPerTick = 1.0f / Time.secondsToTicks(buildTimeSeconds);
+
+	public enum BuildStatus {
+		/** The pillbox is built. A pillbox in the built state can enter the Packing state. */
+		Built,
+		/** The pillbox is being packed for carriage on a tank. A pillbox in the Packing state can enter the Built or Packing states. */
+		Packing,
+		/** The pillbox is being carried on a tank. A pillbox in the Carried state can enter any other state. */
+		Carried,
+		/** The pillbox is being unpacked. A pillbox in the Unpacking state can enter the Built or Carried states. */
+		Unpacking
+	}
+
+	// Pillboxes start built.
+	private BuildStatus buildStatus = BuildStatus.Built;
 
 	private boolean solid = true;
 
@@ -88,14 +103,19 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	@Override
 	protected void onUpdate(World world) {
-		if (!isBeingCarried()) {
+		assert !(buildStatus == BuildStatus.Built && builtPct < 1);
+
+		if (buildStatus == BuildStatus.Built) {
+			assert isSolid();
+
 			if (!capturable) {
 				heal(hpPerTick);
 			}
 		} else {
-			// @TODO (cdc 2021-05-16): Offset this behind the tank. Needs to change based on the direction of the tank.
-
-			setPosition(owner().x(), owner().y());
+			if (buildStatus == BuildStatus.Carried) {
+				assert !isSolid();
+				setPosition(owner().x(), owner().y());
+			}
 		}
 	}
 
@@ -105,54 +125,109 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		// so another player can't instantly grab it without needing to reduce its health.
 		if (newOwner != null) {
 			hitPoints = 5;
-			packPct = 0;
+			setBuildStatus(BuildStatus.Built);
 		}
 	}
 
-	/**
-	 * @return whether the pillbox is currently being carried.
-	 */
-	public boolean isBeingCarried() {
-		return hasOwner() && packPct >= 1;
+	public BuildStatus buildStatus() {
+		return buildStatus;
 	}
 
 	/**
-	 * Increases the packed percentage. Used to pack placed pillboxes so they can be carried and relocated.
+	 * Decreases the built percentage. Used to pack placed pillboxes onto a tank, so they can be carried and relocated.
 	 *
 	 * @precondition the pillbox must have an owner for it to be packed.
 	 */
 	public void packForCarrying() {
 		assert hasOwner();
-		packPct += packPctPerTick;
-		if (packPct > 1) {
-			packPct = 1;
-			solid = false;
+
+		System.out.println("packForCarrying");
+		builtPct -= buildPctPerTick;
+		setBuildStatus(BuildStatus.Packing);
+
+		if (builtPct <= 0) {
+			setBuildStatus(BuildStatus.Carried);
 		}
 	}
 
 	/**
-	 * Decreases the packed percentage. Used to unpack carried pillboxes so they can be placed.
+	 * Increase the built percentage. Used to unpack carried pillboxes so they can be placed.
+	 *
+	 * @param targetX a valid x target build location for this pillbox.
+	 * @param targetY a valid y target build location for this pillbox.
 	 */
-	public void unpackForPlacement() {
-		packPct -= packPctPerTick;
-		if (packPct < 0) {
-			packPct = 0;
-			solid = true;
+	public void unpackForPlacement(float targetX, float targetY) {
+		System.out.println("unpackForPlacement");
+
+		builtPct += buildPctPerTick;
+		setBuildStatus(BuildStatus.Unpacking);
+		setPosition(targetX, targetY);
+
+		if (builtPct >= 1) {
+			setBuildStatus(BuildStatus.Built);
 		}
 	}
 
 	/**
 	 * @return the percent packed this pillbox is, from 0 to 1.
 	 */
-	public float packPct() {
-		return packPct;
+	public float builtPct() {
+		return builtPct;
 	}
 
 	/**
-	 * Sets the pack percent to zero.
+	 * Sets the built percent to 100%.
 	 */
 	public void cancelPacking() {
-		packPct = 0;
+		setBuildStatus(BuildStatus.Built);
+	}
+
+	/**
+	 * Sets the built percent to 0%.
+	 */
+	public void cancelBuilding() {
+		setBuildStatus(BuildStatus.Carried);
+	}
+
+	private void setBuildStatus(BuildStatus status) {
+		buildStatus = status;
+		System.out.println("New pillbox build status: " + status);
+
+		switch (status) {
+		case Built:
+			builtPct = 1;
+			solid = true;
+			break;
+		case Carried:
+			builtPct = 0;
+			solid = false;
+			break;
+		case Packing:
+			solid = true;
+			break;
+		case Unpacking:
+			solid = true;
+			break;
+		}
+	}
+
+	/**
+	 * Specifies whether the target location, in world units, is a valid location to place this pillbox.
+	 *
+	 * @param world reference to the game world.
+	 * @param targetX the x position to place this pillbox, in world units.
+	 * @param targetY the y position to place this pillbox, in world units.
+	 * @return true if the specified target location is a valid placement location for this pillbox.
+	 */
+	public boolean isValidBuildLocation(World world, float targetX, float targetY) {
+		int tileX = Math.round(targetX / Coords.TileToWorldScale);
+		int tileY = Math.round(targetY / Coords.TileToWorldScale);
+		if (world.isValidTile(tileX, tileY) && world.getTerrain(tileX, tileY).isValidBuildTarget()) {
+			var terrainImprovement = world.getTerrainImprovement(tileX, tileY);
+			return (terrainImprovement == null || terrainImprovement.isValidBuildTarget());
+		}
+
+		return false;
 	}
 
 	/**
@@ -265,7 +340,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	}
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	public boolean isValidBuildTarget() {
 		return false;
 	}
 }

@@ -21,6 +21,7 @@ import bubolo.net.command.CreateEntity;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
 import bubolo.util.Coords;
+import bubolo.world.Pillbox.BuildStatus;
 
 /**
  * The tank, which may be controlled by a local player or networked player..
@@ -113,7 +114,9 @@ public class Tank extends ActorEntity implements Damageable {
 	private final List<Controller> controllers = new ArrayList<>();
 
 	// The pillbox that is targeted for packing.
-	private Pillbox packingTarget;
+	private Pillbox pillboxCarryTarget;
+	private float pillboxBuildLocationX = -1;
+	private float pillboxBuildLocationY = -1;
 
 	/**
 	 * Constructs a Tank.
@@ -181,7 +184,7 @@ public class Tank extends ActorEntity implements Damageable {
 		updateSpeedForTerrain(world);
 		moveTank(world);
 		performCollisionDetection(world);
-		packPillbox(world);
+		processPillboxBuilding();
 		hidden = checkIfHidden(world);
 
 		decelerated = false;
@@ -360,8 +363,12 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	public boolean isCarryingPillbox() {
+		return pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() == BuildStatus.Carried;
+	}
+
 	public void packNearestPillbox(World world) {
-		if (packingTarget == null) {
+		if (pillboxCarryTarget == null) {
 			var pillboxes = world.getNearbyCollidables(this, true, 1, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
 				float maxDistanceWorldUnits = Coords.TileToWorldScale;
@@ -373,7 +380,7 @@ public class Tank extends ActorEntity implements Damageable {
 					if (pillbox.isOwnedByLocalPlayer() &&
 							Intersector.intersectSegmentPolygon(new Vector2(x(), y()), new Vector2(targetLineX, targetLineY), pillbox.bounds())) {
 
-						packingTarget = (Pillbox) collidable;
+						pillboxCarryTarget = (Pillbox) collidable;
 						return;
 					}
 				}
@@ -382,16 +389,53 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	public void cancelPillboxPackingIfNotPacked() {
-		if (packingTarget != null && !packingTarget.isBeingCarried()) {
-			packingTarget.cancelPacking();
-			packingTarget = null;
+		if (pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Carried) {
+			pillboxCarryTarget.cancelPacking();
+			pillboxCarryTarget = null;
+			pillboxBuildLocationX = pillboxBuildLocationY = -1;
 		}
 	}
 
-	private void packPillbox(World world) {
-		if (packingTarget != null && packingTarget.packPct() < 1.0f) {
-			packingTarget.packForCarrying();
-			System.out.println("Packing pillbox: " + packingTarget.packPct());
+	public void cancelPillboxBuilding() {
+		if (pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Built) {
+			pillboxCarryTarget.cancelBuilding();
+			pillboxBuildLocationX = pillboxBuildLocationY = -1;
+		}
+	}
+
+	public void unpackPillbox(World world) {
+		if (hasPillboxBuildLocationTarget()) {
+			float placementDistanceWorldUnits = Coords.TileToWorldScale;
+			float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
+			float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
+
+			if (pillboxCarryTarget.isValidBuildLocation(world, targetX, targetY)) {
+				pillboxBuildLocationX = targetX;
+				pillboxBuildLocationY = targetY;
+			}
+		}
+	}
+
+	private boolean hasPillboxBuildLocationTarget() {
+		return isCarryingPillbox() && pillboxBuildLocationX >= 0 && pillboxBuildLocationY >= 0;
+	}
+
+	private void processPillboxBuilding() {
+		processPillboxPacking();
+		processPillboxUnpacking();
+	}
+
+	private void processPillboxPacking() {
+		// Pack the pillbox if it is being packed.
+		if (pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Carried && pillboxCarryTarget.builtPct() > 0) {
+			pillboxCarryTarget.packForCarrying();
+			System.out.println("Packing pillbox: " + pillboxCarryTarget.builtPct());
+		}
+	}
+
+	private void processPillboxUnpacking() {
+		if (hasPillboxBuildLocationTarget() && pillboxCarryTarget != null && pillboxCarryTarget.buildStatus() != BuildStatus.Built) {
+			pillboxCarryTarget.unpackForPlacement(pillboxBuildLocationX, pillboxBuildLocationY);
 		}
 	}
 
@@ -680,7 +724,7 @@ public class Tank extends ActorEntity implements Damageable {
 			Terrain terrain = world.getTerrain(tileX, tileY);
 			if (terrain.isValidBuildTarget() && world.getMine(tileX, tileY) == null) {
 				TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileX, tileY);
-				return (terrainImprovement == null || terrainImprovement.isValidMinePlacementTarget());
+				return (terrainImprovement == null || terrainImprovement.isValidBuildTarget());
 			}
 			return false;
 		}

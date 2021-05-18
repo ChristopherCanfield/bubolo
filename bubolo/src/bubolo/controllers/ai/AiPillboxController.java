@@ -7,6 +7,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
 import bubolo.world.Pillbox;
+import bubolo.world.Pillbox.BuildStatus;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
@@ -31,7 +32,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	public void update(World world)
 	{
 		// Don't process updates if the pillbox is being moved.
-		if (!parent().isBeingCarried()) {
+		if (parent().buildStatus() == BuildStatus.Built) {
 			// Only fire if cannon is ready.
 			if (parent().isCannonReady()) {
 				Tank target = getTarget(world);

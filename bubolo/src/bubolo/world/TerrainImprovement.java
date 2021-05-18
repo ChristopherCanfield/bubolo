@@ -25,11 +25,12 @@ public interface TerrainImprovement {
 	}
 
 	/**
-	 * Specifies whether objects such as mines can be built on top of this improvement.
+	 * Specifies whether buildable objects can be built on top of (if the buildable object is not a terrain improvement),
+	 * or replace (if the buildable object is a terrain improvement), this terrain improvement.
 	 *
-	 * @return true if mines can be built on top of this improvement.
+	 * @return true if buildable objects can be built in a tile that has this terrain improvement.
 	 */
-	boolean isValidMinePlacementTarget();
+	boolean isValidBuildTarget();
 
 	UUID id();
 
