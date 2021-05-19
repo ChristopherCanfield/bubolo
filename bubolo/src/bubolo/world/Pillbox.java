@@ -207,10 +207,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param world reference to the game world.
 	 */
 	public void dropFromTank(World world) {
-		setOwner(null);
-
-		var terrain = world.getNearestBuildableTerrain(x(), y());
+		var terrain = world.getNearestBuildableTerrain(owner().x(), owner().y());
 		world.movePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow());
+		setBuildStatus(BuildStatus.Built);
+		setOwner(null);
 	}
 
 	private void setBuildStatus(BuildStatus status) {

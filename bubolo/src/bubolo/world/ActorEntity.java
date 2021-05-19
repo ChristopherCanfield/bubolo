@@ -99,6 +99,9 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	public final void setOwner(@Nullable ActorEntity owner) {
 		boolean isNewOwner = this.owner != owner;
 		this.owner = owner;
+		if (owner == null) {
+			setOwnedByLocalPlayer(false);
+		}
 
 		if (isNewOwner) {
 			onOwnerChanged(owner);

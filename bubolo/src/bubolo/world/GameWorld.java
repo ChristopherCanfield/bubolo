@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import bubolo.Config;
 import bubolo.controllers.Controller;
@@ -556,32 +557,90 @@ public class GameWorld implements World {
 	public Terrain getNearestBuildableTerrain(float x, float y) {
 		final int tileMaxDistance = 10;
 
-		final int targetColumn = (int) (x / TileToWorldScale);
-		final int targetRow = (int) (y / TileToWorldScale);
+		final int initialColumn = (int) (x / TileToWorldScale);
+		final int initialRow = (int) (y / TileToWorldScale);
 
-		final int startTileColumn = - targetColumn - tileMaxDistance;
-		final int startTileRow = targetRow - tileMaxDistance;
-
-		final int endTileColumn = targetColumn + tileMaxDistance;
-		final int endTileRow = targetRow + tileMaxDistance;
-
-		// @TODO (cdc 2021-05-18): Have this search outwardly from the target's position.
-		for (int column = startTileColumn; column <= endTileColumn; column++) {
-			for (int row = startTileRow; row <= endTileRow; row++) {
-				if (isValidTile(column, row)) {
-					if (isValidTile(column, row) && getTerrain(column, row).isValidBuildTarget()) {
-						var terrainImprovement = getTerrainImprovement(column, row);
-						if (terrainImprovement == null || terrainImprovement.isValidBuildTarget()) {
-						}
-					}
+		Terrain terrain = findTerrainWithinTileRange(initialColumn, initialRow, tileMaxDistance, t -> {
+			if (t.isValidBuildTarget()) {
+				var improvement = getTerrainImprovement(t.tileColumn(), t.tileRow());
+				if (improvement != null) {
+					return improvement.isValidBuildTarget();
+				} else {
+					return true;
 				}
 			}
+			return false;
+		});
+		assert terrain != null;
+		return terrain;
+	}
+
+	/**
+	 * Finds a terrain that meets a requirement within a specified distance from a target tile. The predicate function determines
+	 * whether a given terrain that is within the range is returned. The terrain are checked in order of tile distance, with
+	 * nearer tiles being checked first. If no relevant terrain is found, null is returned.
+	 *
+	 * @param startTileCol the initial tile's column. The initial tile is checked.
+	 * @param startTileRow the initial tile's row. The initial tile is checked.
+	 * @param maxTileDistance the max distance (inclusive) to check from the start tile.
+	 * @param pred determines whether a given entity should be returned.
+	 * @return the nearest terrain that that fulfills the requirements of the predicate, or null if no relevant terrain was found.
+	 */
+	private @Nullable Terrain findTerrainWithinTileRange(int startTileCol, int startTileRow, int maxTileDistance, Predicate<Terrain> pred) {
+		// Initial tile.
+		Terrain terrain = returnTerrainIfMeetsRequirements(startTileCol, startTileRow, pred);
+		if (terrain != null) { return terrain; }
+
+		for (int distance = 1; distance <= maxTileDistance; distance++) {
+			// North
+			terrain = returnTerrainIfMeetsRequirements(startTileCol, startTileRow + distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// South
+			terrain = returnTerrainIfMeetsRequirements(startTileCol, startTileRow - distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// East
+			terrain = returnTerrainIfMeetsRequirements(startTileCol + distance, startTileRow, pred);
+			if (terrain != null) { return terrain; }
+
+			// West
+			terrain = returnTerrainIfMeetsRequirements(startTileCol - distance, startTileRow, pred);
+			if (terrain != null) { return terrain; }
+
+			// Northeast
+			terrain = returnTerrainIfMeetsRequirements(startTileCol + distance, startTileRow + distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// Northwest
+			terrain = returnTerrainIfMeetsRequirements(startTileCol - distance, startTileRow + distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// Southeast
+			terrain = returnTerrainIfMeetsRequirements(startTileCol + distance, startTileRow - distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// Southwest
+			terrain = returnTerrainIfMeetsRequirements(startTileCol - distance, startTileRow - distance, pred);
+			if (terrain != null) { return terrain; }
 		}
+
+		return null;
+	}
+
+	private @Nullable Terrain returnTerrainIfMeetsRequirements(int col, int row, Predicate<Terrain> pred) {
+		if (isValidTile(col, row)) {
+			var terrain = getTerrain(col, row);
+			if (pred.test(terrain)) {
+				return terrain;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maximumDistanceTiles) {
-		for (int distance = 1; distance < maximumDistanceTiles; distance++) {
+		for (int distance = 1; distance <= maximumDistanceTiles; distance++) {
 			if (isTileDeepWater(tileColumn + distance, tileRow)
 					|| isTileDeepWater(tileColumn - distance, tileRow)
 					|| isTileDeepWater(tileColumn + distance, tileRow + distance)
