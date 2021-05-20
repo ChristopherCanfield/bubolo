@@ -147,6 +147,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/**
 	 * Decreases the built percentage. Used to pack placed pillboxes onto a tank, so they can be carried and relocated.
 	 *
+	 * @param world reference to the game world.
 	 * @precondition the pillbox must have an owner for it to be packed.
 	 */
 	public void unbuild(World world) {
@@ -164,6 +165,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/**
 	 * Increase the built percentage. Used to unpack carried pillboxes so they can be placed.
 	 *
+	 * @param world reference to the game world.
 	 * @param targetX a valid x target build location for this pillbox.
 	 * @param targetY a valid y target build location for this pillbox.
 	 */

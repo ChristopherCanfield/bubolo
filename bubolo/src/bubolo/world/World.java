@@ -213,6 +213,7 @@ public interface World {
 	 * setPosition method will be called with the new position. If the tile has a terrain improvement that can be built on, the
 	 * terrain improvement will be disposed.
 	 *
+	 * @param pillbox the pillbox to move.
 	 * @param column >= 0 and < getTileColumns().
 	 * @param row >= 0 and < getTileRows().
 	 * @throws GameLogicException if the specified tile is not a valid build location.
