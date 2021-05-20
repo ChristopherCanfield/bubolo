@@ -152,7 +152,6 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	public void unbuild(World world) {
 		assert hasOwner();
 
-		System.out.println("packForCarrying");
 		builtPct -= buildPctPerTick;
 		setBuildStatus(BuildStatus.Unbuilding);
 
@@ -169,8 +168,6 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param targetY a valid y target build location for this pillbox.
 	 */
 	public void build(World world, float targetX, float targetY) {
-		System.out.println("unpackForPlacement");
-
 		builtPct += buildPctPerTick;
 		setBuildStatus(BuildStatus.Building);
 		int column = worldUnitToTile(targetX);
@@ -219,7 +216,6 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	private void setBuildStatus(BuildStatus status) {
 		buildStatus = status;
-		System.out.println("New pillbox build status: " + status);
 
 		switch (status) {
 		case Built:
@@ -249,8 +245,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return true if the specified target location is a valid placement location for this pillbox.
 	 */
 	public static boolean isValidBuildLocationWU(World world, float targetX, float targetY) {
-		int tileX = (int) targetX / Coords.TileToWorldScale;
-		int tileY = (int) targetY / Coords.TileToWorldScale;
+		int tileX = Coords.worldUnitToTile(targetX);
+		int tileY = Coords.worldUnitToTile(targetY);
 		return isValidBuildTile(world, tileX, tileY);
 	}
 

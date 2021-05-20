@@ -494,21 +494,17 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	private void processPillboxPacking(World world) {
-		System.out.println("tank.processPillboxPacking");
 		// Pack the pillbox if it is being packed.
 		if (carriedPillbox.buildStatus() != BuildStatus.Carried && carriedPillbox.builtPct() > 0) {
 			carriedPillbox.unbuild(world);
-			System.out.println("carriedPillbox.unbuild(): " + carriedPillbox.builtPct());
 		} else if (carriedPillbox.buildStatus() == BuildStatus.Carried) {
 			unbuildPillbox = false;
 		}
 	}
 
 	private void processPillboxUnpacking(World world) {
-		System.out.println("tank.processPillboxUnpacking");
 		if (hasPillboxBuildLocationTarget() && carriedPillbox.buildStatus() != BuildStatus.Built) {
 			carriedPillbox.build(world, pillboxBuildLocationX, pillboxBuildLocationY);
-			System.out.println("carriedPillbox.unbuild(): " + carriedPillbox.builtPct());
 		} else if (carriedPillbox.buildStatus() == BuildStatus.Built) {
 			// If the pillbox was built, stop carrying it.
 			carriedPillbox = null;
