@@ -308,16 +308,18 @@ public class GameWorld implements World {
 	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row) {
 		var targetTile = new Tile(column, row);
 		var terrainImprovement = terrainImprovements.get(targetTile);
-		if (terrainImprovement.isValidBuildTarget()) {
-			terrainImprovement.dispose();
-			terrainImprovements.put(targetTile, pillbox);
-			pillbox.setPosition(column * TileToWorldScale, row * TileToWorldScale);
-
-		} else {
-			throw new GameLogicException(String.format("Invalid tile location selected for GameWorld.movePillboxOntoTileMap (%d,%d). " +
-					"It contains a terrain improvement that can't be built on.",
-					column, row));
+		if (terrainImprovement != null) {
+			if (terrainImprovement.isValidBuildTarget()) {
+				terrainImprovement.dispose();
+			} else {
+				throw new GameLogicException(String.format("Invalid tile location selected for GameWorld.movePillboxOntoTileMap (%d,%d). " +
+						"It contains a terrain improvement that can't be built on.",
+						column, row));
+			}
 		}
+
+		terrainImprovements.put(targetTile, pillbox);
+		pillbox.setPosition(column * TileToWorldScale, row * TileToWorldScale);
 	}
 
 	@Override

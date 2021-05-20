@@ -711,8 +711,8 @@ public class Tank extends ActorEntity implements Damageable {
 		hitPoints = 0;
 		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
 		if (isCarryingPillbox()) {
-			carriedPillbox.setPosition(x(), y());
 			carriedPillbox.dropFromTank(world);
+			carriedPillbox = null;
 		}
 		notifyNetwork();
 	}
