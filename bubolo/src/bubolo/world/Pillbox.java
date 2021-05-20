@@ -1,5 +1,7 @@
 package bubolo.world;
 
+import static bubolo.util.Coords.worldUnitToTile;
+
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Config;
@@ -171,9 +173,11 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 		builtPct += buildPctPerTick;
 		setBuildStatus(BuildStatus.Building);
+		int column = worldUnitToTile(targetX);
+		int row = worldUnitToTile(targetY);
+		setPosition(column * Coords.TileToWorldScale, row * Coords.TileToWorldScale);
 
 		if (builtPct >= 1) {
-			setPosition(targetX, targetY);
 			world.movePillboxOntoTileMap(this, tileColumn(), tileRow());
 			setBuildStatus(BuildStatus.Built);
 		}
@@ -245,8 +249,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return true if the specified target location is a valid placement location for this pillbox.
 	 */
 	public static boolean isValidBuildLocationWU(World world, float targetX, float targetY) {
-		int tileX = Math.round(targetX / Coords.TileToWorldScale);
-		int tileY = Math.round(targetY / Coords.TileToWorldScale);
+		int tileX = (int) targetX / Coords.TileToWorldScale;
+		int tileY = (int) targetY / Coords.TileToWorldScale;
 		return isValidBuildTile(world, tileX, tileY);
 	}
 

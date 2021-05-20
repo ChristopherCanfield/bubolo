@@ -54,7 +54,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 		var pillbox = parent();
 		if (pillbox.hitPoints() <= 0) {
 			for (Tank tank : world.getTanks()) {
-				if (pillbox.owner() != tank && tank.isOwnedByLocalPlayer()) {
+				if (pillbox.owner() != tank && tank.isOwnedByLocalPlayer() && tank.isAlive()) {
 					if (Intersector.overlapConvexPolygons(pillbox.captureBounds(), tank.bounds())) {
 						pillbox.setOwner(tank);
 						pillbox.setOwnedByLocalPlayer(true);

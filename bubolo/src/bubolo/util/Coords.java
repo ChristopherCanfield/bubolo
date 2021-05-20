@@ -15,6 +15,10 @@ public abstract class Coords
 	 */
 	public static final int TileToWorldScale = 32;
 
+	public static int worldUnitToTile(float worldUnit) {
+		return (int) worldUnit / TileToWorldScale;
+	}
+
 	/**
 	 * Converts world coordinates to camera coordinates.
 	 *

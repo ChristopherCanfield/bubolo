@@ -479,7 +479,7 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Process building or unbuilding a pillbox.
+	 * Process building or unbuilding a pillbox. Called once per tick.
 	 */
 	private void processPillboxBuilding(World world) {
 		if (carriedPillbox != null) {
