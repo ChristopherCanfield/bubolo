@@ -25,6 +25,7 @@ public class UpdatePillboxAttributes extends NetworkCommand {
 	private final UUID id;
 	private final float x;
 	private final float y;
+	private final boolean solid;
 	private final float builtPct;
 	private final BuildStatus buildStatus;
 	private final @Nullable UUID ownerId;
@@ -40,6 +41,7 @@ public class UpdatePillboxAttributes extends NetworkCommand {
 		this.y = pillbox.y();
 		this.builtPct = pillbox.builtPct();
 		this.buildStatus = pillbox.buildStatus();
+		this.solid = pillbox.isSolid();
 		this.ownerId = pillbox.hasOwner() ? pillbox.owner().id() : null;
 	}
 
@@ -47,10 +49,10 @@ public class UpdatePillboxAttributes extends NetworkCommand {
 	protected void execute(World world) {
 		Pillbox pillbox = (Pillbox) world.getEntity(id);
 		pillbox.setPosition(x, y);
-		pillbox.setNetPillboxAttributes(buildStatus, builtPct);
+		pillbox.setNetPillboxAttributes(solid, buildStatus, builtPct);
 
 		if (ownerId != null) {
-			var owner = (Tank) world.getEntity(id);
+			var owner = (Tank) world.getEntity(ownerId);
 			pillbox.setOwner(owner);
 		}
 	}

@@ -252,10 +252,12 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/**
 	 * Updates attributes that should only be directly set by the network system.
 	 *
+	 * @param solid whether the pillbox is solid or not.
 	 * @param buildStatus the pillbox's new build status.
 	 * @param builtPct the pillbox's new percent built.
 	 */
-	public void setNetPillboxAttributes(BuildStatus buildStatus, float builtPct) {
+	public void setNetPillboxAttributes(boolean solid, BuildStatus buildStatus, float builtPct) {
+		this.solid = solid;
 		this.buildStatus = buildStatus;
 		this.builtPct = builtPct;
 	}
