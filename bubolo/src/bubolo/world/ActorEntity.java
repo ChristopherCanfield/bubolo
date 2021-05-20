@@ -25,7 +25,6 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	private float rotation;
 
 	private ActorEntity owner;
-	private boolean ownedByLocalPlayer;
 
 	private final BoundingBox boundingBox;
 
@@ -99,9 +98,6 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	public final void setOwner(@Nullable ActorEntity owner) {
 		boolean isNewOwner = this.owner != owner;
 		this.owner = owner;
-		if (owner == null) {
-			setOwnedByLocalPlayer(false);
-		}
 
 		if (isNewOwner) {
 			onOwnerChanged(owner);
@@ -120,11 +116,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	 * @return Whether this object is owned by the local player.
 	 */
 	public boolean isOwnedByLocalPlayer() {
-		return ownedByLocalPlayer;
-	}
-
-	public void setOwnedByLocalPlayer(boolean ownedByLocalPlayer) {
-		this.ownedByLocalPlayer = ownedByLocalPlayer;
+		return owner == null ? false : owner.isOwnedByLocalPlayer();
 	}
 
 	/**

@@ -4,6 +4,7 @@ import static com.badlogic.gdx.math.MathUtils.clamp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -21,6 +22,7 @@ import bubolo.net.command.CreateEntity;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
 import bubolo.util.Coords;
+import bubolo.util.Nullable;
 import bubolo.world.Pillbox.BuildStatus;
 
 /**
@@ -112,6 +114,8 @@ public class Tank extends ActorEntity implements Damageable {
 	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
 
 	private final List<Controller> controllers = new ArrayList<>();
+
+	private boolean controlledByLocalPlayer;
 
 	// The pillbox that is being carried, built, or unbuilt (packed).
 	private Pillbox carriedPillbox;
@@ -374,6 +378,13 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
+	 * @return the carried pillbox's ID, or null if no pillbox is being carried.
+	 */
+	public @Nullable UUID carriedPillboxId() {
+		return isCarryingPillbox() ? carriedPillbox.id() : null;
+	}
+
+	/**
 	 * Builds the carried pillbox, if the tank is carrying one, or unbuilds the nearest friendly pillbox, if one is within range.
 	 * If the tank is not carrying a pillbox, and no friendly pillbox is within range, no action occurs.
 	 *
@@ -627,7 +638,7 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Sends tank move information to the network.
+	 * Sends tank attribute information to the network.
 	 */
 	private void notifyNetwork() {
 		if (isOwnedByLocalPlayer()) {
@@ -840,5 +851,14 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	protected void updateControllers(World world) {
 		controllers.forEach(controller -> controller.update(world));
+	}
+
+	public void setControlledByLocalPlayer(boolean controlledByLocal) {
+		this.controlledByLocalPlayer = controlledByLocal;
+	}
+
+	@Override
+	public boolean isOwnedByLocalPlayer() {
+		return controlledByLocalPlayer;
 	}
 }

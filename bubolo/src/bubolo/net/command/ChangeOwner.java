@@ -29,7 +29,7 @@ public class ChangeOwner extends NetworkCommand
 	private final UUID ownerId;
 
 	/**
-	 * Updates the status of an actor entity.
+	 * Changes the owner of an actor.
 	 *
 	 * @param ownable the actor entity entity to update.
 	 */
@@ -46,12 +46,9 @@ public class ChangeOwner extends NetworkCommand
 			ActorEntity ownable = (ActorEntity) world.getEntity(id);
 			if (ownerId != null) {
 				ActorEntity owner = (ActorEntity) world.getEntity(ownerId);
-
 				ownable.setOwner(owner);
-				ownable.setOwnedByLocalPlayer(owner.isOwnedByLocalPlayer());
 			} else {
 				ownable.setOwner(null);
-				ownable.setOwnedByLocalPlayer(false);
 			}
 
 		} catch (GameLogicException e) {

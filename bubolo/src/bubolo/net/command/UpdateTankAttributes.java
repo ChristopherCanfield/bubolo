@@ -11,7 +11,7 @@ import bubolo.world.Tank;
 import bubolo.world.World;
 
 /**
- * Moves a tank, and updates its speed, rotation, and health.
+ * Updates a tank's attributes.
  *
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
@@ -26,11 +26,12 @@ public class UpdateTankAttributes extends NetworkCommand {
 	private final float rotation;
 	private final float health;
 	private final boolean drowned;
+	private final UUID carriedPillboxId;
 
 	/**
-	 * Constructs a Move Tank command.
+	 * Constructs an Update Tank Attributes network command.
 	 *
-	 * @param tank the tank to move.
+	 * @param tank the tank to update.
 	 */
 	public UpdateTankAttributes(Tank tank) {
 		this.id = tank.id();
@@ -40,12 +41,13 @@ public class UpdateTankAttributes extends NetworkCommand {
 		this.rotation = tank.rotation();
 		this.health = tank.hitPoints();
 		this.drowned = tank.drowned();
+		this.carriedPillboxId = tank.carriedPillboxId();
 	}
 
 	@Override
 	protected void execute(World world) {
 		Tank tank = (Tank) world.getEntity(id);
-		tank.setNetAttributes(new NetTankAttributes(speed, health));
+		tank.setNetAttributes(new NetTankAttributes(speed, health, carriedPillboxId));
 		tank.setPosition(x, y);
 		tank.setRotation(rotation);
 		tank.setDrowning(drowned);

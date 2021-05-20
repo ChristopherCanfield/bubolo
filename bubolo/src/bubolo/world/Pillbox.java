@@ -7,6 +7,12 @@ import com.badlogic.gdx.math.Polygon;
 import bubolo.Config;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
+import bubolo.net.Network;
+import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkSystem;
+import bubolo.net.command.MovePillboxOffTileMap;
+import bubolo.net.command.MovePillboxOntoTileMap;
+import bubolo.net.command.UpdatePillboxAttributes;
 import bubolo.util.Coords;
 import bubolo.util.Time;
 
@@ -159,6 +165,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		if (builtPct <= 0) {
 			world.movePillboxOffTileMap(this);
 			setBuildStatus(BuildStatus.Carried);
+			notifyNetwork(new MovePillboxOffTileMap(this));
 		}
 	}
 
@@ -179,6 +186,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		if (builtPct >= 1) {
 			world.movePillboxOntoTileMap(this, tileColumn(), tileRow());
 			setBuildStatus(BuildStatus.Built);
+			notifyNetwork(new MovePillboxOffTileMap(this));
 		}
 	}
 
@@ -214,6 +222,8 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		world.movePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow());
 		setBuildStatus(BuildStatus.Built);
 		setOwner(null);
+
+		notifyNetwork(new MovePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow()));
 	}
 
 	private void setBuildStatus(BuildStatus status) {
@@ -235,6 +245,19 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			solid = true;
 			break;
 		}
+
+		notifyNetwork();
+	}
+
+	/**
+	 * Updates attributes that should only be directly set by the network system.
+	 *
+	 * @param buildStatus the pillbox's new build status.
+	 * @param builtPct the pillbox's new percent built.
+	 */
+	public void setNetPillboxAttributes(BuildStatus buildStatus, float builtPct) {
+		this.buildStatus = buildStatus;
+		this.builtPct = builtPct;
 	}
 
 	/**
@@ -362,6 +385,31 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		hitPoints += healPoints;
 		if (hitPoints > maxHitPoints) {
 			hitPoints = maxHitPoints;
+		}
+	}
+
+	/**
+	 * Sends a command to the network, followed by an UpdatePillboxAttributes command.
+	 *
+	 * @param additionalNetworkCommand the network commands to send before sending the UpdatePillboxAttributes command.
+	 */
+	private void notifyNetwork(NetworkCommand additionalNetworkCommand) {
+		assert !(additionalNetworkCommand instanceof UpdatePillboxAttributes) :
+				"Use notifyNetwork(), rather than notifyNetwork(additionalNetworkCommand), to send UpdatePillboxAttributes commands.";
+
+		Network net = NetworkSystem.getInstance();
+		net.send(additionalNetworkCommand);
+
+		notifyNetwork();
+	}
+
+	/**
+	 * Sends pillbox attribute information to the network.
+	 */
+	private void notifyNetwork() {
+		if (isOwnedByLocalPlayer()) {
+			Network net = NetworkSystem.getInstance();
+			net.send(new UpdatePillboxAttributes(this));
 		}
 	}
 
