@@ -152,7 +152,7 @@ public abstract class Entity {
 
 	@Override
 	public String toString() {
-		return String.format("%s {position=%f,%f | tile=%d,%d | width=%d | height=%d | isDisposed=%b ", getClass().getName(), x(),
-				y(), tileColumn(), tileRow(), width(), height(), isDisposed());
+		return String.format("%s {id=%s | position=%f,%f | tile=%d,%d | width=%d | height=%d | isDisposed=%b ",
+				getClass().getName(), id().toString(), x(), y(), tileColumn(), tileRow(), width(), height(), isDisposed());
 	}
 }
