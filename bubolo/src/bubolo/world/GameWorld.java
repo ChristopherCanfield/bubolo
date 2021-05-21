@@ -300,7 +300,8 @@ public class GameWorld implements World {
 
 	@Override
 	public void movePillboxOffTileMap(Pillbox pillbox) {
-		assert pillbox.equals(terrainImprovements.get(new Tile(pillbox.tileColumn(), pillbox.tileRow())));
+		var existingPillbox = terrainImprovements.get(new Tile(pillbox.tileColumn(), pillbox.tileRow()));
+		assert pillbox.equals(existingPillbox);
 		terrainImprovements.remove(new Tile(pillbox.tileColumn(), pillbox.tileRow()));
 	}
 

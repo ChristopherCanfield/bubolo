@@ -186,7 +186,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		if (builtPct >= 1) {
 			world.movePillboxOntoTileMap(this, tileColumn(), tileRow());
 			setBuildStatus(BuildStatus.Built);
-			notifyNetwork(new MovePillboxOffTileMap(this));
+			notifyNetwork(new MovePillboxOntoTileMap(this, tileColumn(), tileRow()));
 		}
 	}
 
