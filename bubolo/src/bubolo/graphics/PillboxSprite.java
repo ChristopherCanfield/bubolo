@@ -28,7 +28,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
 
 	private static final DrawLayer defaultDrawLayer = DrawLayer.TerrainImprovements;
-	private static final DrawLayer carriedDrawLayer = DrawLayer.Effects;
+	private static final DrawLayer carriedOrBuildingDrawLayer = DrawLayer.Effects;
 
 	/**
 	 * Constructor for the PillboxSprite. This is Package-private because sprites should not be directly created outside of the
@@ -58,12 +58,8 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 			updateColorSet();
 
 			var pillbox = getEntity();
+			setDrawLayerFromBuildStatus(pillbox.buildStatus());
 			if (pillbox.buildStatus() != BuildStatus.Carried) {
-				if (getDrawLayer() != defaultDrawLayer) {
-					setDrawLayer(defaultDrawLayer);
-					return;
-				}
-
 				if (pillbox.buildStatus() == BuildStatus.Built) {
 					setColor(defaultColor);
 				} else {
@@ -85,11 +81,6 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 					drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
 				}
 			} else {
-				if (getDrawLayer() != carriedDrawLayer) {
-					setDrawLayer(carriedDrawLayer);
-					return;
-				}
-
 				var tank = (Tank) getEntity().owner();
 
 				// Draw the pillbox above the tank.
@@ -98,6 +89,25 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.x(), tank.y(), tank.width() / 2 + 5, 35, tank.rotation());
 			}
 		}
+	}
+
+	private boolean setDrawLayerFromBuildStatus(BuildStatus buildStatus) {
+		var drawLayer = getDrawLayer();
+		switch (buildStatus) {
+		case Built:
+		case Unbuilding:
+			if (drawLayer == DrawLayer.Effects) {
+				setDrawLayer(defaultDrawLayer);
+			}
+			break;
+		case Carried:
+		case Building:
+			if (drawLayer != DrawLayer.Effects) {
+				setDrawLayer(carriedOrBuildingDrawLayer);
+			}
+			break;
+		};
+		return false;
 	}
 
 	private enum DamageState {

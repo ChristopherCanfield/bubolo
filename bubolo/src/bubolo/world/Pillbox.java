@@ -2,6 +2,7 @@ package bubolo.world;
 
 import static bubolo.util.Coords.worldUnitToTile;
 
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Config;
@@ -69,12 +70,12 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	// 0.5f / FPS = heals ~0.5 health per second.
 	private static final float hpPerTick = 0.5f / Config.FPS;
 
-	private static final int width = 30;
-	private static final int height = 30;
+	private static final int width = 29;
+	private static final int height = 29;
 
-	private static final int captureBoundsExtraWidth = 12;
+	private static final int captureBoundsExtraWidth = 14;
 	private static final int captureWidth = width + captureBoundsExtraWidth;
-	private static final int captureBoundsExtraHeight = 12;
+	private static final int captureBoundsExtraHeight = 14;
 	private static final int captureHeight = height + captureBoundsExtraHeight;
 
 	// Gives the appearance of capturing the pillbox by touching it.
@@ -264,7 +265,6 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	/**
 	 * Specifies whether the target location, in world units, is a valid location to place this pillbox.
-	 * @TODO (cdc 2021-05-18): Move this and isValidBuildTile to World.
 	 *
 	 * @param world reference to the game world.
 	 * @param targetX the x position to place this pillbox, in world units.
@@ -272,15 +272,33 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @return true if the specified target location is a valid placement location for this pillbox.
 	 */
 	public static boolean isValidBuildLocationWU(World world, float targetX, float targetY) {
-		int tileX = Coords.worldUnitToTile(targetX);
-		int tileY = Coords.worldUnitToTile(targetY);
+		int tileX = worldUnitToTile(targetX);
+		int tileY = worldUnitToTile(targetY);
 		return isValidBuildTile(world, tileX, tileY);
 	}
 
+	/**
+	 * Specifies whether the target location, in tiles, is a valid location to place this pillbox.
+	 *
+	 * @param world reference to the game world.
+	 * @param tileX the tile column to place this pillbox.
+	 * @param tileY the tile row to place this pillbox.
+	 * @return true if the specified target location is a valid placement location for this pillbox.
+	 */
 	public static boolean isValidBuildTile(World world, int tileX, int tileY) {
 		if (world.isValidTile(tileX, tileY) && world.getTerrain(tileX, tileY).isValidBuildTarget()) {
 			var terrainImprovement = world.getTerrainImprovement(tileX, tileY);
-			return (terrainImprovement == null || terrainImprovement.isValidBuildTarget());
+			if (terrainImprovement == null || terrainImprovement.isValidBuildTarget()) {
+				float targetX = Coords.TileToWorldScale * tileX;
+				float targetY = Coords.TileToWorldScale * tileY;
+				BoundingBox targetLocationBoundingBox = new BoundingBox(targetX, targetY, Coords.TileToWorldScale, Coords.TileToWorldScale);
+				for (Tank tank : world.getTanks()) {
+					if (Intersector.overlapConvexPolygons(tank.bounds(), targetLocationBoundingBox.bounds())) {
+						return false;
+					}
+				}
+				return true;
+			}
 		}
 
 		return false;

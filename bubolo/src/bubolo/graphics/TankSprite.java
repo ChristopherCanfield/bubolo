@@ -139,6 +139,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private void drawTankAmmoIconsAndValues(Tank tank, Graphics graphics) {
 		var spriteBatch = graphics.batch();
 		spriteBatch.begin();
+		spriteBatch.setColor(Color.WHITE);
 
 		float screenHalfWidth = graphics.camera().viewportWidth / 2.0f;
 		float screenHeight = graphics.camera().viewportHeight;
