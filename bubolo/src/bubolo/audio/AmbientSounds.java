@@ -42,7 +42,7 @@ class AmbientSounds implements Music.OnCompletionListener {
 	private final Field libGdxOpenALMusicSourceIdField;
 
 	private static final float clampDistanceWaves = 15 * Coords.TileToWorldScale;
-	private static final float rolloffFactorWaves = 2f;
+	private static final float rolloffFactorWaves = 1f;
 	private static final float referenceDistanceWaves = 100;
 
 	AmbientSounds() {
@@ -78,11 +78,11 @@ class AmbientSounds implements Music.OnCompletionListener {
 	void setListenerPosition(float x, float y) {
 		if (wavesOpenALSourceId > -1) {
 			alSource3f(wavesOpenALSourceId, AL_POSITION, x, y, 10);
-			alSourcef(wavesOpenALSourceId, AL_GAIN, volume);
+			alSourcef(wavesOpenALSourceId, AL_GAIN, oceanWavesVolume * volume);
 		}
 		if (ambientSoundOpenALSourceId > -1) {
 			alSource3f(ambientSoundOpenALSourceId, AL_POSITION, x, y, 10);
-			alSourcef(ambientSoundOpenALSourceId, AL_GAIN, oceanWavesVolume * volume);
+			alSourcef(ambientSoundOpenALSourceId, AL_GAIN, volume);
 		}
 	}
 
