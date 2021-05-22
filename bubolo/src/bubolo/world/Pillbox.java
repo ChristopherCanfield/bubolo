@@ -263,6 +263,12 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		this.builtPct = builtPct;
 	}
 
+	public enum BuildLocationValidity {
+		Buildable,
+		InvalidNotBuildable,
+		InvalidTankInTheWay
+	}
+
 	/**
 	 * Specifies whether the target location, in world units, is a valid location to place this pillbox.
 	 *
@@ -271,7 +277,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param targetY the y position to place this pillbox, in world units.
 	 * @return true if the specified target location is a valid placement location for this pillbox.
 	 */
-	public static boolean isValidBuildLocationWU(World world, float targetX, float targetY) {
+	public static BuildLocationValidity isValidBuildLocationWU(World world, float targetX, float targetY) {
 		int tileX = worldUnitToTile(targetX);
 		int tileY = worldUnitToTile(targetY);
 		return isValidBuildTile(world, tileX, tileY);
@@ -288,7 +294,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param tileY the tile row to place this pillbox.
 	 * @return true if the specified target location is a valid placement location for this pillbox.
 	 */
-	public static boolean isValidBuildTile(World world, int tileX, int tileY) {
+	public static BuildLocationValidity isValidBuildTile(World world, int tileX, int tileY) {
 		if (world.isValidTile(tileX, tileY) && world.getTerrain(tileX, tileY).isValidBuildTarget()) {
 			var terrainImprovement = world.getTerrainImprovement(tileX, tileY);
 			if (terrainImprovement == null || terrainImprovement.isValidBuildTarget()) {
@@ -297,14 +303,14 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 				targetLocationBoundingBox.updateBounds(targetX, targetY, Coords.TileToWorldScale, Coords.TileToWorldScale);
 				for (Tank tank : world.getTanks()) {
 					if (Intersector.overlapConvexPolygons(tank.bounds(), targetLocationBoundingBox.bounds())) {
-						return false;
+						return BuildLocationValidity.InvalidTankInTheWay;
 					}
 				}
-				return true;
+				return BuildLocationValidity.Buildable;
 			}
 		}
 
-		return false;
+		return BuildLocationValidity.InvalidNotBuildable;
 	}
 
 	/**

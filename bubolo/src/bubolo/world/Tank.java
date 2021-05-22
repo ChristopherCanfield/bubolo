@@ -470,18 +470,23 @@ public class Tank extends ActorEntity implements Damageable {
 	private boolean findBuildLocationForPillbox(World world) {
 		if (isCarryingPillbox()) {
 			if (!hasPillboxBuildLocationTarget()) {
-				float placementDistanceWorldUnits = Coords.TileToWorldScale;
-				float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
-				float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
+				// Try to find a buildable tile up to two tiles away from the current tile.
+				for (int attempt = 0; attempt < 2; attempt++) {
+					float placementDistanceWorldUnits = Coords.TileToWorldScale + Coords.TileToWorldScale * attempt;
+					float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
+					float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
 
-				if (Pillbox.isValidBuildLocationWU(world, targetX, targetY)) {
-					pillboxBuildLocationX = targetX;
-					pillboxBuildLocationY = targetY;
-					return true;
-				} else {
-					// No valid location found.
-					return false;
+					var buildLocationValidity = Pillbox.isValidBuildLocationWU(world, targetX, targetY);
+					if (buildLocationValidity == Pillbox.BuildLocationValidity.Buildable) {
+						pillboxBuildLocationX = targetX;
+						pillboxBuildLocationY = targetY;
+						return true;
+					// This prevents the user from building over walls and rivers.
+					} else if (buildLocationValidity == Pillbox.BuildLocationValidity.InvalidNotBuildable) {
+						return false;
+					}
 				}
+				return false;
 			}
 			// Already has a pillbox placement target.
 			return true;
