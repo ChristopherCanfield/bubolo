@@ -138,8 +138,13 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
-		if (e.isOwnedByLocalPlayer() && e.buildStatus() == BuildStatus.Built) {
-			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
+		if (e.isOwnedByLocalPlayer()) {
+			if (e.buildStatus() == BuildStatus.Built) {
+				StatusBarRenderer.drawHealthBar(e, graphics.shapeRenderer(), graphics.camera());
+			} else if (e.buildStatus() == BuildStatus.Building || e.buildStatus() == BuildStatus.Unbuilding) {
+				// Bar to show progress of building or unbuilding.
+				StatusBarRenderer.drawHorizontalStatusBar(e, e.builtPct(), Color.CYAN, graphics.shapeRenderer(), graphics.camera());
+			}
 		}
 	}
 }

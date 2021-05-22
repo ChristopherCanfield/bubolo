@@ -4,10 +4,10 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Vector2;
 
 import bubolo.util.Coords;
 import bubolo.world.Damageable;
+import bubolo.world.Entity;
 
 /**
  * Methods to render in-game status bars, such as health bars.
@@ -32,7 +32,7 @@ final class StatusBarRenderer {
 			float healthBarInteriorBackgroundWidth = entity.width() + 10;
 			float healthBarInteriorWidth = healthBarInteriorBackgroundWidth * healthPct;
 
-			var cameraCoords = Coords.worldToCamera(camera, new Vector2(entity.x(), entity.y()));
+			var cameraCoords = Coords.worldToCamera(camera, entity.x(), entity.y());
 			var entityHalfWidth = entity.width() / 2.0f;
 			var entityHalfHeight = entity.height() / 2.0f;
 
@@ -64,5 +64,39 @@ final class StatusBarRenderer {
 		} else {
 			return Color.RED;
 		}
+	}
+
+	/**
+	 * Draws a horizontal status bar above an entity.
+	 *
+	 * @param entity the target entity.
+	 * @param pctFilled how filled the bar is.
+	 * @param fillColor the color to fill the bar with.
+	 * @param shapeRenderer a shape renderer.
+	 * @param camera the game's camera.
+	 */
+	static void drawHorizontalStatusBar(Entity entity, float pctFilled, Color fillColor, ShapeRenderer shapeRenderer, Camera camera) {
+		shapeRenderer.begin(ShapeType.Filled);
+
+		float barInteriorBackgroundWidth = entity.width() + 10;
+		float barInteriorWidth = barInteriorBackgroundWidth * pctFilled;
+
+		var cameraCoords = Coords.worldToCamera(camera, entity.x(), entity.y());
+		var entityHalfWidth = entity.width() / 2.0f;
+		var entityHalfHeight = entity.height() / 2.0f;
+
+		// The bar's exterior.
+		shapeRenderer.setColor(Color.BLACK);
+		shapeRenderer.rect(cameraCoords.x - entityHalfWidth - 8, cameraCoords.y + entityHalfHeight + 6, barInteriorBackgroundWidth + 4, 8);
+
+		// The bar's interior background.
+		shapeRenderer.setColor(Color.GRAY);
+		shapeRenderer.rect(cameraCoords.x - entityHalfWidth - 6, cameraCoords.y + entityHalfHeight + 8, barInteriorBackgroundWidth, 4);
+
+		// The bar's interior.
+		shapeRenderer.setColor(fillColor);
+		shapeRenderer.rect(cameraCoords.x - entityHalfWidth - 6, cameraCoords.y + entityHalfHeight + 8, barInteriorWidth, 4);
+
+		shapeRenderer.end();
 	}
 }

@@ -167,7 +167,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	}
 
 	private static Vector2 tankCameraCoordinates(Tank tank, Camera camera) {
-		return Coords.worldToCamera(camera, new Vector2(tank.x(), tank.y()));
+		return Coords.worldToCamera(camera, tank.x(), tank.y());
 	}
 
 	@Override

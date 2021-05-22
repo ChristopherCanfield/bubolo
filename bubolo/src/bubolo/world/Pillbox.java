@@ -277,6 +277,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		return isValidBuildTile(world, tileX, tileY);
 	}
 
+	// Used by the isValidBuildTile method.
+	private static final BoundingBox targetLocationBoundingBox = new BoundingBox(0, 0, Coords.TileToWorldScale, Coords.TileToWorldScale);
+
 	/**
 	 * Specifies whether the target location, in tiles, is a valid location to place this pillbox.
 	 *
@@ -291,7 +294,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			if (terrainImprovement == null || terrainImprovement.isValidBuildTarget()) {
 				float targetX = Coords.TileToWorldScale * tileX;
 				float targetY = Coords.TileToWorldScale * tileY;
-				BoundingBox targetLocationBoundingBox = new BoundingBox(targetX, targetY, Coords.TileToWorldScale, Coords.TileToWorldScale);
+				targetLocationBoundingBox.updateBounds(targetX, targetY, Coords.TileToWorldScale, Coords.TileToWorldScale);
 				for (Tank tank : world.getTanks()) {
 					if (Intersector.overlapConvexPolygons(tank.bounds(), targetLocationBoundingBox.bounds())) {
 						return false;
