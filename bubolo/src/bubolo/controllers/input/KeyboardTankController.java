@@ -4,6 +4,8 @@ import static com.badlogic.gdx.Gdx.input;
 
 import com.badlogic.gdx.Input.Keys;
 
+import bubolo.audio.Audio;
+import bubolo.audio.Sfx;
 import bubolo.controllers.Controller;
 import bubolo.world.Tank;
 import bubolo.world.World;
@@ -69,7 +71,10 @@ public class KeyboardTankController implements Controller {
 		if (input.isKeyPressed(Keys.E)) {
 			if (!pillboxBuildKeyPressed) {
 				pillboxBuildKeyPressed = true;
-				tank.buildPillbox(world);
+				if (!tank.buildPillbox(world)) {
+					// The pillbox build/unbuild process couldn't be started, so play a sound effect.
+					Audio.play(Sfx.BuildError, tank.x(), tank.y());
+				}
 			}
 		} else {
 			if (pillboxBuildKeyPressed) {

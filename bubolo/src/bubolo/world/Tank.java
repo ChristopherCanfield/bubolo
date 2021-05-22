@@ -390,17 +390,21 @@ public class Tank extends ActorEntity implements Damageable {
 	 * If the tank is not carrying a pillbox, and no friendly pillbox is within range, no action occurs.
 	 *
 	 * @param world reference to the game world.
+	 * @return true if the pillbox build/unbuild process has started, or false otherwise.
 	 */
-	public void buildPillbox(World world) {
+	public boolean buildPillbox(World world) {
 		if (isCarryingPillbox()) {
 			if (!buildPillbox) {
 				buildPillbox = findBuildLocationForPillbox(world);
+				return buildPillbox;
 			}
 		} else {
 			if (!unbuildPillbox) {
 				unbuildPillbox = unbuildNearestFriendlyPillbox(world);
+				return unbuildPillbox;
 			}
 		}
+		return false;
 	}
 
 	/**

@@ -19,7 +19,9 @@ public enum Sfx
 	TankDrowned("bubbles.ogg", 1, 1, 1),
 	PillboxHit("pillbox_hit.ogg", 1, 0.75f, 1.25f),
 	TreeHit("tree_hit.ogg", 1, 0.75f, 1.25f),
-	WallHit("wall_hit.ogg", 1, 0.75f, 1.25f);
+	WallHit("wall_hit.ogg", 1, 0.75f, 1.25f),
+	BuildError("build_error.ogg", 1, 1, 1);
+
 
 	final String fileName;
 	// Multiplied by the main volume.
