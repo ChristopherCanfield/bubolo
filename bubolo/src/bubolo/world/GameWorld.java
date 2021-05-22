@@ -485,26 +485,20 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects) {
-		return getNearbyCollidables(entity, onlyIncludeSolidObjects, null);
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects) {
+		return getCollidablesWithinTileDistance(entity, tileMaxDistance, onlyIncludeSolidObjects);
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
-		final int tileMaxDistance = 3;
-		return getNearbyCollidables(entity, onlyIncludeSolidObjects, tileMaxDistance, typeFilter);
-	}
-
-	@Override
-	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter) {
 		assert tileMaxDistance >= 0;
 
-		final int startTileColumn = targetEntity.tileColumn() - tileMaxDistance;
-		final int startTileRow = targetEntity.tileRow() - tileMaxDistance;
+		final int startTileColumn = entity.tileColumn() - tileMaxDistance;
+		final int startTileRow = entity.tileRow() - tileMaxDistance;
 
-		final int endTileColumn = targetEntity.tileColumn() + tileMaxDistance;
-		final int endTileRow = targetEntity.tileRow() + tileMaxDistance;
+		final int endTileColumn = entity.tileColumn() + tileMaxDistance;
+		final int endTileRow = entity.tileRow() + tileMaxDistance;
 
 		List<Collidable> nearbyCollidables = new ArrayList<>();
 		for (int column = startTileColumn; column <= endTileColumn; column++) {
@@ -521,7 +515,8 @@ public class GameWorld implements World {
 		// Iterate through every actor to determine which ones are nearby. There's really no better way to do this
 		// currently; if it becomes a bottleneck, I'll look into optimizing it.
 		for (ActorEntity actor : actors) {
-			if (!actor.equals(targetEntity)
+			if (!actor.equals(entity)
+					&& !(actor instanceof TerrainImprovement)
 					&& isEntityWithinTileRange(actor, startTileColumn, endTileColumn, startTileRow, endTileRow)
 					&& includeInNearbyCollidablesList(actor, onlyIncludeSolidObjects, typeFilter)) {
 				nearbyCollidables.add(actor);
@@ -549,11 +544,6 @@ public class GameWorld implements World {
 		int col = e.tileColumn();
 		int row = e.tileRow();
 		return col >= minColumn && col <= maxColumn && row >= minRow && row <= maxRow;
-	}
-
-	@Override
-	public boolean isValidTile(int column, int row) {
-		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
 	}
 
 	@Override

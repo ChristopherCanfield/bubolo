@@ -130,12 +130,12 @@ public class MockWorld implements World {
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, Class<?> typeFilter) {
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, boolean onlyIncludeSolidObjects, Class<?> typeFilter) {
 		return null;
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
 			Class<?> typeFilter) {
 		return null;
 	}

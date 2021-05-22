@@ -164,7 +164,9 @@ public interface World {
 	 * @param row the row to check.
 	 * @return true if column is >= 0 and less than getTileColumns() and row is >= 0 and less than getTileRows().
 	 */
-	public boolean isValidTile(int column, int row);
+	default public boolean isValidTile(int column, int row) {
+		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
+	}
 
 	/**
 	 * Whether the target tile is adjacent to water.
@@ -231,44 +233,32 @@ public interface World {
 	public Mine getMine(int column, int row);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and
-	 * type. The entity that is passed in is not included in the returned list.
+	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by
+	 * solidness. The entity that is passed in is not included in the returned list.
 	 *
 	 * @param entity the target entity.
-	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
-	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which
-	 *     case no type filter is applied.
-	 *
-	 * @return a list of nearby collidables.
-	 */
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
-
-	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and
-	 * type. The entity that is passed in is not included in the returned list. This overload allows for the max distance, in
-	 * tiles, to be passed in.
-	 *
-	 * @param entity the target entity.
-	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 *
+	 * @return a list of collidables that meet the specified requirements.
+	 */
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects);
+
+	/**
+	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by
+	 * solidness and type. The entity that is passed in is not included in the returned list. This overload allows for the collidables
+	 * to be filtered by type, in addition to distance and solidness.
+	 *
+	 * @param entity the target entity.
+	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which
 	 *     case no type filter is applied.
 	 *
-	 * @return a list of nearby collidables.
+	 * @return a list of collidables that meet the specified requirements.
 	 */
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter);
-
-	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness. The
-	 * entity that is passed in is not included in the returned list.
-	 *
-	 * @param entity the target entity.
-	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
-	 *
-	 * @return a list of nearby collidables.
-	 */
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects);
 
 	/**
 	 * Finds the nearest buildable terrain to the x,y world unit position.

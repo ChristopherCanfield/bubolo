@@ -145,7 +145,8 @@ public class Tank extends ActorEntity implements Damageable {
 			do {
 				Spawn spawn = world.getRandomSpawn();
 				setPosition(spawn.x(), spawn.y());
-				spawnFound = world.getNearbyCollidables(this, true, 4, Tank.class).isEmpty();
+				// Ensure there are no tanks on top of, or adjacent to, the selected spawn location.
+				spawnFound = world.getCollidablesWithinTileDistance(this, 4, true, Tank.class).isEmpty();
 			} while (!spawnFound);
 
 			hitPoints = maxHitPoints;
@@ -433,7 +434,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private boolean unbuildNearestFriendlyPillbox(World world) {
 		if (carriedPillbox == null) {
-			var pillboxes = world.getNearbyCollidables(this, true, 1, Pillbox.class);
+			var pillboxes = world.getCollidablesWithinTileDistance(this, 1, true, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
 				float maxDistanceWorldUnits = Coords.TileToWorldScale;
 				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
@@ -537,7 +538,7 @@ public class Tank extends ActorEntity implements Damageable {
 		final float minTreeCoverage = width() * 0.7f;
 
 		float treeCoverage = 0;
-		List<Collidable> trees = world.getNearbyCollidables(this, false, 1, Tree.class);
+		List<Collidable> trees = world.getCollidablesWithinTileDistance(this, 1, false, Tree.class);
 		for (var tree : trees) {
 			if (tree.overlapsEntity(this, minTranslationVector)) {
 				if (minTranslationVector.depth > minTreeCoverage) {
@@ -613,7 +614,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 		// Search for collisions. If one is found, move the tank back to its previous position, plus an
 		// offset defined by collisionBounce.
-		var adjacentCollidables = world.getNearbyCollidables(this, true, 1, null);
+		var adjacentCollidables = world.getCollidablesWithinTileDistance(this, 1, true, null);
 		for (var collider : adjacentCollidables) {
 			if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
 				float newX = previousX + (-dirX * collisionBounce);
