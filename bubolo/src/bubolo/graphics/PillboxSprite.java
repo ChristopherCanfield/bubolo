@@ -1,8 +1,11 @@
 package bubolo.graphics;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Pillbox;
+import bubolo.world.Pillbox.BuildStatus;
+import bubolo.world.Tank;
 
 /**
  * The graphical representation of a Pillbox
@@ -21,6 +24,12 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	private static final int colorColumn = 0;
 	private static final int damageColumn = 1;
 
+	private static final Color defaultColor = new Color(Color.WHITE);
+	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
+
+	private static final DrawLayer defaultDrawLayer = DrawLayer.TerrainImprovements;
+	private static final DrawLayer carriedOrBuildingDrawLayer = DrawLayer.Effects;
+
 	/**
 	 * Constructor for the PillboxSprite. This is Package-private because sprites should not be directly created outside of the
 	 * graphics system.
@@ -28,7 +37,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	 * @param pillbox Reference to the pillbox that this PillboxSprite represents.
 	 */
 	PillboxSprite(Pillbox pillbox) {
-		super(DrawLayer.TerrainImprovements, pillbox);
+		super(defaultDrawLayer, pillbox);
 
 		frames = Graphics.getTextureRegion2d(textureFileName, 32, 32, 1, 0);
 	}
@@ -45,26 +54,60 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	@Override
 	public void draw(Graphics graphics) {
-		updateColorSet();
+		if (!isDisposed()) {
+			updateColorSet();
 
-		if (isDisposed()) {
-			graphics.sprites().removeSprite(this);
-			return;
-		} else {
-			// Draw the pillbox.
-			drawTexture(graphics, frames[colorColumn][0]);
+			var pillbox = getEntity();
+			setDrawLayerFromBuildStatus(pillbox.buildStatus());
+			if (pillbox.buildStatus() != BuildStatus.Carried) {
+				if (pillbox.buildStatus() == BuildStatus.Built) {
+					setColor(defaultColor);
+				} else {
+					buildingColor.a = Math.min(0.9f, pillbox.builtPct() + 0.1f);
+					setColor(buildingColor);
+				}
 
-			DamageState damageState = DamageState.getDamageState(getEntity());
-			// Draw the lights if the pillbox isn't out of service.
-			if (damageState != DamageState.OutOfService) {
-				drawTexture(graphics, frames[colorColumn][colorIndex]);
-			}
+				// Draw the pillbox.
+				drawTexture(graphics, frames[colorColumn][0]);
 
-			// Draw damage, if any.
-			if (damageState != DamageState.Undamaged) {
-				drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
+				DamageState damageState = DamageState.getDamageState(getEntity());
+				// Draw the lights if the pillbox isn't out of service.
+				if (damageState != DamageState.OutOfService) {
+					drawTexture(graphics, frames[colorColumn][colorIndex]);
+				}
+
+				// Draw damage, if any.
+				if (damageState != DamageState.Undamaged) {
+					drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
+				}
+			} else {
+				var tank = (Tank) getEntity().owner();
+
+				// Draw the pillbox above the tank.
+				setColor(defaultColor);
+				// Draw the pillbox.
+				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.x(), tank.y(), tank.width() / 2 + 5, 35, tank.rotation());
 			}
 		}
+	}
+
+	private boolean setDrawLayerFromBuildStatus(BuildStatus buildStatus) {
+		var drawLayer = getDrawLayer();
+		switch (buildStatus) {
+		case Built:
+		case Unbuilding:
+			if (drawLayer == DrawLayer.Effects) {
+				setDrawLayer(defaultDrawLayer);
+			}
+			break;
+		case Carried:
+		case Building:
+			if (drawLayer != DrawLayer.Effects) {
+				setDrawLayer(carriedOrBuildingDrawLayer);
+			}
+			break;
+		};
+		return false;
 	}
 
 	private enum DamageState {
@@ -96,7 +139,12 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
 		if (e.isOwnedByLocalPlayer()) {
-			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
+			if (e.buildStatus() == BuildStatus.Built) {
+				StatusBarRenderer.drawHealthBar(e, graphics.shapeRenderer(), graphics.camera());
+			} else if (e.buildStatus() == BuildStatus.Building || e.buildStatus() == BuildStatus.Unbuilding) {
+				// Bar to show progress of building or unbuilding.
+				StatusBarRenderer.drawHorizontalStatusBar(e, e.builtPct(), Color.CYAN, graphics.shapeRenderer(), graphics.camera());
+			}
 		}
 	}
 }

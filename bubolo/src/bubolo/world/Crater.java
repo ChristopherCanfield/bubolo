@@ -40,7 +40,7 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 	}
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	public boolean isValidBuildTarget() {
 		return true;
 	}
 

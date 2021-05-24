@@ -13,17 +13,16 @@ import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.net.NetworkCommand;
 import bubolo.util.GameLogicException;
-import bubolo.world.ActorEntity;
+import bubolo.util.Nullable;
 import bubolo.world.Entity;
 import bubolo.world.World;
 
 /**
- * Generic entity creator for the network.
+ * Notifies the network that an entity has been created.
  *
  * @author BU CS673 - Clone Productions
  */
-public class CreateEntity extends NetworkCommand
-{
+public class CreateEntity extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final Class<? extends Entity> type;
@@ -39,80 +38,56 @@ public class CreateEntity extends NetworkCommand
 	/**
 	 * Constructs a CreateEntity object.
 	 *
-	 * @param type
-	 *            the entity's class.
-	 * @param id
-	 *            the entity's unique id.
-	 * @param x
-	 *            the entity's x position.
-	 * @param y
-	 *            the entity's y position.
-	 * @param rotation
-	 *            the entity's rotation.
+	 * @param type the entity's class.
+	 * @param id the entity's unique id.
+	 * @param x the entity's x position.
+	 * @param y the entity's y position.
+	 * @param rotation the entity's rotation.
 	 */
-	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation)
-	{
+	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation) {
 		this.type = type;
 		this.id = id;
-		this.x = (int)x;
-		this.y = (int)y;
+		this.x = (int) x;
+		this.y = (int) y;
 		this.rotation = rotation;
 		this.factory = null;
 	}
 
 	/**
-	 * Constructs a CreateEntity object.
+	 * Constructs a CreateEntity object with an attached controller factory.
 	 *
-	 * @param type
-	 *            the entity's class.
-	 * @param id
-	 *            the entity's unique id.
-	 * @param x
-	 *            the entity's x position.
-	 * @param y
-	 *            the entity's y position.
-	 * @param rotation
-	 *            the entity's rotation.
-	 * @param factory
-	 *            factory for adding custom controllers to this entity.
+	 * @param type the entity's class.
+	 * @param id the entity's unique id.
+	 * @param x the entity's x position.
+	 * @param y the entity's y position.
+	 * @param rotation the entity's rotation.
+	 * @param factory [optional] factory for adding custom controllers to this entity. Can be null.
 	 */
-	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation, ControllerFactory factory)
-	{
+	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation, @Nullable ControllerFactory factory) {
 		this.type = type;
 		this.id = id;
-		this.x = (int)x;
-		this.y = (int)y;
+		this.x = (int) x;
+		this.y = (int) y;
 		this.rotation = rotation;
 		this.factory = factory;
 	}
 
 	@Override
-	protected void execute(World world)
-	{
-		try
-		{
+	protected void execute(World world) {
+		try {
 			var args = new Entity.ConstructionArgs(id, x, y, rotation);
-
-			Entity entity;
-			entity = world.addEntity(type, args, factory);
-
-			if (entity instanceof ActorEntity actor)
-			{
-				actor.setOwnedByLocalPlayer(false);
-			}
-		}
-		catch (GameLogicException e)
-		{
+			world.addEntity(type, args, factory);
+		} catch (GameLogicException e) {
 			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateEntity net command: Entity was not created. ID: " + id);
 		}
 	}
 
 	/**
 	 * Returns the entity's unique id.
+	 *
 	 * @return the entity's unique id.
 	 */
-	protected UUID getId()
-	{
+	protected UUID getId() {
 		return id;
 	}
 }

@@ -164,7 +164,9 @@ public interface World {
 	 * @param row the row to check.
 	 * @return true if column is >= 0 and less than getTileColumns() and row is >= 0 and less than getTileRows().
 	 */
-	public boolean isValidTile(int column, int row);
+	default public boolean isValidTile(int column, int row) {
+		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
+	}
 
 	/**
 	 * Whether the target tile is adjacent to water.
@@ -201,6 +203,26 @@ public interface World {
 	public TerrainImprovement getTerrainImprovement(int column, int row);
 
 	/**
+	 * Moves a pillbox off of the tile map. This is intended to be used when pillboxes are picked up by tanks. Pillboxes
+	 * that are off of the tile map won't be returned using the getTerrainImprovements method.
+	 *
+	 * @param pillbox the pillbox to move.
+	 */
+	public void movePillboxOffTileMap(Pillbox pillbox);
+
+	/**
+	 * Moves a pillbox back onto the tile map. This is intended to be used when a pillbox is placed by a tank. The pillbox's
+	 * setPosition method will be called with the new position. If the tile has a terrain improvement that can be built on, the
+	 * terrain improvement will be disposed.
+	 *
+	 * @param pillbox the pillbox to move.
+	 * @param column >= 0 and < getTileColumns().
+	 * @param row >= 0 and < getTileRows().
+	 * @throws GameLogicException if the specified tile is not a valid build location.
+	 */
+	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row);
+
+	/**
 	 * Returns the mine located in specified (column, row) tile position, or null if none is.
 	 *
 	 * @param column >= 0 and < getTileColumns().
@@ -211,51 +233,48 @@ public interface World {
 	public Mine getMine(int column, int row);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and
-	 * type. The entity that is passed in is not included in the returned list.
+	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by
+	 * solidness. The entity that is passed in is not included in the returned list.
 	 *
 	 * @param entity the target entity.
+	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
 	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
-	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which
-	 *     case no type filter is applied.
 	 *
-	 * @return a list of nearby collidables.
+	 * @return a list of collidables that meet the specified requirements.
 	 */
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness and
-	 * type. The entity that is passed in is not included in the returned list. This overload allows for the max distance, in
-	 * tiles, to be passed in.
+	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by
+	 * solidness and type. The entity that is passed in is not included in the returned list. This overload allows for the collidables
+	 * to be filtered by type, in addition to distance and solidness.
 	 *
 	 * @param entity the target entity.
-	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
 	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which
 	 *     case no type filter is applied.
 	 *
-	 * @return a list of nearby collidables.
+	 * @return a list of collidables that meet the specified requirements.
 	 */
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter);
 
 	/**
-	 * Returns a list of collidables that are adjacent to or near an entity. The collidables may be filtered by solidness. The
-	 * entity that is passed in is not included in the returned list.
+	 * Finds the nearest buildable terrain to the x,y world unit position.
 	 *
-	 * @param entity the target entity.
-	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
-	 *
-	 * @return a list of nearby collidables.
+	 * @param x the target x position, in world units.
+	 * @param y the target y position, in world units.
+	 * @return the nearest buildable terrain to the specified position.
 	 */
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects);
+	public Terrain getNearestBuildableTerrain(float x, float y);
 
 	/**
 	 * Returns the number of tiles to the nearest deep water, up to the maximum distance.
 	 *
 	 * @param tileColumn the target's column.
 	 * @param tileRow the target's row.
-	 * @param maxDistanceTiles the maximum distance to check, in tiles.
+	 * @param maxDistanceTiles the maximum distance (inclusive) to check, in tiles.
 	 * @return the number of tiles to the nearest deep water, or -1 if not found within the maximum distance.
 	 */
 	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maxDistanceTiles);

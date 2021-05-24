@@ -99,14 +99,14 @@ public abstract class Entity {
 	 * @return the world column that the object is in.
 	 */
 	public int tileColumn() {
-		return (int) x() / Coords.TileToWorldScale;
+		return Coords.worldUnitToTile(x());
 	}
 
 	/**
 	 * @return the world row that the object is in.
 	 */
 	public int tileRow() {
-		return (int) y() / Coords.TileToWorldScale;
+		return Coords.worldUnitToTile(y());
 	}
 
 	/**
@@ -152,7 +152,7 @@ public abstract class Entity {
 
 	@Override
 	public String toString() {
-		return String.format("%s {position=%f,%f | tile=%d,%d | width=%d | height=%d | isDisposed=%b ", getClass().getName(), x(),
-				y(), tileColumn(), tileRow(), width(), height(), isDisposed());
+		return String.format("%s {id=%s | position=%f,%f | tile=%d,%d | width=%d | height=%d | isDisposed=%b ",
+				getClass().getName(), id().toString(), x(), y(), tileColumn(), tileRow(), width(), height(), isDisposed());
 	}
 }

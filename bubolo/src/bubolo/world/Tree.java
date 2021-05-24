@@ -85,7 +85,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	}
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	public boolean isValidBuildTarget() {
 		return true;
 	}
 

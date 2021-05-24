@@ -1,5 +1,7 @@
 package bubolo.world;
 
+import static bubolo.util.Coords.TileToWorldScale;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import bubolo.Config;
 import bubolo.controllers.Controller;
@@ -296,6 +299,31 @@ public class GameWorld implements World {
 	}
 
 	@Override
+	public void movePillboxOffTileMap(Pillbox pillbox) {
+		var existingPillbox = terrainImprovements.get(new Tile(pillbox.tileColumn(), pillbox.tileRow()));
+		assert pillbox.equals(existingPillbox);
+		terrainImprovements.remove(new Tile(pillbox.tileColumn(), pillbox.tileRow()));
+	}
+
+	@Override
+	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row) {
+		var targetTile = new Tile(column, row);
+		var terrainImprovement = terrainImprovements.get(targetTile);
+		if (terrainImprovement != null) {
+			if (terrainImprovement.isValidBuildTarget()) {
+				terrainImprovement.dispose();
+			} else {
+				throw new GameLogicException(String.format("Invalid tile location selected for GameWorld.movePillboxOntoTileMap (%d,%d). " +
+						"It contains a terrain improvement that can't be built on.",
+						column, row));
+			}
+		}
+
+		terrainImprovements.put(targetTile, pillbox);
+		pillbox.setPosition(column * TileToWorldScale, row * TileToWorldScale);
+	}
+
+	@Override
 	public Mine getMine(int column, int row) {
 		return mines.get(new Tile(column, row));
 	}
@@ -457,26 +485,20 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects) {
-		return getNearbyCollidables(entity, onlyIncludeSolidObjects, null);
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects) {
+		return getCollidablesWithinTileDistance(entity, tileMaxDistance, onlyIncludeSolidObjects);
 	}
 
 	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
-		final int tileMaxDistance = 3;
-		return getNearbyCollidables(entity, onlyIncludeSolidObjects, tileMaxDistance, typeFilter);
-	}
-
-	@Override
-	public List<Collidable> getNearbyCollidables(Entity targetEntity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter) {
 		assert tileMaxDistance >= 0;
 
-		final int startTileColumn = targetEntity.tileColumn() - tileMaxDistance;
-		final int startTileRow = targetEntity.tileRow() - tileMaxDistance;
+		final int startTileColumn = entity.tileColumn() - tileMaxDistance;
+		final int startTileRow = entity.tileRow() - tileMaxDistance;
 
-		final int endTileColumn = targetEntity.tileColumn() + tileMaxDistance;
-		final int endTileRow = targetEntity.tileRow() + tileMaxDistance;
+		final int endTileColumn = entity.tileColumn() + tileMaxDistance;
+		final int endTileRow = entity.tileRow() + tileMaxDistance;
 
 		List<Collidable> nearbyCollidables = new ArrayList<>();
 		for (int column = startTileColumn; column <= endTileColumn; column++) {
@@ -493,7 +515,8 @@ public class GameWorld implements World {
 		// Iterate through every actor to determine which ones are nearby. There's really no better way to do this
 		// currently; if it becomes a bottleneck, I'll look into optimizing it.
 		for (ActorEntity actor : actors) {
-			if (!actor.equals(targetEntity)
+			if (!actor.equals(entity)
+					&& !(actor instanceof TerrainImprovement)
 					&& isEntityWithinTileRange(actor, startTileColumn, endTileColumn, startTileRow, endTileRow)
 					&& includeInNearbyCollidablesList(actor, onlyIncludeSolidObjects, typeFilter)) {
 				nearbyCollidables.add(actor);
@@ -506,7 +529,12 @@ public class GameWorld implements World {
 	private static boolean includeInNearbyCollidablesList(Entity e, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter) {
 		if (e instanceof Collidable c) {
-			var result = (!onlyIncludeSolidObjects || c.isSolid()) && (typeFilter == null || typeFilter.isInstance(c));
+						// Only include solid objects, if requested.
+			var result = (!onlyIncludeSolidObjects || c.isSolid())
+					// Filter for instances of the passed in type, if any.
+					&& (typeFilter == null || typeFilter.isInstance(c))
+					// Don't include pillboxes that are being carried.
+					&& !(e instanceof Pillbox pillbox && pillbox.isBeingCarried());
 			return result;
 		}
 		return false;
@@ -519,13 +547,93 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public boolean isValidTile(int column, int row) {
-		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
+	public Terrain getNearestBuildableTerrain(float x, float y) {
+		final int tileMaxDistance = 10;
+
+		final int initialColumn = (int) (x / TileToWorldScale);
+		final int initialRow = (int) (y / TileToWorldScale);
+
+		Terrain terrain = findTerrainWithinTileRange(initialColumn, initialRow, tileMaxDistance, t -> {
+			if (t.isValidBuildTarget()) {
+				var improvement = getTerrainImprovement(t.tileColumn(), t.tileRow());
+				if (improvement != null) {
+					return improvement.isValidBuildTarget();
+				} else {
+					return true;
+				}
+			}
+			return false;
+		});
+		assert terrain != null;
+		return terrain;
+	}
+
+	/**
+	 * Finds a terrain that meets a requirement within a specified distance from a target tile. The predicate function determines
+	 * whether a given terrain that is within the range is returned. The terrain are checked in order of tile distance, with
+	 * nearer tiles being checked first. If no relevant terrain is found, null is returned.
+	 *
+	 * @param startTileCol the initial tile's column. The initial tile is checked.
+	 * @param startTileRow the initial tile's row. The initial tile is checked.
+	 * @param maxTileDistance the max distance (inclusive) to check from the start tile.
+	 * @param pred determines whether a given entity should be returned.
+	 * @return the nearest terrain that that fulfills the requirements of the predicate, or null if no relevant terrain was found.
+	 */
+	private @Nullable Terrain findTerrainWithinTileRange(int startTileCol, int startTileRow, int maxTileDistance, Predicate<Terrain> pred) {
+		// Initial tile.
+		Terrain terrain = returnTerrainIfMeetsRequirements(startTileCol, startTileRow, pred);
+		if (terrain != null) { return terrain; }
+
+		for (int distance = 1; distance <= maxTileDistance; distance++) {
+			// North
+			terrain = returnTerrainIfMeetsRequirements(startTileCol, startTileRow + distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// South
+			terrain = returnTerrainIfMeetsRequirements(startTileCol, startTileRow - distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// East
+			terrain = returnTerrainIfMeetsRequirements(startTileCol + distance, startTileRow, pred);
+			if (terrain != null) { return terrain; }
+
+			// West
+			terrain = returnTerrainIfMeetsRequirements(startTileCol - distance, startTileRow, pred);
+			if (terrain != null) { return terrain; }
+
+			// Northeast
+			terrain = returnTerrainIfMeetsRequirements(startTileCol + distance, startTileRow + distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// Northwest
+			terrain = returnTerrainIfMeetsRequirements(startTileCol - distance, startTileRow + distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// Southeast
+			terrain = returnTerrainIfMeetsRequirements(startTileCol + distance, startTileRow - distance, pred);
+			if (terrain != null) { return terrain; }
+
+			// Southwest
+			terrain = returnTerrainIfMeetsRequirements(startTileCol - distance, startTileRow - distance, pred);
+			if (terrain != null) { return terrain; }
+		}
+
+		return null;
+	}
+
+	private @Nullable Terrain returnTerrainIfMeetsRequirements(int col, int row, Predicate<Terrain> pred) {
+		if (isValidTile(col, row)) {
+			var terrain = getTerrain(col, row);
+			if (pred.test(terrain)) {
+				return terrain;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maximumDistanceTiles) {
-		for (int distance = 1; distance < maximumDistanceTiles; distance++) {
+		for (int distance = 1; distance <= maximumDistanceTiles; distance++) {
 			if (isTileDeepWater(tileColumn + distance, tileRow)
 					|| isTileDeepWater(tileColumn - distance, tileRow)
 					|| isTileDeepWater(tileColumn + distance, tileRow + distance)

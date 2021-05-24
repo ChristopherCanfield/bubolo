@@ -33,7 +33,6 @@ public class Mine extends ActorEntity implements Damageable {
 		super(args, width, height);
 
 		world.timer().scheduleTicks(fuseTimeTicks, w -> armed = true);
-		setOwnedByLocalPlayer(true);
 		updateBounds();
 	}
 

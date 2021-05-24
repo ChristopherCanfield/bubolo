@@ -20,10 +20,9 @@ import com.badlogic.gdx.math.Vector2;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-abstract class Sprite implements Drawable
-{
+abstract class Sprite implements Drawable {
 	// The layer that this sprite is drawn to.
-	private final DrawLayer drawLayer;
+	private DrawLayer drawLayer;
 
 	// The sprite's color. White draws the texture as it appears in the file.
 	private Color color;
@@ -33,11 +32,9 @@ abstract class Sprite implements Drawable
 	/**
 	 * Constructs a sprite.
 	 *
-	 * @param layer
-	 *            the sprite's draw layer.
+	 * @param layer the sprite's draw layer.
 	 */
-	protected Sprite(DrawLayer layer)
-	{
+	protected Sprite(DrawLayer layer) {
 		this.drawLayer = layer;
 		this.color = Color.WHITE;
 	}
@@ -47,31 +44,31 @@ abstract class Sprite implements Drawable
 	 *
 	 * @return the sprite's draw layer.
 	 */
-	protected final DrawLayer getDrawLayer()
-	{
+	protected final DrawLayer getDrawLayer() {
 		return drawLayer;
 	}
 
+	protected final void setDrawLayer(DrawLayer layer) {
+		this.drawLayer = layer;
+	}
+
 	/**
-	 * Gets the sprite's color. Sprites are white by default, which means that they draw the texture
-	 * without changes. Do not mutate the returned Color directly: Make a copy of it, and then set this
-	 * sprite's color to the new color using setColor.
+	 * Gets the sprite's color. Sprites are white by default, which means that they draw the texture without changes. Do not
+	 * mutate the returned Color directly: Make a copy of it, and then set this sprite's color to the new color using setColor.
 	 *
 	 * @return the sprite's color.
 	 */
-	protected final Color getColor()
-	{
+	protected final Color getColor() {
 		return color;
 	}
 
 	/**
-	 * Sets the sprite's color. The color can be used to tint the texture image. White causes the
-	 * texture image to be drawn without changes.
+	 * Sets the sprite's color. The color can be used to tint the texture image. White causes the texture image to be drawn
+	 * without changes.
 	 *
 	 * @param color the sprite's new color.
 	 */
-	protected final void setColor(Color color)
-	{
+	protected final void setColor(Color color) {
 		this.color = new Color(color);
 	}
 
@@ -95,15 +92,13 @@ abstract class Sprite implements Drawable
 	 * @param graphics The graphics system.
 	 * @param texture The texture to draw.
 	 */
-	protected final void drawTexture(Graphics graphics, Texture texture)
-	{
+	protected final void drawTexture(Graphics graphics, Texture texture) {
 		Vector2 origin = getOrigin(texture.getWidth(), texture.getHeight());
-		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), new Vector2(getX() - origin.x, getY() - origin.y));
+		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), getX() - origin.x, getY() - origin.y);
 
 		var batch = graphics.batch();
 		batch.setColor(color);
-		batch.draw(
-				texture,
+		batch.draw(texture,
 				cameraCoordinates.x,
 				cameraCoordinates.y,
 				origin.x,
@@ -112,18 +107,28 @@ abstract class Sprite implements Drawable
 				texture.getHeight(),
 				SCALE,
 				SCALE,
-				(float)(MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)),
-				0, 0, texture.getWidth(), texture.getHeight(), false, false);
+				MathUtils.radiansToDegrees * (getRotation() - MathUtils.PI / 2.f),
+				0,
+				0,
+				texture.getWidth(),
+				texture.getHeight(),
+				false,
+				false);
 	}
 
 	/**
 	 * Draws the texture region to the screen. batch.begin() must be called before calling this method.
 	 *
 	 * @param graphics the graphics system.
-	 * @param texture The texture region to draw.
+	 * @param textureRegion The texture region to draw.
 	 */
-	protected final void drawTexture(Graphics graphics, TextureRegion texture) {
-		drawTexture(graphics, texture, SCALE);
+	protected final void drawTexture(Graphics graphics, TextureRegion textureRegion) {
+		drawTexture(graphics, textureRegion, SCALE);
+	}
+
+	protected final void drawTexture(Graphics graphics, TextureRegion textureRegion, float scale) {
+		Vector2 origin = getOrigin(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+		drawTexture(graphics, textureRegion, scale, getX() - origin.x, getY() - origin.y, origin.x, origin.y, getRotation());
 	}
 
 	/**
@@ -132,39 +137,38 @@ abstract class Sprite implements Drawable
 	 * @param graphics the graphics system.
 	 * @param texture The texture region to draw.
 	 * @param scale the scale that the texture region will be drawn.
+	 * @param worldX the world x position.
+	 * @param worldY the world y position.
+	 * @param originX the x offset.
+	 * @param originY the y offset.
+	 * @param rotationRadians the object's rotation, in radians.
 	 */
-	protected final void drawTexture(Graphics graphics, TextureRegion texture, float scale)
-	{
-		Vector2 origin = getOrigin(texture.getRegionWidth(), texture.getRegionHeight());
-
-		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), new Vector2(getX() - origin.x, getY() - origin.y));
+	protected final void drawTexture(Graphics graphics, TextureRegion texture, float scale, float worldX, float worldY,
+			float originX, float originY, float rotationRadians) {
+		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), getX() - originX, getY() - originY);
 
 		var batch = graphics.batch();
 		batch.setColor(color);
-		batch.draw(
-				texture,
+		batch.draw(texture,
 				cameraCoordinates.x,
 				cameraCoordinates.y,
-				origin.x,
-				origin.y,
+				originX,
+				originY,
 				texture.getRegionWidth(),
 				texture.getRegionHeight(),
 				scale,
 				scale,
-				(float)(MathUtils.radiansToDegrees * (getRotation() - Math.PI / 2.f)));
+				MathUtils.radiansToDegrees * (rotationRadians - MathUtils.PI / 2.f));
 	}
 
 	/**
 	 * Returns the center of a given width and height.
 	 *
-	 * @param width
-	 *            the width of a texture or texture region.
-	 * @param height
-	 *            the height of a texture or texture region.
+	 * @param width the width of a texture or texture region.
+	 * @param height the height of a texture or texture region.
 	 * @return the center of the given width and height.
 	 */
-	private static Vector2 getOrigin(float width, float height)
-	{
+	private static Vector2 getOrigin(float width, float height) {
 		return new Vector2(width / 2.f, height / 2.f);
 	}
 }

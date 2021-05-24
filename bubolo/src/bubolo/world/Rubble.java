@@ -26,7 +26,7 @@ public class Rubble extends StaticEntity implements TerrainImprovement {
 	}
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	public boolean isValidBuildTarget() {
 		return true;
 	}
 }

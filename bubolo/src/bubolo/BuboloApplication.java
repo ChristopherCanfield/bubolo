@@ -188,7 +188,7 @@ public class BuboloApplication extends AbstractGameApplication
 
 			Tank tank = world.addEntity(Tank.class, args);
 			tank.setPlayerName(network.getPlayerName());
-			tank.setOwnedByLocalPlayer(true);
+			tank.setControlledByLocalPlayer(true);
 
 			network.send(new CreateTank(tank));
 
@@ -206,7 +206,7 @@ public class BuboloApplication extends AbstractGameApplication
 			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 			Tank tank = world.addEntity(Tank.class, args);
-			tank.setOwnedByLocalPlayer(true);
+			tank.setControlledByLocalPlayer(true);
 
 			network.startDebug();
 

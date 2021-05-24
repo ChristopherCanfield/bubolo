@@ -4,14 +4,12 @@
 
 package bubolo.net.command;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import bubolo.mock.MockWorldOwner;
 import bubolo.net.NetworkCommand;
-import bubolo.world.World;
-
-import static org.mockito.Mockito.mock;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -25,7 +23,7 @@ public class ConnectedToServerTest
 	public void testExecute()
 	{
 		NetworkCommand command = new ConnectedToServer("Client", "Server");
-		command.execute(mock(World.class));
+		command.execute(new MockWorldOwner());
 	}
 
 	@Test

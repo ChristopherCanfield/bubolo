@@ -107,7 +107,7 @@ public class NetworkObserverNotifierTest
 	}
 
 	/**
-	 * Test method for {@link bubolo.net.NetworkObserverNotifier#notifyMessageReceived(java.lang.String)}.
+	 * Test method for {@link bubolo.net.NetworkObserverNotifier#notifyMessageReceived(MessageType, java.lang.String)}.
 	 */
 	@Test
 	public void testNotifyMessageReceived()

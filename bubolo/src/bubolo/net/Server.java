@@ -230,8 +230,7 @@ class Server implements NetworkSubsystem
 				}
 				catch (IOException e)
 				{
-					// TODO (cdc - 4/7/2014): Pass this to the main thread, and eliminate the stack
-					// trace.
+					// TODO (cdc - 4/7/2014): Pass this to the main thread, and eliminate the stack trace.
 					System.out.println(e);
 					throw new NetworkException(e);
 				}

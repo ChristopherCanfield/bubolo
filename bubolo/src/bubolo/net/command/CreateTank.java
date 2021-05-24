@@ -19,9 +19,9 @@ import bubolo.world.World;
  * Creates a network-controlled tank on connected computers.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class CreateTank extends CreateEntity
-{
+public class CreateTank extends CreateEntity {
 	private static final long serialVersionUID = 1L;
 
 	private final String playerName;
@@ -29,37 +29,31 @@ public class CreateTank extends CreateEntity
 	/**
 	 * @param tank reference to the tank that should be created on network players' computers.
 	 */
-	public CreateTank(Tank tank)
-	{
-		super(Tank.class, tank.id(), tank.x(), tank.y(), tank.rotation(),
-				new ControllerFactory() {
-					private static final long serialVersionUID = 1L;
+	public CreateTank(Tank tank) {
+		super(Tank.class, tank.id(), tank.x(), tank.y(), tank.rotation(), new ControllerFactory() {
+			private static final long serialVersionUID = 1L;
 
-					@Override
-					public void create(ActorEntity entity)
-					{
-						entity.addController(new NetworkTankController());
-					}
-				});
+			@Override
+			public void create(ActorEntity entity) {
+				entity.addController(new NetworkTankController());
+			}
+		});
 
 		assert tank.playerName() != null;
 		this.playerName = tank.playerName();
 	}
 
 	@Override
-	public void execute(World world)
-	{
+	public void execute(World world) {
 		super.execute(world);
 
-		try
-		{
+		try {
 			Tank tank = (Tank) world.getEntity(getId());
 			tank.setPlayerName(playerName);
-			tank.setOwnedByLocalPlayer(false);
-		}
-		catch (Exception e)
-		{
-			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateTank net command: The tank was not created. ID: " + getId());
+			tank.setControlledByLocalPlayer(false);
+		} catch (Exception e) {
+			Logger.getLogger(Config.AppProgramaticTitle)
+					.severe("CreateTank net command: The tank was not created. ID: " + getId());
 		}
 	}
 }

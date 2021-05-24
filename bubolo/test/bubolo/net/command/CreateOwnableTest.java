@@ -12,7 +12,6 @@ import bubolo.mock.MockWorld;
 import bubolo.net.NetworkCommand;
 import bubolo.world.Pillbox;
 import bubolo.world.Tank;
-import bubolo.world.entity.OldEntity;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -26,13 +25,13 @@ public class CreateOwnableTest
 	public void testExecute()
 	{
 		MockWorld world = new MockWorld();
-		
+
 		Pillbox pillbox = new Pillbox();
 		world.add(pillbox);
-		
-		OldEntity tank = new Tank();
+
+		Tank tank = new Tank();
 		world.add(tank);
-		
+
 		NetworkCommand command = new CreateActor(pillbox.getClass(), pillbox.getId(), pillbox.getX(), pillbox.getY(), pillbox.getRotation(), pillbox.getOwnerId());
 		command.execute(world);
 	}

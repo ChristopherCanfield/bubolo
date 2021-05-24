@@ -5,11 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import bubolo.net.Network;
+import bubolo.net.NetworkSystem;
 import bubolo.util.Coords;
 import bubolo.world.Entity.ConstructionArgs;
 
@@ -22,6 +22,8 @@ public class GameWorldTest
 	@BeforeEach
 	public void beforeEach() {
 		world = new GameWorld(2, 2);
+		Network net = NetworkSystem.getInstance();
+		net.startDebug();
 	}
 
 	@Test

@@ -4,7 +4,12 @@
 
 package bubolo.net;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 import java.net.InetAddress;
@@ -15,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import bubolo.mock.MockWorld;
+import bubolo.mock.MockWorldOwner;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -96,7 +102,7 @@ public class NetworkTest
 	@Test
 	public void testUpdate()
 	{
-		net.update(new MockWorld());
+		net.update(new MockWorldOwner());
 	}
 
 	/**
@@ -113,22 +119,22 @@ public class NetworkTest
 	{
 		net.startGame(new MockWorld());
 	}
-	
+
 	@Test
 	public void setGetPlayerName()
 	{
 		net.startDebug();
 		final String name = "Test";
 		net.startServer(name);
-		
+
 		assertEquals(name, net.getPlayerName());
 	}
 
 	@Test
 	public void addRemoveObserver()
 	{
-		
-		
+
+
 		NetworkObserver o = mock(NetworkObserver.class);
 		net.addObserver(o);
 		assertEquals(1, net.getNotifier().getObserverCount());
@@ -136,12 +142,12 @@ public class NetworkTest
 		net.removeObserver(o);
 		assertEquals(0, net.getNotifier().getObserverCount());
 	}
-	
+
 	@Test
 	public void isServer()
 	{
 		assertFalse(net.isServer());
-		
+
 		net.startServer("Test");
 		assertTrue(net.isServer());
 	}

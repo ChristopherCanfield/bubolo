@@ -4,10 +4,12 @@ import static com.badlogic.gdx.math.MathUtils.clamp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import com.badlogic.gdx.math.Vector2;
 
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
@@ -20,6 +22,8 @@ import bubolo.net.command.CreateEntity;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
 import bubolo.util.Coords;
+import bubolo.util.Nullable;
+import bubolo.world.Pillbox.BuildStatus;
 
 /**
  * The tank, which may be controlled by a local player or networked player..
@@ -111,6 +115,15 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private final List<Controller> controllers = new ArrayList<>();
 
+	private boolean controlledByLocalPlayer;
+
+	// The pillbox that is being carried, built, or unbuilt (packed).
+	private Pillbox carriedPillbox;
+	private boolean unbuildPillbox;
+	private boolean buildPillbox;
+	private float pillboxBuildLocationX = -1;
+	private float pillboxBuildLocationY = -1;
+
 	/**
 	 * Constructs a Tank.
 	 *
@@ -132,7 +145,8 @@ public class Tank extends ActorEntity implements Damageable {
 			do {
 				Spawn spawn = world.getRandomSpawn();
 				setPosition(spawn.x(), spawn.y());
-				spawnFound = world.getNearbyCollidables(this, true, 4, Tank.class).isEmpty();
+				// Ensure there are no tanks on top of, or adjacent to, the selected spawn location.
+				spawnFound = world.getCollidablesWithinTileDistance(this, 4, true, Tank.class).isEmpty();
 			} while (!spawnFound);
 
 			hitPoints = maxHitPoints;
@@ -147,7 +161,11 @@ public class Tank extends ActorEntity implements Damageable {
 			accelerated = false;
 			decelerated = false;
 			rotated = false;
+
 			hidden = false;
+
+			carriedPillbox = null;
+			pillboxBuildLocationX = pillboxBuildLocationY = 0;
 
 			notifyNetwork();
 		}
@@ -177,6 +195,7 @@ public class Tank extends ActorEntity implements Damageable {
 		updateSpeedForTerrain(world);
 		moveTank(world);
 		performCollisionDetection(world);
+		processPillboxBuilding(world);
 		hidden = checkIfHidden(world);
 
 		decelerated = false;
@@ -218,6 +237,14 @@ public class Tank extends ActorEntity implements Damageable {
 		return (int) (y() + height) / Coords.TileToWorldScale;
 	}
 
+	public float centerX() {
+		return x() + (width() / 2.0f);
+	}
+
+	public float centerY() {
+		return y() + (height() / 2.0f);
+	}
+
 	/**
 	 * Returns the tank's speed.
 	 *
@@ -253,6 +280,7 @@ public class Tank extends ActorEntity implements Damageable {
 				speed = adjustedMaxSpeed;
 			}
 			accelerated = true;
+			cancelBuildingPillbox();
 		}
 		clampSpeed();
 
@@ -266,6 +294,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (speed > 0 && !decelerated) {
 			speed -= decelerationRate;
 			decelerated = true;
+			cancelBuildingPillbox();
 		}
 		clampSpeed();
 
@@ -286,6 +315,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (!rotated) {
 			rotated = true;
 			setRotation(rotation() + rotationRate);
+			cancelBuildingPillbox();
 			notifyNetwork();
 		}
 	}
@@ -297,6 +327,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (!rotated) {
 			rotated = true;
 			setRotation(rotation() - rotationRate);
+			cancelBuildingPillbox();
 			notifyNetwork();
 		}
 	}
@@ -318,6 +349,8 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return bullet reference to the new bullet or null if the tank cannot fire.
 	 */
 	public Bullet fireCannon(World world) {
+		cancelBuildingPillbox();
+
 		if (isCannonReady()) {
 			cannonReadyTime = System.currentTimeMillis();
 
@@ -341,6 +374,168 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	public boolean isCarryingPillbox() {
+		return carriedPillbox != null && carriedPillbox.buildStatus() == BuildStatus.Carried;
+	}
+
+	/**
+	 * @return the carried pillbox's ID, or null if no pillbox is being carried.
+	 */
+	public @Nullable UUID carriedPillboxId() {
+		return isCarryingPillbox() ? carriedPillbox.id() : null;
+	}
+
+	/**
+	 * Builds the carried pillbox, if the tank is carrying one, or unbuilds the nearest friendly pillbox, if one is within range.
+	 * If the tank is not carrying a pillbox, and no friendly pillbox is within range, no action occurs.
+	 *
+	 * @param world reference to the game world.
+	 * @return true if the pillbox build/unbuild process has started, or false otherwise.
+	 */
+	public boolean buildPillbox(World world) {
+		if (isCarryingPillbox()) {
+			if (!buildPillbox) {
+				buildPillbox = findBuildLocationForPillbox(world);
+				return buildPillbox;
+			}
+		} else {
+			if (!unbuildPillbox) {
+				unbuildPillbox = unbuildNearestFriendlyPillbox(world);
+				return unbuildPillbox;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Cancels building or unbuilding a pillbox. If no pillbox is being built or unbuilt, no action occurs.
+	 */
+	public void cancelBuildingPillbox() {
+		if (carriedPillbox != null) {
+			if (unbuildPillbox) {
+				carriedPillbox.cancelUnbuilding();
+				carriedPillbox = null;
+			} else if (buildPillbox) {
+				if (carriedPillbox.buildStatus() == BuildStatus.Built) {
+					// If the pillbox was built, stop carrying it.
+					carriedPillbox = null;
+				} else {
+					carriedPillbox.cancelBuilding();
+				}
+			}
+		}
+
+		unbuildPillbox = false;
+		buildPillbox = false;
+		pillboxBuildLocationX = pillboxBuildLocationY = -1;
+	}
+
+	/**
+	 * Starts unbuilding the nearest friendly pillbox, if one is within range.
+	 *
+	 * @param world reference to the game world.
+	 * @return true if a friendly pillbox was found within range.
+	 */
+	private boolean unbuildNearestFriendlyPillbox(World world) {
+		if (carriedPillbox == null) {
+			var pillboxes = world.getCollidablesWithinTileDistance(this, 2, true, Pillbox.class);
+			if (!pillboxes.isEmpty()) {
+				float maxDistanceWorldUnits = Coords.TileToWorldScale * 1.5f;
+				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
+				float targetLineY = (float) Math.sin(rotation()) * maxDistanceWorldUnits + centerY();
+
+				var tankPosition = new Vector2(x(), y());
+				var lineEndPosition = new Vector2(targetLineX, targetLineY);
+				for (Collidable collidable : pillboxes) {
+					// It's safe to cast to Pillbox, because we filtered to ensure only pillboxes were returned.
+					Pillbox pillbox = (Pillbox) collidable;
+					if (pillbox.isOwnedByLocalPlayer() &&
+							Intersector.intersectSegmentPolygon(tankPosition, lineEndPosition, pillbox.bounds())) {
+
+						carriedPillbox = (Pillbox) collidable;
+						return true;
+					}
+				}
+			}
+			// No friendly pillbox found within range.
+			return false;
+		}
+		// Already carrying a pillbox.
+		return true;
+	}
+
+	/**
+	 * Attempts to find a valid build location for the carried pillbox.
+	 *
+	 * @param world reference to the game world.
+	 * @return true if a valid build location was found, or false if one was not found or no pillbox is being carried.
+	 */
+	private boolean findBuildLocationForPillbox(World world) {
+		if (isCarryingPillbox()) {
+			if (!hasPillboxBuildLocationTarget()) {
+				// Try to find a buildable tile up to two tiles away from the current tile.
+				for (int attempt = 0; attempt < 2; attempt++) {
+					float placementDistanceWorldUnits = Coords.TileToWorldScale + Coords.TileToWorldScale * attempt;
+					float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
+					float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
+
+					var buildLocationValidity = Pillbox.isValidBuildLocationWU(world, targetX, targetY);
+					if (buildLocationValidity == Pillbox.BuildLocationValidity.Buildable) {
+						pillboxBuildLocationX = targetX;
+						pillboxBuildLocationY = targetY;
+						return true;
+					// This prevents the user from building over walls and rivers.
+					} else if (buildLocationValidity == Pillbox.BuildLocationValidity.InvalidNotBuildable) {
+						return false;
+					}
+				}
+				return false;
+			}
+			// Already has a pillbox placement target.
+			return true;
+		}
+		// Isn't carrying a pillbox.
+		return false;
+	}
+
+	private boolean hasPillboxBuildLocationTarget() {
+		return pillboxBuildLocationX >= 0 && pillboxBuildLocationY >= 0;
+	}
+
+	/**
+	 * Process building or unbuilding a pillbox. Called once per tick.
+	 */
+	private void processPillboxBuilding(World world) {
+		if (carriedPillbox != null) {
+			if (unbuildPillbox) {
+				processPillboxPacking(world);
+			} else if (buildPillbox) {
+				processPillboxUnpacking(world);
+			} else {
+				carriedPillbox.setPosition(x(), y());
+			}
+		}
+	}
+
+	private void processPillboxPacking(World world) {
+		// Pack the pillbox if it is being packed.
+		if (carriedPillbox.buildStatus() != BuildStatus.Carried && carriedPillbox.builtPct() > 0) {
+			carriedPillbox.unbuild(world);
+		} else if (carriedPillbox.buildStatus() == BuildStatus.Carried) {
+			unbuildPillbox = false;
+		}
+	}
+
+	private void processPillboxUnpacking(World world) {
+		if (hasPillboxBuildLocationTarget() && carriedPillbox.buildStatus() != BuildStatus.Built) {
+			carriedPillbox.build(world, pillboxBuildLocationX, pillboxBuildLocationY);
+		} else if (carriedPillbox.buildStatus() == BuildStatus.Built) {
+			// If the pillbox was built, stop carrying it.
+			carriedPillbox = null;
+			buildPillbox = false;
+		}
+	}
+
 	/**
 	 * @return true if the Tank is hidden, false otherwise.
 	 */
@@ -355,7 +550,7 @@ public class Tank extends ActorEntity implements Damageable {
 		final float minTreeCoverage = width() * 0.7f;
 
 		float treeCoverage = 0;
-		List<Collidable> trees = world.getNearbyCollidables(this, false, 1, Tree.class);
+		List<Collidable> trees = world.getCollidablesWithinTileDistance(this, 1, false, Tree.class);
 		for (var tree : trees) {
 			if (tree.overlapsEntity(this, minTranslationVector)) {
 				if (minTranslationVector.depth > minTreeCoverage) {
@@ -379,7 +574,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (terrain instanceof DeepWater) {
 			drowned = true;
 			Audio.play(Sfx.TankDrowned, x(), y());
-			onDeath();
+			onDeath(world);
 			return true;
 		}
 		return false;
@@ -431,7 +626,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 		// Search for collisions. If one is found, move the tank back to its previous position, plus an
 		// offset defined by collisionBounce.
-		var adjacentCollidables = world.getNearbyCollidables(this, true, 1, null);
+		var adjacentCollidables = world.getCollidablesWithinTileDistance(this, 1, true, null);
 		for (var collider : adjacentCollidables) {
 			if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
 				float newX = previousX + (-dirX * collisionBounce);
@@ -456,7 +651,7 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Sends tank move information to the network.
+	 * Sends tank attribute information to the network.
 	 */
 	private void notifyNetwork() {
 		if (isOwnedByLocalPlayer()) {
@@ -524,7 +719,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 			if (hitPoints <= 0) {
 				Audio.play(Sfx.TankExplosion, x(), y());
-				onDeath();
+				onDeath(world);
 			}
 		}
 	}
@@ -532,9 +727,13 @@ public class Tank extends ActorEntity implements Damageable {
 	/**
 	 * Called when the tank dies.
 	 */
-	private void onDeath() {
+	private void onDeath(World world) {
 		hitPoints = 0;
 		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
+		if (isCarryingPillbox()) {
+			carriedPillbox.dropFromTank(world);
+			carriedPillbox = null;
+		}
 		notifyNetwork();
 	}
 
@@ -626,7 +825,7 @@ public class Tank extends ActorEntity implements Damageable {
 			Terrain terrain = world.getTerrain(tileX, tileY);
 			if (terrain.isValidBuildTarget() && world.getMine(tileX, tileY) == null) {
 				TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileX, tileY);
-				return (terrainImprovement == null || terrainImprovement.isValidMinePlacementTarget());
+				return (terrainImprovement == null || terrainImprovement.isValidBuildTarget());
 			}
 			return false;
 		}
@@ -665,5 +864,14 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	protected void updateControllers(World world) {
 		controllers.forEach(controller -> controller.update(world));
+	}
+
+	public void setControlledByLocalPlayer(boolean controlledByLocal) {
+		this.controlledByLocalPlayer = controlledByLocal;
+	}
+
+	@Override
+	public boolean isOwnedByLocalPlayer() {
+		return controlledByLocalPlayer;
 	}
 }

@@ -148,7 +148,6 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	private void processCapture(Tank tank) {
 		if (owner() == null || (hitPoints <= 0 && tank != owner() && tank.isOwnedByLocalPlayer())) {
-			setOwnedByLocalPlayer(true);
 			setOwner(tank);
 
 			Network net = NetworkSystem.getInstance();
@@ -247,7 +246,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 
 	@Override
-	public boolean isValidMinePlacementTarget() {
+	public boolean isValidBuildTarget() {
 		return false;
 	}
 

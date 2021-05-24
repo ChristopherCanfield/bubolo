@@ -7,6 +7,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
 import bubolo.world.Pillbox;
+import bubolo.world.Pillbox.BuildStatus;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
@@ -30,15 +31,18 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	@Override
 	public void update(World world)
 	{
-		// Only fire if cannon is ready.
-		if (parent().isCannonReady()) {
-			Tank target = getTarget(world);
-			if (target != null) {
-				fire(getTargetDirection(target), world);
+		// Don't process updates if the pillbox is being moved.
+		if (parent().buildStatus() == BuildStatus.Built) {
+			// Only fire if cannon is ready.
+			if (parent().isCannonReady()) {
+				Tank target = getTarget(world);
+				if (target != null) {
+					fire(getTargetDirection(target), world);
+				}
 			}
-		}
 
-		handleTankCapture(world);
+			handleTankCapture(world);
+		}
 	}
 
 	/**
@@ -50,10 +54,9 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 		var pillbox = parent();
 		if (pillbox.hitPoints() <= 0) {
 			for (Tank tank : world.getTanks()) {
-				if (pillbox.owner() != tank && tank.isOwnedByLocalPlayer()) {
+				if (pillbox.owner() != tank && tank.isOwnedByLocalPlayer() && tank.isAlive()) {
 					if (Intersector.overlapConvexPolygons(pillbox.captureBounds(), tank.bounds())) {
 						pillbox.setOwner(tank);
-						pillbox.setOwnedByLocalPlayer(true);
 						sendNetUpdate(pillbox);
 					}
 				}
@@ -107,7 +110,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 		double ydistance = Math.abs(parent().y() - target.y());
 		double distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
 
-		return (distance < parent().getRange());
+		return (distance < parent().range());
 	}
 
 	/**

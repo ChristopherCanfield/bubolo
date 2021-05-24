@@ -139,6 +139,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private void drawTankAmmoIconsAndValues(Tank tank, Graphics graphics) {
 		var spriteBatch = graphics.batch();
 		spriteBatch.begin();
+		spriteBatch.setColor(Color.WHITE);
 
 		float screenHalfWidth = graphics.camera().viewportWidth / 2.0f;
 		float screenHeight = graphics.camera().viewportHeight;
@@ -166,7 +167,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	}
 
 	private static Vector2 tankCameraCoordinates(Tank tank, Camera camera) {
-		return Coords.worldToCamera(camera, new Vector2(tank.x(), tank.y()));
+		return Coords.worldToCamera(camera, tank.x(), tank.y());
 	}
 
 	@Override

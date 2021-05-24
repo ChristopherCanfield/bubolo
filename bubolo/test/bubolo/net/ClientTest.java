@@ -6,7 +6,7 @@
 
 package bubolo.net;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 import java.net.ConnectException;
@@ -44,7 +44,7 @@ public class ClientTest
 	{
 		client.send(mock(NetworkCommand.class));
 	}
-	
+
 	@Test
 	public void connect()
 	{
