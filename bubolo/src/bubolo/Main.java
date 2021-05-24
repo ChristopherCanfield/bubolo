@@ -47,6 +47,7 @@ public class Main {
 		cfg.setTitle(Config.AppTitle);
 		cfg.setWindowedMode(Config.TargetWindowWidth, Config.TargetWindowHeight);
 		cfg.setForegroundFPS(Config.FPS);
+		cfg.useVsync(false);
 		return cfg;
 	}
 }
