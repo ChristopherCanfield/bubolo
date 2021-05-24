@@ -438,16 +438,19 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private boolean unbuildNearestFriendlyPillbox(World world) {
 		if (carriedPillbox == null) {
-			var pillboxes = world.getCollidablesWithinTileDistance(this, 1, true, Pillbox.class);
+			var pillboxes = world.getCollidablesWithinTileDistance(this, 2, true, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
-				float maxDistanceWorldUnits = Coords.TileToWorldScale;
+				float maxDistanceWorldUnits = Coords.TileToWorldScale * 1.5f;
 				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
 				float targetLineY = (float) Math.sin(rotation()) * maxDistanceWorldUnits + centerY();
 
+				var tankPosition = new Vector2(x(), y());
+				var lineEndPosition = new Vector2(targetLineX, targetLineY);
 				for (Collidable collidable : pillboxes) {
+					// It's safe to cast to Pillbox, because we filtered to ensure only pillboxes were returned.
 					Pillbox pillbox = (Pillbox) collidable;
 					if (pillbox.isOwnedByLocalPlayer() &&
-							Intersector.intersectSegmentPolygon(new Vector2(x(), y()), new Vector2(targetLineX, targetLineY), pillbox.bounds())) {
+							Intersector.intersectSegmentPolygon(tankPosition, lineEndPosition, pillbox.bounds())) {
 
 						carriedPillbox = (Pillbox) collidable;
 						return true;
