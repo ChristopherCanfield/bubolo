@@ -63,8 +63,8 @@ public class GameWorld implements World {
 	private final List<Spawn> spawnsUnmodifiableView = Collections.unmodifiableList(spawns);
 
 	// first: column; second: row.
-	private Terrain[][] terrain;
-	private final Map<Tile, TerrainImprovement> terrainImprovements = new HashMap<>();
+	private final Terrain[][] terrain;
+	private final TerrainImprovement[][] terrainImprovements;
 	private final Map<Tile, Mine> mines = new HashMap<>();
 
 	// The entities to remove.
@@ -108,6 +108,7 @@ public class GameWorld implements World {
 		assert worldTileRows <= Config.MaxWorldRows;
 
 		terrain = new Terrain[worldTileColumns][worldTileRows];
+		terrainImprovements = new TerrainImprovement[worldTileColumns][worldTileRows];
 
 		width = worldTileColumns * Coords.TileToWorldScale;
 		height = worldTileRows * Coords.TileToWorldScale;
@@ -240,21 +241,22 @@ public class GameWorld implements World {
 			assert !(terrainImprovement instanceof Terrain);
 			assert !(terrainImprovement instanceof Mine);
 
-			Terrain t = terrain[entity.tileColumn()][entity.tileRow()];
+			var col = entity.tileColumn();
+			var row = entity.tileRow();
+			Terrain t = terrain[col][row];
 			assert t == null || t.isValidBuildTarget() : String.format(
 					"Invalid target tile (%d,%d) for terrain improvement %s. Terrain %s is not a valid build target.",
 					t.tileColumn(), t.tileRow(), entity.getClass().getSimpleName(), t.getClass().getSimpleName());
 
 			// Add the terrain improvement. If one already exists, ensure that it has been disposed.
-			Tile tile = new Tile(entity.tileColumn(), entity.tileRow());
-			TerrainImprovement existingTerrainImprovement = terrainImprovements.get(tile);
+			TerrainImprovement existingTerrainImprovement = terrainImprovements[entity.tileColumn()][entity.tileRow()];
 			if (existingTerrainImprovement != null) {
 				assert ((Entity) existingTerrainImprovement).isDisposed()
 						: String.format("TerrainImprovement %s added to tile (%d,%d), which already has an improvement: %s",
 								terrainImprovement.getClass().getName(), entity.tileColumn(), entity.tileRow(),
 								existingTerrainImprovement.getClass().getName());
 			}
-			terrainImprovements.put(tile, terrainImprovement);
+			terrainImprovements[col][row] = terrainImprovement;
 		}
 	}
 
@@ -295,20 +297,21 @@ public class GameWorld implements World {
 
 	@Override
 	public TerrainImprovement getTerrainImprovement(int column, int row) {
-		return terrainImprovements.get(new Tile(column, row));
+		assert isValidTile(column, row) :
+				String.format("Invalid terrain improvement location: %d,%d.", column, row);
+		return terrainImprovements[column][row];
 	}
 
 	@Override
 	public void movePillboxOffTileMap(Pillbox pillbox) {
-		var existingPillbox = terrainImprovements.get(new Tile(pillbox.tileColumn(), pillbox.tileRow()));
+		var existingPillbox = terrainImprovements[pillbox.tileColumn()][pillbox.tileRow()];
 		assert pillbox.equals(existingPillbox);
-		terrainImprovements.remove(new Tile(pillbox.tileColumn(), pillbox.tileRow()));
+		terrainImprovements[pillbox.tileColumn()][pillbox.tileRow()] = null;
 	}
 
 	@Override
 	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row) {
-		var targetTile = new Tile(column, row);
-		var terrainImprovement = terrainImprovements.get(targetTile);
+		var terrainImprovement = terrainImprovements[column][row];
 		if (terrainImprovement != null) {
 			if (terrainImprovement.isValidBuildTarget()) {
 				terrainImprovement.dispose();
@@ -319,7 +322,7 @@ public class GameWorld implements World {
 			}
 		}
 
-		terrainImprovements.put(targetTile, pillbox);
+		terrainImprovements[column][row] = pillbox;
 		pillbox.setPosition(column * TileToWorldScale, row * TileToWorldScale);
 	}
 
@@ -412,23 +415,29 @@ public class GameWorld implements World {
 	 *
 	 * @param markedForRemoval a collection of entities to remove.
 	 */
-	@SuppressWarnings("unlikely-arg-type")
 	private void removeEntities(Collection<Entity> markedForRemoval) {
 		if (!markedForRemoval.isEmpty()) {
 			entities.removeAll(markedForRemoval);
 			entityMap.values().removeAll(markedForRemoval);
-
-			terrainImprovements.values().removeAll(markedForRemoval);
 
 			tanks.removeAll(markedForRemoval);
 			actors.removeAll(markedForRemoval);
 			spawns.removeAll(markedForRemoval);
 			mines.values().removeAll(markedForRemoval);
 
-			// Notify the lifetime observers.
-			for (var entity : markedForRemoval) {
+			for (var toBeRemoved : markedForRemoval) {
+				// Remove if terrain improvement
+				if (toBeRemoved instanceof TerrainImprovement) {
+					var col = toBeRemoved.tileColumn();
+					var row = toBeRemoved.tileRow();
+					if (toBeRemoved == terrainImprovements[col][row]) {
+						terrainImprovements[col][row] = null;
+					}
+				}
+
+				// Notify lifetime observers.
 				for (var observer : entityLifetimeObservers) {
-					observer.onEntityRemoved(entity);
+					observer.onEntityRemoved(toBeRemoved);
 				}
 			}
 
@@ -504,7 +513,7 @@ public class GameWorld implements World {
 		for (int column = startTileColumn; column <= endTileColumn; column++) {
 			for (int row = startTileRow; row <= endTileRow; row++) {
 				if (isValidTile(column, row)) {
-					TerrainImprovement ti = terrainImprovements.get(new Tile(column, row));
+					TerrainImprovement ti = terrainImprovements[column][row];
 					if (includeInNearbyCollidablesList((Entity) ti, onlyIncludeSolidObjects, typeFilter)) {
 						nearbyCollidables.add((Collidable) ti);
 					}
