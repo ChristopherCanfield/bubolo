@@ -36,7 +36,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private String playerName;
 
 	// Max speed in world units per tick.
-	private static final float maxSpeed = 3.25f;
+	private static final float maxSpeed = 3.0092f;
 
 	// The maximum speed after adjusting for the underlying terrain & terrain improvement.
 	private float adjustedMaxSpeed = maxSpeed;

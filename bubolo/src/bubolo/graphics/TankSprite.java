@@ -1,5 +1,7 @@
 package bubolo.graphics;
 
+import java.text.DecimalFormat;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -122,19 +124,21 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 		float screenHalfWidth = graphics.camera().viewportWidth / 2.0f;
 		float screenHeight = graphics.camera().viewportHeight;
-		shapeRenderer.rect(screenHalfWidth - 70, screenHeight - 25, 140, 30);
+		shapeRenderer.rect(screenHalfWidth - 110, screenHeight - 25, 220, 30);
 
 		shapeRenderer.end();
 
 		// Draw a thin border around the ammo UI box.
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.BLACK);
-		shapeRenderer.rect(screenHalfWidth - 70, screenHeight - 25, 140, 30);
+		shapeRenderer.rect(screenHalfWidth - 110, screenHeight - 25, 220, 30);
 
 		shapeRenderer.end();
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
+
+	private static final DecimalFormat speedFormatter = new DecimalFormat("0.00 Kph");
 
 	private void drawStatusBarValues(Tank tank, Graphics graphics) {
 		var spriteBatch = graphics.batch();
@@ -146,22 +150,26 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		float bulletWidth = bulletTexture.getWidth() * 2;
 		float bulletHeight = bulletTexture.getHeight() * 2;
 		// Draw the bullet texture.
-		spriteBatch.draw(bulletTexture, screenHalfWidth - 60, screenHeight - 20, bulletWidth, bulletHeight);
+		spriteBatch.draw(bulletTexture, screenHalfWidth - 100, screenHeight - 20, bulletWidth, bulletHeight);
 
 		int textVerticalPosition = (int) screenHeight - 5;
 		// Render the ammo count text.
 		font.setColor(TANK_UI_FONT_COLOR);
-		font.draw(spriteBatch, "x " + Integer.toString(tank.ammoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
+		font.draw(spriteBatch, "x " + tank.ammoCount(), screenHalfWidth - 100 + 12, textVerticalPosition);
+
+		// Render the tank's speed.
+		int tankSpeedTextLocation = (int) ((tank.speedKph() < 10) ? screenHalfWidth - 25 : screenHalfWidth - 30);
+		font.draw(spriteBatch, speedFormatter.format(tank.speedKph()), tankSpeedTextLocation, textVerticalPosition);
 
 		// Mine texture divided by number of frames per row.
 		float mineWidth = mineTexture.getWidth() / 6;
 		// Mine texture divided by number of frames per column.
 		float mineHeight = mineTexture.getHeight() / 3;
 		// Draw the mine texture.
-		spriteBatch.draw(mineTexture, screenHalfWidth + 13, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
+		spriteBatch.draw(mineTexture, screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
 
 		// Render the mine count text.
-		font.draw(spriteBatch, "x " + Integer.toString(tank.mineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
+		font.draw(spriteBatch, "x " + tank.mineCount(), screenHalfWidth + 53 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}
