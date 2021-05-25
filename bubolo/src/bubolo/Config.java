@@ -1,6 +1,6 @@
 package bubolo;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 
 /**
  * Configuration constants.
@@ -22,8 +22,8 @@ public class Config {
 
 	public static final float DefaultPixelsPerWorldUnit = 1;
 
-	public static final int MaxWorldColumns = (Short.MAX_VALUE * 2 + 2) / Coords.TileToWorldScale;
+	public static final int MaxWorldColumns = (Short.MAX_VALUE * 2 + 2) / Units.TileToWorldScale;
 	public static final int MaxWorldRows = MaxWorldColumns;
-	public static final int MaxWorldX = MaxWorldColumns * Coords.TileToWorldScale - 1;
-	public static final int MaxWorldY = MaxWorldRows * Coords.TileToWorldScale - 1;
+	public static final int MaxWorldX = MaxWorldColumns * Units.TileToWorldScale - 1;
+	public static final int MaxWorldY = MaxWorldRows * Units.TileToWorldScale - 1;
 }

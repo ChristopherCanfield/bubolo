@@ -3,7 +3,7 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 
 /**
  * Used for processing standard format textures of different kinds for use in adaptive tiling and animations.
@@ -94,8 +94,8 @@ abstract class TextureUtil {
 	private static TextureRegion[] adaptiveSplit_16(Texture tex)
 	{
 
-		if (tex.getHeight() != Coords.TileToWorldScale * 4
-				&& tex.getWidth() != Coords.TileToWorldScale * 4)
+		if (tex.getHeight() != Units.TileToWorldScale * 4
+				&& tex.getWidth() != Units.TileToWorldScale * 4)
 		{
 			throw new TextureDimensionException("Cannot split texture into 16 tiles, wrong size!");
 		}
@@ -104,7 +104,7 @@ abstract class TextureUtil {
 
 		// Grab the 16 texture frames for a standard 4x4 layout
 
-		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale, Coords.TileToWorldScale, 0, 0);
+		TextureRegion[][] allFrames = splitFrames(tex, Units.TileToWorldScale, Units.TileToWorldScale, 0, 0);
 
 		// Assign each texture frame to the correct index
 		adapt[0] = allFrames[0][0];
@@ -140,8 +140,8 @@ abstract class TextureUtil {
 	 */
 	private static TextureRegion[] adaptiveSplit_water(Texture tex)
 	{
-		if (tex.getHeight() != Coords.TileToWorldScale * 4
-				&& tex.getWidth() != Coords.TileToWorldScale * 6) {
+		if (tex.getHeight() != Units.TileToWorldScale * 4
+				&& tex.getWidth() != Units.TileToWorldScale * 6) {
 			throw new TextureDimensionException("Cannot split texture into 16x9x9 tiles, wrong size!");
 		}
 
@@ -149,7 +149,7 @@ abstract class TextureUtil {
 
 		// Grab the 34 texture frames for a standard 4x4 + 3x3 + 3x3 layout
 
-		TextureRegion[][] allFrames = splitFrames(tex, Coords.TileToWorldScale, Coords.TileToWorldScale, 0, 0);
+		TextureRegion[][] allFrames = splitFrames(tex, Units.TileToWorldScale, Units.TileToWorldScale, 0, 0);
 
 		// Assign each texture frame to the correct index...
 
@@ -184,7 +184,7 @@ abstract class TextureUtil {
 		adapt[23] = allFrames[5][3];
 
 		// @Hack (cdc 2021-05-06): Hack to fix texture bleeding issue. This could be fixed by resizing the texture, and adding padding around each tile.
-		adapt[22] = new TextureRegion(tex, 4 * Coords.TileToWorldScale + 1, 3 * Coords.TileToWorldScale, Coords.TileToWorldScale, Coords.TileToWorldScale);
+		adapt[22] = new TextureRegion(tex, 4 * Units.TileToWorldScale + 1, 3 * Units.TileToWorldScale, Units.TileToWorldScale, Units.TileToWorldScale);
 		return adapt;
 	}
 }

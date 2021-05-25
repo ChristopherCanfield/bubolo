@@ -1,6 +1,6 @@
 package bubolo.world;
 
-import static bubolo.util.Coords.TileToWorldScale;
+import static bubolo.util.Units.TileToWorldScale;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import bubolo.controllers.Controllers;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.DestroyEntity;
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
 import bubolo.util.Timer;
@@ -110,8 +110,8 @@ public class GameWorld implements World {
 		terrain = new Terrain[worldTileColumns][worldTileRows];
 		terrainImprovements = new TerrainImprovement[worldTileColumns][worldTileRows];
 
-		width = worldTileColumns * Coords.TileToWorldScale;
-		height = worldTileRows * Coords.TileToWorldScale;
+		width = worldTileColumns * Units.TileToWorldScale;
+		height = worldTileRows * Units.TileToWorldScale;
 	}
 
 	@Override
@@ -278,8 +278,8 @@ public class GameWorld implements World {
 		for (int column = 0; column < getTileColumns(); column++) {
 			for (int row = 0; row < getTileRows(); row++) {
 				if (terrain[column][row] == null) {
-					float x = column * Coords.TileToWorldScale;
-					float y = row * Coords.TileToWorldScale;
+					float x = column * Units.TileToWorldScale;
+					float y = row * Units.TileToWorldScale;
 					var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
 					addEntity(terrainType, args);
 				}

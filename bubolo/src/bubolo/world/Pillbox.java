@@ -1,6 +1,6 @@
 package bubolo.world;
 
-import static bubolo.util.Coords.worldUnitToTile;
+import static bubolo.util.Units.worldUnitToTile;
 
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
@@ -14,7 +14,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.MovePillboxOffTileMap;
 import bubolo.net.command.MovePillboxOntoTileMap;
 import bubolo.net.command.UpdatePillboxAttributes;
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.util.Time;
 
 /**
@@ -182,7 +182,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		setBuildStatus(BuildStatus.Building);
 		int column = worldUnitToTile(targetX);
 		int row = worldUnitToTile(targetY);
-		setPosition(column * Coords.TileToWorldScale, row * Coords.TileToWorldScale);
+		setPosition(column * Units.TileToWorldScale, row * Units.TileToWorldScale);
 
 		if (builtPct >= 1) {
 			world.movePillboxOntoTileMap(this, tileColumn(), tileRow());
@@ -284,7 +284,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	}
 
 	// Used by the isValidBuildTile method.
-	private static final BoundingBox targetLocationBoundingBox = new BoundingBox(0, 0, Coords.TileToWorldScale, Coords.TileToWorldScale);
+	private static final BoundingBox targetLocationBoundingBox = new BoundingBox(0, 0, Units.TileToWorldScale, Units.TileToWorldScale);
 
 	/**
 	 * Specifies whether the target location, in tiles, is a valid location to place this pillbox.
@@ -298,9 +298,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		if (world.isValidTile(tileX, tileY) && world.getTerrain(tileX, tileY).isValidBuildTarget()) {
 			var terrainImprovement = world.getTerrainImprovement(tileX, tileY);
 			if (terrainImprovement == null || terrainImprovement.isValidBuildTarget()) {
-				float targetX = Coords.TileToWorldScale * tileX;
-				float targetY = Coords.TileToWorldScale * tileY;
-				targetLocationBoundingBox.updateBounds(targetX, targetY, Coords.TileToWorldScale, Coords.TileToWorldScale);
+				float targetX = Units.TileToWorldScale * tileX;
+				float targetY = Units.TileToWorldScale * tileY;
+				targetLocationBoundingBox.updateBounds(targetX, targetY, Units.TileToWorldScale, Units.TileToWorldScale);
 				for (Tank tank : world.getTanks()) {
 					if (Intersector.overlapConvexPolygons(tank.bounds(), targetLocationBoundingBox.bounds())) {
 						return BuildLocationValidity.InvalidTankInTheWay;

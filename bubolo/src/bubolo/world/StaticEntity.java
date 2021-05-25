@@ -1,7 +1,7 @@
 package bubolo.world;
 
 import bubolo.Config;
-import bubolo.util.Coords;
+import bubolo.util.Units;
 
 /**
  * Game world objects that never move, and that do not have intelligence.
@@ -57,7 +57,7 @@ public abstract class StaticEntity extends Entity {
 	 */
 	@Override
 	public int tileColumn() {
-		return (int) x() / Coords.TileToWorldScale;
+		return (int) x() / Units.TileToWorldScale;
 	}
 
 	/**
@@ -65,6 +65,6 @@ public abstract class StaticEntity extends Entity {
 	 */
 	@Override
 	public int tileRow() {
-		return (int) y() / Coords.TileToWorldScale;
+		return (int) y() / Units.TileToWorldScale;
 	}
 }

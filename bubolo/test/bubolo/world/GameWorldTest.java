@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.world.Entity.ConstructionArgs;
 
 public class GameWorldTest
@@ -161,7 +161,7 @@ public class GameWorldTest
 	{
 		World w = new GameWorld(10, 50);
 		assertEquals(10, w.getTileColumns());
-		assertEquals(10 * Coords.TileToWorldScale, w.getWidth());
+		assertEquals(10 * Units.TileToWorldScale, w.getWidth());
 	}
 
 	@Test
@@ -169,6 +169,6 @@ public class GameWorldTest
 	{
 		World w = new GameWorld(10, 50);
 		assertEquals(50, w.getTileRows());
-		assertEquals(50 * Coords.TileToWorldScale, w.getHeight());
+		assertEquals(50 * Units.TileToWorldScale, w.getHeight());
 	}
 }

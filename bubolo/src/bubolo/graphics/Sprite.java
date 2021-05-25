@@ -6,7 +6,7 @@
 
 package bubolo.graphics;
 
-import static bubolo.util.Coords.worldToCamera;
+import static bubolo.util.Units.worldToCamera;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;

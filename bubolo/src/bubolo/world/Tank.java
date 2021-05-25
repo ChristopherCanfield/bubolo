@@ -21,7 +21,7 @@ import bubolo.net.command.CreateActor;
 import bubolo.net.command.CreateEntity;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.util.Nullable;
 import bubolo.world.Pillbox.BuildStatus;
 
@@ -204,7 +204,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 		if (isOwnedByLocalPlayer()) {
 			Audio.setListenerPosition(x(), y());
-			int distanceToDeepWater = world.getTileDistanceToDeepWater(tileColumn(), tileRow(), 15) * Coords.TileToWorldScale;
+			int distanceToDeepWater = world.getTileDistanceToDeepWater(tileColumn(), tileRow(), 15) * Units.TileToWorldScale;
 			Audio.setListenerDistanceToDeepWater(distanceToDeepWater);
 		}
 	}
@@ -224,7 +224,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	@Override
 	public int tileColumn() {
-		return (int) (x() + width) / Coords.TileToWorldScale;
+		return (int) (x() + width) / Units.TileToWorldScale;
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	@Override
 	public int tileRow() {
-		return (int) (y() + height) / Coords.TileToWorldScale;
+		return (int) (y() + height) / Units.TileToWorldScale;
 	}
 
 	public float centerX() {
@@ -440,7 +440,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (carriedPillbox == null) {
 			var pillboxes = world.getCollidablesWithinTileDistance(this, 2, true, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
-				float maxDistanceWorldUnits = Coords.TileToWorldScale * 1.5f;
+				float maxDistanceWorldUnits = Units.TileToWorldScale * 1.5f;
 				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
 				float targetLineY = (float) Math.sin(rotation()) * maxDistanceWorldUnits + centerY();
 
@@ -475,7 +475,7 @@ public class Tank extends ActorEntity implements Damageable {
 			if (!hasPillboxBuildLocationTarget()) {
 				// Try to find a buildable tile up to two tiles away from the current tile.
 				for (int attempt = 0; attempt < 2; attempt++) {
-					float placementDistanceWorldUnits = Coords.TileToWorldScale + Coords.TileToWorldScale * attempt;
+					float placementDistanceWorldUnits = Units.TileToWorldScale + Units.TileToWorldScale * attempt;
 					float targetX = (float) Math.cos(rotation()) * placementDistanceWorldUnits + centerX();
 					float targetY = (float) Math.sin(rotation()) * placementDistanceWorldUnits + centerY();
 
@@ -799,10 +799,10 @@ public class Tank extends ActorEntity implements Damageable {
 		if (canPlaceMineHere(world)) {
 			mineReadyTime = System.currentTimeMillis() + mineLayingSpeedMillis;
 
-			int tileX = Math.round(x() / Coords.TileToWorldScale);
-			int tileY = Math.round(y() / Coords.TileToWorldScale);
-			int mineX = tileX * Coords.TileToWorldScale;
-			int mineY = tileY * Coords.TileToWorldScale;
+			int tileX = Math.round(x() / Units.TileToWorldScale);
+			int tileY = Math.round(y() / Units.TileToWorldScale);
+			int mineX = tileX * Units.TileToWorldScale;
+			int mineY = tileY * Units.TileToWorldScale;
 
 			var args = new Entity.ConstructionArgs(Entity.nextId(), mineX, mineY, 0);
 			Mine mine = world.addEntity(Mine.class, args);
@@ -820,8 +820,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private boolean canPlaceMineHere(World world) {
 		if (mineReadyTime < System.currentTimeMillis() && mineCount > 0) {
-			int tileX = Math.round(x() / Coords.TileToWorldScale);
-			int tileY = Math.round(y() / Coords.TileToWorldScale);
+			int tileX = Math.round(x() / Units.TileToWorldScale);
+			int tileY = Math.round(y() / Units.TileToWorldScale);
 
 			Terrain terrain = world.getTerrain(tileX, tileY);
 			if (terrain.isValidBuildTarget() && world.getMine(tileX, tileY) == null) {

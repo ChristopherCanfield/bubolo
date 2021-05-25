@@ -2,7 +2,7 @@ package bubolo.world;
 
 import java.util.UUID;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 
 /**
  * Base class for objects that live in the game world. Entities are created using the World.addEntity method:
@@ -99,14 +99,14 @@ public abstract class Entity {
 	 * @return the world column that the object is in.
 	 */
 	public int tileColumn() {
-		return Coords.worldUnitToTile(x());
+		return Units.worldUnitToTile(x());
 	}
 
 	/**
 	 * @return the world row that the object is in.
 	 */
 	public int tileRow() {
-		return Coords.worldUnitToTile(y());
+		return Units.worldUnitToTile(y());
 	}
 
 	/**

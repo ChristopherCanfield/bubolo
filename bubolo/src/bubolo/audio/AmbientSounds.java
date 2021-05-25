@@ -14,7 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.backends.lwjgl3.audio.OpenALMusic;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.util.GameRuntimeException;
 
 /**
@@ -41,7 +41,7 @@ class AmbientSounds implements Music.OnCompletionListener {
 	 * This is needed to update their position, since libGDX is not designed to work with audio listener movement. */
 	private final Field libGdxOpenALMusicSourceIdField;
 
-	private static final float clampDistanceWaves = 15 * Coords.TileToWorldScale;
+	private static final float clampDistanceWaves = 15 * Units.TileToWorldScale;
 	private static final float rolloffFactorWaves = 1f;
 	private static final float referenceDistanceWaves = 100;
 

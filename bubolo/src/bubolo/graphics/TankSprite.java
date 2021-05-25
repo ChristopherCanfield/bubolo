@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.world.Tank;
 
 /**
@@ -167,7 +167,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	}
 
 	private static Vector2 tankCameraCoordinates(Tank tank, Camera camera) {
-		return Coords.worldToCamera(camera, tank.x(), tank.y());
+		return Units.worldToCamera(camera, tank.x(), tank.y());
 	}
 
 	@Override

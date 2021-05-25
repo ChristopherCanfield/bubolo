@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.world.Damageable;
 import bubolo.world.Entity;
 
@@ -32,7 +32,7 @@ final class StatusBarRenderer {
 			float healthBarInteriorBackgroundWidth = entity.width() + 10;
 			float healthBarInteriorWidth = healthBarInteriorBackgroundWidth * healthPct;
 
-			var cameraCoords = Coords.worldToCamera(camera, entity.x(), entity.y());
+			var cameraCoords = Units.worldToCamera(camera, entity.x(), entity.y());
 			var entityHalfWidth = entity.width() / 2.0f;
 			var entityHalfHeight = entity.height() / 2.0f;
 
@@ -81,7 +81,7 @@ final class StatusBarRenderer {
 		float barInteriorBackgroundWidth = entity.width() + 10;
 		float barInteriorWidth = barInteriorBackgroundWidth * pctFilled;
 
-		var cameraCoords = Coords.worldToCamera(camera, entity.x(), entity.y());
+		var cameraCoords = Units.worldToCamera(camera, entity.x(), entity.y());
 		var entityHalfWidth = entity.width() / 2.0f;
 		var entityHalfHeight = entity.height() / 2.0f;
 

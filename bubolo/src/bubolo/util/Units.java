@@ -4,12 +4,11 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Utility methods for working with coordinates.
+ * Methods for converting between different units and coordinate systems.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public abstract class Coords {
+public abstract class Units {
 	/**
 	 * The number of world units per tile.
 	 */

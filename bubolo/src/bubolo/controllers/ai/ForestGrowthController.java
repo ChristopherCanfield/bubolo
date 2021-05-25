@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Deque;
 
 import bubolo.controllers.Controller;
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.world.Entity;
 import bubolo.world.EntityLifetimeObserver;
 import bubolo.world.Grass;
@@ -156,8 +156,8 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 		} else {
 			if (world.getTerrainImprovement(nextLocation.column, nextLocation.row) == null) {
 				var args = new Entity.ConstructionArgs(Entity.nextId(),
-						nextLocation.column * Coords.TileToWorldScale,
-						nextLocation.row * Coords.TileToWorldScale,
+						nextLocation.column * Units.TileToWorldScale,
+						nextLocation.row * Units.TileToWorldScale,
 						0);
 				world.addEntity(Tree.class, args);
 			}

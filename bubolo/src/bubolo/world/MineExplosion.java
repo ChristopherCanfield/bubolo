@@ -1,6 +1,6 @@
 package bubolo.world;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.util.Time;
 
 /**
@@ -16,8 +16,8 @@ public class MineExplosion extends ActorEntity {
 	private static final float totalDamage = 25;
 	private static final float damagePerTick = totalDamage / Time.secondsToTicks(LifetimeSeconds);
 
-	private static final int width = Coords.TileToWorldScale;
-	private static final int height = Coords.TileToWorldScale;
+	private static final int width = Units.TileToWorldScale;
+	private static final int height = Units.TileToWorldScale;
 
 	private static final int blastRadiusTiles = 1;
 

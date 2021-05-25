@@ -20,7 +20,7 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
 import bubolo.Config;
-import bubolo.util.Coords;
+import bubolo.util.Units;
 import bubolo.world.Base;
 import bubolo.world.Crater;
 import bubolo.world.DeepWater;
@@ -306,8 +306,8 @@ public class MapImporter {
 				// Add the entity if it is known to this tileset.
 				if (ts.isGidInThisTileset(tileGid)) {
 					// The game world is flipped from json map indexes (zero is the top in the map file, but the bottom in the world map).
-					int posY = (world.getTileRows() - row - 1) * Coords.TileToWorldScale;
-					int posX = col * Coords.TileToWorldScale;
+					int posY = (world.getTileRows() - row - 1) * Units.TileToWorldScale;
+					int posX = col * Units.TileToWorldScale;
 					float rotation = 0;
 
 					// The x and y coords are flipped in the map.

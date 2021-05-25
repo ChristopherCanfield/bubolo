@@ -2,7 +2,7 @@ package bubolo.world;
 
 import java.util.UUID;
 
-import bubolo.util.Coords;
+import bubolo.util.Units;
 
 /**
  * An object that can be built on top of terrain. Terrain improvements are mutually exclusive; that is, only
@@ -47,14 +47,14 @@ public interface TerrainImprovement {
 	 * @return the world column that the object is in.
 	 */
 	default int tileColumn() {
-		return (int) x() / Coords.TileToWorldScale;
+		return (int) x() / Units.TileToWorldScale;
 	}
 
 	/**
 	 * @return the world row that the object is in.
 	 */
 	default int tileRow() {
-		return (int) y() / Coords.TileToWorldScale;
+		return (int) y() / Units.TileToWorldScale;
 	}
 
 	void dispose();
