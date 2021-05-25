@@ -161,14 +161,16 @@ abstract class Sprite implements Drawable {
 				MathUtils.radiansToDegrees * (rotationRadians - MathUtils.PI / 2.f));
 	}
 
+	private static final Vector2 origin = new Vector2();
+
 	/**
 	 * Returns the center of a given width and height.
 	 *
 	 * @param width the width of a texture or texture region.
 	 * @param height the height of a texture or texture region.
-	 * @return the center of the given width and height.
+	 * @return the center of the given width and height. This object is reused across Sprite instances, and should not be stored.
 	 */
 	private static Vector2 getOrigin(float width, float height) {
-		return new Vector2(width / 2.f, height / 2.f);
+		return origin.set(width / 2.f, height / 2.f);
 	}
 }
