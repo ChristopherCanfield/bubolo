@@ -9,13 +9,17 @@ import com.badlogic.gdx.math.Vector2;
  * @author Christopher D. Canfield
  */
 public abstract class Units {
-	/**
-	 * The number of world units per tile.
-	 */
+	/** The number of world units per tile. */
 	public static final int TileToWorldScale = 32;
 
-	public static int worldUnitToTile(float worldUnit) {
-		return (int) worldUnit / TileToWorldScale;
+	/**
+	 * The number of world units per meter.
+	 * @TODO (cdc 2021-05-25): Convert world units to meters throughout the program.
+	 */
+	public static final float WuToMeters = 0.15f;
+
+	public static int worldUnitToTile(float worldUnits) {
+		return (int) worldUnits / TileToWorldScale;
 	}
 
 	/**
