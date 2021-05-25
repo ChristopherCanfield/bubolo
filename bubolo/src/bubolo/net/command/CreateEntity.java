@@ -28,8 +28,8 @@ public class CreateEntity extends NetworkCommand {
 	private final Class<? extends Entity> type;
 	private final UUID id;
 
-	private final int x;
-	private final int y;
+	private final short x;
+	private final short y;
 
 	private final float rotation;
 
@@ -47,8 +47,8 @@ public class CreateEntity extends NetworkCommand {
 	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation) {
 		this.type = type;
 		this.id = id;
-		this.x = (int) x;
-		this.y = (int) y;
+		this.x = (short) x;
+		this.y = (short) y;
 		this.rotation = rotation;
 		this.factory = null;
 	}
@@ -66,8 +66,8 @@ public class CreateEntity extends NetworkCommand {
 	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation, @Nullable ControllerFactory factory) {
 		this.type = type;
 		this.id = id;
-		this.x = (int) x;
-		this.y = (int) y;
+		this.x = (short) x;
+		this.y = (short) y;
 		this.rotation = rotation;
 		this.factory = factory;
 	}
@@ -75,7 +75,7 @@ public class CreateEntity extends NetworkCommand {
 	@Override
 	protected void execute(World world) {
 		try {
-			var args = new Entity.ConstructionArgs(id, x, y, rotation);
+			var args = new Entity.ConstructionArgs(id, Short.toUnsignedInt(x), Short.toUnsignedInt(y), rotation);
 			world.addEntity(type, args, factory);
 		} catch (GameLogicException e) {
 			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateEntity net command: Entity was not created. ID: " + id);

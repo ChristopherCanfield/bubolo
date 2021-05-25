@@ -20,7 +20,7 @@ public class StartGame extends NetworkCommand
 {
 	private static final long serialVersionUID = 1L;
 
-	private final int secondsUntilStart;
+	private final byte secondsUntilStart;
 	private final SendMap sendMapCommand;
 
 	/**
@@ -33,7 +33,7 @@ public class StartGame extends NetworkCommand
 	 */
 	public StartGame(int secondsUntilStart, SendMap sendMapCommand)
 	{
-		this.secondsUntilStart = secondsUntilStart;
+		this.secondsUntilStart = (byte) secondsUntilStart;
 		this.sendMapCommand = checkNotNull(sendMapCommand);
 	}
 
