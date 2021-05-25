@@ -103,16 +103,16 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 			if (tank.isAlive()) {
 				StatusBarRenderer.drawHealthBar(tank, graphics.shapeRenderer(), graphics.camera());
 			}
-			drawTankAmmo(tank, graphics);
+			drawStatusBar(tank, graphics);
 		}
 	}
 
-	private void drawTankAmmo(Tank tank, Graphics graphics) {
-		drawTankAmmoBackground(graphics);
-		drawTankAmmoIconsAndValues(tank, graphics);
+	private void drawStatusBar(Tank tank, Graphics graphics) {
+		drawStatusBarBackground(graphics);
+		drawStatusBarValues(tank, graphics);
 	}
 
-	private static void drawTankAmmoBackground(Graphics graphics) {
+	private static void drawStatusBarBackground(Graphics graphics) {
 		// Blending is required to enable transparency.
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		var shapeRenderer = graphics.shapeRenderer();
@@ -136,7 +136,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
-	private void drawTankAmmoIconsAndValues(Tank tank, Graphics graphics) {
+	private void drawStatusBarValues(Tank tank, Graphics graphics) {
 		var spriteBatch = graphics.batch();
 		spriteBatch.begin();
 		spriteBatch.setColor(Color.WHITE);
@@ -151,7 +151,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		int textVerticalPosition = (int) screenHeight - 5;
 		// Render the ammo count text.
 		font.setColor(TANK_UI_FONT_COLOR);
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.ammoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
+		font.draw(spriteBatch, "x " + Integer.toString(tank.ammoCount()), screenHalfWidth - 60 + 12, textVerticalPosition);
 
 		// Mine texture divided by number of frames per row.
 		float mineWidth = mineTexture.getWidth() / 6;
@@ -161,7 +161,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		spriteBatch.draw(mineTexture, screenHalfWidth + 13, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
 
 		// Render the mine count text.
-		font.draw(graphics.batch(), "x " + Integer.toString(tank.mineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
+		font.draw(spriteBatch, "x " + Integer.toString(tank.mineCount()), screenHalfWidth + 13 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}
@@ -228,7 +228,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	}
 
 	/**
-	 * Initializes the tank. This is needed because the Tank entity may not know whether it is local or not at construction time.
+	 * Initializes the tank sprite. This is needed because the Tank entity may not know whether it is local or not at construction time.
 	 *
 	 * @param graphics reference to the graphics system.
 	 */

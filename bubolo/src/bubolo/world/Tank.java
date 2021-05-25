@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
 import com.badlogic.gdx.math.Vector2;
 
+import bubolo.Config;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
@@ -21,8 +22,8 @@ import bubolo.net.command.CreateActor;
 import bubolo.net.command.CreateEntity;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
-import bubolo.util.Units;
 import bubolo.util.Nullable;
+import bubolo.util.Units;
 import bubolo.world.Pillbox.BuildStatus;
 
 /**
@@ -246,12 +247,17 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Returns the tank's speed.
-	 *
-	 * @return the tank's speed.
+	 * @return the tank's speed in world units per tick.
 	 */
 	public float speed() {
 		return speed;
+	}
+
+	/**
+	 * @return the tank's speed in kilometer's per hour.
+	 */
+	public float speedKph() {
+		return speed * Units.WuToMeters * Config.FPS * 3600 / 1_000;
 	}
 
 	/**
