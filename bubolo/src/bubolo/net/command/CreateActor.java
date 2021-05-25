@@ -19,9 +19,9 @@ import bubolo.world.World;
  * Creates an actor entity on remote computers.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class CreateActor extends CreateEntity
-{
+public class CreateActor extends CreateEntity {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID ownerId;
@@ -29,39 +29,29 @@ public class CreateActor extends CreateEntity
 	/**
 	 * Constructs a CreateActor command object.
 	 *
-	 * @param type
-	 *            the actor's class.
-	 * @param id
-	 *            the actor's unique id.
-	 * @param x
-	 *            the actor's x position.
-	 * @param y
-	 *            the actor's y position.
-	 * @param rotation
-	 *            the actor's rotation.
-	 * @param ownerId
-	 *            the id of the entity that owns the actor.
+	 * @param type the actor's class.
+	 * @param id the actor's unique id.
+	 * @param x the actor's x position.
+	 * @param y the actor's y position.
+	 * @param rotation the actor's rotation.
+	 * @param ownerId the id of the entity that owns the actor.
 	 */
-	public CreateActor(Class<? extends Entity> type, UUID id, float x, float y, float rotation, UUID ownerId)
-	{
+	public CreateActor(Class<? extends Entity> type, UUID id, float x, float y, float rotation, UUID ownerId) {
 		super(type, id, x, y, rotation);
 		this.ownerId = ownerId;
 	}
 
 	@Override
-	protected void execute(World world)
-	{
+	protected void execute(World world) {
 		super.execute(world);
 
-		try
-		{
+		try {
 			ActorEntity ownable = (ActorEntity) world.getEntity(getId());
 			ActorEntity owner = (ActorEntity) world.getEntity(ownerId);
 			ownable.setOwner(owner);
-		}
-		catch (GameLogicException e)
-		{
-			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateOwnable net command: The entity was not created. ID: " + getId());
+		} catch (GameLogicException e) {
+			Logger.getLogger(Config.AppProgramaticTitle)
+					.severe("CreateActor net command: The entity was not created. ID: " + getId());
 		}
 	}
 }

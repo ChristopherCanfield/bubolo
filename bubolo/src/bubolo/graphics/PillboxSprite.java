@@ -106,7 +106,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				setDrawLayer(carriedOrBuildingDrawLayer);
 			}
 			break;
-		};
+		}
 		return false;
 	}
 
