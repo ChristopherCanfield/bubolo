@@ -76,7 +76,11 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 		refillSuppliesAndHealth();
 
 		refuelingTank = false;
-		for (Tank tank : world.getTanks()) {
+		/* @NOTE (cdc 2021-05-25): Switched to the index-based for loop, rather than for-each (my preference), b/c the
+		 * 			iterator for the UnmodifiableList was creating a weirdly large amount of garbage according to the profiler. */
+		var tanks = world.getTanks();
+		for (int i = 0; i < tanks.size(); i++) {
+			var tank = tanks.get(i);
 			if (overlapsEntity(tank)) {
 				if (refuelTank(tank)) {
 					refuelingTank = true;

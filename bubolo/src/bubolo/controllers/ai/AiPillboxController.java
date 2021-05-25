@@ -78,7 +78,11 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 		Tank target = null;
 		double targetDistance = Integer.MAX_VALUE;
 
-		for (Tank tank : world.getTanks()) {
+		/* @NOTE (cdc 2021-05-25): Switched to the index-based for loop, rather than for-each (my preference), b/c the
+		 * 			iterator for the UnmodifiableList was creating a weirdly large amount of garbage according to the profiler. */
+		var tanks = world.getTanks();
+		for (int i = 0; i < tanks.size(); i++) {
+			var tank = tanks.get(i);
 			// Don't attack the owner's tank, or hidden tanks.
 			if (!tank.equals(pillbox.owner()) && !tank.isHidden()) {
 				if (targetInRange(tank)) {
