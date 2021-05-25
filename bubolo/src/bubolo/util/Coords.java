@@ -43,6 +43,20 @@ public abstract class Coords {
 	}
 
 	/**
+	 * Converts world coordinates to camera coordinates. This overload fills a passed-in instantiated Vector2, rather
+	 * than returning a new Vector2.
+	 *
+	 * @param camera the game's camera.
+	 * @param worldX the world x coordinate to convert.
+	 * @param worldY the world y coordinate to convert.
+	 * @param cameraCoordinatesOut an instantiated Vector2 that will be filled with the camera coordinates.
+	 * @return reference to cameraCoordinatesOut.
+	 */
+	public static Vector2 worldToCamera(Camera camera, float worldX, float worldY, Vector2 cameraCoordinatesOut) {
+		return cameraCoordinatesOut.set(worldX - camera.position.x, worldY - camera.position.y);
+	}
+
+	/**
 	 * Converts camera coordinates to world coordinates.
 	 *
 	 * @param camera the game's camera.

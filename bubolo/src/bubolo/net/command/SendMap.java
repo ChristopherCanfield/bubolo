@@ -16,29 +16,28 @@ import bubolo.world.GameWorld;
 import bubolo.world.World;
 
 /**
- * Network command that is used to send basic information, including type, position, and rotation, of all
- * entities in the world to other players.
+ * Network command that is used to send basic information, including type, position, and rotation, of all entities in
+ * the world to other players.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class SendMap extends NetworkCommand
-{
+public class SendMap extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final List<EntitySerializationData> entities = new ArrayList<>();
 
-	private final int rows;
-	private final int columns;
+	private final byte rows;
+	private final byte columns;
 
 	/**
 	 * Constructs a Send Map network command.
 	 *
 	 * @param world the game world, after all map entities have been added.
 	 */
-	public SendMap(World world)
-	{
-		this.rows = world.getTileRows();
-		this.columns = world.getTileColumns();
+	public SendMap(World world) {
+		this.rows = (byte) world.getTileRows();
+		this.columns = (byte) world.getTileColumns();
 
 		var worldEntities = world.getEntities();
 		assert !worldEntities.isEmpty() : "Empty world passed to SendMap network command.";
@@ -50,13 +49,13 @@ public class SendMap extends NetworkCommand
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
-	{
-		World world = new GameWorld(columns, rows);
+	public void execute(WorldOwner worldOwner) {
+		World world = new GameWorld(Byte.toUnsignedInt(columns), Byte.toUnsignedInt(rows));
 		worldOwner.setWorld(world);
 
 		for (var entityData : entities) {
-			var args = new Entity.ConstructionArgs(entityData.id(), entityData.x(), entityData.y(), entityData.rotation());
+			var args = new Entity.ConstructionArgs(entityData.id(), entityData.x(), entityData.y(),
+					entityData.rotation());
 			world.addEntity(entityData.type(), args);
 		}
 
@@ -65,5 +64,7 @@ public class SendMap extends NetworkCommand
 	}
 
 	// Minimal data record for sending map data to remote players.
-	private static record EntitySerializationData(Class<? extends Entity> type, UUID id, float x, float y, float rotation) implements Serializable {}
+	private static record EntitySerializationData(Class<? extends Entity> type, UUID id, float x, float y,
+			float rotation) implements Serializable {
+	}
 }

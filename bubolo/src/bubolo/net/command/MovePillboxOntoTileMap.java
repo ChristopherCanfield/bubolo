@@ -2,6 +2,7 @@ package bubolo.net.command;
 
 import java.util.UUID;
 
+import bubolo.Config;
 import bubolo.net.NetworkCommand;
 import bubolo.world.Pillbox;
 import bubolo.world.World;
@@ -15,18 +16,21 @@ public class MovePillboxOntoTileMap extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
-	private final int column;
-	private final int row;
+	private final byte column;
+	private final byte row;
 
 	public MovePillboxOntoTileMap(Pillbox pillbox, int column, int row) {
+		assert column <= Config.MaxWorldColumns;
+		assert row <= Config.MaxWorldRows;
+
 		this.id = pillbox.id();
-		this.column = column;
-		this.row = row;
+		this.column = (byte) column;
+		this.row = (byte) row;
 	}
 
 	@Override
 	protected void execute(World world) {
 		var pillbox = (Pillbox) world.getEntity(id);
-		world.movePillboxOntoTileMap(pillbox, column, row);
+		world.movePillboxOntoTileMap(pillbox, Byte.toUnsignedInt(column), Byte.toUnsignedInt(row));
 	}
 }

@@ -31,9 +31,9 @@ import bubolo.world.World;
  * The Game: this is where the subsystems are initialized, as well as where the main game loop is.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class BuboloApplication extends AbstractGameApplication
-{
+public class BuboloApplication extends AbstractGameApplication {
 	private static Logger logger = Logger.getLogger(Config.AppProgramaticTitle);
 
 	private final int windowWidth;
@@ -48,9 +48,7 @@ public class BuboloApplication extends AbstractGameApplication
 	private Path mapPath = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
 
 	public enum PlayerType {
-		LocalSinglePlayer,
-		Host,
-		Client
+		LocalSinglePlayer, Host, Client
 	}
 
 	private final PlayerType playerType;
@@ -61,11 +59,10 @@ public class BuboloApplication extends AbstractGameApplication
 	 * @param windowWidth the width of the window.
 	 * @param windowHeight the height of the window.
 	 * @param playerType whether this is a local single player, network host, or network client.
-	 * @param commandLineArgs the arguments passed to the application through the command line. The first argument specifies the map
-	 * 		to use. Any additional arguments are ignored.
+	 * @param commandLineArgs the arguments passed to the application through the command line. The first argument
+	 * specifies the map to use. Any additional arguments are ignored.
 	 */
-	public BuboloApplication(int windowWidth, int windowHeight, PlayerType playerType, String[] commandLineArgs)
-	{
+	public BuboloApplication(int windowWidth, int windowHeight, PlayerType playerType, String[] commandLineArgs) {
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
 		this.playerType = playerType;
@@ -88,12 +85,11 @@ public class BuboloApplication extends AbstractGameApplication
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
 	 *
-	 * @see <a
-	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
+	 * @see <a href=
+	 * "http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
 	@Override
-	public void create()
-	{
+	public void create() {
 		initializeLogger();
 
 		graphics = new Graphics(windowWidth, windowHeight);
@@ -122,7 +118,8 @@ public class BuboloApplication extends AbstractGameApplication
 
 	private static void initializeLogger() {
 		try {
-			// TODO (cdc - 2021-03-16): This log file probably belongs in appdata and equivalent on other systems, rather than temp.
+			// TODO (cdc - 2021-03-16): This log file probably belongs in appdata and equivalent on other systems,
+			// rather than temp.
 			FileHandler fileHandler = new FileHandler("%t" + Config.AppTitle + ".log", 5_000, 3, true);
 			logger.addHandler(fileHandler);
 		} catch (SecurityException | IOException e) {
@@ -135,34 +132,25 @@ public class BuboloApplication extends AbstractGameApplication
 	/**
 	 * Called automatically by the rendering library.
 	 *
-	 * @see <a
-	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
+	 * @see <a href=
+	 * "http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
 	@Override
-	public void render()
-	{
+	public void render() {
 		try {
 			final State state = getState();
 			World world = world();
-			if (state == State.NET_GAME)
-			{
+			if (state == State.NET_GAME) {
 				graphics.draw(world);
 				world.update();
 				network.update(this);
-			}
-			else if (state == State.LOCAL_GAME)
-			{
+			} else if (state == State.LOCAL_GAME) {
 				graphics.draw(world);
 				world.update();
-			}
-			else if (state == State.NET_GAME_LOBBY ||
-					state == State.NET_GAME_STARTING)
-			{
+			} else if (state == State.NET_GAME_LOBBY || state == State.NET_GAME_STARTING) {
 				graphics.draw(screen);
 				network.update(this);
-			}
-			else if (state == State.NET_GAME_SETUP)
-			{
+			} else if (state == State.NET_GAME_SETUP) {
 				graphics.draw(screen);
 			}
 		} catch (Exception e) {
@@ -171,8 +159,7 @@ public class BuboloApplication extends AbstractGameApplication
 	}
 
 	@Override
-	protected void onStateChanged()
-	{
+	protected void onStateChanged() {
 		World world = world();
 
 		var state = getState();
@@ -180,8 +167,8 @@ public class BuboloApplication extends AbstractGameApplication
 		case NET_GAME: {
 			screen.dispose();
 
-			Audio.initialize(world.getWidth(), world.getHeight(),
-					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
+			Audio.initialize(world.getWidth(), world.getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
+					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			var spawn = world.getRandomSpawn();
 			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
@@ -193,14 +180,15 @@ public class BuboloApplication extends AbstractGameApplication
 			network.send(new CreateTank(tank));
 
 			setReady(true);
-		} break;
+			break;
+		}
 		case LOCAL_GAME: {
 			if (screen != null) {
 				screen.dispose();
 			}
 
-			Audio.initialize(world.getWidth(), world.getHeight(),
-					TargetWindowWidth * DefaultPixelsPerWorldUnit, TargetWindowHeight * DefaultPixelsPerWorldUnit);
+			Audio.initialize(world.getWidth(), world.getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
+					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			var spawn = world.getRandomSpawn();
 			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
@@ -211,7 +199,8 @@ public class BuboloApplication extends AbstractGameApplication
 			network.startDebug();
 
 			setReady(true);
-		} break;
+			break;
+		}
 		case NET_GAME_LOBBY:
 			screen = new LobbyScreen(this, world);
 			break;
@@ -239,17 +228,19 @@ public class BuboloApplication extends AbstractGameApplication
 	/**
 	 * Called when the application is destroyed.
 	 *
-	 * @see <a
-	 *      href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
+	 * @see <a href=
+	 * "http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a>
 	 */
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		Audio.dispose();
 		NetworkSystem.getInstance().dispose();
 		Graphics.dispose();
-		/* TODO (2021-04-13): After updating to lwjgl3, the process remains in the background even after the window is closed and
-		 * this dispose method is called. I'm not sure why that is. System.exit is a temporary hack until I can look into it further. */
+		/*
+		 * TODO (2021-04-13): After updating to lwjgl3, the process remains in the background even after the window is
+		 * closed and this dispose method is called. I'm not sure why that is. System.exit is a temporary hack until I
+		 * can look into it further.
+		 */
 		System.exit(0);
 	}
 }

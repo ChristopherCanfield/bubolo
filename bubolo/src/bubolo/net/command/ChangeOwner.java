@@ -25,7 +25,6 @@ public class ChangeOwner extends NetworkCommand
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
-
 	private final UUID ownerId;
 
 	/**

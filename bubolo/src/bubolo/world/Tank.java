@@ -17,7 +17,7 @@ import bubolo.audio.SfxRateLimiter;
 import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
-import bubolo.net.command.CreateBullet;
+import bubolo.net.command.CreateActor;
 import bubolo.net.command.CreateEntity;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
@@ -366,7 +366,7 @@ public class Tank extends ActorEntity implements Damageable {
 			ammoCount--;
 
 			Network net = NetworkSystem.getInstance();
-			net.send(new CreateBullet(bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
+			net.send(new CreateActor(Bullet.class, bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
 
 			return bullet;
 		} else {
@@ -806,6 +806,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 			var args = new Entity.ConstructionArgs(Entity.nextId(), mineX, mineY, 0);
 			Mine mine = world.addEntity(Mine.class, args);
+			mine.setOwner(this);
 
 			mineCount--;
 
