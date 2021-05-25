@@ -116,7 +116,7 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	 * @return Whether this object is owned by the local player.
 	 */
 	public boolean isOwnedByLocalPlayer() {
-		return owner == null ? false : owner.isOwnedByLocalPlayer();
+		return (owner == null) ? false : owner.isOwnedByLocalPlayer();
 	}
 
 	/**

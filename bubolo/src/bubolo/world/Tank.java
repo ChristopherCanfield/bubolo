@@ -806,6 +806,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 			var args = new Entity.ConstructionArgs(Entity.nextId(), mineX, mineY, 0);
 			Mine mine = world.addEntity(Mine.class, args);
+			mine.setOwner(this);
 
 			mineCount--;
 

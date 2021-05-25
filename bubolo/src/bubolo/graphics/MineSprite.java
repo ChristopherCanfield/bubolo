@@ -18,10 +18,10 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	private int colorId = ColorSets.BLUE;
 
 	// An array of all frames held in the texture sheet, by ROW and COLUMN.
-	private TextureRegion[][] allFrames;
+	private final TextureRegion[][] allFrames;
 
 	// The texture regions to be used for the idle animation.
-	private TextureRegion[][] idleFrames;
+	private final TextureRegion[][] idleFrames;
 
 	// The number of milliseconds per frame.
 	private static final long millisPerFrame = 150;
