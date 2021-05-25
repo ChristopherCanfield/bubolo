@@ -35,8 +35,13 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 	}
 
 	@Override
-	public float speedModifier() {
-		return terrainTravelSpeed.speedModifier;
+	public float accelerationModifier() {
+		return terrainTravelSpeed.accelerationModifier;
+	}
+
+	@Override
+	public float maxSpeedModifier() {
+		return terrainTravelSpeed.maxSpeedModifier;
 	}
 
 	@Override

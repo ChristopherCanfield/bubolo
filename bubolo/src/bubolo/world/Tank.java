@@ -36,7 +36,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private String playerName;
 
 	// Max speed in world units per tick.
-	private static final float maxSpeed = 3.0092f;
+	private static final float maxSpeed = 2.77779f; // 2.77779 WU per tick is about 90 Kph.
 
 	// The maximum speed after adjusting for the underlying terrain & terrain improvement.
 	private float adjustedMaxSpeed = maxSpeed;
@@ -45,7 +45,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private float speed = 0;
 
 	// The rate of acceleration, in world units per tick.
-	private static final float accelerationRate = 0.01f;
+	private static final float accelerationRate = 0.0075f;
 
 	// The acceleration rate after adjusting for the underlying terrain and terrain improvement.
 	private float adjustedAccelerationRate = accelerationRate;
@@ -593,13 +593,13 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private void updateSpeedForTerrain(World world) {
 		var terrainImprovement = world.getTerrainImprovement(tileColumn(), tileRow());
-		if (terrainImprovement != null && terrainImprovement.speedModifier() > 0) {
-			adjustedMaxSpeed = maxSpeed * terrainImprovement.speedModifier();
-			adjustedAccelerationRate = accelerationRate * terrainImprovement.speedModifier();
+		if (terrainImprovement != null && terrainImprovement.maxSpeedModifier() > 0) {
+			adjustedMaxSpeed = maxSpeed * terrainImprovement.maxSpeedModifier();
+			adjustedAccelerationRate = accelerationRate * terrainImprovement.accelerationModifier();
 		} else {
 			var terrain = world.getTerrain(tileColumn(), tileRow());
-			adjustedMaxSpeed = maxSpeed * terrain.speedModifier();
-			adjustedAccelerationRate = accelerationRate * terrain.speedModifier();
+			adjustedMaxSpeed = maxSpeed * terrain.maxSpeedModifier();
+			adjustedAccelerationRate = accelerationRate * terrain.accelerationModifier();
 		}
 		clampSpeed();
 	}

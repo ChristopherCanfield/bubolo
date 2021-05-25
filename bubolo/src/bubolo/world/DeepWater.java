@@ -24,7 +24,7 @@ public class DeepWater extends Terrain implements EdgeMatchable {
 	private static final Class<?>[] matchingTypes = new Class[] { Water.class };
 
 	protected DeepWater(ConstructionArgs args, World world) {
-		super(args, width, height, terrainTravelSpeed.speedModifier);
+		super(args, width, height, terrainTravelSpeed);
 	}
 
 	@Override

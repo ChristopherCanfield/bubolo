@@ -24,7 +24,7 @@ public class Water extends Terrain implements EdgeMatchable {
 	private static final int height = 32;
 
 	protected Water(ConstructionArgs args, World world) {
-		super(args, width, height, terrainTravelSpeed.speedModifier);
+		super(args, width, height, terrainTravelSpeed);
 	}
 
 	@Override

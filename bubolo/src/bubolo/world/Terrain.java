@@ -7,17 +7,21 @@ package bubolo.world;
  */
 public class Terrain extends StaticEntity {
 
-	private final float speedModifier;
+	private final TerrainTravelSpeed terrainTravelSpeed;
 	private TerrainImprovement improvement;
 
-	protected Terrain(ConstructionArgs args, int width, int height, float speedModifier) {
+	protected Terrain(ConstructionArgs args, int width, int height, TerrainTravelSpeed terrainTravelSpeed) {
 		super(args, width, height);
 
-		this.speedModifier = speedModifier;
+		this.terrainTravelSpeed = terrainTravelSpeed;
 	}
 
-	public float speedModifier() {
-		return speedModifier;
+	public float accelerationModifier() {
+		return terrainTravelSpeed.accelerationModifier;
+	}
+
+	public float maxSpeedModifier() {
+		return terrainTravelSpeed.maxSpeedModifier;
 	}
 
 	public TerrainImprovement improvement() {

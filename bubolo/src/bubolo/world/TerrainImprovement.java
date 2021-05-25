@@ -15,12 +15,23 @@ public interface TerrainImprovement {
 
 	/**
 	 * The terrain improvement's impact on tank movement speed, if any. If non-zero, this overrides the underlying
-	 * terrain's movement speed impacts. If this terrain does not impact movement speed, leave it at the default value
-	 * of zero.
+	 * terrain's movement speed impacts. If this terrain improvement does not impact movement speed, leave it at
+	 * the default value of zero.
 	 *
-	 * @return the terrain improvement's impact on tank movement speed, or zero if this does not affect tank movement speed.
+	 * @return the terrain improvement's impact on the tank's max movement speed, or zero if this does not affect tank movement speed.
 	 */
-	default float speedModifier() {
+	default float accelerationModifier() {
+		return 0;
+	}
+
+	/**
+	 * The terrain improvement's impact on the tank's acceleration, if any. If non-zero, this overrides the underlying
+	 * terrain's movement speed impacts. If this terrain improvement does not impact movement speed, leave it at
+	 * the default value of zero.
+	 *
+	 * @return the terrain improvement's impact on tank acceleration, or zero if this does not affect tank movement speed.
+	 */
+	default float maxSpeedModifier() {
 		return 0;
 	}
 

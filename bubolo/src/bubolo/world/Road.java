@@ -28,7 +28,7 @@ public class Road extends Terrain implements EdgeMatchable {
 	 * @param world reference to the game world.
 	 */
 	protected Road(ConstructionArgs args, World world) {
-		super(args, width, height, terrainTravelSpeed.speedModifier);
+		super(args, width, height, terrainTravelSpeed);
 	}
 
 	@Override

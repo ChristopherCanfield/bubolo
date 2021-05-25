@@ -57,7 +57,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	private static final int width = 32;
 	private static final int height = 32;
 
-	private static final float speedModifier = 0.75f;
+	private static final TerrainTravelSpeed terrainTravelSpeed = TerrainTravelSpeed.VerySlow;
 
 	/**
 	 * Constructs a new Base.
@@ -260,8 +260,13 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	}
 
 	@Override
-	public float speedModifier() {
-		return speedModifier;
+	public float accelerationModifier() {
+		return terrainTravelSpeed.accelerationModifier;
+	}
+
+	@Override
+	public float maxSpeedModifier() {
+		return terrainTravelSpeed.maxSpeedModifier;
 	}
 
 	@Override
