@@ -86,6 +86,8 @@ abstract class Sprite implements Drawable {
 	 */
 	abstract void draw(Graphics graphics);
 
+	private static final Vector2 cameraCoordinatesTempVar = new Vector2();
+
 	/**
 	 * Draws the texture to the screen. batch.begin() must be called before calling this method.
 	 *
@@ -94,7 +96,7 @@ abstract class Sprite implements Drawable {
 	 */
 	protected final void drawTexture(Graphics graphics, Texture texture) {
 		Vector2 origin = getOrigin(texture.getWidth(), texture.getHeight());
-		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), getX() - origin.x, getY() - origin.y);
+		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), getX() - origin.x, getY() - origin.y, cameraCoordinatesTempVar);
 
 		var batch = graphics.batch();
 		batch.setColor(color);
@@ -145,7 +147,7 @@ abstract class Sprite implements Drawable {
 	 */
 	protected final void drawTexture(Graphics graphics, TextureRegion texture, float scale, float worldX, float worldY,
 			float originX, float originY, float rotationRadians) {
-		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), getX() - originX, getY() - originY);
+		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), getX() - originX, getY() - originY, cameraCoordinatesTempVar);
 
 		var batch = graphics.batch();
 		batch.setColor(color);
