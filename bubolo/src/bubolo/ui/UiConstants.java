@@ -8,13 +8,12 @@ import javax.swing.ImageIcon;
 
 import bubolo.audio.Audio;
 
-
 /**
  * User interface constants.
- * @author BU CS673 - Clone Productions
+ *
+ * @author Christopher D. Canfield
  */
-public abstract class UiConstants
-{
+public abstract class UiConstants {
 	/**
 	 * File path where UI icons are stored.
 	 */

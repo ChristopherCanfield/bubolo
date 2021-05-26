@@ -16,7 +16,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	private int frameIndex;
 
 	// An index representing which row of the sprite sheet to use, based on color set.
-	private int colorId = ColorSets.BLUE;
+	private int colorId = SpriteColorSet.BLUE;
 
 	// An array of all frames held in the texture sheet, by ROW and COLUMN.
 	private final TextureRegion[][] allFrames;
@@ -67,11 +67,11 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable
 	private void updateColorSet()
 	{
 		if (!getEntity().hasOwner()) {
-			colorId = ColorSets.NEUTRAL;
+			colorId = SpriteColorSet.NEUTRAL;
 		} else if (getEntity().isOwnedByLocalPlayer()) {
-			colorId = ColorSets.BLUE;
+			colorId = SpriteColorSet.BLUE;
 		} else {
-			colorId = ColorSets.RED;
+			colorId = SpriteColorSet.RED;
 		}
 	}
 

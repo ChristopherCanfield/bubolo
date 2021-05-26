@@ -12,13 +12,12 @@ import bubolo.world.Tank;
 import bubolo.world.World;
 
 /**
- * A controller for pillboxes. This controller searches for a target, and fires when the pillbox
- * is ready.
+ * A controller for pillboxes. This controller searches for a target, and fires when the pillbox is ready.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class AiPillboxController extends ActorEntityController<Pillbox>
-{
+public class AiPillboxController extends ActorEntityController<Pillbox> {
 	/**
 	 * Constructs an AI Pillbox controller.
 	 *
@@ -29,8 +28,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	}
 
 	@Override
-	public void update(World world)
-	{
+	public void update(World world) {
 		// Don't process updates if the pillbox is being moved.
 		if (parent().buildStatus() == BuildStatus.Built) {
 			// Only fire if cannon is ready.
@@ -71,15 +69,16 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	 *
 	 * @return target always the closest tank that is within range, or null if no tank is within range.
 	 */
-	private Tank getTarget(World world)
-	{
+	private Tank getTarget(World world) {
 		var pillbox = parent();
 
 		Tank target = null;
 		double targetDistance = Integer.MAX_VALUE;
 
-		/* @NOTE (cdc 2021-05-25): Switched to the index-based for loop, rather than for-each (my preference), b/c the
-		 * 			iterator for the UnmodifiableList was creating a weirdly large amount of garbage according to the profiler. */
+		/*
+		 * @NOTE (cdc 2021-05-25): Switched to the index-based for loop, rather than for-each (my preference), b/c the iterator
+		 * for the UnmodifiableList was creating a weirdly large amount of garbage according to the profiler.
+		 */
 		var tanks = world.getTanks();
 		for (int i = 0; i < tanks.size(); i++) {
 			var tank = tanks.get(i);
@@ -104,12 +103,10 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	/**
 	 * determine if the target tank is within range of the pillbox
 	 *
-	 * @param target
-	 *            the tank the pillbox is targeting
+	 * @param target the tank the pillbox is targeting
 	 * @return targetInRange returns true if the target is within range of this pillbox
 	 */
-	private boolean targetInRange(Tank target)
-	{
+	private boolean targetInRange(Tank target) {
 		double xdistance = Math.abs(parent().x() - target.x());
 		double ydistance = Math.abs(parent().y() - target.y());
 		double distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
@@ -123,8 +120,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	 * @param target the Tank that the pillbox will target.
 	 * @return the angle between this pillbox and the target.
 	 */
-	private float getTargetDirection(Tank target)
-	{
+	private float getTargetDirection(Tank target) {
 		double xvector = target.x() - parent().x();
 		double yvector = target.y() - parent().y();
 		float direction = (float) Math.atan2(yvector, xvector);
@@ -138,14 +134,12 @@ public class AiPillboxController extends ActorEntityController<Pillbox>
 	 * @param rotation the pillbox cannon's rotation.
 	 * @param world reference to the game world.
 	 */
-	private void fire(float rotation, World world)
-	{
+	private void fire(float rotation, World world) {
 		parent().aimCannon(rotation);
 		parent().fireCannon(world);
 	}
 
-	private static void sendNetUpdate(Pillbox pillbox)
-	{
+	private static void sendNetUpdate(Pillbox pillbox) {
 		Network net = NetworkSystem.getInstance();
 		net.send(new ChangeOwner(pillbox));
 	}

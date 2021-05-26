@@ -19,9 +19,9 @@ import bubolo.world.World;
  * Changes the owner of an actor entity.
  *
  * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class ChangeOwner extends NetworkCommand
-{
+public class ChangeOwner extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -32,26 +32,21 @@ public class ChangeOwner extends NetworkCommand
 	 *
 	 * @param ownable the actor entity entity to update.
 	 */
-	public ChangeOwner(ActorEntity ownable)
-	{
+	public ChangeOwner(ActorEntity ownable) {
 		this.id = ownable.id();
 		this.ownerId = (ownable.owner() != null) ? ownable.owner().id() : null;
 	}
 
 	@Override
-	protected void execute(World world)
-	{
+	protected void execute(World world) {
 		try {
 			ActorEntity ownable = (ActorEntity) world.getEntity(id);
-			if (ownerId != null) {
-				ActorEntity owner = (ActorEntity) world.getEntity(ownerId);
-				ownable.setOwner(owner);
-			} else {
-				ownable.setOwner(null);
-			}
+			ActorEntity owner = (ActorEntity) world.getEntityOrNull(ownerId);
+			ownable.setOwner(owner);
 
 		} catch (GameLogicException e) {
-			Logger.getLogger(Config.AppProgramaticTitle).warning("UpdateOwnable net command: Unable to find ownable entity. ID: " + id);
+			Logger.getLogger(Config.AppProgramaticTitle)
+					.warning("UpdateOwnable net command: Unable to find ownable entity. ID: " + id);
 		}
 	}
 }

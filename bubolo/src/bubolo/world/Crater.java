@@ -81,10 +81,17 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 		return flooding;
 	}
 
+	/**
+	 * Starts flooding the crater, if it is not already flooding.
+	 *
+	 * @param world reference to the game world.
+	 */
 	public void flood(World world) {
-		flooding = true;
-		world.timer().scheduleSeconds(FloodTimeSeconds, w -> {
-			replaceWithWater(world);
-		});
+		if (!flooding) {
+			flooding = true;
+			world.timer().scheduleSeconds(FloodTimeSeconds, w -> {
+				replaceWithWater(world);
+			});
+		}
 	}
 }

@@ -21,7 +21,7 @@ import bubolo.world.World;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class CreateTank extends CreateEntity {
+public class CreateTank extends CreateActor {
 	private static final long serialVersionUID = 1L;
 
 	private final String playerName;
@@ -30,7 +30,7 @@ public class CreateTank extends CreateEntity {
 	 * @param tank reference to the tank that should be created on network players' computers.
 	 */
 	public CreateTank(Tank tank) {
-		super(Tank.class, tank.id(), tank.x(), tank.y(), tank.rotation(), new ControllerFactory() {
+		super(Tank.class, tank.id(), tank.x(), tank.y(), tank.rotation(), null, new ControllerFactory() {
 			private static final long serialVersionUID = 1L;
 
 			@Override

@@ -31,9 +31,18 @@ public class CreateEntity extends NetworkCommand {
 	private final short x;
 	private final short y;
 
-	private final float rotation;
-
 	private final ControllerFactory factory;
+
+	/**
+	 * Constructs a CreateEntity object using Entity construction args. The x and y positions are truncated to unsigned shorts,
+	 * and the rotation is set to zero.
+	 *
+	 * @param type the entity's class.
+	 * @param constructionArgs the entity's construction arguments.
+	 */
+	public CreateEntity(Class<? extends Entity> type, Entity.ConstructionArgs constructionArgs) {
+		this(type, constructionArgs.id(), (short) constructionArgs.x(), (short) constructionArgs.y());
+	}
 
 	/**
 	 * Constructs a CreateEntity object.
@@ -42,15 +51,9 @@ public class CreateEntity extends NetworkCommand {
 	 * @param id the entity's unique id.
 	 * @param x the entity's x position.
 	 * @param y the entity's y position.
-	 * @param rotation the entity's rotation.
 	 */
-	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation) {
-		this.type = type;
-		this.id = id;
-		this.x = (short) x;
-		this.y = (short) y;
-		this.rotation = rotation;
-		this.factory = null;
+	public CreateEntity(Class<? extends Entity> type, UUID id, short x, short y) {
+		this(type, id, x, y, null);
 	}
 
 	/**
@@ -60,22 +63,20 @@ public class CreateEntity extends NetworkCommand {
 	 * @param id the entity's unique id.
 	 * @param x the entity's x position.
 	 * @param y the entity's y position.
-	 * @param rotation the entity's rotation.
 	 * @param factory [optional] factory for adding custom controllers to this entity. Can be null.
 	 */
-	public CreateEntity(Class<? extends Entity> type, UUID id, float x, float y, float rotation, @Nullable ControllerFactory factory) {
+	public CreateEntity(Class<? extends Entity> type, UUID id, short x, short y, @Nullable ControllerFactory factory) {
 		this.type = type;
 		this.id = id;
-		this.x = (short) x;
-		this.y = (short) y;
-		this.rotation = rotation;
+		this.x = x;
+		this.y = y;
 		this.factory = factory;
 	}
 
 	@Override
 	protected void execute(World world) {
 		try {
-			var args = new Entity.ConstructionArgs(id, Short.toUnsignedInt(x), Short.toUnsignedInt(y), rotation);
+			var args = new Entity.ConstructionArgs(id, Short.toUnsignedInt(x), Short.toUnsignedInt(y), 0);
 			world.addEntity(type, args, factory);
 		} catch (GameLogicException e) {
 			Logger.getLogger(Config.AppProgramaticTitle).severe("CreateEntity net command: Entity was not created. ID: " + id);

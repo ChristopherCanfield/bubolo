@@ -17,6 +17,7 @@ public class MovePillboxOffTileMap extends NetworkCommand {
 	private final UUID id;
 
 	public MovePillboxOffTileMap(Pillbox pillbox) {
+		assert pillbox.isOwnedByLocalPlayer();
 		this.id = pillbox.id();
 	}
 

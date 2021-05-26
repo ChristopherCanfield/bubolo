@@ -19,7 +19,6 @@ import bubolo.controllers.Controller;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateActor;
-import bubolo.net.command.CreateEntity;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
 import bubolo.util.Nullable;
@@ -817,7 +816,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mineCount--;
 
 			Network net = NetworkSystem.getInstance();
-			net.send(new CreateEntity(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation()));
+			net.send(new CreateActor(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation(), id()));
 
 			return mine;
 		}

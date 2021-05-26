@@ -40,9 +40,6 @@ public class StartGame extends NetworkCommand
 	@Override
 	public void execute(WorldOwner worldOwner)
 	{
-		// Only the server has a Tree controller, to eliminate the risk of synchronization issues.
-		//worldOwner.world().removeController(AiTreeController.class);
-
 		// Build the map on the client.
 		sendMapCommand.execute(worldOwner);
 

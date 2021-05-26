@@ -11,10 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 /**
  * Base class for ui screens that are drawn in the LWJGL window.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public abstract class Screen
-{
+public abstract class Screen {
 	/** The scene2d.ui stage. **/
 	protected final Stage stage;
 
@@ -24,14 +23,13 @@ public abstract class Screen
 	/**
 	 * Default constructor.
 	 */
-	protected Screen()
-	{
+	protected Screen() {
 		stage = new Stage();
 		table = new Table();
 
 		table.setFillParent(true);
 		table.top();
-	    stage.addActor(table);
+		stage.addActor(table);
 
 		Gdx.input.setInputProcessor(stage);
 	}
@@ -39,19 +37,17 @@ public abstract class Screen
 	/**
 	 * Updates and draws the screen.
 	 */
-	public final void update()
-	{
+	public final void update() {
 		update(false);
 	}
 
 	/**
 	 * Updates and draws the screen.
+	 *
 	 * @param debug true if the screen should be drawn in debug mode.
 	 */
-	public final void update(boolean debug)
-	{
-		if (debug)
-		{
+	public final void update(boolean debug) {
+		if (debug) {
 			table.debug();
 		}
 
@@ -63,8 +59,7 @@ public abstract class Screen
 	/**
 	 * Called once per tick. Child classes can override this if necessary.
 	 */
-	protected void onUpdate()
-	{
+	protected void onUpdate() {
 	}
 
 	public void resize(int width, int height) {

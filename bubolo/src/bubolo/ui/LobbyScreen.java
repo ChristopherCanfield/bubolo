@@ -30,10 +30,9 @@ import bubolo.world.World;
 /**
  * The network game lobby, which allows users to message each other before starting the game.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class LobbyScreen extends Screen implements NetworkObserver
-{
+public class LobbyScreen extends Screen implements NetworkObserver {
 	private Label messageHistory;
 	private TextButton sendMessageButton;
 	private TextField sendMessageField;
@@ -56,18 +55,14 @@ public class LobbyScreen extends Screen implements NetworkObserver
 	/**
 	 * Constructs the network game lobby.
 	 *
-	 * @param app
-	 *            reference to the Game Application.
-	 * @param world
-	 *            reference to the game world.
+	 * @param app reference to the Game Application.
+	 * @param world reference to the game world.
 	 */
-	public LobbyScreen(GameApplication app, World world)
-	{
+	public LobbyScreen(GameApplication app, World world) {
 		this.app = app;
 		this.world = world;
 
-		TextureAtlas atlas = new TextureAtlas(
-				new FileHandle(UiConstants.UI_PATH + "uiskin.atlas"));
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "uiskin.atlas"));
 		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "uiskin.json"), atlas);
 
 		createMessageHistoryBox(skin);
@@ -79,11 +74,8 @@ public class LobbyScreen extends Screen implements NetworkObserver
 		messageHistoryReceivedFromServer = net.isServer();
 	}
 
-	private void createMessageHistoryBox(Skin skin)
-	{
-		table.row().colspan(3)
-				.width(Gdx.graphics.getWidth() - 20.f)
-				.height(Gdx.graphics.getHeight() - 100.f);
+	private void createMessageHistoryBox(Skin skin) {
+		table.row().colspan(3).width(Gdx.graphics.getWidth() - 20.f).height(Gdx.graphics.getHeight() - 100.f);
 
 		messageHistory = new Label("", skin);
 		messageHistory.setWrap(true);
@@ -93,8 +85,7 @@ public class LobbyScreen extends Screen implements NetworkObserver
 		table.add(scrollpane).expand();
 	}
 
-	private void createSendMessageRow(Skin skin)
-	{
+	private void createSendMessageRow(Skin skin) {
 		table.row().padBottom(15.f);
 
 		final Network net = NetworkSystem.getInstance();
@@ -103,8 +94,7 @@ public class LobbyScreen extends Screen implements NetworkObserver
 
 		sendMessageButton.addListener(new ClickListener() {
 			@Override
-			public void clicked(InputEvent event, float x, float y)
-			{
+			public void clicked(InputEvent event, float x, float y) {
 				sendMessage();
 			}
 		});
@@ -112,41 +102,32 @@ public class LobbyScreen extends Screen implements NetworkObserver
 		table.add(sendMessageButton).expandX().width(100.f);
 
 		sendMessageField = new TextField("", skin);
-		final float width = net.isServer() ? Gdx.graphics.getWidth() - 250.f :
-				Gdx.graphics.getWidth() - 150.f;
+		final float width = net.isServer() ? Gdx.graphics.getWidth() - 250.f : Gdx.graphics.getWidth() - 150.f;
 		table.add(sendMessageField).expandX().width(width);
 
 		stage.addListener(new InputListener() {
 			@Override
-			public boolean keyUp(InputEvent event, int keycode)
-			{
-				if (keycode == Input.Keys.ENTER)
-				{
+			public boolean keyUp(InputEvent event, int keycode) {
+				if (keycode == Input.Keys.ENTER) {
 					sendMessage();
 				}
 				return false;
 			}
 		});
 
-		if (net.isServer())
-		{
+		if (net.isServer()) {
 			startGameButton = new TextButton("Start", skin);
 			table.add(startGameButton).expandX().width(100.f);
 
 			startGameButton.addListener(new ClickListener() {
 				@Override
-				public void clicked(InputEvent event, float x, float y)
-				{
-					if (clientCount > 0)
-					{
-						if (!startingGame)
-						{
+				public void clicked(InputEvent event, float x, float y) {
+					if (clientCount > 0) {
+						if (!startingGame) {
 							startingGame = true;
 							net.startGame(world);
 						}
-					}
-					else
-					{
+					} else {
 						appendToMessageHistory(messageHistory, "Unable to start game: No clients are connected.");
 					}
 				}
@@ -155,32 +136,24 @@ public class LobbyScreen extends Screen implements NetworkObserver
 	}
 
 	@Override
-	protected void onUpdate()
-	{
-		if (app.getState() == State.NET_GAME_STARTING)
-		{
+	protected void onUpdate() {
+		if (app.getState() == State.NET_GAME_STARTING) {
 			final long currentTime = System.currentTimeMillis();
 			final long secondsRemaining = (startTime - currentTime) / 1000L;
 
-			if (currentTime < startTime)
-			{
-				if (secondsRemaining < lastSecondsRemaining)
-				{
+			if (currentTime < startTime) {
+				if (secondsRemaining < lastSecondsRemaining) {
 					appendToMessageHistory(messageHistory, secondsRemaining + "...");
 					lastSecondsRemaining = secondsRemaining;
 				}
-			}
-			else
-			{
+			} else {
 				app.setState(State.NET_GAME);
 			}
 		}
 	}
 
-	private void sendMessage()
-	{
-		if (!sendMessageField.getText().isEmpty())
-		{
+	private void sendMessage() {
+		if (!sendMessageField.getText().isEmpty()) {
 			Network net = NetworkSystem.getInstance();
 			net.send(new SendMessage(sendMessageField.getText()));
 			appendToMessageHistory(messageHistory, net.getPlayerName() + ": " + sendMessageField.getText());
@@ -189,14 +162,12 @@ public class LobbyScreen extends Screen implements NetworkObserver
 	}
 
 	@Override
-	public void onConnect(String clientName, String serverName)
-	{
+	public void onConnect(String clientName, String serverName) {
 		appendToMessageHistory(messageHistory, "Welcome " + clientName + ". The host is " + serverName + ".");
 	}
 
 	@Override
-	public void onClientConnected(String clientName)
-	{
+	public void onClientConnected(String clientName) {
 		++clientCount;
 
 		Network net = NetworkSystem.getInstance();
@@ -206,15 +177,13 @@ public class LobbyScreen extends Screen implements NetworkObserver
 	}
 
 	@Override
-	public void onClientDisconnected(String clientName)
-	{
+	public void onClientDisconnected(String clientName) {
 		--clientCount;
 		appendToMessageHistory(messageHistory, clientName + " left the game.");
 	}
 
 	@Override
-	public void onGameStart(int secondsUntilStart)
-	{
+	public void onGameStart(int secondsUntilStart) {
 		startingGame = true;
 		appendToMessageHistory(messageHistory, "Get ready: The game is starting!\n\n");
 
@@ -226,8 +195,7 @@ public class LobbyScreen extends Screen implements NetworkObserver
 	}
 
 	@Override
-	public void onMessageReceived(SendMessage.MessageType messageType, String message)
-	{
+	public void onMessageReceived(SendMessage.MessageType messageType, String message) {
 		if (!messageHistoryReceivedFromServer && messageType == MessageType.LobbyMessageHistory) {
 			messageHistoryReceivedFromServer = true;
 			if (!message.isEmpty()) {
@@ -238,14 +206,12 @@ public class LobbyScreen extends Screen implements NetworkObserver
 		}
 	}
 
-	private static void appendToMessageHistory(Label messageHistory, String message)
-	{
+	private static void appendToMessageHistory(Label messageHistory, String message) {
 		messageHistory.setText(message + "\n" + messageHistory.getText());
 	}
 
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		Network net = NetworkSystem.getInstance();
 		net.removeObserver(this);
 		Gdx.input.setInputProcessor(null);
