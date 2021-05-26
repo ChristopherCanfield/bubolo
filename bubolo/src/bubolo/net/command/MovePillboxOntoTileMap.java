@@ -20,6 +20,7 @@ public class MovePillboxOntoTileMap extends NetworkCommand {
 	private final byte row;
 
 	public MovePillboxOntoTileMap(Pillbox pillbox, int column, int row) {
+		assert pillbox.isOwnedByLocalPlayer();
 		assert column <= Config.MaxWorldColumns;
 		assert row <= Config.MaxWorldRows;
 
