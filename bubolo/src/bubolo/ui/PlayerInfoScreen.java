@@ -61,8 +61,8 @@ public class PlayerInfoScreen extends Screen {
 		this.app = app;
 		this.isClient = isClient;
 
-		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "uiskin.atlas"));
-		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "uiskin.json"), atlas);
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "skin.atlas"));
+		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "skin.json"), atlas);
 
 		createPlayerNameRow(skin);
 		createIpAddressRow(skin);
@@ -79,7 +79,7 @@ public class PlayerInfoScreen extends Screen {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
-				if (keycode == Input.Keys.ENTER) {
+				if (keycode == Input.Keys.ENTER || keycode = Input.Keys.NUMPAD_ENTER) {
 					if (textFieldsPopulated()) {
 						if (isClient) {
 							connectToServer();

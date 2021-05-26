@@ -169,9 +169,11 @@ public class Audio {
 	 * Shuts down and cleans up the audio system.
 	 */
 	public static void dispose() {
-		sources.dispose();
-		buffers.dispose();
-		ambientSounds.dispose();
+		if (initialized) {
+			sources.dispose();
+			buffers.dispose();
+			ambientSounds.dispose();
+		}
 		initialized = false;
 	}
 }

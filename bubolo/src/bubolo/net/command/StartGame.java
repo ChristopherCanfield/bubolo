@@ -7,7 +7,7 @@ import bubolo.net.WorldOwner;
 
 /**
  * Notifies the clients that the game is starting. The map must have already been sent to the client before sending
-	 * this command.
+ * this command.
  *
  * @author Christopher D. Canfield
  */
@@ -20,7 +20,7 @@ public class StartGame extends NetworkCommand {
 	 * Notifies clients that the game is starting. The map must have already been sent to the client before sending
 	 * this command.
 	 *
-	 * @param secondsUntilStart the number of seconds until the game starts.
+	 * @param secondsUntilStart the number of seconds until the game starts. Must be equal to or less than 255.
 	 */
 	public StartGame(int secondsUntilStart) {
 		assert secondsUntilStart <= (Byte.MAX_VALUE * 2 + 1);

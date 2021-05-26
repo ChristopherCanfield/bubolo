@@ -62,8 +62,8 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 		this.app = app;
 		this.world = world;
 
-		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "uiskin.atlas"));
-		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "uiskin.json"), atlas);
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "skin.atlas"));
+		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "skin.json"), atlas);
 
 		createMessageHistoryBox(skin);
 		createSendMessageRow(skin);
@@ -108,7 +108,7 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
-				if (keycode == Input.Keys.ENTER) {
+				if (keycode == Input.Keys.ENTER || keycode == Input.Keys.NUMPAD_ENTER) {
 					sendMessage();
 				}
 				return false;

@@ -6,8 +6,6 @@ package bubolo.ui;
 
 import javax.swing.ImageIcon;
 
-import bubolo.audio.Audio;
-
 /**
  * User interface constants.
  *
@@ -23,11 +21,6 @@ public abstract class UiConstants {
 	 * File path where the user interface files are located.
 	 */
 	public static final String UI_PATH = "res/ui/";
-
-	/**
-	 * Sound Effects Volume Default
-	 */
-	public static final float SFXVOL_DEFAULT = Audio.soundEffectVolume();
 
 	/**
 	 * The game icon
