@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net;
 
 import java.io.IOException;
@@ -18,16 +12,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import bubolo.net.command.ClientConnected;
 
 /**
- * The game client.
+ * A game client. A network game can have multiple clients, but only one server.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-class Client implements NetworkSubsystem, Runnable
-{
+class Client implements NetworkSubsystem, Runnable {
 	private Socket server;
 
 	// Specifies whether the network system has shut down.
-	private AtomicBoolean shutdown = new AtomicBoolean(false);
+	private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
 	private final Executor sender;
 
@@ -42,11 +35,9 @@ class Client implements NetworkSubsystem, Runnable
 	/**
 	 * Constructs a Client object.
 	 *
-	 * @param network
-	 *            reference to the network.
+	 * @param network reference to the network.
 	 */
-	Client(Network network)
-	{
+	Client(Network network) {
 		this.network = network;
 		this.sender = Executors.newSingleThreadExecutor();
 	}
@@ -54,18 +45,13 @@ class Client implements NetworkSubsystem, Runnable
 	/**
 	 * Attempts to connect to the specified IP address.
 	 *
-	 * @param serverIpAddress
-	 *            the IP address of a server. Note that this isn't necessarily the <i>game</i>
-	 *            server, since clients also connect directly to each other.
-	 * @param clientName
-	 *            the name of this client.
-	 * @throws NetworkException
-	 *             if a network error occurs.
+	 * @param serverIpAddress the IP address of a server. Note that this isn't necessarily the <i>game</i> server, since clients
+	 *     also connect directly to each other.
+	 * @param clientName the name of this client.
+	 * @throws NetworkException if a network error occurs.
 	 */
-	void connect(InetAddress serverIpAddress, String clientName) throws NetworkException
-	{
-		try
-		{
+	void connect(InetAddress serverIpAddress, String clientName) throws NetworkException {
+		try {
 			playerName = clientName;
 
 			server = new Socket(serverIpAddress, NetworkInformation.GAME_PORT);
@@ -78,56 +64,40 @@ class Client implements NetworkSubsystem, Runnable
 			Thread thread = new Thread(this, "net-client");
 			thread.setDaemon(true);
 			thread.start();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			throw new NetworkException(e);
 		}
 	}
 
 	@Override
-	public void send(NetworkCommand command)
-	{
+	public void send(NetworkCommand command) {
 		sender.execute(new NetworkSender(serverStream, command));
 	}
 
 	@Override
-	public void dispose()
-	{
+	public void dispose() {
 		shutdown.set(true);
 	}
 
 	@Override
-	public void run()
-	{
-		if (server == null)
-		{
-			throw new IllegalStateException(
-					"Unable to run client; the network system has not been started.");
+	public void run() {
+		if (server == null) {
+			throw new IllegalStateException("Unable to run client; the network system has not been started.");
 		}
 
-		try (ObjectInputStream inputStream = new ObjectInputStream(server.getInputStream()))
-		{
-			while (!shutdown.get())
-			{
+		try (ObjectInputStream inputStream = new ObjectInputStream(server.getInputStream())) {
+			while (!shutdown.get()) {
 				NetworkCommand command = (NetworkCommand) inputStream.readObject();
 				network.postToGameThread(command);
 			}
-		}
-		catch (IOException | ClassNotFoundException e)
-		{
+		} catch (IOException | ClassNotFoundException e) {
 			// TODO: Pass this exception to the primary thread, and eliminate the stack track.
 			e.printStackTrace();
 			throw new NetworkException(e);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				server.close();
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 			}
 		}
 	}

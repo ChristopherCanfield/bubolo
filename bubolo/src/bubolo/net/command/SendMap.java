@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkSystem;
 import bubolo.net.WorldOwner;
 import bubolo.world.Entity;
 import bubolo.world.GameWorld;
@@ -27,8 +29,8 @@ public class SendMap extends NetworkCommand {
 
 	private final List<EntitySerializationData> entities = new ArrayList<>();
 
-	private final byte rows;
-	private final byte columns;
+	private final short rows;
+	private final short columns;
 
 	/**
 	 * Constructs a Send Map network command.
@@ -36,8 +38,8 @@ public class SendMap extends NetworkCommand {
 	 * @param world the game world, after all map entities have been added.
 	 */
 	public SendMap(World world) {
-		this.rows = (byte) world.getTileRows();
-		this.columns = (byte) world.getTileColumns();
+		this.rows = (short) world.getTileRows();
+		this.columns = (short) world.getTileColumns();
 
 		var worldEntities = world.getEntities();
 		assert !worldEntities.isEmpty() : "Empty world passed to SendMap network command.";
@@ -50,7 +52,7 @@ public class SendMap extends NetworkCommand {
 
 	@Override
 	public void execute(WorldOwner worldOwner) {
-		World world = new GameWorld(Byte.toUnsignedInt(columns), Byte.toUnsignedInt(rows));
+		World world = new GameWorld(Short.toUnsignedInt(columns), Short.toUnsignedInt(rows));
 		worldOwner.setWorld(world);
 
 		for (var entityData : entities) {
@@ -61,6 +63,11 @@ public class SendMap extends NetworkCommand {
 
 		// Process a game tick, which finalizes the addition of the new entities to the world.
 		world.update();
+
+		// Notify the server that the map has been received.
+		Network net = NetworkSystem.getInstance();
+		net.send(new MapDownloadComplete(net.getPlayerName()));
+		net.getNotifier().notifyClientReady(net.getPlayerName());
 	}
 
 	// Minimal data record for sending map data to remote players.

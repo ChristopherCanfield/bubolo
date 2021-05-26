@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -12,15 +6,12 @@ import java.net.InetAddress;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import bubolo.world.World;
-
 /**
  * The network system implementation.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class NetworkSystem implements Network
-{
+public class NetworkSystem implements Network {
 	private NetworkSubsystem subsystem;
 
 	// Queue of commands that should be run in the game logic thread.
@@ -44,46 +35,39 @@ public class NetworkSystem implements Network
 	 *
 	 * @return the network system instance.
 	 */
-	public static Network getInstance()
-	{
-		if (instance == null)
-		{
+	public static synchronized Network getInstance() {
+		if (instance == null) {
 			instance = new NetworkSystem();
 		}
 		return instance;
 	}
 
-	private NetworkSystem()
-	{
+	private NetworkSystem() {
 		this.postedCommands = new ConcurrentLinkedQueue<NetworkCommand>();
 		this.observerNotifier = new NetworkObserverNotifier();
 	}
 
 	@Override
-	public boolean isServer()
-	{
+	public boolean isServer() {
 		return isServer;
 	}
 
 	@Override
-	public String getPlayerName()
-	{
+	public String getPlayerName() {
 		return name;
 	}
 
 	@Override
-	public void startServer(String serverName) throws NetworkException, IllegalStateException
-	{
-		checkState(subsystem == null, "The network system has already been started. " +
-				"Do not call startServer or connect more than once.");
+	public void startServer(String serverName) throws NetworkException, IllegalStateException {
+		checkState(subsystem == null,
+				"The network system has already been started. " + "Do not call startServer or connect more than once.");
 
 		name = serverName;
 		isServer = true;
 
 		// Don't allow the server to run in debug mode, since it requires external resources.
 		// Instead, test this properly in an integration test.
-		if (debug)
-		{
+		if (debug) {
 			return;
 		}
 
@@ -93,18 +77,16 @@ public class NetworkSystem implements Network
 	}
 
 	@Override
-	public void connect(InetAddress serverIpAddress, String clientName) throws NetworkException, IllegalStateException
-	{
-		checkState(subsystem == null, "The network system has already been started. " +
-				"Do not call startServer or connect more than once.");
+	public void connect(InetAddress serverIpAddress, String clientName) throws NetworkException, IllegalStateException {
+		checkState(subsystem == null,
+				"The network system has already been started. " + "Do not call startServer or connect more than once.");
 
 		name = clientName;
 		isServer = false;
 
 		// Don't allow the client to run in debug mode, since it requires external resources.
 		// Instead, test this properly in an integration test.
-		if (debug)
-		{
+		if (debug) {
 			return;
 		}
 
@@ -114,32 +96,27 @@ public class NetworkSystem implements Network
 	}
 
 	@Override
-	public void startDebug()
-	{
+	public void startDebug() {
 		debug = true;
 	}
 
 	@Override
-	public void startGame(World world)
-	{
+	public void startGame() {
 		if (subsystem instanceof Server server) {
-			server.startGame(world);
+			server.startGame();
 		}
 	}
 
 	@Override
-	public void send(NetworkCommand command)
-	{
+	public void send(NetworkCommand command) {
 		// Returns without sending the command if the system is running in debug mode.
-		if (debug)
-		{
+		if (debug) {
 			return;
 		}
 
 		// Explicit check rather than a call to checkState, because FindBugs
 		// was unable to identify checkState as a valid defense against null pointer dereferencing.
-		if (subsystem == null)
-		{
+		if (subsystem == null) {
 			throw new NetworkException("Unable to send command: the network is not initialized.");
 		}
 
@@ -147,46 +124,37 @@ public class NetworkSystem implements Network
 	}
 
 	@Override
-	public void update(WorldOwner worldOwner)
-	{
+	public void update(WorldOwner worldOwner) {
 		// Execute all posted commands in the game logic thread.
 		NetworkCommand c = null;
-		while ((c = postedCommands.poll()) != null)
-		{
+		while ((c = postedCommands.poll()) != null) {
 			c.execute(worldOwner);
 		}
 	}
 
 	@Override
-	public void addObserver(NetworkObserver o)
-	{
+	public void addObserver(NetworkObserver o) {
 		observerNotifier.addObserver(o);
 	}
 
 	@Override
-	public void removeObserver(NetworkObserver o)
-	{
+	public void removeObserver(NetworkObserver o) {
 		observerNotifier.removeObserver(o);
 	}
 
-
 	@Override
-	public NetworkObserverNotifier getNotifier()
-	{
+	public NetworkObserverNotifier getNotifier() {
 		return observerNotifier;
 	}
 
 	@Override
-	public void postToGameThread(NetworkCommand command)
-	{
+	public void postToGameThread(NetworkCommand command) {
 		postedCommands.add(command);
 	}
 
 	@Override
-	public void dispose()
-	{
-		if (subsystem != null)
-		{
+	public void dispose() {
+		if (subsystem != null) {
 			subsystem.dispose();
 		}
 		subsystem = null;

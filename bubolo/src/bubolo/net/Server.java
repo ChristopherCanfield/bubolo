@@ -17,10 +17,8 @@ import com.badlogic.gdx.Gdx;
 
 import bubolo.net.command.ClientConnected;
 import bubolo.net.command.ConnectedToServer;
-import bubolo.net.command.SendMap;
 import bubolo.net.command.StartGame;
 import bubolo.util.Nullable;
-import bubolo.world.World;
 
 /**
  * The game server.
@@ -86,18 +84,16 @@ class Server implements NetworkSubsystem {
 	}
 
 	/**
-	 * Notifies clients that the game is ready to start.
-	 *
-	 * @param world reference to the game world.
+	 * Notifies clients that the game is ready to start. This should not be called until the map data has been sent.
 	 */
-	void startGame(World world) {
+	void startGame() {
 		checkState(!clients.isEmpty(), "No clients are connected.");
 
 		gameStarted.set(true);
 		clientAcceptor.interrupt();
 
-		final int secondsUntilStart = 3;
-		StartGame startGameCommand = new StartGame(secondsUntilStart, new SendMap(world));
+		final int secondsUntilStart = 5;
+		StartGame startGameCommand = new StartGame(secondsUntilStart);
 		send(startGameCommand);
 
 		network.getNotifier().notifyGameStart(secondsUntilStart);
@@ -241,8 +237,7 @@ class Server implements NetworkSubsystem {
 					network.postToGameThread(command);
 				}
 			} catch (IOException | ClassNotFoundException e) {
-				// TODO: Pass this exception to the primary thread, and eliminate the
-				// stack track.
+				// TODO: Pass this exception to the primary thread, and eliminate the stack track.
 				e.printStackTrace();
 				throw new NetworkException(e);
 			} finally {

@@ -1,10 +1,4 @@
-/**
- *
- */
-
 package bubolo.net.command;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
@@ -12,39 +6,31 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.WorldOwner;
 
 /**
- * Command that is used to notify the clients to start the game.
+ * Notifies the clients that the game is starting. The map must have already been sent to the client before sending
+	 * this command.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class StartGame extends NetworkCommand
-{
+public class StartGame extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final byte secondsUntilStart;
-	private final SendMap sendMapCommand;
 
 	/**
-	 * Notifies clients that the game is starting.
+	 * Notifies clients that the game is starting. The map must have already been sent to the client before sending
+	 * this command.
 	 *
-	 * @param secondsUntilStart
-	 *            the number of seconds until the game starts.
-	 * @param sendMapCommand
-	 *            an instantiated send map command.
+	 * @param secondsUntilStart the number of seconds until the game starts.
 	 */
-	public StartGame(int secondsUntilStart, SendMap sendMapCommand)
-	{
+	public StartGame(int secondsUntilStart) {
+		assert secondsUntilStart <= (Byte.MAX_VALUE * 2 + 1);
 		this.secondsUntilStart = (byte) secondsUntilStart;
-		this.sendMapCommand = checkNotNull(sendMapCommand);
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner)
-	{
-		// Build the map on the client.
-		sendMapCommand.execute(worldOwner);
-
+	public void execute(WorldOwner worldOwner) {
 		// Notify NetworkObservers about the game start time.
 		Network net = NetworkSystem.getInstance();
-		net.getNotifier().notifyGameStart(secondsUntilStart);
+		net.getNotifier().notifyGameStart(Byte.toUnsignedInt(secondsUntilStart));
 	}
 }

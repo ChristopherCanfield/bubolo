@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net;
 
 import java.util.ArrayList;
@@ -12,31 +6,26 @@ import java.util.List;
 import bubolo.net.command.SendMessage.MessageType;
 
 /**
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class NetworkObserverNotifier
-{
+public class NetworkObserverNotifier {
 	// The list of network observers.
-	private List<NetworkObserver> observers;
+	private final List<NetworkObserver> observers;
 
 	/**
 	 * Constructs a NetworkObserverNotifier.
 	 */
-	NetworkObserverNotifier()
-	{
+	NetworkObserverNotifier() {
 		this.observers = new ArrayList<NetworkObserver>();
 	}
 
 	/**
 	 * Adds an observer to the network observer list.
 	 *
-	 * @param o
-	 *            the observer to add.
+	 * @param o the observer to add.
 	 */
-	void addObserver(NetworkObserver o)
-	{
-		if (!observers.contains(o))
-		{
+	void addObserver(NetworkObserver o) {
+		if (!observers.contains(o)) {
 			observers.add(o);
 		}
 	}
@@ -44,11 +33,9 @@ public class NetworkObserverNotifier
 	/**
 	 * Removes an observer from the network observer list.
 	 *
-	 * @param o
-	 *            the observer to remove.
+	 * @param o the observer to remove.
 	 */
-	void removeObserver(NetworkObserver o)
-	{
+	void removeObserver(NetworkObserver o) {
 		observers.remove(o);
 	}
 
@@ -57,23 +44,18 @@ public class NetworkObserverNotifier
 	 *
 	 * @return the observer count.
 	 */
-	int getObserverCount()
-	{
+	int getObserverCount() {
 		return observers.size();
 	}
 
 	/**
 	 * Notifies observers that this client has connected to a server.
 	 *
-	 * @param clientName
-	 *            the name of the client that connected.
-	 * @param serverName
-	 *            the name of the server.
+	 * @param clientName the name of the client that connected.
+	 * @param serverName the name of the server.
 	 */
-	public void notifyConnect(String clientName, String serverName)
-	{
-		for (final NetworkObserver o : observers)
-		{
+	public void notifyConnect(String clientName, String serverName) {
+		for (final NetworkObserver o : observers) {
 			o.onConnect(clientName, serverName);
 		}
 	}
@@ -81,13 +63,10 @@ public class NetworkObserverNotifier
 	/**
 	 * Notifies observers that a client has connected to this server.
 	 *
-	 * @param clientName
-	 *            the name of the client that connected.
+	 * @param clientName the name of the client that connected.
 	 */
-	public void notifyClientConnected(String clientName)
-	{
-		for (final NetworkObserver o : observers)
-		{
+	public void notifyClientConnected(String clientName) {
+		for (final NetworkObserver o : observers) {
 			o.onClientConnected(clientName);
 		}
 	}
@@ -95,27 +74,27 @@ public class NetworkObserverNotifier
 	/**
 	 * Notifies observers that a client has disconnected.
 	 *
-	 * @param clientName
-	 *            the name of the client that disconnected.
+	 * @param clientName the name of the client that disconnected.
 	 */
-	public void notifyClientDisconnected(String clientName)
-	{
-		for (final NetworkObserver o : observers)
-		{
+	public void notifyClientDisconnected(String clientName) {
+		for (final NetworkObserver o : observers) {
 			o.onClientDisconnected(clientName);
+		}
+	}
+
+	public void notifyClientReady(String clientName) {
+		for (final NetworkObserver o : observers) {
+			o.onClientReady(clientName);
 		}
 	}
 
 	/**
 	 * Notifies observers that the game is starting.
 	 *
-	 * @param secondsUntilStart
-	 *            the number of seconds until the game begins.
+	 * @param secondsUntilStart the number of seconds until the game begins.
 	 */
-	public void notifyGameStart(final int secondsUntilStart)
-	{
-		for (final NetworkObserver o : observers)
-		{
+	public void notifyGameStart(final int secondsUntilStart) {
+		for (final NetworkObserver o : observers) {
 			o.onGameStart(secondsUntilStart);
 		}
 	}
@@ -126,10 +105,8 @@ public class NetworkObserverNotifier
 	 * @param messageType the type of the received message.
 	 * @param message the message text.
 	 */
-	public void notifyMessageReceived(MessageType messageType, String message)
-	{
-		for (final NetworkObserver o : observers)
-		{
+	public void notifyMessageReceived(MessageType messageType, String message) {
+		for (final NetworkObserver o : observers) {
 			o.onMessageReceived(messageType, message);
 		}
 	}

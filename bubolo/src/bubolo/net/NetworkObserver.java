@@ -1,14 +1,10 @@
-/**
- *
- */
-
 package bubolo.net;
 
 import bubolo.net.command.SendMessage.MessageType;
 
 /**
- * Enables a subsystem to monitor network events. The subsystem must implement this interface and
- * then register with the network system using the following code:
+ * Enables a subsystem to monitor network events. The subsystem must implement this interface and then register with the network
+ * system using the following code:
  * <p>
  * <code>
  * Network net = NetworkSystem.getInstance();<br>
@@ -16,41 +12,43 @@ import bubolo.net.command.SendMessage.MessageType;
  * </code>
  * </p>
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public interface NetworkObserver
-{
+public interface NetworkObserver {
+
 	/**
 	 * Called when a player has successfully connected to the server.
 	 *
-	 * @param clientName
-	 *            the name of the client that connected.
-	 * @param serverName
-	 *            the name of the server player.
+	 * @param clientName the name of the client that connected.
+	 * @param serverName the name of the server player.
 	 */
 	void onConnect(String clientName, String serverName);
 
 	/**
 	 * Called when a new client has connected to the server.
 	 *
-	 * @param clientName
-	 *            the name of the new client player.
+	 * @param clientName the name of the new client player.
 	 */
 	void onClientConnected(String clientName);
 
 	/**
 	 * Called when a client player has disconnected.
 	 *
-	 * @param clientName
-	 *            the name of the player who disconnected.
+	 * @param clientName the name of the player who disconnected.
 	 */
 	void onClientDisconnected(String clientName);
 
 	/**
+	 * Called when a client has completed downloading the map and is ready to start the game.
+	 *
+	 * @param clientName the name of the client who is ready.
+	 */
+	void onClientReady(String clientName);
+
+	/**
 	 * Called when a networked game starts.
 	 *
-	 * @param secondsUntilStart
-	 *            the number of seconds until the game starts.
+	 * @param secondsUntilStart the number of seconds until the game starts.
 	 */
 	void onGameStart(int secondsUntilStart);
 
