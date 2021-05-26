@@ -14,8 +14,8 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.MovePillboxOffTileMap;
 import bubolo.net.command.MovePillboxOntoTileMap;
 import bubolo.net.command.UpdatePillboxAttributes;
-import bubolo.util.Units;
 import bubolo.util.Time;
+import bubolo.util.Units;
 
 /**
  * Pillboxes are stationary defensive structures that shoot at enemy tanks, and can be captured. Captured pillboxes do not shoot
@@ -163,9 +163,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		builtPct -= buildPctPerTick;
 		setBuildStatus(BuildStatus.Unbuilding);
 
-		if (builtPct <= 0) {
-			world.movePillboxOffTileMap(this);
+		if (builtPct <= 0 && isOwnedByLocalPlayer()) {
 			setBuildStatus(BuildStatus.Carried);
+			world.movePillboxOffTileMap(this);
 			notifyNetwork(new MovePillboxOffTileMap(this));
 		}
 	}
@@ -184,9 +184,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		int row = worldUnitToTile(targetY);
 		setPosition(column * Units.TileToWorldScale, row * Units.TileToWorldScale);
 
-		if (builtPct >= 1) {
-			world.movePillboxOntoTileMap(this, tileColumn(), tileRow());
+		if (builtPct >= 1 && isOwnedByLocalPlayer()) {
 			setBuildStatus(BuildStatus.Built);
+			world.movePillboxOntoTileMap(this, tileColumn(), tileRow());
 			notifyNetwork(new MovePillboxOntoTileMap(this, tileColumn(), tileRow()));
 		}
 	}
@@ -219,12 +219,16 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param world reference to the game world.
 	 */
 	public void dropFromTank(World world) {
-		var terrain = world.getNearestBuildableTerrain(owner().x(), owner().y());
-		world.movePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow());
-		setBuildStatus(BuildStatus.Built);
-		setOwner(null);
+		if (isOwnedByLocalPlayer()) {
+			var terrain = world.getNearestBuildableTerrain(owner().x(), owner().y());
+			setBuildStatus(BuildStatus.Built);
+			world.movePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow());
 
-		notifyNetwork(new MovePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow()));
+			notifyNetwork(new MovePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow()));
+
+			setOwner(null);
+			notifyNetwork(true);
+		}
 	}
 
 	private void setBuildStatus(BuildStatus status) {
@@ -418,25 +422,38 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	}
 
 	/**
-	 * Sends a command to the network, followed by an UpdatePillboxAttributes command.
+	 * Sends a command to the network, followed by an UpdatePillboxAttributes command. If this pillbox is not owned by
+	 * the local player, this is a no-op.
 	 *
 	 * @param additionalNetworkCommand the network commands to send before sending the UpdatePillboxAttributes command.
 	 */
 	private void notifyNetwork(NetworkCommand additionalNetworkCommand) {
-		assert !(additionalNetworkCommand instanceof UpdatePillboxAttributes) :
-				"Use notifyNetwork(), rather than notifyNetwork(additionalNetworkCommand), to send UpdatePillboxAttributes commands.";
+		if (isOwnedByLocalPlayer()) {
+			assert !(additionalNetworkCommand instanceof UpdatePillboxAttributes) :
+					"Use notifyNetwork(), rather than notifyNetwork(additionalNetworkCommand), to send UpdatePillboxAttributes commands.";
 
-		Network net = NetworkSystem.getInstance();
-		net.send(additionalNetworkCommand);
+			Network net = NetworkSystem.getInstance();
+			net.send(additionalNetworkCommand);
 
-		notifyNetwork();
+			notifyNetwork();
+		}
+	}
+
+	/**
+	 * Sends pillbox attribute information to the network, if this pillbox is owned by the local player.
+	 */
+	private void notifyNetwork() {
+		notifyNetwork(false);
 	}
 
 	/**
 	 * Sends pillbox attribute information to the network.
+	 *
+	 * @param overrideOwnedByLocalPlayerCheck if true, the network command is sent regardless of whether this pillbox is owned
+	 * by the local player.
 	 */
-	private void notifyNetwork() {
-		if (isOwnedByLocalPlayer()) {
+	private void notifyNetwork(boolean overrideOwnedByLocalPlayerCheck) {
+		if (isOwnedByLocalPlayer() || overrideOwnedByLocalPlayerCheck) {
 			Network net = NetworkSystem.getInstance();
 			net.send(new UpdatePillboxAttributes(this));
 		}

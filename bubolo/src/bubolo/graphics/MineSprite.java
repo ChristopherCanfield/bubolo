@@ -14,8 +14,8 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	// The index representing which animation frame will be drawn.
 	private int frameIndex;
 
-	// An index representing which row of the sprite sheet to use, Mined on color set.
-	private int colorId = ColorSets.BLUE;
+	// An index representing which row of the sprite sheet to use.
+	private int colorId = SpriteColorSet.BLUE;
 
 	// An array of all frames held in the texture sheet, by ROW and COLUMN.
 	private final TextureRegion[][] allFrames;
@@ -37,9 +37,9 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 
 	/**
 	 * Constructor for the MineSprite. This is Package-private because sprites should not be directly created outside of the
-	 * graphics system (instead, call the Sprite.create(entity) static method).
+	 * graphics system.
 	 *
-	 * @param mine Reference to the Mine that this MineSprite represents.
+	 * @param mine reference to the Mine that this MineSprite represents.
 	 */
 	MineSprite(Mine mine) {
 		super(DrawLayer.Mines, mine);
@@ -50,13 +50,13 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 
 	@Override
 	public void draw(Graphics graphics) {
-		if (isDisposed()) {
-			graphics.sprites().removeSprite(this);
-		} else if (!getEntity().isOwnedByLocalPlayer() && getEntity().isArmed()) {
+		if (!getEntity().isOwnedByLocalPlayer() && getEntity().isArmed()) {
 			// Hide other people's mines, but give other players a chance to see it while the mine
 			// is arming.
 			return;
 		} else {
+			colorId = getEntity().isOwnedByLocalPlayer() ? SpriteColorSet.BLUE : SpriteColorSet.RED;
+
 			if (!getEntity().isArmed()) {
 				frameIndex = 0;
 			}

@@ -22,10 +22,10 @@ import bubolo.controllers.Controllers;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.DestroyEntity;
-import bubolo.util.Units;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
 import bubolo.util.Timer;
+import bubolo.util.Units;
 
 /**
  * The concrete implementation of the World interface. GameWorld is the sole owner of Entity objects.
@@ -305,7 +305,10 @@ public class GameWorld implements World {
 	@Override
 	public void movePillboxOffTileMap(Pillbox pillbox) {
 		var existingPillbox = terrainImprovements[pillbox.tileColumn()][pillbox.tileRow()];
-		assert pillbox.equals(existingPillbox);
+		assert pillbox.equals(existingPillbox) : String.format("movePillboxOffTileMap: pillbox was not in expected tile location (%d,%d). Found: %s",
+				pillbox.tileColumn(),
+				pillbox.tileRow(),
+				String.valueOf(existingPillbox));
 		terrainImprovements[pillbox.tileColumn()][pillbox.tileRow()] = null;
 	}
 
@@ -395,11 +398,9 @@ public class GameWorld implements World {
 			entitiesToAdd.clear();
 		}
 
-		// Add timers for any craters that may flood.
+		// Start the flooding process for craters that are adjacent to water.
 		for (Crater crater : cratersToFlood) {
-			timer().scheduleSeconds(4, w -> {
-				crater.replaceWithWater(w);
-			});
+			crater.flood(this);
 		}
 		cratersToFlood.clear();
 

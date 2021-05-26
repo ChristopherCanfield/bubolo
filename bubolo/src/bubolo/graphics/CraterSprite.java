@@ -57,9 +57,7 @@ class CraterSprite extends AbstractEntitySprite<Crater> {
 
 		for (int i = 1; i < frameCount - 2; i++) {
 			graphics.timer().scheduleSeconds(initialFloodFrameTimeSeconds + (i * secondsPerRemainingFloodFrame),
-					g -> {
-						frame++;
-					});
+					g -> { frame++; });
 		}
 	}
 }

@@ -4,9 +4,8 @@ package bubolo.graphics;
  * Used to determine the color for standardized sprite textures that have more than one
  * color set available. These values are indices used when selecting which row of frames
  * to use in sprite display.
- * 
  */
-class ColorSets
+class SpriteColorSet
 {
 	/**
 	 * Index used for the main character color, blue, indicating that it appears in the
