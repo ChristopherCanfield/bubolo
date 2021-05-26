@@ -8,8 +8,6 @@ package bubolo.net;
 
 import java.net.InetAddress;
 
-import bubolo.world.World;
-
 /**
  * The interface for the Network system.
  *
@@ -87,11 +85,8 @@ public interface Network
 
 	/**
 	 * Notifies the clients that the game should start. This method is not needed by clients.
-	 *
-	 * @param world
-	 *            reference to the game world.
 	 */
-	void startGame(World world);
+	void startGame();
 
 	/**
 	 * Adds an observer to the network observer list.

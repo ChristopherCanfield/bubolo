@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.ui;
 
 import com.badlogic.gdx.Gdx;
@@ -23,6 +19,7 @@ import bubolo.GameApplication.State;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
 import bubolo.net.NetworkSystem;
+import bubolo.net.command.SendMap;
 import bubolo.net.command.SendMessage;
 import bubolo.net.command.SendMessage.MessageType;
 import bubolo.world.World;
@@ -47,6 +44,9 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 	// The number of clients who are connected.
 	private int clientCount;
 
+	// The number of clients who have finished downloading the map and are ready to start.
+	private int clientsReadyToStart;
+
 	// True if the game is starting.
 	private boolean startingGame;
 
@@ -62,8 +62,8 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 		this.app = app;
 		this.world = world;
 
-		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "uiskin.atlas"));
-		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "uiskin.json"), atlas);
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "skin.atlas"));
+		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "skin.json"), atlas);
 
 		createMessageHistoryBox(skin);
 		createSendMessageRow(skin);
@@ -108,7 +108,7 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
-				if (keycode == Input.Keys.ENTER) {
+				if (keycode == Input.Keys.ENTER || keycode == Input.Keys.NUMPAD_ENTER) {
 					sendMessage();
 				}
 				return false;
@@ -124,8 +124,10 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 				public void clicked(InputEvent event, float x, float y) {
 					if (clientCount > 0) {
 						if (!startingGame) {
+							appendToMessageHistory(messageHistory, "Sending map data...\n");
+							net.send(new SendMessage("Sending map data...\n"));
 							startingGame = true;
-							net.startGame(world);
+							net.send(new SendMap(world));
 						}
 					} else {
 						appendToMessageHistory(messageHistory, "Unable to start game: No clients are connected.");
@@ -183,9 +185,20 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 	}
 
 	@Override
+	public void onClientReady(String clientName) {
+		appendToMessageHistory(messageHistory, clientName + " has finished downloading the map and is ready to play.");
+
+		++clientsReadyToStart;
+		if (clientsReadyToStart == clientCount) {
+			Network net = NetworkSystem.getInstance();
+			net.startGame();
+		}
+	}
+
+	@Override
 	public void onGameStart(int secondsUntilStart) {
 		startingGame = true;
-		appendToMessageHistory(messageHistory, "Get ready: The game is starting!\n\n");
+		appendToMessageHistory(messageHistory, "Get ready: The game is starting!");
 
 		long currentTime = System.currentTimeMillis();
 		startTime = currentTime + (secondsUntilStart * 1000);

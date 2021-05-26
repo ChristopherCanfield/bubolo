@@ -206,7 +206,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param screen the ui screen to update.
 	 */
 	public void draw(Screen screen) {
-		Gdx.gl20.glClearColor(0.6f, 0.6f, 0.6f, 1);
+		Gdx.gl20.glClearColor(0.45f, 0.45f, 0.45f, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		screen.update();

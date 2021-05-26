@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
+import bubolo.ui.UiConstants;
 import bubolo.util.Units;
 import bubolo.world.Tank;
 
@@ -50,7 +51,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private boolean deathAnimationCreated;
 
 	// For player name drawing.
-	private static final BitmapFont font = new BitmapFont();
+	private static final BitmapFont font = new BitmapFont(Gdx.files.internal(UiConstants.UI_PATH + "arial-16.fnt"));
 
 	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
 
@@ -138,7 +139,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
-	private static final DecimalFormat speedFormatter = new DecimalFormat("0.00 Kph");
+	private static final DecimalFormat speedFormatter = new DecimalFormat("0.0 Kph");
 
 	private void drawStatusBarValues(Tank tank, Graphics graphics) {
 		var spriteBatch = graphics.batch();
@@ -158,7 +159,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		font.draw(spriteBatch, "x " + tank.ammoCount(), screenHalfWidth - 100 + 12, textVerticalPosition);
 
 		// Render the tank's speed.
-		int tankSpeedTextLocation = (int) ((tank.speedKph() < 10) ? screenHalfWidth - 25 : screenHalfWidth - 30);
+		int tankSpeedTextLocation = (int) ((tank.speedKph() < 10) ? screenHalfWidth - 20 : screenHalfWidth - 25);
 		font.draw(spriteBatch, speedFormatter.format(tank.speedKph()), tankSpeedTextLocation, textVerticalPosition);
 
 		// Mine texture divided by number of frames per row.
