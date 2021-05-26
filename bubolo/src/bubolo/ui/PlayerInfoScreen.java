@@ -79,7 +79,7 @@ public class PlayerInfoScreen extends Screen {
 		stage.addListener(new InputListener() {
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
-				if (keycode == Input.Keys.ENTER || keycode = Input.Keys.NUMPAD_ENTER) {
+				if (keycode == Input.Keys.ENTER || keycode == Input.Keys.NUMPAD_ENTER) {
 					if (textFieldsPopulated()) {
 						if (isClient) {
 							connectToServer();
