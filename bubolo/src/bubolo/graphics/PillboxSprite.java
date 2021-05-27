@@ -22,7 +22,8 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	private static final String textureFileName = "pillbox.png";
 
 	private static final int colorColumn = 0;
-	private static final int damageColumn = 1;
+	private static final int disabledColorColumn = 1;
+	private static final int damageColumn = 2;
 
 	private static final Color defaultColor = new Color(Color.WHITE);
 	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
@@ -74,6 +75,8 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				// Draw the lights if the pillbox isn't out of service.
 				if (damageState != DamageState.OutOfService) {
 					drawTexture(graphics, frames[colorColumn][colorIndex]);
+				} else {
+					drawTexture(graphics, frames[disabledColorColumn][colorIndex]);
 				}
 
 				// Draw damage, if any.
