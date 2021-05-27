@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Config;
+import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
 import bubolo.net.Network;
@@ -395,6 +396,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 				world.timer().rescheduleTicks(capturableTimerId, captureTimeTicks);
 			} else {
 				capturableTimerId = world.timer().scheduleTicks(captureTimeTicks, this::onCapturableTimerExpired);
+				Audio.play(Sfx.PillboxPowerOff, x(), y());
 			}
 
 			capturable = true;
@@ -405,6 +407,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private void onCapturableTimerExpired(World world) {
 		capturable = false;
 		capturableTimerId = -1;
+		Audio.play(Sfx.PillboxPowerOn, x(), y());
 	}
 
 	/**
