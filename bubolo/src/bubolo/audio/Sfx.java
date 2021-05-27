@@ -18,8 +18,10 @@ public enum Sfx
 	TankHit("tank_explosion.ogg", 1, 0.75f, 1.25f),
 	TankDrowned("bubbles.ogg", 1, 1, 1),
 	PillboxHit("pillbox_hit.ogg", 1, 0.75f, 1.25f),
-	PillboxPowerOn("pillbox_power_on.ogg", 1.0f, 0.95f, 1.05f),
-	PillboxPowerOff("pillbox_power_off.ogg", 1.0f, 0.95f, 1.05f),
+	PillboxPowerOn("pillbox_power_on.ogg", 1.1f, 0.95f, 1.05f),
+	PillboxPowerOff("pillbox_power_off.ogg", 1.1f, 0.95f, 1.05f),
+	PillboxTargetFound("pillbox_target_found.ogg", 0.9f, 1, 1),
+	PillboxTargetLost("pillbox_target_lost.ogg", 0.35f, 1, 1),
 	TreeHit("tree_hit.ogg", 1, 0.75f, 1.25f),
 	WallHit("wall_hit.ogg", 1, 0.75f, 1.25f),
 	BuildError("build_error.ogg", 1, 1, 1);

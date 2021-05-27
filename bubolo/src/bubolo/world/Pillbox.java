@@ -30,6 +30,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private static final int cannonReloadSpeedTicks = Time.secondsToTicks(0.5f);
 	private boolean cannonReloaded = true;
 
+	/** Whether the pillbox has a target. */
+	private boolean hasTarget;
+
 	/** The direction the pillbox will fire. */
 	private float cannonRotation = 0;
 
@@ -348,6 +351,20 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), cannonRotation);
 		Bullet bullet = world.addEntity(Bullet.class, args);
 		bullet.setOwner(this);
+	}
+
+	/**
+	 * @return true if the pillbox has a target.
+	 */
+	public boolean hasTarget() {
+		return hasTarget;
+	}
+
+	/**
+	 * @param value true if the pillbox's targeting system has identified a target, or false otherwise.
+	 */
+	public void setHasTarget(boolean value) {
+		this.hasTarget = value;
 	}
 
 	/**

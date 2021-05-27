@@ -2,6 +2,8 @@ package bubolo.controllers.ai;
 
 import com.badlogic.gdx.math.Intersector;
 
+import bubolo.audio.Audio;
+import bubolo.audio.Sfx;
 import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
@@ -12,12 +14,17 @@ import bubolo.world.Tank;
 import bubolo.world.World;
 
 /**
- * A controller for pillboxes. This controller searches for a target, and fires when the pillbox is ready.
+ * A controller for pillboxes. This controller handles pillbox target acquisition and pillbox capturing.
  *
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class AiPillboxController extends ActorEntityController<Pillbox> {
+	private static float delayBeforeFiringAtTarget = 0.35f;
+
+	private boolean firingDelayExpired;
+	private boolean targetLost;
+
 	/**
 	 * Constructs an AI Pillbox controller.
 	 *
@@ -29,13 +36,36 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 
 	@Override
 	public void update(World world) {
+		var pillbox = parent();
+
 		// Don't process updates if the pillbox is being moved.
-		if (parent().buildStatus() == BuildStatus.Built) {
+		if (pillbox.buildStatus() == BuildStatus.Built) {
 			// Only fire if cannon is ready.
-			if (parent().isCannonReady()) {
+			if (pillbox.isCannonReady()) {
 				Tank target = getTarget(world);
 				if (target != null) {
-					fire(getTargetDirection(target), world);
+					if (!pillbox.hasTarget()) {
+						Audio.play(Sfx.PillboxTargetFound, pillbox.x(), pillbox.y());
+						pillbox.setHasTarget(true);
+						firingDelayExpired = false;
+						targetLost = false;
+
+						// Allow the pillbox to start firing after a brief delay.
+						world.timer().scheduleSeconds(delayBeforeFiringAtTarget, w -> {
+							firingDelayExpired = true;
+						});
+					} else if (firingDelayExpired) {
+						fire(getTargetDirection(target), world);
+					}
+				} else if (pillbox.hasTarget() && !targetLost) {
+					targetLost = true;
+					// Schedule the target lost actions.
+					world.timer().scheduleSeconds(1.5f, w -> {
+						if (pillbox.hasTarget()) {
+							Audio.play(Sfx.PillboxTargetLost, pillbox.x(), pillbox.y());
+							pillbox.setHasTarget(false);
+						}
+					});
 				}
 			}
 

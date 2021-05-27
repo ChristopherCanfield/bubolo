@@ -21,6 +21,9 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
 
+	private static final int pillboxNoTargetColumn = 0;
+	private static final int pillboxHasTargetColumn = 1;
+
 	private static final int colorColumn = 0;
 	private static final int disabledColorColumn = 1;
 	private static final int damageColumn = 2;
@@ -69,7 +72,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				}
 
 				// Draw the pillbox.
-				drawTexture(graphics, frames[colorColumn][0]);
+				if (pillbox.hasTarget()) {
+					drawTexture(graphics, frames[pillboxHasTargetColumn][0]);
+				} else {
+					drawTexture(graphics, frames[pillboxNoTargetColumn][0]);
+				}
 
 				DamageState damageState = DamageState.getDamageState(getEntity());
 				// Draw the lights if the pillbox isn't out of service.
