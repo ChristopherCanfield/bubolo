@@ -71,14 +71,15 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 					setColor(buildingColor);
 				}
 
+				DamageState damageState = DamageState.getDamageState(getEntity());
+
 				// Draw the pillbox.
-				if (pillbox.hasTarget()) {
+				if (pillbox.hasTarget() && damageState != DamageState.OutOfService) {
 					drawTexture(graphics, frames[pillboxHasTargetColumn][0]);
 				} else {
 					drawTexture(graphics, frames[pillboxNoTargetColumn][0]);
 				}
 
-				DamageState damageState = DamageState.getDamageState(getEntity());
 				// Draw the lights if the pillbox isn't out of service.
 				if (damageState != DamageState.OutOfService) {
 					drawTexture(graphics, frames[colorColumn][colorIndex]);

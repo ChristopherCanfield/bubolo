@@ -1,5 +1,6 @@
 package bubolo.world;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.controllers.Controller;
@@ -50,7 +51,13 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	}
 
 	public ActorEntity setRotation(float radians) {
-		this.rotation = radians;
+		rotation = radians;
+		if (rotation > Math.PI) {
+			rotation = -MathUtils.PI;
+		} else if (rotation < -Math.PI) {
+			rotation = MathUtils.PI;
+		}
+
 		return this;
 	}
 

@@ -62,7 +62,9 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 					// Schedule the target lost actions.
 					world.timer().scheduleSeconds(1.5f, w -> {
 						if (pillbox.hasTarget()) {
-							Audio.play(Sfx.PillboxTargetLost, pillbox.x(), pillbox.y());
+							if (pillbox.hitPoints() > 0) {
+								Audio.play(Sfx.PillboxTargetLost, pillbox.x(), pillbox.y());
+							}
 							pillbox.setHasTarget(false);
 						}
 					});
