@@ -136,7 +136,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				return Undamaged;
 			} else if (damagePercent > 0.60f && damagePercent < 0.85f) {
 				return LightlyDamaged;
-			} else if (damagePercent > 0.30f && damagePercent < 0.60f) {
+			} else if (damagePercent > 0.30f && damagePercent <= 0.60f) {
 				return ModeratelyDamaged;
 			} else if (damagePercent > 0 && damagePercent <= 0.30f) {
 				return SeverelyDamaged;
