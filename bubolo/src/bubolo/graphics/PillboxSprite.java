@@ -16,13 +16,17 @@ import bubolo.world.Tank;
 class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable {
 	private TextureRegion[][] frames;
 
-	private int colorIndex = SpriteColorSet.NEUTRAL;
+	private int colorIndex;
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
 
+	private static final int pillboxNoTargetColumn = 0;
+	private static final int pillboxHasTargetColumn = 1;
+
 	private static final int colorColumn = 0;
-	private static final int damageColumn = 1;
+	private static final int disabledColorColumn = 1;
+	private static final int damageColumn = 2;
 
 	private static final Color defaultColor = new Color(Color.WHITE);
 	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
@@ -44,11 +48,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	private void updateColorSet() {
 		if (!getEntity().hasOwner()) {
-			colorIndex = SpriteColorSet.NEUTRAL + 1;
+			colorIndex = SpriteColorSet.Neutral.row + 1;
 		} else if (getEntity().isOwnedByLocalPlayer()) {
-			colorIndex = SpriteColorSet.BLUE + 1;
+			colorIndex = SpriteColorSet.Blue.row + 1;
 		} else {
-			colorIndex = SpriteColorSet.RED + 1;
+			colorIndex = SpriteColorSet.Red.row + 1;
 		}
 	}
 
@@ -67,13 +71,20 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 					setColor(buildingColor);
 				}
 
-				// Draw the pillbox.
-				drawTexture(graphics, frames[colorColumn][0]);
-
 				DamageState damageState = DamageState.getDamageState(getEntity());
+
+				// Draw the pillbox.
+				if (pillbox.hasTarget() && damageState != DamageState.OutOfService) {
+					drawTexture(graphics, frames[pillboxHasTargetColumn][0]);
+				} else {
+					drawTexture(graphics, frames[pillboxNoTargetColumn][0]);
+				}
+
 				// Draw the lights if the pillbox isn't out of service.
 				if (damageState != DamageState.OutOfService) {
 					drawTexture(graphics, frames[colorColumn][colorIndex]);
+				} else {
+					drawTexture(graphics, frames[disabledColorColumn][colorIndex]);
 				}
 
 				// Draw damage, if any.
@@ -125,7 +136,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				return Undamaged;
 			} else if (damagePercent > 0.60f && damagePercent < 0.85f) {
 				return LightlyDamaged;
-			} else if (damagePercent > 0.30f && damagePercent < 0.60f) {
+			} else if (damagePercent > 0.30f && damagePercent <= 0.60f) {
 				return ModeratelyDamaged;
 			} else if (damagePercent > 0 && damagePercent <= 0.30f) {
 				return SeverelyDamaged;

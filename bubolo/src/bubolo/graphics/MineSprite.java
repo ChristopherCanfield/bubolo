@@ -15,7 +15,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	private int frameIndex;
 
 	// An index representing which row of the sprite sheet to use.
-	private int colorId = SpriteColorSet.BLUE;
+	private int colorId;
 
 	// An array of all frames held in the texture sheet, by ROW and COLUMN.
 	private final TextureRegion[][] allFrames;
@@ -55,7 +55,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 			// is arming.
 			return;
 		} else {
-			colorId = getEntity().isOwnedByLocalPlayer() ? SpriteColorSet.BLUE : SpriteColorSet.RED;
+			colorId = getEntity().isOwnedByLocalPlayer() ? SpriteColorSet.Blue.row : SpriteColorSet.Red.row;
 
 			if (!getEntity().isArmed()) {
 				frameIndex = 0;

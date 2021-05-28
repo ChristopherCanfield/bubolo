@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Config;
+import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
 import bubolo.net.Network;
@@ -28,6 +29,9 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	/** Time required to reload cannon. */
 	private static final int cannonReloadSpeedTicks = Time.secondsToTicks(0.5f);
 	private boolean cannonReloaded = true;
+
+	/** Whether the pillbox has a target. */
+	private boolean hasTarget;
 
 	/** The direction the pillbox will fire. */
 	private float cannonRotation = 0;
@@ -350,6 +354,20 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	}
 
 	/**
+	 * @return true if the pillbox has a target.
+	 */
+	public boolean hasTarget() {
+		return hasTarget;
+	}
+
+	/**
+	 * @param value true if the pillbox's targeting system has identified a target, or false otherwise.
+	 */
+	public void setHasTarget(boolean value) {
+		this.hasTarget = value;
+	}
+
+	/**
 	 * @return the distance at which the pillbox will attempt to fire at an enemy
 	 */
 	public float range() {
@@ -395,6 +413,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 				world.timer().rescheduleTicks(capturableTimerId, captureTimeTicks);
 			} else {
 				capturableTimerId = world.timer().scheduleTicks(captureTimeTicks, this::onCapturableTimerExpired);
+				Audio.play(Sfx.PillboxPowerOff, x(), y());
 			}
 
 			capturable = true;
@@ -405,6 +424,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private void onCapturableTimerExpired(World world) {
 		capturable = false;
 		capturableTimerId = -1;
+		Audio.play(Sfx.PillboxPowerOn, x(), y());
 	}
 
 	/**
