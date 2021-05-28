@@ -633,13 +633,16 @@ public class Tank extends ActorEntity implements Damageable {
 		// offset defined by collisionBounce.
 		var adjacentCollidables = world.getCollidablesWithinTileDistance(this, 1, true, null);
 		for (var collider : adjacentCollidables) {
-			if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
-				float newX = previousX + (-dirX * collisionBounce);
-				float newY = previousY + (-dirY * collisionBounce);
-				setPosition(newX, newY);
+			// Ensure that network tanks can dead-reckon through their own base.
+			if (!(collider instanceof Base base && base.hasOwner() && id().equals(base.owner().id()))) {
+				if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
+					float newX = previousX + (-dirX * collisionBounce);
+					float newY = previousY + (-dirY * collisionBounce);
+					setPosition(newX, newY);
 
-				decelerate();
-				break;
+					decelerate();
+					break;
+				}
 			}
 		}
 
@@ -647,10 +650,13 @@ public class Tank extends ActorEntity implements Damageable {
 		// collisionBounce offset. This prevents the tank from tunneling through solid objects, which could occur
 		// if the tank is bounced into a solid object.
 		for (var collider : adjacentCollidables) {
-			if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
-				setPosition(previousX, previousY);
+			// Ensure that network tanks can dead-reckon through their own base.
+			if (!(collider instanceof Base base && base.hasOwner() && id().equals(base.owner().id()))) {
+				if (Intersector.overlaps(boundingCircle, collider.bounds().getBoundingRectangle())) {
+					setPosition(previousX, previousY);
 
-				break;
+					break;
+				}
 			}
 		}
 	}
