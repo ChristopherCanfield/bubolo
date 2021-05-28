@@ -16,7 +16,7 @@ import bubolo.world.Tank;
 class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable {
 	private TextureRegion[][] frames;
 
-	private int colorIndex = SpriteColorSet.NEUTRAL;
+	private int colorIndex;
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
@@ -48,11 +48,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	private void updateColorSet() {
 		if (!getEntity().hasOwner()) {
-			colorIndex = SpriteColorSet.NEUTRAL + 1;
+			colorIndex = SpriteColorSet.Neutral.row + 1;
 		} else if (getEntity().isOwnedByLocalPlayer()) {
-			colorIndex = SpriteColorSet.BLUE + 1;
+			colorIndex = SpriteColorSet.Blue.row + 1;
 		} else {
-			colorIndex = SpriteColorSet.RED + 1;
+			colorIndex = SpriteColorSet.Red.row + 1;
 		}
 	}
 

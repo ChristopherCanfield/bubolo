@@ -118,7 +118,8 @@ public class Graphics implements EntityLifetimeObserver {
 
 	/**
 	 * Returns a texture region from a path to a texture. Ensures that the same texture region isn't stored multiple
-	 * times. Will create the region if it has not yet been created.
+	 * times. Will create the region if it has not yet been created. The frames are in column-row order. This overload
+	 * assumes that there is no padding between frames.
 	 *
 	 * @param path the path to the texture file.
 	 * @param frameWidth each frame's width.
@@ -129,6 +130,18 @@ public class Graphics implements EntityLifetimeObserver {
 		return getTextureRegion2d(path, frameWidth, frameHeight, 0, 0);
 	}
 
+	/**
+	 * Returns a texture region from a path to a texture. Ensures that the same texture region isn't stored multiple
+	 * times. Will create the region if it has not yet been created. The frames are in column-row order. Use this overload
+	 * to specify the padding between each frame.
+	 *
+	 * @param path the path to the texture file.
+	 * @param frameWidth each frame's width.
+	 * @param frameHeight each frame's height.
+	 * @param framePaddingWidth the amount of padding between each column.
+	 * @param framePaddingHeight the amount of padding between each row.
+	 * @return the requested texture region.
+	 */
 	static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight, int framePaddingWidth, int framePaddingHeight) {
 		TextureRegion[][] textureRegion = textureRegions2d.get(path);
 		if (textureRegion == null) {

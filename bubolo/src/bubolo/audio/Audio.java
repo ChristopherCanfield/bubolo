@@ -2,6 +2,7 @@ package bubolo.audio;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.AL_MAX_DISTANCE;
 import static org.lwjgl.openal.AL10.AL_PITCH;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_REFERENCE_DISTANCE;
@@ -49,6 +50,7 @@ public class Audio {
 	private static float referenceDistance;
 	// OpenAL rolloff factor: how quickly a sound fades out as its distance increases.
 	private static float rolloffFactor;
+	private static float maxDistance;
 
 	private static float listenerX;
 	private static float listenerY;
@@ -74,10 +76,11 @@ public class Audio {
 		buffers = new AudioBuffers();
 		loadSoundEffects();
 
-		alDistanceModel(AL10.AL_INVERSE_DISTANCE);
+		alDistanceModel(AL10.AL_INVERSE_DISTANCE_CLAMPED);
 
 		referenceDistance = Math.max(viewportWidth, viewportHeight) * 0.4f;
 		rolloffFactor = Math.min(worldWidth / viewportWidth, worldHeight / viewportHeight);
+		maxDistance = Math.min(viewportWidth * 3, viewportHeight * 3);
 
 		ambientSounds = new AmbientSounds();
 		ambientSounds.play(ambientSoundsVolume);
@@ -117,6 +120,7 @@ public class Audio {
 			alSource3f(sourceId, AL_POSITION, x, y, sourceZPosition);
 			alSourcef(sourceId, AL_ROLLOFF_FACTOR, rolloffFactor);
 			alSourcef(sourceId, AL_REFERENCE_DISTANCE, referenceDistance);
+			alSourcef(sourceId, AL_MAX_DISTANCE, maxDistance);
 
 			alSourcePlay(sourceId);
 		} else {

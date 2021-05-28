@@ -27,7 +27,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private int frameIndex;
 
 	// An index representing which row of the sprite sheet to use, based on color set.
-	private int colorId = SpriteColorSet.RED;
+	private int colorId = SpriteColorSet.Red.row;
 
 	// An array of all frames held in the texture sheet, by row and then column. Row = color set.
 	private TextureRegion[][] frames;
@@ -259,7 +259,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	}
 
 	private static int determineColorSet(Tank tank) {
-		return tank.isOwnedByLocalPlayer() ? SpriteColorSet.BLUE : SpriteColorSet.RED;
+		return tank.isOwnedByLocalPlayer() ? SpriteColorSet.Blue.row : SpriteColorSet.Red.row;
 	}
 
 	private enum Visibility {

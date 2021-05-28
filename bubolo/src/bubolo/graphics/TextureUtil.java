@@ -50,7 +50,7 @@ abstract class TextureUtil {
 
 	/**
 	 * Splits a texture into frames, using the height and width of each frame to determine start and end points of each frame.
-	 * All frames must be the same size.
+	 * All frames must be the same size. The frames are in column-row order.
 	 *
 	 * @param tex the texture to be split into frames.
 	 * @param frameWidth the width of each frame.

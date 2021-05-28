@@ -1,25 +1,20 @@
 package bubolo.graphics;
 
+import com.badlogic.gdx.graphics.Color;
+
 /**
- * Used to determine the color for standardized sprite textures that have more than one
- * color set available. These values are indices used when selecting which row of frames
- * to use in sprite display.
+ * Used by certain sprite textures to determine the color to use.
  */
-class SpriteColorSet
-{
-	/**
-	 * Index used for the main character color, blue, indicating that it appears in the
-	 * first row of multi-color textures.
-	 */
-	public static final int BLUE = 0;
-	/**
-	 * Index used for the enemy character color, red, indicating that it appears in the
-	 * second row of multi-color textures.
-	 */
-	public static final int RED = 1;
-	/**
-	 * Index used for the main character color, usually white/gray, indicating that it
-	 * appears in the third row of multi-color textures.
-	 */
-	public static final int NEUTRAL = 2;
+enum SpriteColorSet {
+	Blue(0, new Color(89.0f/255, 137.0f/255, 208.0f/255, 1)),
+	Red(1, new Color(208.0f/255, 90.0f/255, 104.0f/255, 1)),
+	Neutral(2, new Color(215.0f/255, 215.0f/255, 215.0f/255, 1));
+
+	final int row;
+	final Color color;
+
+	SpriteColorSet(int row, Color color) {
+		this.row = row;
+		this.color = color;
+	}
 }
