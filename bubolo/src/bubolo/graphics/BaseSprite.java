@@ -124,11 +124,21 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 		}
 	}
 
+	private static final Color ammoBarColor = Color.CYAN;
+
 	@Override
 	public void drawUiElements(Graphics graphics) {
-		var e = getEntity();
-		if (e.isOwnedByLocalPlayer()) {
-			StatusBarRenderer.drawHealthBar(getEntity(), graphics.shapeRenderer(), graphics.camera());
+		var repairBay = getEntity();
+		if (repairBay.isOwnedByLocalPlayer()) {
+			StatusBarRenderer.drawHealthBar(repairBay, graphics.shapeRenderer(), graphics.camera());
+
+			if (repairBay.isFriendlyTankOnThisRepairBay()) {
+				float pctAmmo = repairBay.ammo() / repairBay.maxAmmo();
+				StatusBarRenderer.drawVerticalStatusBar(repairBay, pctAmmo, ammoBarColor, graphics.shapeRenderer(), graphics.camera());
+
+				float pctMines = repairBay.mines() / repairBay.maxMines();
+				StatusBarRenderer.drawVerticalStatusBar(repairBay, pctMines, ammoBarColor, graphics.shapeRenderer(), graphics.camera(), 10);
+			}
 		}
 	}
 }

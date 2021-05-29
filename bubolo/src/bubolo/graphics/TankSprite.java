@@ -156,7 +156,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		int textVerticalPosition = (int) screenHeight - 5;
 		// Render the ammo count text.
 		font.setColor(TANK_UI_FONT_COLOR);
-		font.draw(spriteBatch, "x " + tank.ammoCount(), screenHalfWidth - 100 + 12, textVerticalPosition);
+		font.draw(spriteBatch, "x " + tank.ammo(), screenHalfWidth - 100 + 12, textVerticalPosition);
 
 		// Render the tank's speed.
 		int tankSpeedTextLocation = (int) ((tank.speedKph() < 10) ? screenHalfWidth - 20 : screenHalfWidth - 25);
@@ -170,7 +170,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		spriteBatch.draw(mineTexture, screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
 
 		// Render the mine count text.
-		font.draw(spriteBatch, "x " + tank.mineCount(), screenHalfWidth + 53 + 22, textVerticalPosition);
+		font.draw(spriteBatch, "x " + tank.mines(), screenHalfWidth + 53 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}

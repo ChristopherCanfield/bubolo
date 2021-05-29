@@ -14,7 +14,9 @@ import bubolo.util.Time;
  */
 public class Base extends ActorEntity implements Damageable, TerrainImprovement {
 	/** Whether this base is currently refueling a Tank. */
-	private boolean refuelingTank = false;
+	private boolean refuelingTank;
+	/** Whether a friendly tank is on this repair bay. */
+	private boolean isFriendlyTankOnThisRepairBay;
 
 	private static final int maxHitPoints = 100;
 
@@ -76,6 +78,8 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 		refillSuppliesAndHealth();
 
 		refuelingTank = false;
+		isFriendlyTankOnThisRepairBay = false;
+
 		/* @NOTE (cdc 2021-05-25): Switched to the index-based for loop, rather than for-each (my preference), b/c the
 		 * 			iterator for the UnmodifiableList was creating a weirdly large amount of garbage according to the profiler. */
 		var tanks = world.getTanks();
@@ -84,7 +88,9 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 			if (overlapsEntity(tank)) {
 				if (refuelTank(tank)) {
 					refuelingTank = true;
-					break;
+					isFriendlyTankOnThisRepairBay = true;
+				} else if (hasOwner() && owner().equals(tank)) {
+					isFriendlyTankOnThisRepairBay = true;
 				} else {
 					refuelingTank = false;
 					processCapture(tank);
@@ -167,8 +173,8 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	private static boolean isTankRefueled(Tank tank) {
 		return tank.hitPoints() >= tank.maxHitPoints()
-				&& tank.ammoCount() >= tank.maxAmmo()
-				&& tank.mineCount() >= tank.maxMines();
+				&& tank.ammo() >= tank.maxAmmo()
+				&& tank.mines() >= tank.maxMines();
 	}
 
 	/**
@@ -176,6 +182,26 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	 */
 	public boolean isRefueling() {
 		return refuelingTank;
+	}
+
+	public boolean isFriendlyTankOnThisRepairBay() {
+		return isFriendlyTankOnThisRepairBay;
+	}
+
+	public float ammo() {
+		return ammo;
+	}
+
+	public float maxAmmo() {
+		return maxAmmo;
+	}
+
+	public float mines() {
+		return mines;
+	}
+
+	public float maxMines() {
+		return mines;
 	}
 
 	/**
