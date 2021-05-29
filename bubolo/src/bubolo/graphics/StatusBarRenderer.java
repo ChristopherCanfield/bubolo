@@ -111,9 +111,9 @@ final class StatusBarRenderer {
 	 * @param fillColor the color to fill the bar with.
 	 * @param shapeRenderer a shape renderer.
 	 * @param camera the game's camera.
-	 * @return the bottom y position of the bar, in world units.
+	 * @return the left x and bottom y position of the bar, in camera coordinates.
 	 */
-	static float drawVerticalStatusBar(Entity entity, float pctFilled, Color fillColor, ShapeRenderer shapeRenderer, Camera camera) {
+	static Vector2 drawVerticalStatusBar(Entity entity, float pctFilled, Color fillColor, ShapeRenderer shapeRenderer, Camera camera) {
 		return drawVerticalStatusBar(entity, pctFilled, fillColor, shapeRenderer, camera, 0);
 	}
 
@@ -127,9 +127,9 @@ final class StatusBarRenderer {
 	 * @param camera the game's camera.
 	 * @param horizontalOffset an offset that moves the vertical bar horizontally compared with the default position. Positive numbers
 	 * move the bar to the right, while negative numbers move it to the left.
-	 * @return the bottom y position of the bar, in world units.
+	 * @return the left x and bottom y position of the bar, in camera coordinates.
 	 */
-	static float drawVerticalStatusBar(Entity entity, float pctFilled, Color fillColor, ShapeRenderer shapeRenderer, Camera camera, int horizontalOffset) {
+	static Vector2 drawVerticalStatusBar(Entity entity, float pctFilled, Color fillColor, ShapeRenderer shapeRenderer, Camera camera, int horizontalOffset) {
 		shapeRenderer.begin(ShapeType.Filled);
 
 		float barInteriorBackgroundHeight = entity.height() * 0.9f;
@@ -153,7 +153,6 @@ final class StatusBarRenderer {
 
 		shapeRenderer.end();
 
-		var worldUnits = Units.cameraToWorld(camera, 0, cameraCoords.y - entityHalfHeight - 2, tempVec);
-		return worldUnits.x;
+		return new Vector2(cameraCoords.x + entityHalfWidth + 4 + horizontalOffset, cameraCoords.y - entityHalfHeight - 2);
 	}
 }

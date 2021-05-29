@@ -70,6 +70,10 @@ public abstract class Units {
 		return cameraToWorld(camera, cameraCoordinates.x, cameraCoordinates.y, new Vector2());
 	}
 
+	public static Vector2 cameraToWorld(Camera camera, float cameraX, float cameraY) {
+		return cameraToWorld(camera, cameraX, cameraY, new Vector2());
+	}
+
 	public static Vector2 cameraToWorld(Camera camera, float cameraX, float cameraY, Vector2 worldCoordinatesOut) {
 		return worldCoordinatesOut.set(cameraX + camera.position.x, cameraY + camera.position.y);
 	}

@@ -1,6 +1,7 @@
 package bubolo.graphics;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Base;
@@ -34,8 +35,14 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 	// The sprite's frames, arranged in column-row order.
 	private final TextureRegion[][] frames;
 
+	private final Texture bulletTexture;
+	private final Texture mineTexture;
+
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "repair_bay.png";
+
+	private static final String bulletTextureFile = "bullet.png";
+	private static final String mineTextureFile = "mine.png";
 
 	/**
 	 * Constructor for the BaseSprite. This is Package-private because sprites should not be directly created outside of the
@@ -47,6 +54,8 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 		super(DrawLayer.TerrainImprovements, base);
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32, 1, 1);
+		bulletTexture = Graphics.getTexture(bulletTextureFile);
+		mineTexture = Graphics.getTexture(mineTextureFile);
 	}
 
 	@Override
@@ -124,7 +133,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 		}
 	}
 
-	private static final Color ammoBarColor = Color.CYAN;
+	private static final Color ammoBarColor = Color.valueOf("00C66DFF");
 
 	@Override
 	public void drawUiElements(Graphics graphics) {
@@ -134,10 +143,27 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 
 			if (repairBay.isFriendlyTankOnThisRepairBay()) {
 				float pctAmmo = repairBay.ammo() / repairBay.maxAmmo();
-				StatusBarRenderer.drawVerticalStatusBar(repairBay, pctAmmo, ammoBarColor, graphics.shapeRenderer(), graphics.camera());
+				var ammoBarPos = StatusBarRenderer.drawVerticalStatusBar(repairBay, pctAmmo, ammoBarColor, graphics.shapeRenderer(), graphics.camera());
 
 				float pctMines = repairBay.mines() / repairBay.maxMines();
-				StatusBarRenderer.drawVerticalStatusBar(repairBay, pctMines, ammoBarColor, graphics.shapeRenderer(), graphics.camera(), 10);
+				var mineBarPos = StatusBarRenderer.drawVerticalStatusBar(repairBay, pctMines, ammoBarColor, graphics.shapeRenderer(), graphics.camera(), 10);
+
+				var spriteBatch = graphics.batch();
+				spriteBatch.begin();
+
+				float bulletWidth = bulletTexture.getWidth() * 1.1f;
+				float bulletHeight = bulletTexture.getHeight() * 1.1f;
+				// Draw the bullet texture.
+				spriteBatch.draw(bulletTexture, ammoBarPos.x + 1, ammoBarPos.y - 8, bulletWidth, bulletHeight);
+
+				// Mine texture divided by number of frames per row.
+				float mineWidth = mineTexture.getWidth() / 6 * 0.65f;
+				// Mine texture divided by number of frames per column.
+				float mineHeight = mineTexture.getHeight() / 3 * 0.65f;
+				// Draw the mine texture.
+				spriteBatch.draw(mineTexture, mineBarPos.x - 3, mineBarPos.y - 10, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
+
+				spriteBatch.end();
 			}
 		}
 	}
