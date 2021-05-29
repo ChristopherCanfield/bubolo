@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.Config;
@@ -95,6 +96,10 @@ public class Tank extends ActorEntity implements Damageable {
 	private float previousX = 0;
 	// The previous y position. Used for collision handling.
 	private float previousY = 0;
+
+	// Used for snapping the tank to an axis when driving on roads.
+	private NearAxis lastNearAxis = NearAxis.None;
+	private boolean disableRotation;
 
 	private static final int maxHitPoints = 100;
 	private float hitPoints = maxHitPoints;
@@ -193,6 +198,7 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 
 		updateSpeedForTerrain(world);
+		snapToAxisIfEnteredRoad(world);
 		moveTank(world);
 		performCollisionDetection(world);
 		processPillboxBuilding(world);
@@ -317,7 +323,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Rotates the tank clockwise.
 	 */
 	public void rotateRight() {
-		if (!rotated) {
+		if (!rotated && !disableRotation) {
 			rotated = true;
 			setRotation(rotation() + rotationRate);
 			cancelBuildingPillbox();
@@ -329,7 +335,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * Rotates the tank counter-clockwise.
 	 */
 	public void rotateLeft() {
-		if (!rotated) {
+		if (!rotated && !disableRotation) {
 			rotated = true;
 			setRotation(rotation() - rotationRate);
 			cancelBuildingPillbox();
@@ -601,6 +607,72 @@ public class Tank extends ActorEntity implements Damageable {
 			adjustedAccelerationRate = accelerationRate * terrain.accelerationModifier();
 		}
 		clampSpeed();
+	}
+
+	/**
+	 * Snaps the tank to an axis, if it is on a road and is nearly facing an axis. This is done to make it
+	 * easier for a person to drive on a road at high speeds. Otherwise, it is very difficult to rotate the
+	 * tank to a precise east/west/north/south heading.
+	 *
+	 * @param world reference to the game world.
+	 */
+	private void snapToAxisIfEnteredRoad(World world) {
+		boolean isOnRoad = world.getTerrain(tileColumn(), tileRow()) instanceof Road;
+		if (isOnRoad) {
+			NearAxis nearAxis = NearAxis.getNearAxis(rotation());
+			if (nearAxis != lastNearAxis && nearAxis != NearAxis.None) {
+				setRotation(nearAxis.rotation);
+				lastNearAxis = nearAxis;
+				disableRotation = true;
+				world.timer().scheduleSeconds(0.25f, w -> {
+					disableRotation = false;
+				});
+			}
+		} else if (!isOnRoad) {
+			lastNearAxis = NearAxis.None;
+		}
+	}
+
+	private static boolean between(float val, float min, float max) {
+		assert min < max;
+		return val >= min && val <= max;
+	}
+
+	/**
+	 * Used to snap the tank to an axis when on a road, to make it easier to drive on a road at high speeds.
+	 */
+	private enum NearAxis {
+		None(-1),
+		NorthY(MathUtils.HALF_PI),
+		SouthY(-MathUtils.HALF_PI),
+		EastX(0),
+		WestX(MathUtils.PI);
+
+		final float rotation;
+
+		NearAxis(float rotation) {
+			this.rotation = rotation;
+		}
+
+		/**
+		 * Returns the nearest axis, or None if the tank isn't nearly facing an axis.
+		 *
+		 * @param rotationRadians the tank's rotation, in radians.
+		 * @return the nearest axis, or None if the tank isn't nearly facing an axis.
+		 */
+		private static NearAxis getNearAxis(float rotationRadians) {
+			if (between(rotationRadians, MathUtils.HALF_PI * 0.85f, MathUtils.HALF_PI * 1.15f)) {
+				return NorthY;
+			} else if (between(rotationRadians, -MathUtils.HALF_PI * 1.15f, -MathUtils.HALF_PI * 0.85f)) {
+				return SouthY;
+			} else if (between(rotationRadians, -0.2355f, 0) || between(rotationRadians, 0, 0.2355f)) {
+				return EastX;
+			} else if (between(rotationRadians, MathUtils.PI * 0.9275f, MathUtils.PI * 1.075f) || between(rotationRadians, -MathUtils.PI * 1.075f, -MathUtils.PI * 0.925f)) {
+				return WestX;
+			} else {
+				return None;
+			}
+		}
 	}
 
 	/**
