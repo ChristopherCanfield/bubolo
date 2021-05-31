@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
@@ -67,6 +68,11 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private static final Color TANK_UI_BOX_COLOR = new Color(50 / 255f, 50 / 255f, 50 / 255f, 110 / 255f);
 	private static final Color TANK_UI_FONT_COLOR = new Color(240 / 255f, 240 / 255f, 240 / 255f, 1f);
 
+	private final ParticleEffect[] smokeEmitter = new ParticleEffect[3];
+	private static final String smokeParticleEffectLowDamageFile = "res/particles/Particle Park Smoke Low Damage.p";
+	private static final String smokeParticleEffectMediumDamageFile = "res/particles/Particle Park Smoke Medium Damage.p";
+	private static final String smokeParticleEffectHighDamageFile = "res/particles/Particle Park Smoke High Damage.p";
+
 	/**
 	 * Constructor for the TankSprite. This is Package-private because sprites should not be directly created outside of the
 	 * graphics system.
@@ -78,6 +84,18 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 		bulletTexture = Graphics.getTexture(BULLET_TEXTURE_FILE);
 		mineTexture = Graphics.getTexture(MINE_TEXTURE_FILE);
+
+		smokeEmitter[0] = new ParticleEffect();
+		smokeEmitter[0].load(Gdx.files.internal(smokeParticleEffectLowDamageFile), Gdx.files.internal("res/particles"));
+		smokeEmitter[0].start();
+
+		smokeEmitter[1] = new ParticleEffect();
+		smokeEmitter[1].load(Gdx.files.internal(smokeParticleEffectMediumDamageFile), Gdx.files.internal("res/particles"));
+		smokeEmitter[1].start();
+
+		smokeEmitter[2] = new ParticleEffect();
+		smokeEmitter[2].load(Gdx.files.internal(smokeParticleEffectHighDamageFile), Gdx.files.internal("res/particles"));
+		smokeEmitter[2].start();
 	}
 
 	/**
@@ -156,7 +174,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		int textVerticalPosition = (int) screenHeight - 5;
 		// Render the ammo count text.
 		font.setColor(TANK_UI_FONT_COLOR);
-		font.draw(spriteBatch, "x " + tank.ammoCount(), screenHalfWidth - 100 + 12, textVerticalPosition);
+		font.draw(spriteBatch, "x " + tank.ammo(), screenHalfWidth - 100 + 12, textVerticalPosition);
 
 		// Render the tank's speed.
 		int tankSpeedTextLocation = (int) ((tank.speedKph() < 10) ? screenHalfWidth - 20 : screenHalfWidth - 25);
@@ -170,7 +188,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		spriteBatch.draw(mineTexture, screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
 
 		// Render the mine count text.
-		font.draw(spriteBatch, "x " + tank.mineCount(), screenHalfWidth + 53 + 22, textVerticalPosition);
+		font.draw(spriteBatch, "x " + tank.mines(), screenHalfWidth + 53 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}
@@ -196,6 +214,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		} else if (visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			deathAnimationCreated = false;
 			animateAndDraw(graphics);
+			drawSmoke(graphics);
 		}
 	}
 
@@ -208,6 +227,31 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		// Tank is idle.
 		} else {
 			drawTexture(graphics, idleFrames[colorId]);
+		}
+	}
+
+	private Vector2 tankCameraPos = new Vector2();
+
+	private void drawSmoke(Graphics graphics) {
+		var smokeEffectIndex = getSmokeEffectIndex(getEntity());
+		if (smokeEffectIndex != -1) {
+			tankCameraPos = Units.worldToCamera(graphics.camera(), getEntity().x(), getEntity().y());
+			smokeEmitter[smokeEffectIndex].setPosition(tankCameraPos.x, tankCameraPos.y);
+			smokeEmitter[smokeEffectIndex].update(Gdx.graphics.getDeltaTime());
+			smokeEmitter[smokeEffectIndex].draw(graphics.batch());
+		}
+	}
+
+	private static int getSmokeEffectIndex(Tank tank) {
+		var pctHealth = tank.hitPoints() / tank.maxHitPoints();
+		if (pctHealth >= 0.85f) {
+			return -1;
+		} else if (pctHealth >= 0.5f) {
+			return 0;
+		} else if (pctHealth >= 0.25f) {
+			return 1;
+		} else {
+			return 2;
 		}
 	}
 

@@ -768,27 +768,27 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Returns the current ammo count of the tank
+	 * Returns the amount of ammo the tank is carrying.
 	 *
-	 * @return current ammo count
+	 * @return the tank's ammo count.
 	 */
-	public int ammoCount() {
+	public int ammo() {
 		return ammoCount;
 	}
 
 	/**
-	 * Returns the number of mines the tank currently contains
+	 * Returns the number of mines the tank is carrying.
 	 *
-	 * @return the current mine count
+	 * @return the tank's mine count.
 	 */
-	public int mineCount() {
+	public int mines() {
 		return mineCount;
 	}
 
 	/**
-	 * Changes the hit point count after taking damage
+	 * Damages the tank by reducing the tank's hit points by the number of damage points passed in.
 	 *
-	 * @param damagePoints how much damage the tank has taken
+	 * @param damagePoints the amount of damage to give to the tank. >= 0.
 	 */
 	@Override
 	public void receiveDamage(float damagePoints, World world) {
