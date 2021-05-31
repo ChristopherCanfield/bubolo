@@ -129,14 +129,29 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	private boolean refuelTank(Tank tank) {
 		if (tank == owner() && !isTankRefueled(tank)) {
 			if (readyToResupplyTank) {
-				float refuelRepairPoints = (repairPoints > resuplyEventRepairAmount) ? resuplyEventRepairAmount : repairPoints;
-				repairPoints -= refuelRepairPoints;
+				float refuelRepairPoints;
+				if (tank.hitPoints() < tank.maxHitPoints()) {
+					refuelRepairPoints = (repairPoints > resuplyEventRepairAmount) ? resuplyEventRepairAmount : repairPoints;
+					repairPoints -= refuelRepairPoints;
+				} else {
+					refuelRepairPoints = 0;
+				}
 
-				int refuelAmmo = (int) ((ammo > resuplyEventAmmoAmount) ? resuplyEventAmmoAmount : ammo);
-				ammo -= refuelAmmo;
+				int refuelAmmo;
+				if (tank.ammo() < tank.maxAmmo()) {
+					refuelAmmo = (int) ((ammo > resuplyEventAmmoAmount) ? resuplyEventAmmoAmount : ammo);
+					ammo -= refuelAmmo;
+				} else {
+					refuelAmmo = 0;
+				}
 
-				int refuelMines = (int) ((mines > resuplyEventMinesAmount) ? resuplyEventMinesAmount : mines);
-				mines -= refuelMines;
+				int refuelMines;
+				if (tank.mines() < tank.maxMines()) {
+					refuelMines = (int) ((mines > resuplyEventMinesAmount) ? resuplyEventMinesAmount : mines);
+					mines -= refuelMines;
+				} else {
+					refuelMines = 0;
+				}
 
 				tank.refuel(refuelRepairPoints, refuelAmmo, refuelMines);
 
@@ -202,6 +217,14 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	public float maxMines() {
 		return mines;
+	}
+
+	public float repairPoints() {
+		return repairPoints;
+	}
+
+	public float maxRepairPoints() {
+		return maxRepairPoints;
 	}
 
 	/**
