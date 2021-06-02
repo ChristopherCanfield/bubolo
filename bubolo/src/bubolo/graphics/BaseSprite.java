@@ -146,7 +146,6 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 
 			if (repairBay.isFriendlyTankOnThisRepairBay()) {
 				float pctRepairPoints = repairBay.repairPoints() / repairBay.maxRepairPoints();
-				System.out.println("pctRepairPoints: " + pctRepairPoints);
 				var repairBarPos = StatusBarRenderer.drawVerticalStatusBar(repairBay, pctRepairPoints, statusBarColor, graphics.shapeRenderer(), graphics.camera());
 
 				float pctAmmo = repairBay.ammo() / repairBay.maxAmmo();

@@ -11,6 +11,7 @@ import bubolo.world.Crater;
 import bubolo.world.DeepWater;
 import bubolo.world.Entity;
 import bubolo.world.Grass;
+import bubolo.world.House;
 import bubolo.world.Mine;
 import bubolo.world.MineExplosion;
 import bubolo.world.Pillbox;
@@ -141,6 +142,10 @@ class SpriteSystem {
 			public Sprite create(Graphics graphics, Entity e) {
 				return new GrassSprite((Grass) e);
 			}
+		});
+
+		factories.put(House.class, (graphics, e) -> {
+			return new HouseSprite((House) e);
 		});
 
 		factories.put(Mine.class, new SpriteFactory() {

@@ -27,6 +27,7 @@ import bubolo.world.DeepWater;
 import bubolo.world.Entity;
 import bubolo.world.GameWorld;
 import bubolo.world.Grass;
+import bubolo.world.House;
 import bubolo.world.Mine;
 import bubolo.world.Pillbox;
 import bubolo.world.Road;
@@ -131,6 +132,7 @@ public class MapImporter {
 		stationaryElements.tiles.put(5, (world, args) -> world.addEntity(Crater.class, args));
 		stationaryElements.tiles.put(6, (world, args) -> world.addEntity(Rubble.class, args));
 		stationaryElements.tiles.put(7, (world, args) -> world.addEntity(Spawn.class, args));
+		stationaryElements.tiles.put(8, (world, args) -> world.addEntity(House.class, args));
 		tilesets.put(stationaryElements.name, stationaryElements);
 
 		Tileset terrain = new Tileset("bubolo_tilset_terrain");
@@ -150,6 +152,7 @@ public class MapImporter {
 		stationaryElements_oldLayout.tiles.put(3, (world, args) -> world.addEntity(Wall.class, args));
 		stationaryElements_oldLayout.tiles.put(4, (world, args) -> world.addEntity(Base.class, args));
 		stationaryElements_oldLayout.tiles.put(5, (world, args) -> world.addEntity(Spawn.class, args));
+		stationaryElements_oldLayout.tiles.put(6, (world, args) -> world.addEntity(House.class, args));
 		tilesets.put(stationaryElements_oldLayout.name, stationaryElements_oldLayout);
 
 		Tileset terrain_oldLayout = new Tileset("bubolo_tilset_terrain_oldLayout");

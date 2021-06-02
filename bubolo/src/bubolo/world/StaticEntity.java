@@ -9,6 +9,7 @@ import bubolo.util.Units;
  * The primary differences between StaticEntities and ActorEntities are:
  * - StaticEntities can't be moved after construction, because their position is final.
  * - StaticEntities don't have a public update method that is called by the world each game tick.
+ * - StaticEntities don't have a settable rotation.
  *
  * @author Christopher D. Canfield
  * @since 0.4.0

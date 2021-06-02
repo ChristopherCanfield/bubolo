@@ -27,7 +27,7 @@ abstract class Sprite implements Drawable {
 	// The sprite's color. White draws the texture as it appears in the file.
 	private Color color;
 
-	private static final float SCALE = 1.f;
+	private static final float defaultScale = 1.f;
 
 	/**
 	 * Constructs a sprite.
@@ -93,8 +93,20 @@ abstract class Sprite implements Drawable {
 	 *
 	 * @param graphics The graphics system.
 	 * @param texture The texture to draw.
+	 * @param scale the scale that the texture will be drawn.
 	 */
 	protected final void drawTexture(Graphics graphics, Texture texture) {
+		drawTexture(graphics, texture, defaultScale);
+	}
+
+	/**
+	 * Draws the texture to the screen. batch.begin() must be called before calling this method.
+	 *
+	 * @param graphics The graphics system.
+	 * @param texture The texture to draw.
+	 * @param scale the scale that the texture will be drawn.
+	 */
+	protected final void drawTexture(Graphics graphics, Texture texture, float scale) {
 		Vector2 origin = getOrigin(texture.getWidth(), texture.getHeight());
 		Vector2 cameraCoordinates = worldToCamera(graphics.camera(), getX() - origin.x, getY() - origin.y, cameraCoordinatesTempVar);
 
@@ -107,8 +119,8 @@ abstract class Sprite implements Drawable {
 				origin.y,
 				texture.getWidth(),
 				texture.getHeight(),
-				SCALE,
-				SCALE,
+				scale,
+				scale,
 				MathUtils.radiansToDegrees * (getRotation() - MathUtils.PI / 2.f),
 				0,
 				0,
@@ -125,7 +137,7 @@ abstract class Sprite implements Drawable {
 	 * @param textureRegion The texture region to draw.
 	 */
 	protected final void drawTexture(Graphics graphics, TextureRegion textureRegion) {
-		drawTexture(graphics, textureRegion, SCALE);
+		drawTexture(graphics, textureRegion, defaultScale);
 	}
 
 	protected final void drawTexture(Graphics graphics, TextureRegion textureRegion, float scale) {
