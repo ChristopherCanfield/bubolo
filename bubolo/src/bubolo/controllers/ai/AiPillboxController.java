@@ -8,9 +8,11 @@ import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
+import bubolo.util.Units;
 import bubolo.world.Pillbox;
 import bubolo.world.Pillbox.BuildStatus;
 import bubolo.world.Tank;
+import bubolo.world.Wall;
 import bubolo.world.World;
 
 /**
@@ -167,8 +169,29 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 	 * @param world reference to the game world.
 	 */
 	private void fire(float rotation, World world) {
-		parent().aimCannon(rotation);
-		parent().fireCannon(world);
+		var pillbox = parent();
+		pillbox.aimCannon(rotation);
+		// Don't fire a bullet if it will hit a wall that is touching the pillbox.
+		// @TODO (cdc 2021-06-03): If a pillbox becomes surrounded by walls, it won't be able to fire.
+		if (!willBulletHitAdjacentWall(pillbox, world)) {
+			pillbox.fireCannon(world);
+		}
+	}
+
+	/**
+	 * Returns true if a pillbox will hit an adjacent wall if it fires. Not 100% accurate, but good enough (cdc 2021-06-03).
+	 *
+	 * @param pillbox the pillbox that this AI controls.
+	 * @param world reference to the game world.
+	 * @return whether the pillbox will hit an adjacent wall if it fires.
+	 */
+	private static boolean willBulletHitAdjacentWall(Pillbox pillbox, World world) {
+		var oneTileDistX = (float) Math.cos(pillbox.cannonRotation()) * Units.TileToWorldScale + pillbox.centerX();
+		var oneTileDistY = (float) Math.sin(pillbox.cannonRotation()) * Units.TileToWorldScale + pillbox.centerY();
+		int oneTileColumn = Units.worldUnitToTile(oneTileDistX);
+		int oneTileRow = Units.worldUnitToTile(oneTileDistY);
+
+		return (world.getTerrainImprovement(oneTileColumn, oneTileRow) instanceof Wall);
 	}
 
 	private static void sendNetUpdate(Pillbox pillbox) {
