@@ -100,8 +100,8 @@ public class Audio {
 	/**
 	 * Plays a sound effect. This should be called in the following way:<br>
 	 * <br>
-	 * <code>Audio.play(Sfx.TankExplosion);<br>
-	 * Audio.play(Sfx.TankHit);</code>
+	 * <code>Audio.play(Sfx.TankExplosion, sourceWorldX, sourceWorldY);<br>
+	 * Audio.play(Sfx.TankHit, sourceWorldX, sourceWorldY);</code>
 	 *
 	 * @param soundEffect the sound effect to play.
 	 * @param x the source's x world position.

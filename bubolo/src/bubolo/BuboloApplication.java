@@ -45,7 +45,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 	private Screen screen;
 
-	private Path mapPath = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
+	private Path mapPath = FileSystems.getDefault().getPath("res", "maps/Canfield Island.json");
 
 	public enum PlayerType {
 		LocalSinglePlayer, Host, Client
