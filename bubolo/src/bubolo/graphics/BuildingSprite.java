@@ -16,7 +16,7 @@ public class BuildingSprite extends AbstractEntitySprite<Building> {
 	private final TextureRegion[] texture;
 	private final int appearanceIndex;
 
-	private static final String textureFile = "house2.png";
+	private static final String textureFile = "buildings.png";
 
 	private static final Color color1 = Color.LIGHT_GRAY;
 	private static final Color color2 = Color.valueOf("B5B5B5");
