@@ -31,8 +31,8 @@ public class Bullet extends ActorEntity {
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
 
-	private static final int width = 4;
-	private static final int height = 8;
+	public static final int Width = 4;
+	public static final int Height = 8;
 
 	/**
 	 * Constructs a new Bullet.
@@ -41,7 +41,7 @@ public class Bullet extends ActorEntity {
 	 * @param world reference to the game world.
 	 */
 	protected Bullet(ConstructionArgs args, World world) {
-		super(args, width, height);
+		super(args, Width, Height);
 		updateBounds();
 
 		Audio.play(Sfx.CannonFired, args.x(), args.y());

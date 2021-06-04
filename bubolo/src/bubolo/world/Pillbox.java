@@ -339,6 +339,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		cannonRotation = rotation;
 	}
 
+	public float cannonRotation() {
+		return cannonRotation;
+	}
+
 	/**
 	 * Fires the cannon in its current direction.
 	 *

@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  *
  * @author BU673 - Clone Industries
  */
-class BulletExplosionSprite extends Sprite
-{
+class BulletExplosionSprite extends Sprite {
 	private TextureRegion[][] frames;
 
 	// The number of milliseconds per frame.
@@ -34,16 +33,13 @@ class BulletExplosionSprite extends Sprite
 	private static final String TEXTURE_FILE = "explosion.png";
 
 	/**
-	 * Constructs a BulletExplosionSprite. This is Package-private because sprites should not be
-	 * directly created outside of the graphics system.
+	 * Constructs a BulletExplosionSprite. This is Package-private because sprites should not be directly created
+	 * outside of the graphics system.
 	 *
-	 * @param x
-	 *            the x position of the explosion.
-	 * @param y
-	 *            the y position of the explosion.
+	 * @param x the x position of the explosion.
+	 * @param y the y position of the explosion.
 	 */
-	BulletExplosionSprite(int x, int y)
-	{
+	BulletExplosionSprite(int x, int y) {
 		super(DrawLayer.Effects);
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, WIDTH, HEIGHT);
@@ -56,64 +52,52 @@ class BulletExplosionSprite extends Sprite
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
+	public void draw(Graphics graphics) {
 		drawTexture(graphics, frames[frameIndex][0]);
 		animate();
 	}
 
-	private void animate()
-	{
+	private void animate() {
 		frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
 		lastFrameTime = System.currentTimeMillis();
-		if (frameTimeRemaining < 0)
-		{
+		if (frameTimeRemaining < 0) {
 			frameTimeRemaining = millisPerFrame;
 
-			if (frameIndex < frames.length - 1)
-			{
+			if (frameIndex < frames.length - 1) {
 				++frameIndex;
-			}
-			else
-			{
+			} else {
 				disposed = true;
 			}
 		}
 	}
 
 	@Override
-	public boolean isDisposed()
-	{
+	public boolean isDisposed() {
 		return disposed;
 	}
 
 	@Override
-	public float getX()
-	{
+	public float getX() {
 		return x;
 	}
 
 	@Override
-	public float getY()
-	{
+	public float getY() {
 		return y;
 	}
 
 	@Override
-	public int getWidth()
-	{
+	public int getWidth() {
 		return WIDTH;
 	}
 
 	@Override
-	public int getHeight()
-	{
+	public int getHeight() {
 		return HEIGHT;
 	}
 
 	@Override
-	public float getRotation()
-	{
+	public float getRotation() {
 		return 0.f;
 	}
 }

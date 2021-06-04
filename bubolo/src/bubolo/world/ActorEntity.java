@@ -71,6 +71,14 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		return y;
 	}
 
+	public float centerX() {
+		return x + width() / 2;
+	}
+
+	public float centerY() {
+		return y + height() / 2;
+	}
+
 	/**
 	 * Sets the actor's position, and updates its bounds.
 	 *

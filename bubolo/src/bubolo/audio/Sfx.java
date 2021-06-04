@@ -10,8 +10,7 @@ package bubolo.audio;
  * @author Christopher D. Canfield
  * @since 0.4.0
  */
-public enum Sfx
-{
+public enum Sfx {
 	CannonFired("cannon_fired.ogg", 1, 0.75f, 1.25f),
 	MineExplosion("mine_explosion.ogg", 1, 0.75f, 1.25f),
 	TankExplosion("tank_explosion.ogg", 1, 0.75f, 1.25f),
@@ -24,7 +23,12 @@ public enum Sfx
 	PillboxTargetLost("pillbox_target_lost.ogg", 1f, 1, 1),
 	TreeHit("tree_hit.ogg", 1, 0.75f, 1.25f),
 	WallHit("wall_hit.ogg", 1, 0.75f, 1.25f),
-	BuildError("build_error.ogg", 1, 1, 1);
+	BuildError("build_error.ogg", 1, 1, 1),
+
+	BuildingHit1("building_hit.ogg", 1, 0.9f, 1.1f),
+	BuildingHit2("building_hit2.ogg", 1, 0.9f, 1.1f),
+
+	BuildingDestroyed("building_destroyed.ogg", 0.9f, 1.1f, 1);
 
 
 	final String fileName;
