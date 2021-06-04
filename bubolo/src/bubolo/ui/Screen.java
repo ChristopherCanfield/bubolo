@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.ui;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
  * Base class for ui screens that are drawn in the LWJGL window.
  *
  * @author Christopher D. Canfield
+ * @since 0.3.0
  */
 public abstract class Screen {
 	/** The scene2d.ui stage. **/
