@@ -1,31 +1,34 @@
 package bubolo.graphics.gui;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 
-import bubolo.graphics.Graphics;
 import bubolo.util.Units;
 
 class Button {
 	private final BitmapFont font;
 
-	int width;
-	int height;
 	float left;
 	// The top position, in screen coordinates (0 is at top).
 	float top;
 
+	int width;
+	int height;
+
 	String text;
 
 	private boolean selected;
+	private boolean hovered;
 
 	Button(float left, float top, int width, int height, BitmapFont font, String text) {
-		this.width = width;
-		this.height = height;
 		this.left = left;
 		this.top = top;
+		this.width = width;
+		this.height = height;
 		this.font = font;
 		this.text = text;
 	}
@@ -49,25 +52,67 @@ class Button {
 		return selected;
 	}
 
+	void setHovered(boolean hovered) {
+		this.hovered = hovered;
+	}
+
+	boolean isHovered() {
+		return hovered;
+	}
+
 	boolean contains(float screenX, float screenY) {
 		return left <= screenX && right() >= screenX &&
 				top <= screenY && bottom() >= screenY;
 	}
 
 	private float cameraTop(Camera camera) {
-		return Units.screenYToCameraY(camera, top);
+		return Units.screenYToCameraY(camera, top + height);
 	}
 
-	public void drawBorder(ShapeRenderer renderer, Camera camera) {
-		System.out.printf("Trying to draw border at %f, %f, %d, %d%n", left, cameraTop(camera), width, height);
+	public void drawBorder(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor) {
+		setShapeRendererColor(renderer, defaultColor, hoveredColor, selectedColor);
+		renderer.rect(left, cameraTop(camera), width, height);
+		if (selected) {
+			renderer.rect(left + 1, cameraTop(camera) + 1, width - 2, height - 2);
+		}
+	}
+
+	public void drawBackground(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor) {
+		setShapeRendererColor(renderer, defaultColor, hoveredColor, selectedColor);
 		renderer.rect(left, cameraTop(camera), width, height);
 	}
 
-	public void drawBackground(ShapeRenderer renderer, Camera camera) {
-		renderer.rect(left, cameraTop(camera), width, height);
+	private void setShapeRendererColor(ShapeRenderer renderer, Color defaultColor, Color hoveredColor, Color selectedColor) {
+		if (selected) {
+			renderer.setColor(selectedColor);
+		} else if (hovered) {
+			renderer.setColor(hoveredColor);
+		} else {
+			renderer.setColor(defaultColor);
+		}
 	}
 
-	public void drawBatch(Graphics graphics) {
-		font.draw(graphics.batch(), text, left, cameraTop(graphics.camera()) + font.getLineHeight(), 0, text.length(), width, Align.center, false);
+	public void drawBatch(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor) {
+		if (selected) {
+			batch.setColor(selectedColor);
+		} else if (hovered) {
+			batch.setColor(hoveredColor);
+		} else {
+			batch.setColor(defaultColor);
+		}
+		font.draw(batch, text, left, cameraTop(camera) + (font.getCapHeight() + height) / 2, 0, text.length(), width, Align.center, false);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s{left=%f,top=%f,right=%f,bottom=%f,width=%d,height=%d,text=%s}",
+				getClass().getName(),
+				left,
+				top,
+				right(),
+				bottom(),
+				width,
+				height,
+				text);
 	}
 }

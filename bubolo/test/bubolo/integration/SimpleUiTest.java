@@ -1,5 +1,6 @@
 package bubolo.integration;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
@@ -27,6 +28,7 @@ public class SimpleUiTest extends AbstractGameApplication {
 		graphics = new Graphics(Config.TargetWindowWidth, Config.TargetWindowHeight);
 		screen = new GuiTestScreen();
 		graphics.camera().position.set(0, 0, 0);
+		Gdx.input.setInputProcessor(screen);
 	}
 
 	@Override

@@ -40,6 +40,12 @@ public class VButtonGroup {
 		public Color buttonBorderColor = Color.BLACK;
 		public Color buttonBackgroundColor = Color.BLUE;
 		public Color buttonTextColor = Color.WHITE;
+		public Color buttonHoverBackgroundColor = Color.BLACK;
+		public Color buttonHoverBorderColor = Color.BLUE;
+		public Color buttonHoverTextColor = Color.WHITE;
+		public Color buttonSelectedBorderColor = Color.BLACK;
+		public Color buttonSelectedBackgroundColor = Color.CYAN;
+		public Color buttonSelectedTextColor = Color.YELLOW;
 
 		@Override
 		public Args clone() {
@@ -58,9 +64,16 @@ public class VButtonGroup {
 		assert args.buttonWidth > 0;
 		assert args.buttonHeight > 0;
 		assert args.buttonFont != null;
-		assert args.buttonBorderColor != null;
+
 		assert args.buttonBackgroundColor != null;
+		assert args.buttonBorderColor != null;
 		assert args.buttonTextColor != null;
+		assert args.buttonSelectedBackgroundColor != null;
+		assert args.buttonSelectedBorderColor != null;
+		assert args.buttonSelectedTextColor != null;
+		assert args.buttonHoverBackgroundColor != null;
+		assert args.buttonHoverBorderColor != null;
+		assert args.buttonHoverTextColor != null;
 
 		this.args = args.clone();
 	}
@@ -86,22 +99,56 @@ public class VButtonGroup {
 		renderer.setColor(args.buttonBackgroundColor);
 		renderer.begin(ShapeType.Filled);
 		for (Button button : buttons) {
-			button.drawBackground(renderer, graphics.camera());
+			button.drawBackground(renderer, graphics.camera(), args.buttonBackgroundColor, args.buttonHoverBackgroundColor, args.buttonSelectedBackgroundColor);
 		}
 		renderer.end();
 
 		renderer.setColor(args.buttonBorderColor);
 		renderer.begin(ShapeType.Line);
 		for (Button button : buttons) {
-			button.drawBorder(renderer, graphics.camera());
+			button.drawBorder(renderer, graphics.camera(), args.buttonBorderColor, args.buttonHoverBorderColor, args.buttonSelectedBorderColor);
 		}
 		renderer.end();
 
 		graphics.batch().setColor(args.buttonTextColor);
 		graphics.batch().begin();
 		for (Button button : buttons) {
-			button.drawBatch(graphics);
+			button.drawBatch(graphics.batch(), graphics.camera(), args.buttonTextColor, args.buttonHoverTextColor, args.buttonSelectedTextColor);
 		}
 		graphics.batch().end();
+	}
+
+	public boolean onMouseClicked(int screenX, int screenY) {
+		buttons.forEach(b -> b.setSelected(false));
+
+		Button clickedButton = findButtonThatContainsPoint(screenX, screenY);
+		if (clickedButton != null) {
+			clickedButton.setSelected(true);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean onMouseMoved(int screenX, int screenY) {
+		System.out.println("Mouse hovered: " + screenX + "," + screenY);
+
+		buttons.forEach(b -> b.setHovered(false));
+
+		Button hoverButton = findButtonThatContainsPoint(screenX, screenY);
+		if (hoverButton != null) {
+			hoverButton.setHovered(true);
+			System.out.println("Hovered over " + hoverButton + "; Mouse=" + screenX + "," + screenY);
+			return true;
+		}
+		return false;
+	}
+
+	private Button findButtonThatContainsPoint(int screenX, int screenY) {
+		for (Button button : buttons) {
+			if (button.contains(screenX, screenY)) {
+				return button;
+			}
+		}
+		return null;
 	}
 }
