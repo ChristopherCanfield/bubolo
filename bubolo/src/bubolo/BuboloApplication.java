@@ -235,7 +235,7 @@ public class BuboloApplication extends AbstractGameApplication {
 	public void dispose() {
 		Audio.dispose();
 		NetworkSystem.getInstance().dispose();
-		Graphics.dispose();
+		graphics.dispose();
 		/*
 		 * TODO (2021-04-13): After updating to lwjgl3, the process remains in the background even after the window is
 		 * closed and this dispose method is called. I'm not sure why that is. System.exit is a temporary hack until I

@@ -156,7 +156,7 @@ public class Graphics implements EntityLifetimeObserver {
 	/**
 	 * Destroys all textures, and destroys the Graphics instance.
 	 */
-	public static void dispose() {
+	public void dispose() {
 		for (Texture texture : textures.values()) {
 			texture.dispose();
 		}
@@ -178,15 +178,15 @@ public class Graphics implements EntityLifetimeObserver {
 		loadAllTextures();
 	}
 
-	Camera camera() {
+	public Camera camera() {
 		return camera;
 	}
 
-	Batch batch() {
+	public Batch batch() {
 		return batch;
 	}
 
-	ShapeRenderer shapeRenderer() {
+	public ShapeRenderer shapeRenderer() {
 		return shapeRenderer;
 	}
 
