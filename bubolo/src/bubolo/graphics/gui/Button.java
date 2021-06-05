@@ -94,11 +94,11 @@ class Button {
 
 	public void drawBatch(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor) {
 		if (selected) {
-			batch.setColor(selectedColor);
+			font.setColor(selectedColor);
 		} else if (hovered) {
-			batch.setColor(hoveredColor);
+			font.setColor(hoveredColor);
 		} else {
-			batch.setColor(defaultColor);
+			font.setColor(defaultColor);
 		}
 		font.draw(batch, text, left, cameraTop(camera) + (font.getCapHeight() + height) / 2, 0, text.length(), width, Align.center, false);
 	}

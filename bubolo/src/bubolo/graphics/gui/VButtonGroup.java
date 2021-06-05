@@ -37,15 +37,15 @@ public class VButtonGroup {
 		public int buttonWidth;
 		public int buttonHeight;
 		public BitmapFont buttonFont = Fonts.Arial18;
-		public Color buttonBorderColor = Color.BLACK;
-		public Color buttonBackgroundColor = Color.BLUE;
-		public Color buttonTextColor = Color.WHITE;
-		public Color buttonHoverBackgroundColor = Color.BLACK;
-		public Color buttonHoverBorderColor = Color.BLUE;
-		public Color buttonHoverTextColor = Color.WHITE;
+		public Color buttonBorderColor = Color.DARK_GRAY;
+		public Color buttonBackgroundColor = Color.WHITE;
+		public Color buttonTextColor = Color.BLACK;
 		public Color buttonSelectedBorderColor = Color.BLACK;
-		public Color buttonSelectedBackgroundColor = Color.CYAN;
+		public Color buttonSelectedBackgroundColor = Color.DARK_GRAY;
 		public Color buttonSelectedTextColor = Color.YELLOW;
+		public Color buttonHoverBorderColor = Color.BLACK;
+		public Color buttonHoverBackgroundColor = Color.LIGHT_GRAY;
+		public Color buttonHoverTextColor = Color.BLACK;
 
 		@Override
 		public Args clone() {
@@ -96,26 +96,49 @@ public class VButtonGroup {
 	public void draw(Graphics graphics) {
 		var renderer = graphics.shapeRenderer();
 
-		renderer.setColor(args.buttonBackgroundColor);
 		renderer.begin(ShapeType.Filled);
 		for (Button button : buttons) {
 			button.drawBackground(renderer, graphics.camera(), args.buttonBackgroundColor, args.buttonHoverBackgroundColor, args.buttonSelectedBackgroundColor);
 		}
 		renderer.end();
 
-		renderer.setColor(args.buttonBorderColor);
 		renderer.begin(ShapeType.Line);
 		for (Button button : buttons) {
 			button.drawBorder(renderer, graphics.camera(), args.buttonBorderColor, args.buttonHoverBorderColor, args.buttonSelectedBorderColor);
 		}
 		renderer.end();
 
-		graphics.batch().setColor(args.buttonTextColor);
 		graphics.batch().begin();
 		for (Button button : buttons) {
 			button.drawBatch(graphics.batch(), graphics.camera(), args.buttonTextColor, args.buttonHoverTextColor, args.buttonSelectedTextColor);
 		}
 		graphics.batch().end();
+	}
+
+	public void selectNext() {
+		assert !buttons.isEmpty();
+
+		int index = findSelectedButtonIndex();
+		if (index == -1) {
+			buttons.get(0).setSelected(true);
+		} else {
+			int newSelectedIndex = (index == (buttons.size() - 1)) ? 0 : index + 1;
+			buttons.get(index).setSelected(false);
+			buttons.get(newSelectedIndex).setSelected(true);
+		}
+	}
+
+	public void selectPrevious() {
+		assert !buttons.isEmpty();
+
+		int index = findSelectedButtonIndex();
+		if (index == -1) {
+			buttons.get(buttons.size() - 1).setSelected(true);
+		} else {
+			int newSelectedIndex = (index == 0) ? buttons.size() - 1 : index - 1;
+			buttons.get(index).setSelected(false);
+			buttons.get(newSelectedIndex).setSelected(true);
+		}
 	}
 
 	public boolean onMouseClicked(int screenX, int screenY) {
@@ -130,14 +153,11 @@ public class VButtonGroup {
 	}
 
 	public boolean onMouseMoved(int screenX, int screenY) {
-		System.out.println("Mouse hovered: " + screenX + "," + screenY);
-
 		buttons.forEach(b -> b.setHovered(false));
 
 		Button hoverButton = findButtonThatContainsPoint(screenX, screenY);
 		if (hoverButton != null) {
 			hoverButton.setHovered(true);
-			System.out.println("Hovered over " + hoverButton + "; Mouse=" + screenX + "," + screenY);
 			return true;
 		}
 		return false;
@@ -150,5 +170,17 @@ public class VButtonGroup {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @return the index of the selected button, or -1 if no button is selected.
+	 */
+	private int findSelectedButtonIndex() {
+		for (int i = 0; i < buttons.size(); i++) {
+			if (buttons.get(i).isSelected()) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }

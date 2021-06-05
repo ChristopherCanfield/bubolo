@@ -1,5 +1,6 @@
 package bubolo.graphics.gui;
 
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 
@@ -20,10 +21,12 @@ public class GuiTestScreen implements Screen, InputProcessor {
 		buttonGroupArgs.paddingBetweenButtons = 10;
 
 		buttonGroup = new VButtonGroup(buttonGroupArgs);
-		buttonGroup.addButton("Hello!");
-		buttonGroup.addButton("I'm button two!");
+		buttonGroup.addButton("Single Player Game");
+		buttonGroup.addButton("Join Multiplayer Game");
 		buttonGroup.addButton("Host Multiplayer Game");
 		buttonGroup.addButton("Settings");
+		buttonGroup.addButton("I'm Useless.");
+		buttonGroup.addButton("Exit");
 	}
 
 	@Override
@@ -45,12 +48,16 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
-		return false;
-	}
-
-	@Override
 	public boolean keyUp(int keycode) {
+		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
+			buttonGroup.selectPrevious();
+		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode ==
+				Keys.NUMPAD_2) {
+			buttonGroup.selectNext();
+		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+			// @TODO (cdc 2021-06-05): Handle menu button activation.
+		}
+
 		return false;
 	}
 
@@ -60,23 +67,28 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		return buttonGroup.onMouseClicked(screenX, screenY);
 	}
 
 	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
+	public boolean mouseMoved(int screenX, int screenY) {
+		return buttonGroup.onMouseMoved(screenX, screenY);
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
 
 	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		return buttonGroup.onMouseMoved(screenX, screenY);
+	public boolean keyDown(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
 	}
 
 	@Override
