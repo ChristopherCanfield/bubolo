@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import bubolo.GameApplication;
 
-public class MainMenuScreen extends Screen {
+public class MainMenuScreen extends Stage2dScreen {
 	private final GameApplication app;
 
 	public MainMenuScreen(GameApplication app) {

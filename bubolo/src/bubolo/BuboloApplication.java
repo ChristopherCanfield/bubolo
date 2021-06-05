@@ -21,7 +21,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateTank;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.PlayerInfoScreen;
-import bubolo.ui.Screen;
+import bubolo.ui.Stage2dScreen;
 import bubolo.util.GameRuntimeException;
 import bubolo.world.Entity;
 import bubolo.world.Tank;
@@ -43,7 +43,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 	private Network network;
 
-	private Screen screen;
+	private Stage2dScreen screen;
 
 	private Path mapPath = FileSystems.getDefault().getPath("res", "maps/Canfield Island.json");
 

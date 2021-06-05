@@ -1,7 +1,9 @@
 package bubolo.graphics.gui;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Align;
 
 import bubolo.graphics.Graphics;
 import bubolo.util.Units;
@@ -49,11 +51,16 @@ class Button {
 				top <= screenY && bottom() >= screenY;
 	}
 
-	public void draw(Graphics graphics) {
+	private float cameraTop(Camera camera) {
+		return Units.screenYToCameraY(camera, top);
+	}
+
+	public void drawShapes(Graphics graphics) {
 		ShapeRenderer renderer = graphics.shapeRenderer();
-		float cameraTop = Units.screenYToCameraY(graphics.camera(), top);
-		renderer.rect(cameraTop, left, width, height);
+		renderer.rect(cameraTop(graphics.camera()), left, width, height);
+	}
 
-
+	public void drawBatch(Graphics graphics) {
+		font.draw(graphics.batch(), text, left, cameraTop(graphics.camera()), 0, text.length(), width, Align.center, false);
 	}
 }

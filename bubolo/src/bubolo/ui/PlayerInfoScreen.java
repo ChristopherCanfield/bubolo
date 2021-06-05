@@ -33,7 +33,7 @@ import bubolo.net.NetworkSystem;
  *
  * @author Christopher D. Canfield
  */
-public class PlayerInfoScreen extends Screen {
+public class PlayerInfoScreen extends Stage2dScreen {
 	private TextField playerNameField;
 	private TextField ipAddressField;
 	private Label statusLabel1;

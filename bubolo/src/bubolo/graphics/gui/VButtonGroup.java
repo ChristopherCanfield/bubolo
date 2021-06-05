@@ -46,8 +46,16 @@ public class VButtonGroup {
 	}
 
 	public void draw(Graphics graphics) {
+		graphics.shapeRenderer().begin();
 		for (Button button : buttons) {
-			button.draw(graphics);
+			button.drawShapes(graphics);
 		}
+		graphics.shapeRenderer().end();
+
+		graphics.batch().begin();
+		for (Button button : buttons) {
+			button.drawBatch(graphics);
+		}
+		graphics.batch().end();
 	}
 }

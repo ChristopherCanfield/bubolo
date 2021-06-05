@@ -29,7 +29,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class LobbyScreen extends Screen implements NetworkObserver {
+public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 	private Label messageHistory;
 	private TextButton sendMessageButton;
 	private TextField sendMessageField;
