@@ -12,6 +12,10 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	private final VButtonGroup buttonGroup;
 	private final Color clearColor = new Color(0.85f, 0.85f, 0.85f, 1);
 
+	// For scaling window coordinates to screen coordinates.
+	private float scaleX = 1;
+	private float scaleY = 1;
+
 	public GuiTestScreen() {
 		var buttonGroupArgs = new VButtonGroup.Args();
 		buttonGroupArgs.left = Config.TargetWindowWidth * 0.5f - 100;
@@ -41,6 +45,8 @@ public class GuiTestScreen implements Screen, InputProcessor {
 
 	@Override
 	public void resize(int newWidth, int newHeight) {
+		scaleX = (float) Config.TargetWindowWidth / newWidth;
+		scaleY = (float) Config.TargetWindowHeight / newHeight;
 	}
 
 	@Override
@@ -51,8 +57,7 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	public boolean keyUp(int keycode) {
 		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
 			buttonGroup.selectPrevious();
-		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode ==
-				Keys.NUMPAD_2) {
+		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
 			buttonGroup.selectNext();
 		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
 			// @TODO (cdc 2021-06-05): Handle menu button activation.
@@ -68,12 +73,12 @@ public class GuiTestScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return buttonGroup.onMouseClicked(screenX, screenY);
+		return buttonGroup.onMouseClicked((int) (screenX * scaleX), (int) (screenY * scaleY));
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return buttonGroup.onMouseMoved(screenX, screenY);
+		return buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY));
 	}
 
 	@Override
