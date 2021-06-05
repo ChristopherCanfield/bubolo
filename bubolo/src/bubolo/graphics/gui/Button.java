@@ -34,8 +34,11 @@ class Button {
 		return left + width;
 	}
 
+	/**
+	 * @return the bottom, in screen coordinates (y down).
+	 */
 	float bottom() {
-		return top - height;
+		return top + height;
 	}
 
 	void setSelected(boolean selected) {
@@ -55,12 +58,16 @@ class Button {
 		return Units.screenYToCameraY(camera, top);
 	}
 
-	public void drawShapes(Graphics graphics) {
-		ShapeRenderer renderer = graphics.shapeRenderer();
-		renderer.rect(cameraTop(graphics.camera()), left, width, height);
+	public void drawBorder(ShapeRenderer renderer, Camera camera) {
+		System.out.printf("Trying to draw border at %f, %f, %d, %d%n", left, cameraTop(camera), width, height);
+		renderer.rect(left, cameraTop(camera), width, height);
+	}
+
+	public void drawBackground(ShapeRenderer renderer, Camera camera) {
+		renderer.rect(left, cameraTop(camera), width, height);
 	}
 
 	public void drawBatch(Graphics graphics) {
-		font.draw(graphics.batch(), text, left, cameraTop(graphics.camera()), 0, text.length(), width, Align.center, false);
+		font.draw(graphics.batch(), text, left, cameraTop(graphics.camera()) + font.getLineHeight(), 0, text.length(), width, Align.center, false);
 	}
 }

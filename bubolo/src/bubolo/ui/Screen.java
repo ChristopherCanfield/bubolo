@@ -12,6 +12,8 @@ public interface Screen {
 
 	/**
 	 * Updates and draws the screen.
+	 *
+	 * @param graphics reference to the graphics system.
 	 */
 	void draw(Graphics graphics);
 

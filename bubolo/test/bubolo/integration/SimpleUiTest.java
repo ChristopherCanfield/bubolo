@@ -26,6 +26,7 @@ public class SimpleUiTest extends AbstractGameApplication {
 	public void create() {
 		graphics = new Graphics(Config.TargetWindowWidth, Config.TargetWindowHeight);
 		screen = new GuiTestScreen();
+		graphics.camera().position.set(0, 0, 0);
 	}
 
 	@Override
@@ -34,7 +35,7 @@ public class SimpleUiTest extends AbstractGameApplication {
 
 	@Override
 	public void render() {
-		screen.draw(graphics);
+		graphics.draw(screen);
 	}
 
 	@Override
