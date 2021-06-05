@@ -1,7 +1,9 @@
-package bubolo.graphics.ui;
+package bubolo.graphics.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import bubolo.graphics.Graphics;
 
@@ -22,12 +24,14 @@ public class VButtonGroup {
 
 	private final int buttonWidth;
 	private final int buttonHeight;
+	private final BitmapFont buttonFont;
 
-	public VButtonGroup(float left, float top, int buttonWidth, int buttonHeight) {
+	public VButtonGroup(float left, float top, int buttonWidth, int buttonHeight, BitmapFont buttonFont) {
 		this.left = left;
 		this.top = top;
 		this.buttonWidth = buttonWidth;
 		this.buttonHeight = buttonHeight;
+		this.buttonFont = buttonFont;
 	}
 
 	public void addButton(String text) {
@@ -38,7 +42,7 @@ public class VButtonGroup {
 			buttonTop = (int) buttons.get(buttons.size() - 1).bottom() + paddingBetweenButtons;
 		}
 
-		buttons.add(new Button(left + padding, buttonTop, buttonWidth, buttonHeight, text));
+		buttons.add(new Button(left + padding, buttonTop, buttonWidth, buttonHeight, buttonFont, text));
 	}
 
 	public void draw(Graphics graphics) {

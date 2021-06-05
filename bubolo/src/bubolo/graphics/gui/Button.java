@@ -1,11 +1,14 @@
-package bubolo.graphics.ui;
+package bubolo.graphics.gui;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import bubolo.graphics.Graphics;
 import bubolo.util.Units;
 
 class Button {
+	private final BitmapFont font;
+
 	int width;
 	int height;
 	float left;
@@ -16,11 +19,12 @@ class Button {
 
 	private boolean selected;
 
-	Button(float left, float top, int width, int height, String text) {
+	Button(float left, float top, int width, int height, BitmapFont font, String text) {
 		this.width = width;
 		this.height = height;
 		this.left = left;
 		this.top = top;
+		this.font = font;
 		this.text = text;
 	}
 
@@ -49,5 +53,7 @@ class Button {
 		ShapeRenderer renderer = graphics.shapeRenderer();
 		float cameraTop = Units.screenYToCameraY(graphics.camera(), top);
 		renderer.rect(cameraTop, left, width, height);
+
+
 	}
 }
