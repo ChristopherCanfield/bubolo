@@ -78,9 +78,9 @@ public class Audio {
 
 		alDistanceModel(AL10.AL_INVERSE_DISTANCE_CLAMPED);
 
-		referenceDistance = Math.max(viewportWidth, viewportHeight) * 0.4f;
+		referenceDistance = Math.max(viewportWidth, viewportHeight) * 0.45f;
 		rolloffFactor = Math.min(worldWidth / viewportWidth, worldHeight / viewportHeight);
-		maxDistance = Math.min(viewportWidth * 3, viewportHeight * 3);
+		maxDistance = Math.min(viewportWidth * 3.5f, viewportHeight * 3.5f);
 
 		ambientSounds = new AmbientSounds();
 		ambientSounds.play(ambientSoundsVolume);
