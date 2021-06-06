@@ -237,8 +237,14 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		if (smokeEffectIndex != -1) {
 			tankCameraPos = Units.worldToCamera(graphics.camera(), getEntity().x(), getEntity().y());
 			smokeEmitter[smokeEffectIndex].setPosition(tankCameraPos.x, tankCameraPos.y);
-			smokeEmitter[smokeEffectIndex].update(Gdx.graphics.getDeltaTime());
-			smokeEmitter[smokeEffectIndex].draw(graphics.batch());
+			smokeEmitter[smokeEffectIndex].draw(graphics.batch(), Gdx.graphics.getDeltaTime());
+		} else {
+			for (var emitter : smokeEmitter) {
+				// @NOTE (cdc 2021-06-06): Reset and move the emitter offscreen. This shouldn't be necessary, but it was added
+				// to try to address a network issue where smoke would display in the wrong location.
+				emitter.reset();
+				emitter.setPosition(-100, -100);
+			}
 		}
 	}
 
