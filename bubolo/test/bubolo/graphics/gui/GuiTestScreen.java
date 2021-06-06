@@ -1,5 +1,6 @@
 package bubolo.graphics.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -53,6 +54,24 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	public void dispose() {
 	}
 
+	/**
+	 * Activates the specified button. May be -1, in which case no button is activated.
+	 *
+	 * @param buttonIndex a valid button index, or -1.
+	 * @return whether a button was activated.
+	 */
+	private boolean activateButton(int buttonIndex) {
+		if (buttonIndex == 5) {
+			System.out.println("Exiting");
+			Gdx.app.exit();
+			return true;
+		} else if (buttonIndex != -1) {
+			System.out.println("Button activated: " + buttonGroup.selectedButtonText());
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public boolean keyUp(int keycode) {
 		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
@@ -60,7 +79,8 @@ public class GuiTestScreen implements Screen, InputProcessor {
 		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
 			buttonGroup.selectNext();
 		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-			// @TODO (cdc 2021-06-05): Handle menu button activation.
+			int selectedIndex = buttonGroup.selectedButtonIndex();
+			activateButton(selectedIndex);
 		}
 
 		return false;
@@ -73,12 +93,13 @@ public class GuiTestScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return buttonGroup.onMouseClicked((int) (screenX * scaleX), (int) (screenY * scaleY));
+		int buttonIndex = buttonGroup.onMouseClicked((int) (screenX * scaleX), (int) (screenY * scaleY));
+		return activateButton(buttonIndex);
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY));
+		return buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY)) != -1;
 	}
 
 	@Override

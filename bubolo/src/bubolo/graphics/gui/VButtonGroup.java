@@ -141,35 +141,52 @@ public class VButtonGroup {
 		}
 	}
 
-	public boolean onMouseClicked(int screenX, int screenY) {
+	/**
+	 * @return the index of the selected button, or -1 if no button is selected.
+	 */
+	public int selectedButtonIndex() {
+		return findSelectedButtonIndex();
+	}
+
+	/**
+	 * @return the selected button's text, or null if no button is selected.
+	 */
+	public String selectedButtonText() {
+		int selectedButtonIndex = findSelectedButtonIndex();
+		if (selectedButtonIndex != -1) {
+			return buttons.get(selectedButtonIndex).text;
+		} else {
+			return null;
+		}
+	}
+
+	public int onMouseClicked(int screenX, int screenY) {
 		buttons.forEach(b -> b.setSelected(false));
 
-		Button clickedButton = findButtonThatContainsPoint(screenX, screenY);
-		if (clickedButton != null) {
-			clickedButton.setSelected(true);
-			return true;
+		int clickedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+		if (clickedButtonIndex != -1) {
+			buttons.get(clickedButtonIndex).setSelected(true);
 		}
-		return false;
+		return clickedButtonIndex;
 	}
 
-	public boolean onMouseMoved(int screenX, int screenY) {
+	public int onMouseMoved(int screenX, int screenY) {
 		buttons.forEach(b -> b.setHovered(false));
 
-		Button hoverButton = findButtonThatContainsPoint(screenX, screenY);
-		if (hoverButton != null) {
-			hoverButton.setHovered(true);
-			return true;
+		int hoverButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+		if (hoverButtonIndex != -1) {
+			buttons.get(hoverButtonIndex).setHovered(true);
 		}
-		return false;
+		return hoverButtonIndex;
 	}
 
-	private Button findButtonThatContainsPoint(int screenX, int screenY) {
-		for (Button button : buttons) {
-			if (button.contains(screenX, screenY)) {
-				return button;
+	private int findButtonThatContainsPoint(int screenX, int screenY) {
+		for (int i = 0; i < buttons.size(); i++) {
+			if (buttons.get(i).contains(screenX, screenY)) {
+				return i;
 			}
 		}
-		return null;
+		return -1;
 	}
 
 	/**

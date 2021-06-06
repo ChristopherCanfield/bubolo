@@ -45,6 +45,7 @@ public class SimpleUiTest extends AbstractGameApplication {
 
 	@Override
 	public void dispose() {
+		screen.dispose();
 		graphics.dispose();
 	}
 }
