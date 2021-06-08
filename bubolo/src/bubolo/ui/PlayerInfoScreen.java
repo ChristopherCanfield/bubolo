@@ -173,7 +173,7 @@ public class PlayerInfoScreen extends Stage2dScreen {
 	private void startServer() {
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameField.getText());
-		app.setState(State.NET_GAME_LOBBY);
+		app.setState(State.NetGameLobby);
 	}
 
 	private void connectToServer() {
@@ -201,7 +201,7 @@ public class PlayerInfoScreen extends Stage2dScreen {
 					return;
 				}
 
-				app.setState(State.NET_GAME_LOBBY);
+				app.setState(State.NetGameLobby);
 			} else {
 				--ticksUntilConnect;
 			}

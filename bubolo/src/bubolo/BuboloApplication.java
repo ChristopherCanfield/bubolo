@@ -110,9 +110,9 @@ public class BuboloApplication extends AbstractGameApplication {
 		}
 
 		if (playerType == PlayerType.LocalSinglePlayer) {
-			setState(State.LOCAL_GAME);
+			setState(State.SinglePlayerGame);
 		} else {
-			setState(State.NET_GAME_SETUP);
+			setState(State.NetGameSetup);
 		}
 	}
 
@@ -140,17 +140,17 @@ public class BuboloApplication extends AbstractGameApplication {
 		try {
 			final State state = getState();
 			World world = world();
-			if (state == State.NET_GAME) {
+			if (state == State.MultiplayerGame) {
 				graphics.draw(world);
 				world.update();
 				network.update(this);
-			} else if (state == State.LOCAL_GAME) {
+			} else if (state == State.SinglePlayerGame) {
 				graphics.draw(world);
 				world.update();
-			} else if (state == State.NET_GAME_LOBBY || state == State.NET_GAME_STARTING) {
+			} else if (state == State.NetGameLobby || state == State.NetGameStarting) {
 				graphics.draw(screen);
 				network.update(this);
-			} else if (state == State.NET_GAME_SETUP) {
+			} else if (state == State.NetGameSetup) {
 				graphics.draw(screen);
 			}
 		} catch (Exception e) {
@@ -164,7 +164,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 		var state = getState();
 		switch (state) {
-		case NET_GAME: {
+		case MultiplayerGame: {
 			screen.dispose();
 
 			Audio.initialize(world.getWidth(), world.getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
@@ -182,7 +182,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 		}
-		case LOCAL_GAME: {
+		case SinglePlayerGame: {
 			if (screen != null) {
 				screen.dispose();
 			}
@@ -201,17 +201,17 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 		}
-		case NET_GAME_LOBBY:
+		case NetGameLobby:
 			screen = new LobbyScreen(this, world);
 			break;
-		case NET_GAME_SETUP:
+		case NetGameSetup:
 			boolean isClient = (playerType == PlayerType.Client);
 			screen = new PlayerInfoScreen(this, isClient);
 			break;
-		case NET_GAME_STARTING:
+		case NetGameStarting:
 			// Do nothing.
 			break;
-		case MAIN_MENU:
+		case MainMenu:
 			// Do nothing.
 			// TODO (cdc - 2021-03-31): Allow the main menu to be displayed again.
 			break;

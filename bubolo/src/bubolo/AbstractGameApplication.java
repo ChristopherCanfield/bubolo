@@ -25,7 +25,7 @@ public abstract class AbstractGameApplication implements GameApplication
 	 */
 	protected AbstractGameApplication()
 	{
-		this.state = State.MAIN_MENU;
+		this.state = State.MainMenu;
 	}
 
 	@Override

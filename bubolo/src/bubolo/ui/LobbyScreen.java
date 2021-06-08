@@ -139,7 +139,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 
 	@Override
 	protected void onUpdate() {
-		if (app.getState() == State.NET_GAME_STARTING) {
+		if (app.getState() == State.NetGameStarting) {
 			final long currentTime = System.currentTimeMillis();
 			final long secondsRemaining = (startTime - currentTime) / 1000L;
 
@@ -149,7 +149,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 					lastSecondsRemaining = secondsRemaining;
 				}
 			} else {
-				app.setState(State.NET_GAME);
+				app.setState(State.MultiplayerGame);
 			}
 		}
 	}
@@ -204,7 +204,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 		startTime = currentTime + (secondsUntilStart * 1000);
 		lastSecondsRemaining = secondsUntilStart;
 
-		app.setState(State.NET_GAME_STARTING);
+		app.setState(State.NetGameStarting);
 	}
 
 	@Override
