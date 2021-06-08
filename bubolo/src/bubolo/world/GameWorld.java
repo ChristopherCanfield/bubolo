@@ -305,11 +305,29 @@ public class GameWorld implements World {
 	@Override
 	public void movePillboxOffTileMap(Pillbox pillbox) {
 		var existingPillbox = terrainImprovements[pillbox.tileColumn()][pillbox.tileRow()];
-		assert pillbox.equals(existingPillbox) : String.format("movePillboxOffTileMap: pillbox was not in expected tile location (%d,%d). Found: %s",
-				pillbox.tileColumn(),
-				pillbox.tileRow(),
-				String.valueOf(existingPillbox));
+		if (existingPillbox == null) {
+			// Search for the pillbox, and remove it if found.
+			removePillboxFromTerrainImprovementsArray(pillbox.id());
+		}
+//		assert pillbox.equals(existingPillbox) : String.format("movePillboxOffTileMap: pillbox was not in expected tile location (%d,%d). Found: %s",
+//				pillbox.tileColumn(),
+//				pillbox.tileRow(),
+//				String.valueOf(existingPillbox));
 		terrainImprovements[pillbox.tileColumn()][pillbox.tileRow()] = null;
+	}
+
+	// @HACK (cdc 2021-06-08): This is a hack to fix a network crashing issue with moving pillboxes.
+	private void removePillboxFromTerrainImprovementsArray(UUID id) {
+		for (int column = 0; column < terrainImprovements.length; column++) {
+			for (int row = 0; row < terrainImprovements[0].length; row++) {
+				var improvement = terrainImprovements[column][row];
+				if (improvement != null && improvement.id().equals(id)) {
+					terrainImprovements[column][row] = null;
+					return;
+				}
+			}
+		}
+		System.out.println("removePillboxFromTerrainImprovementsArray: Unable to find pillbox " + id);
 	}
 
 	@Override
