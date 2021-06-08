@@ -216,7 +216,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	}
 
 	public float maxMines() {
-		return mines;
+		return maxMines;
 	}
 
 	public float repairPoints() {
