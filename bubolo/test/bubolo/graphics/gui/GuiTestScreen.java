@@ -68,11 +68,6 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		buttonGroup.onMouseClicked((int) (screenX * scaleX), (int) (screenY * scaleY));
 		buttonGroup.activateSelectedButton();
@@ -82,6 +77,11 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
 		return buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY)) != -1;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
 	}
 
 	@Override
