@@ -194,8 +194,11 @@ public class BuboloApplication extends AbstractGameApplication {
 			assert previousState == State.MainMenu;
 
 			// TODO (cdc - 2021-06-08): Implement this.
+			setState(State.SinglePlayerGame);
 			break;
 		case SinglePlayerGame: {
+			assert previousState == State.SinglePlayerSetup;
+
 			if (screen != null) {
 				screen.dispose();
 			}

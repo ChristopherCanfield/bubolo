@@ -41,11 +41,10 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	private void onSinglePlayerButtonActivated(Button button) {
-		app.setState(State.SinglePlayerGame);
+		app.setState(State.SinglePlayerSetup);
 	}
 
 	private void onJoinMultiplayerButtonActivated(Button button) {
-
 	}
 
 	private void onHostMultiplayerButtonActivated(Button button) {
@@ -80,6 +79,8 @@ public class MainMenuScreen implements Screen, InputProcessor {
 			buttonGroup.selectNext();
 		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
 			buttonGroup.activateSelectedButton();
+		} else if (keycode == Keys.ESCAPE) {
+			Gdx.app.exit();
 		}
 
 		return false;
@@ -94,7 +95,9 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY)) != -1;
+		int buttonIndex = buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY));
+		buttonGroup.selectButton(buttonIndex);
+		return false;
 	}
 
 	@Override

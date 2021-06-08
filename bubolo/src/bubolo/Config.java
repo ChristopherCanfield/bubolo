@@ -13,6 +13,13 @@ public class Config {
 	public static final String AppProgramaticTitle = "bubolo";
 	public static final String AppAuthor = "Clone Productions";
 
+	public static final String IconPath = "res/icons/";
+	public static final String AppIcon16x16 = IconPath + "tank_icon16x16.png";
+	public static final String AppIcon32x32 = IconPath + "tank_icon32x32.png";
+	public static final String AppIcon48x48 = IconPath + "tank_icon48x48.png";
+
+	public static final String UiPath = "res/ui/";
+
 	public static final int FPS = 60;
 	public static final double SecondsPerFrame = 1.0 / FPS;
 	public static final double MillisPerFrame = 1000.0 / FPS;

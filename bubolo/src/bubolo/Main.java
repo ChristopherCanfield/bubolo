@@ -27,6 +27,7 @@ public class Main {
 		cfg.setWindowedMode(Config.TargetWindowWidth, Config.TargetWindowHeight);
 		cfg.setForegroundFPS(Config.FPS);
 		cfg.useVsync(false);
+		cfg.setWindowIcon(Config.AppIcon16x16, Config.AppIcon32x32, Config.AppIcon48x48);
 		return cfg;
 	}
 }

@@ -147,6 +147,16 @@ public class VButtonGroup {
 		}
 	}
 
+	public void selectButton(int buttonIndex) {
+		assert !buttons.isEmpty();
+
+		buttons.forEach(b -> b.setSelected(false));
+		buttons.forEach(b -> b.setHovered(false));
+		if (buttonIndex != -1) {
+			buttons.get(buttonIndex).setSelected(true);
+		}
+	}
+
 	/**
 	 * @return the index of the selected button, or -1 if no button is selected.
 	 */

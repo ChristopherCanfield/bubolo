@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import bubolo.Config;
 import bubolo.GameApplication;
 import bubolo.GameApplication.State;
 import bubolo.net.Network;
@@ -62,8 +63,8 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 		this.app = app;
 		this.world = world;
 
-		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "skin.atlas"));
-		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "skin.json"), atlas);
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath + "skin.atlas"));
+		Skin skin = new Skin(new FileHandle(Config.UiPath + "skin.json"), atlas);
 
 		createMessageHistoryBox(skin);
 		createSendMessageRow(skin);
