@@ -91,13 +91,15 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				if (damageState != DamageState.Undamaged) {
 					drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
 				}
+			// If Tank is being carried.
 			} else {
 				var tank = (Tank) getEntity().owner();
-
-				// Draw the pillbox above the tank.
-				setColor(defaultColor);
-				// Draw the pillbox.
-				drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.x(), tank.y(), tank.width() / 2 + 5, 35, tank.rotation());
+				if (!tank.isHidden()) {
+					// Draw the pillbox above the tank.
+					setColor(defaultColor);
+					// Draw the pillbox.
+					drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.x(), tank.y(), tank.width() / 2 + 5, 35, tank.rotation());
+				}
 			}
 		}
 	}

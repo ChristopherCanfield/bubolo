@@ -52,15 +52,18 @@ public class Building extends StaticEntity implements TerrainImprovement, Collid
 
 	@Override
 	public void receiveDamage(float damage, World world) {
+		assert damage >= 0;
 		hitPoints -= damage;
 
-		float healthPct = hitPoints / maxHitPoints;
-		if (hitPoints <= 0) {
-			onDeath(world);
-		} else if (healthPct < 0.4f) {
-			Audio.play(Sfx.BuildingHit2, x(), y());
-		} else {
-			Audio.play(Sfx.BuildingHit1, x(), y());
+		if (!isDisposed()) {
+			float healthPct = hitPoints / maxHitPoints;
+			if (hitPoints <= 0) {
+				onDeath(world);
+			} else if (healthPct < 0.4f) {
+				Audio.play(Sfx.BuildingHit2, x(), y());
+			} else {
+				Audio.play(Sfx.BuildingHit1, x(), y());
+			}
 		}
 	}
 

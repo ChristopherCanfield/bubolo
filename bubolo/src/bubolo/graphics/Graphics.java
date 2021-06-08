@@ -54,7 +54,7 @@ public class Graphics implements EntityLifetimeObserver {
 	private CameraController cameraController;
 
 	// The comparator used to sort sprites.
-	private static final Comparator<Sprite> spriteComparator = Comparator.comparing(Sprite::getDrawLayer)
+	private static final Comparator<Sprite> sortSpritesByLayerThenName = Comparator.comparing(Sprite::getDrawLayer)
 			.thenComparing(s -> s.getClass().getSimpleName());
 
 	private final List<Sprite> spritesInView = new ArrayList<Sprite>();
@@ -297,7 +297,7 @@ public class Graphics implements EntityLifetimeObserver {
 	private void drawSpritesByLayer(List<Sprite> sprites) {
 		// Sort list by draw layer, to ensure that sprites are drawn in the correct order,
 		// then by sprite type, to facilitate batching.
-		Collections.sort(spritesInView, spriteComparator);
+		Collections.sort(spritesInView, sortSpritesByLayerThenName);
 
 		batch.begin();
 		for (Sprite sprite : sprites) {
