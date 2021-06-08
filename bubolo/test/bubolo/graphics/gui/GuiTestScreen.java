@@ -26,12 +26,12 @@ public class GuiTestScreen implements Screen, InputProcessor {
 		buttonGroupArgs.paddingBetweenButtons = 10;
 
 		buttonGroup = new VButtonGroup(buttonGroupArgs);
-		buttonGroup.addButton("Single Player Game");
+		buttonGroup.addButton("Single Player Game", button -> { System.out.println("I'm an action attached to Single Player Game!"); });
 		buttonGroup.addButton("Join Multiplayer Game");
 		buttonGroup.addButton("Host Multiplayer Game");
 		buttonGroup.addButton("Settings");
 		buttonGroup.addButton("I'm Useless.");
-		buttonGroup.addButton("Exit");
+		buttonGroup.addButton("Exit", button -> { Gdx.app.exit(); });
 	}
 
 	@Override
@@ -54,24 +54,6 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	public void dispose() {
 	}
 
-	/**
-	 * Activates the specified button. May be -1, in which case no button is activated.
-	 *
-	 * @param buttonIndex a valid button index, or -1.
-	 * @return whether a button was activated.
-	 */
-	private boolean activateButton(int buttonIndex) {
-		if (buttonIndex == 5) {
-			System.out.println("Exiting");
-			Gdx.app.exit();
-			return true;
-		} else if (buttonIndex != -1) {
-			System.out.println("Button activated: " + buttonGroup.selectedButtonText());
-			return true;
-		}
-		return false;
-	}
-
 	@Override
 	public boolean keyUp(int keycode) {
 		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
@@ -79,8 +61,7 @@ public class GuiTestScreen implements Screen, InputProcessor {
 		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
 			buttonGroup.selectNext();
 		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-			int selectedIndex = buttonGroup.selectedButtonIndex();
-			activateButton(selectedIndex);
+			buttonGroup.activateSelectedButton();
 		}
 
 		return false;
@@ -93,8 +74,9 @@ public class GuiTestScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		int buttonIndex = buttonGroup.onMouseClicked((int) (screenX * scaleX), (int) (screenY * scaleY));
-		return activateButton(buttonIndex);
+		buttonGroup.onMouseClicked((int) (screenX * scaleX), (int) (screenY * scaleY));
+		buttonGroup.activateSelectedButton();
+		return false;
 	}
 
 	@Override

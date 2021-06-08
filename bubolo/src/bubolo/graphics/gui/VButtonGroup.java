@@ -2,6 +2,7 @@ package bubolo.graphics.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.util.Nullable;
 
 /**
  * A vertical grouping of buttons. VButtonGroup objects use screen coordinates (y down; 0 is at top of screen).
@@ -83,6 +85,10 @@ public class VButtonGroup {
 	}
 
 	public void addButton(String text) {
+		addButton(text, null);
+	}
+
+	public void addButton(String text, @Nullable Consumer<Button> action) {
 		int buttonTop;
 		if (buttons.isEmpty()) {
 			buttonTop = (int) args.top + args.padding;
@@ -90,7 +96,7 @@ public class VButtonGroup {
 			buttonTop = (int) buttons.get(buttons.size() - 1).bottom() + args.paddingBetweenButtons;
 		}
 
-		buttons.add(new Button(args.left + args.padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text));
+		buttons.add(new Button(args.left + args.padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
 	}
 
 	public void draw(Graphics graphics) {
@@ -157,6 +163,21 @@ public class VButtonGroup {
 			return buttons.get(selectedButtonIndex).text;
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * Applies (activates) the button's action, if one is attached to it, and returns the selected button's index.
+	 *
+	 * @return the selected button's index, or -1 if no selected button
+	 */
+	public int activateSelectedButton() {
+		int selectedButtonIndex = findSelectedButtonIndex();
+		if (selectedButtonIndex != -1) {
+			buttons.get(selectedButtonIndex).onAction();
+			return selectedButtonIndex;
+		} else {
+			return -1;
 		}
 	}
 

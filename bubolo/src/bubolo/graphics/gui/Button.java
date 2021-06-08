@@ -1,5 +1,7 @@
 package bubolo.graphics.gui;
 
+import java.util.function.Consumer;
+
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 
+import bubolo.util.Nullable;
 import bubolo.util.Units;
 
 class Button {
@@ -21,16 +24,21 @@ class Button {
 
 	String text;
 
+	private Consumer<Button> action = b -> {};
+
 	private boolean selected;
 	private boolean hovered;
 
-	Button(float left, float top, int width, int height, BitmapFont font, String text) {
+	Button(float left, float top, int width, int height, BitmapFont font, String text, @Nullable Consumer<Button> action) {
 		this.left = left;
 		this.top = top;
 		this.width = width;
 		this.height = height;
 		this.font = font;
 		this.text = text;
+		if (action != null) {
+			this.action = action;
+		}
 	}
 
 	float right() {
@@ -101,6 +109,10 @@ class Button {
 			font.setColor(defaultColor);
 		}
 		font.draw(batch, text, left, cameraTop(camera) + (font.getCapHeight() + height) / 2, 0, text.length(), width, Align.center, false);
+	}
+
+	protected void onAction() {
+		action.accept(this);
 	}
 
 	@Override
