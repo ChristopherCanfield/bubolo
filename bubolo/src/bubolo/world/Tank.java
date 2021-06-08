@@ -38,6 +38,8 @@ public class Tank extends ActorEntity implements Damageable {
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 2.77779f; // 2.77779 WU per tick is about 90 Kph.
 
+	private boolean solid = true;
+
 	// The maximum speed after adjusting for the underlying terrain & terrain improvement.
 	private float adjustedMaxSpeed = maxSpeed;
 
@@ -161,6 +163,8 @@ public class Tank extends ActorEntity implements Damageable {
 			cannonReadyTime = 0;
 			mineReadyTime = 0;
 
+			solid = true;
+
 			speed = 0;
 			adjustedMaxSpeed = maxSpeed;
 			accelerated = false;
@@ -243,10 +247,12 @@ public class Tank extends ActorEntity implements Damageable {
 		return (int) (y() + height) / Units.TileToWorldScale;
 	}
 
+	@Override
 	public float centerX() {
 		return x() + (width() / 2.0f);
 	}
 
+	@Override
 	public float centerY() {
 		return y() + (height() / 2.0f);
 	}
@@ -812,6 +818,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private void onDeath(World world) {
 		hitPoints = 0;
+		solid = false;
 		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
 		if (isCarryingPillbox()) {
 			carriedPillbox.dropFromTank(world);
@@ -932,7 +939,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 	@Override
 	public boolean isSolid() {
-		return true;
+		return solid;
 	}
 
 	/**
