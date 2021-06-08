@@ -13,6 +13,7 @@ import bubolo.world.Entity;
 import bubolo.world.Entity.ConstructionArgs;
 import bubolo.world.EntityLifetimeObserver;
 import bubolo.world.Mine;
+import bubolo.world.Pillbox;
 import bubolo.world.Spawn;
 import bubolo.world.Tank;
 import bubolo.world.Terrain;
@@ -130,22 +131,6 @@ public class MockWorld implements World {
 	}
 
 	@Override
-	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, boolean onlyIncludeSolidObjects, Class<?> typeFilter) {
-		return null;
-	}
-
-	@Override
-	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, boolean onlyIncludeSolidObjects, int tileMaxDistance,
-			Class<?> typeFilter) {
-		return null;
-	}
-
-	@Override
-	public List<Collidable> getNearbyCollidables(Entity entity, boolean onlyIncludeSolidObjects) {
-		return null;
-	}
-
-	@Override
 	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maxDistanceTiles) {
 		return 0;
 	}
@@ -161,6 +146,31 @@ public class MockWorld implements World {
 	@Override
 	public int getControllerCount() {
 		return 0;
+	}
+
+	@Override
+	public void movePillboxOffTileMap(Pillbox pillbox) {
+	}
+
+	@Override
+	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row) {
+	}
+
+	@Override
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance,
+			boolean onlyIncludeSolidObjects) {
+		return null;
+	}
+
+	@Override
+	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance,
+			boolean onlyIncludeSolidObjects, Class<?> typeFilter) {
+		return null;
+	}
+
+	@Override
+	public Terrain getNearestBuildableTerrain(float x, float y) {
+		return null;
 	}
 
 }

@@ -178,5 +178,9 @@ public class NetworkObserverNotifierTest
 		{
 			this.message = message;
 		}
+
+		@Override
+		public void onClientReady(String clientName) {
+		}
 	}
 }
