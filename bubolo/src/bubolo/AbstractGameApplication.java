@@ -11,8 +11,7 @@ import bubolo.world.World;
  *
  * @author BU CS673 - Clone Productions
  */
-public abstract class AbstractGameApplication implements GameApplication
-{
+public abstract class AbstractGameApplication implements GameApplication {
 	private boolean ready;
 
 	/** The game world. **/
@@ -23,25 +22,21 @@ public abstract class AbstractGameApplication implements GameApplication
 	/**
 	 * Constructs an AbstractGameApplication;
 	 */
-	protected AbstractGameApplication()
-	{
+	protected AbstractGameApplication() {
 		this.state = State.MainMenu;
 	}
 
 	@Override
-	public final boolean isReady()
-	{
+	public final boolean isReady() {
 		return ready;
 	}
 
 	/**
 	 * Sets whether the game is ready.
 	 *
-	 * @param value
-	 *            true if the game is ready.
+	 * @param value true if the game is ready.
 	 */
-	protected void setReady(boolean value)
-	{
+	protected void setReady(boolean value) {
 		ready = value;
 	}
 
@@ -56,38 +51,36 @@ public abstract class AbstractGameApplication implements GameApplication
 	}
 
 	@Override
-	public void setState(State state)
-	{
+	public void setState(State state) {
+		var previousState = this.state;
 		this.state = state;
-		onStateChanged();
+		onStateChanged(previousState, state);
 	}
 
 	@Override
-	public State getState()
-	{
+	public State getState() {
 		return state;
 	}
 
 	/**
 	 * Called when the application's state is changed.
+	 *
+	 * @param previousState the previous application state.
+	 * @param newState the new state that the application has entered.
 	 */
-	protected void onStateChanged()
-	{
+	protected void onStateChanged(State previousState, State newState) {
 	}
 
 	@Override
-	public void pause()
-	{
+	public void pause() {
 	}
 
 	@Override
-	public void resume()
-	{
+	public void resume() {
 	}
 
 	@Override
-	public boolean isGameStarted()
-	{
+	public boolean isGameStarted() {
 		return (isReady() && world != null);
 	}
 }

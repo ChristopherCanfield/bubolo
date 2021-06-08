@@ -159,11 +159,25 @@ public class BuboloApplication extends AbstractGameApplication {
 	}
 
 	@Override
-	protected void onStateChanged() {
+	protected void onStateChanged(State previousState, State newState) {
 		World world = world();
 
-		var state = getState();
-		switch (state) {
+		switch (newState) {
+		case MainMenu:
+			// Do nothing.
+			// TODO (cdc - 2021-03-31): Allow the main menu to be displayed again.
+			break;
+		case NetGameSetup:
+			boolean isClient = (playerType == PlayerType.Client);
+			screen = new PlayerInfoScreen(this, isClient);
+			break;
+		case NetGameLobby:
+			screen = new LobbyScreen(this, world);
+			break;
+		case NetGameStarting:
+			assert previousState == State.NetGameLobby;
+			// Do nothing.
+			break;
 		case MultiplayerGame: {
 			screen.dispose();
 
@@ -182,6 +196,11 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 		}
+		case SinglePlayerSetup:
+			assert previousState == State.MainMenu;
+
+			// TODO (cdc - 2021-06-08): Implement this.
+			break;
 		case SinglePlayerGame: {
 			if (screen != null) {
 				screen.dispose();
@@ -201,19 +220,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 		}
-		case NetGameLobby:
-			screen = new LobbyScreen(this, world);
-			break;
-		case NetGameSetup:
-			boolean isClient = (playerType == PlayerType.Client);
-			screen = new PlayerInfoScreen(this, isClient);
-			break;
-		case NetGameStarting:
-			// Do nothing.
-			break;
-		case MainMenu:
-			// Do nothing.
-			// TODO (cdc - 2021-03-31): Allow the main menu to be displayed again.
+		case Settings:
 			break;
 		}
 	}

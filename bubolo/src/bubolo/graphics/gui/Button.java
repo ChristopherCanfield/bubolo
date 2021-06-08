@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
 
-class Button {
+public class Button {
 	private final BitmapFont font;
 
 	float left;
@@ -39,6 +39,10 @@ class Button {
 		if (action != null) {
 			this.action = action;
 		}
+	}
+
+	public String text() {
+		return text;
 	}
 
 	float right() {

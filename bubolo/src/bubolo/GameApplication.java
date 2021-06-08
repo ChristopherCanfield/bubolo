@@ -19,6 +19,8 @@ public interface GameApplication extends ApplicationListener, WorldOwner {
 		/** The main menu state. **/
 		MainMenu,
 
+		Settings,
+
 		/** The enter player information state. **/
 		NetGameSetup,
 
@@ -28,13 +30,13 @@ public interface GameApplication extends ApplicationListener, WorldOwner {
 		/** The game is starting. **/
 		NetGameStarting,
 
+		/** The multiplayer game state. **/
+		MultiplayerGame,
+
 		SinglePlayerSetup,
 
 		/** The single player game state. **/
 		SinglePlayerGame,
-
-		/** The multiplayer game state. **/
-		MultiplayerGame
 	}
 
 	/**
