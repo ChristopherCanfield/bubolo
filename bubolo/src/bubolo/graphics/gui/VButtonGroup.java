@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.gui.Button.ButtonStatus;
 import bubolo.util.Nullable;
+import bubolo.util.Units;
 
 /**
  * A vertical grouping of buttons. VButtonGroup objects use screen coordinates (y down; 0 is at top of screen).
@@ -22,6 +26,7 @@ public class VButtonGroup {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
+	private float bottom;
 
 	private int selectedButtonIndex = -1;
 	private int hoveredButtonIndex = -1;
@@ -34,7 +39,7 @@ public class VButtonGroup {
 		// The top position, in screen coordinates (0 is at top).
 		public float top;
 
-		public int padding;
+		public int padding = 20;
 		public int paddingBetweenButtons;
 
 		public Color borderColor = Color.BLACK;
@@ -82,10 +87,24 @@ public class VButtonGroup {
 		assert args.buttonHoverTextColor != null;
 
 		this.args = args.clone();
+
+		bottom = args.top + args.padding * 2;
 	}
 
 	public float right() {
-		return args.left + args.padding * 2 + args.buttonWidth;
+		return args.left + width();
+	}
+
+	public float width() {
+		return args.padding * 2 + args.buttonWidth;
+	}
+
+	public float bottom() {
+		return bottom;
+	}
+
+	public float height() {
+		return args.top - bottom();
 	}
 
 	public void addButton(String text) {
@@ -96,45 +115,75 @@ public class VButtonGroup {
 		int buttonTop;
 		if (buttons.isEmpty()) {
 			buttonTop = (int) args.top + args.padding;
+			bottom += args.buttonHeight;
 		} else {
 			buttonTop = (int) buttons.get(buttons.size() - 1).bottom() + args.paddingBetweenButtons;
+			bottom += args.buttonHeight + args.paddingBetweenButtons;
 		}
-
 		buttons.add(new Button(args.left + args.padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
 	}
 
 	public void draw(Graphics graphics) {
 		var renderer = graphics.shapeRenderer();
+		var camera = graphics.camera();
 
+		drawBackground(renderer, camera);
+		drawBorder(renderer, camera);
+
+		drawButtonBackgrounds(renderer, camera);
+		drawButtonBorders(renderer, camera);
+		drawButtonText(graphics.batch(), camera);
+	}
+
+	private void drawBackground(ShapeRenderer renderer, Camera camera) {
+		renderer.begin(ShapeType.Filled);
+		renderer.setColor(args.backgroundColor);
+		renderer.rect(args.left, cameraTop(camera), width(), height());
+		renderer.end();
+	}
+
+	private float cameraTop(Camera camera) {
+		return Units.screenYToCameraY(camera, args.top);
+	}
+
+	private void drawBorder(ShapeRenderer renderer, Camera camera) {
+
+	}
+
+	private void drawButtonBackgrounds(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Filled);
 		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).drawBackground(renderer, graphics.camera(),
+			buttons.get(i).drawBackground(renderer, camera,
 					args.buttonBackgroundColor,
 					args.buttonHoverBackgroundColor,
 					args.buttonSelectedBackgroundColor,
 					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
 		}
 		renderer.end();
+	}
 
+	private void drawButtonBorders(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Line);
 		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).drawBorder(renderer, graphics.camera(),
+			buttons.get(i).drawBorder(renderer, camera,
 					args.buttonBorderColor,
 					args.buttonHoverBorderColor,
 					args.buttonSelectedBorderColor,
 					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
 		}
 		renderer.end();
+	}
 
-		graphics.batch().begin();
+	private void drawButtonText(Batch batch, Camera camera) {
+		batch.begin();
 		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).drawBatch(graphics.batch(), graphics.camera(),
+			buttons.get(i).drawBatch(batch, camera,
 					args.buttonTextColor,
 					args.buttonHoverTextColor,
 					args.buttonSelectedTextColor,
 					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
 		}
-		graphics.batch().end();
+		batch.end();
 	}
 
 	public void selectNext() {
