@@ -127,18 +127,18 @@ public class PlayerInfoScreen extends Screen {
 		var networkInterfaces = NetworkInterface.getNetworkInterfaces();
 		while (networkInterfaces.hasMoreElements()) {
 			var networkInterface = networkInterfaces.nextElement();
-			var addresses = networkInterface.getInetAddresses();
-			while (addresses.hasMoreElements()) {
-				var address = addresses.nextElement();
-				if (address instanceof Inet4Address
-						// Filter out localhost.
-						&& !address.getHostAddress().contains("127.0.0.1")
-						// Filter out VirtualBox network adapters.
-						&& !address.getHostName().contains("VirtualBox")) {
-					if (!ipAddresses.isEmpty()) {
-						ipAddresses.append(", ");
+			// Filter out loopback and VirtualBox addresses.
+			if (!networkInterface.isLoopback()
+					&& !networkInterface.getDisplayName().contains("VirtualBox")) {
+				var addresses = networkInterface.getInetAddresses();
+				while (addresses.hasMoreElements()) {
+					var address = addresses.nextElement();
+					if (address instanceof Inet4Address) {
+						if (!ipAddresses.isEmpty()) {
+							ipAddresses.append(", ");
+						}
+						ipAddresses.append(address.getHostAddress());
 					}
-					ipAddresses.append(address.getHostAddress());
 				}
 			}
 		}
