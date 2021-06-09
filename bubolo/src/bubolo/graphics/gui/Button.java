@@ -26,8 +26,21 @@ public class Button {
 
 	private Consumer<Button> action = b -> {};
 
-	private boolean selected;
-	private boolean hovered;
+	enum ButtonStatus {
+		Unselected,
+		Selected,
+		Hovered;
+
+		static ButtonStatus getButtonStatus(int buttonIndexToCheck, int selectedButtonIndex, int hoveredButtonIndex) {
+			if (buttonIndexToCheck == selectedButtonIndex) {
+				return Selected;
+			} else if (buttonIndexToCheck == hoveredButtonIndex) {
+				return Hovered;
+			} else {
+				return Unselected;
+			}
+		}
+	}
 
 	Button(float left, float top, int width, int height, BitmapFont font, String text, @Nullable Consumer<Button> action) {
 		this.left = left;
@@ -56,22 +69,6 @@ public class Button {
 		return top + height;
 	}
 
-	void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
-	boolean isSelected() {
-		return selected;
-	}
-
-	void setHovered(boolean hovered) {
-		this.hovered = hovered;
-	}
-
-	boolean isHovered() {
-		return hovered;
-	}
-
 	boolean contains(float screenX, float screenY) {
 		return left <= screenX && right() >= screenX &&
 				top <= screenY && bottom() >= screenY;
@@ -81,37 +78,34 @@ public class Button {
 		return Units.screenYToCameraY(camera, top + height);
 	}
 
-	public void drawBorder(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor) {
-		setShapeRendererColor(renderer, defaultColor, hoveredColor, selectedColor);
+	public void drawBorder(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
+		renderer.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
 		renderer.rect(left, cameraTop(camera), width, height);
-		if (selected) {
+		if (status == ButtonStatus.Selected) {
 			renderer.rect(left + 1, cameraTop(camera) + 1, width - 2, height - 2);
 		}
 	}
 
-	public void drawBackground(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor) {
-		setShapeRendererColor(renderer, defaultColor, hoveredColor, selectedColor);
+	public void drawBackground(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
+		renderer.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
 		renderer.rect(left, cameraTop(camera), width, height);
 	}
 
-	private void setShapeRendererColor(ShapeRenderer renderer, Color defaultColor, Color hoveredColor, Color selectedColor) {
-		if (selected) {
-			renderer.setColor(selectedColor);
-		} else if (hovered) {
-			renderer.setColor(hoveredColor);
-		} else {
-			renderer.setColor(defaultColor);
+	private static Color getColorForState(Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
+		switch (status) {
+		case Unselected:
+			return defaultColor;
+		case Selected:
+			return selectedColor;
+		case Hovered:
+			return hoveredColor;
+		default:
+			return defaultColor;
 		}
 	}
 
-	public void drawBatch(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor) {
-		if (selected) {
-			font.setColor(selectedColor);
-		} else if (hovered) {
-			font.setColor(hoveredColor);
-		} else {
-			font.setColor(defaultColor);
-		}
+	public void drawBatch(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
+		font.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
 		font.draw(batch, text, left, cameraTop(camera) + (font.getCapHeight() + height) / 2, 0, text.length(), width, Align.center, false);
 	}
 

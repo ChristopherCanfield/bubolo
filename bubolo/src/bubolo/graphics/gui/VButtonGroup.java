@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.graphics.gui.Button.ButtonStatus;
 import bubolo.util.Nullable;
 
 /**
@@ -21,6 +22,9 @@ public class VButtonGroup {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
+
+	private int selectedButtonIndex = -1;
+	private int hoveredButtonIndex = -1;
 
 	/**
 	 * VButtonGroup arguments.
@@ -103,20 +107,32 @@ public class VButtonGroup {
 		var renderer = graphics.shapeRenderer();
 
 		renderer.begin(ShapeType.Filled);
-		for (Button button : buttons) {
-			button.drawBackground(renderer, graphics.camera(), args.buttonBackgroundColor, args.buttonHoverBackgroundColor, args.buttonSelectedBackgroundColor);
+		for (int i = 0; i < buttons.size(); i++) {
+			buttons.get(i).drawBackground(renderer, graphics.camera(),
+					args.buttonBackgroundColor,
+					args.buttonHoverBackgroundColor,
+					args.buttonSelectedBackgroundColor,
+					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
 		}
 		renderer.end();
 
 		renderer.begin(ShapeType.Line);
-		for (Button button : buttons) {
-			button.drawBorder(renderer, graphics.camera(), args.buttonBorderColor, args.buttonHoverBorderColor, args.buttonSelectedBorderColor);
+		for (int i = 0; i < buttons.size(); i++) {
+			buttons.get(i).drawBorder(renderer, graphics.camera(),
+					args.buttonBorderColor,
+					args.buttonHoverBorderColor,
+					args.buttonSelectedBorderColor,
+					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
 		}
 		renderer.end();
 
 		graphics.batch().begin();
-		for (Button button : buttons) {
-			button.drawBatch(graphics.batch(), graphics.camera(), args.buttonTextColor, args.buttonHoverTextColor, args.buttonSelectedTextColor);
+		for (int i = 0; i < buttons.size(); i++) {
+			buttons.get(i).drawBatch(graphics.batch(), graphics.camera(),
+					args.buttonTextColor,
+					args.buttonHoverTextColor,
+					args.buttonSelectedTextColor,
+					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
 		}
 		graphics.batch().end();
 	}
@@ -124,51 +140,46 @@ public class VButtonGroup {
 	public void selectNext() {
 		assert !buttons.isEmpty();
 
-		int index = findSelectedButtonIndex();
-		if (index == -1) {
-			buttons.get(0).setSelected(true);
+		if (selectedButtonIndex == -1) {
+			selectedButtonIndex = 0;
 		} else {
-			int newSelectedIndex = (index == (buttons.size() - 1)) ? 0 : index + 1;
-			buttons.get(index).setSelected(false);
-			buttons.get(newSelectedIndex).setSelected(true);
+			selectedButtonIndex = (selectedButtonIndex == (buttons.size() - 1)) ? 0 : selectedButtonIndex + 1;
 		}
 	}
 
 	public void selectPrevious() {
 		assert !buttons.isEmpty();
 
-		int index = findSelectedButtonIndex();
-		if (index == -1) {
-			buttons.get(buttons.size() - 1).setSelected(true);
+		if (selectedButtonIndex == -1) {
+			selectedButtonIndex = buttons.size() - 1;
 		} else {
-			int newSelectedIndex = (index == 0) ? buttons.size() - 1 : index - 1;
-			buttons.get(index).setSelected(false);
-			buttons.get(newSelectedIndex).setSelected(true);
+			selectedButtonIndex = (selectedButtonIndex == 0) ? buttons.size() - 1 : selectedButtonIndex - 1;
 		}
 	}
 
+	/**
+	 * Selects the specified button.
+	 *
+	 * @param buttonIndex the button index to selected. >= -1 and < button count.
+	 */
 	public void selectButton(int buttonIndex) {
 		assert !buttons.isEmpty();
+		assert buttonIndex >= -1 && buttonIndex < buttons.size();
 
-		buttons.forEach(b -> b.setSelected(false));
-		buttons.forEach(b -> b.setHovered(false));
-		if (buttonIndex != -1) {
-			buttons.get(buttonIndex).setSelected(true);
-		}
+		selectedButtonIndex = buttonIndex;
 	}
 
 	/**
 	 * @return the index of the selected button, or -1 if no button is selected.
 	 */
 	public int selectedButtonIndex() {
-		return findSelectedButtonIndex();
+		return selectedButtonIndex;
 	}
 
 	/**
 	 * @return the selected button's text, or null if no button is selected.
 	 */
 	public String selectedButtonText() {
-		int selectedButtonIndex = findSelectedButtonIndex();
 		if (selectedButtonIndex != -1) {
 			return buttons.get(selectedButtonIndex).text;
 		} else {
@@ -182,7 +193,6 @@ public class VButtonGroup {
 	 * @return the selected button's index, or -1 if no selected button
 	 */
 	public int activateSelectedButton() {
-		int selectedButtonIndex = findSelectedButtonIndex();
 		if (selectedButtonIndex != -1) {
 			buttons.get(selectedButtonIndex).onAction();
 			return selectedButtonIndex;
@@ -192,40 +202,18 @@ public class VButtonGroup {
 	}
 
 	public int onMouseClicked(int screenX, int screenY) {
-		buttons.forEach(b -> b.setSelected(false));
-
-		int clickedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
-		if (clickedButtonIndex != -1) {
-			buttons.get(clickedButtonIndex).setSelected(true);
-		}
-		return clickedButtonIndex;
+		selectedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+		return selectedButtonIndex;
 	}
 
 	public int onMouseMoved(int screenX, int screenY) {
-		buttons.forEach(b -> b.setHovered(false));
-
-		int hoverButtonIndex = findButtonThatContainsPoint(screenX, screenY);
-		if (hoverButtonIndex != -1) {
-			buttons.get(hoverButtonIndex).setHovered(true);
-		}
-		return hoverButtonIndex;
+		hoveredButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+		return hoveredButtonIndex;
 	}
 
 	private int findButtonThatContainsPoint(int screenX, int screenY) {
 		for (int i = 0; i < buttons.size(); i++) {
 			if (buttons.get(i).contains(screenX, screenY)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * @return the index of the selected button, or -1 if no button is selected.
-	 */
-	private int findSelectedButtonIndex() {
-		for (int i = 0; i < buttons.size(); i++) {
-			if (buttons.get(i).isSelected()) {
 				return i;
 			}
 		}
