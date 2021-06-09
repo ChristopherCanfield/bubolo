@@ -46,7 +46,8 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 
 	@Override
 	public boolean isValidBuildTarget() {
-		return true;
+		// Flooding tiles are not valid build targets.
+		return !isFlooding();
 	}
 
 	@Override
@@ -89,6 +90,13 @@ public class Crater extends StaticEntity implements TerrainImprovement, EdgeMatc
 	public void flood(World world) {
 		if (!flooding) {
 			flooding = true;
+
+			// Mines explode if the crater they're in starts flooding.
+			var mine = world.getMine(tileColumn(), tileRow());
+			if (mine != null) {
+				mine.explode(world);
+			}
+
 			world.timer().scheduleSeconds(FloodTimeSeconds, w -> {
 				replaceWithWater(world);
 			});

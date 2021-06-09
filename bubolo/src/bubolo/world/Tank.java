@@ -880,7 +880,7 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Creates the mine in world and passes it back to the caller. Returns null if a mine can't be created.
+	 * Adds a mine to the world and passes it back to the caller. Returns null if a mine can't be created.
 	 *
 	 * @param world reference to the game world.
 	 * @return The mine, or null if a mine is unable to be placed.
@@ -912,11 +912,12 @@ public class Tank extends ActorEntity implements Damageable {
 		if (mineReadyTime < System.currentTimeMillis() && mineCount > 0) {
 			int tileX = Math.round(x() / Units.TileToWorldScale);
 			int tileY = Math.round(y() / Units.TileToWorldScale);
-
-			Terrain terrain = world.getTerrain(tileX, tileY);
-			if (terrain.isValidBuildTarget() && world.getMine(tileX, tileY) == null) {
-				TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileX, tileY);
-				return (terrainImprovement == null || terrainImprovement.isValidBuildTarget());
+			if (world.getMine(tileX, tileY) == null) {
+				Terrain terrain = world.getTerrain(tileX, tileY);
+				if (terrain.isValidBuildTarget()) {
+					TerrainImprovement terrainImprovement = world.getTerrainImprovement(tileX, tileY);
+					return (terrainImprovement == null || terrainImprovement.isValidBuildTarget());
+				}
 			}
 			return false;
 		}
