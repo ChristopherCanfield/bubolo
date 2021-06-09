@@ -261,12 +261,12 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		}
 	}
 
-	private static final Color tankHiddenColor = new Color(Color.WHITE).mul(1.f, 1.f, 1.f, 0.6f);
+	static final Color HiddenByTreeColor = new Color(Color.WHITE).mul(1.f, 1.f, 1.f, 0.6f);
 
 	private Visibility visibility() {
 		if (getEntity().isHidden()) {
 			if (getEntity().isOwnedByLocalPlayer()) {
-				setColor(tankHiddenColor);
+				setColor(HiddenByTreeColor);
 				return Visibility.HIDDEN;
 			} else {
 				return Visibility.NETWORK_TANK_HIDDEN;
