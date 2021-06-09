@@ -349,7 +349,12 @@ public class GameWorld implements World {
 
 	@Override
 	public Mine getMine(int column, int row) {
-		return mines.get(new Tile(column, row));
+		var mine = mines.get(new Tile(column, row));
+		if (mine != null && !mine.isDisposed()) {
+			return mine;
+		} else {
+			return null;
+		}
 	}
 
 	@Override

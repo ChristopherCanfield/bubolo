@@ -30,6 +30,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	private static final Color defaultColor = new Color(Color.WHITE);
 	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
+	private static final Color hiddenColor = TankSprite.HiddenByTreeColor;
 
 	private static final DrawLayer defaultDrawLayer = DrawLayer.TerrainImprovements;
 	private static final DrawLayer carriedOrBuildingDrawLayer = DrawLayer.Effects;
@@ -94,9 +95,12 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 			// If Tank is being carried.
 			} else {
 				var tank = (Tank) getEntity().owner();
-				if (!tank.isHidden()) {
-					// Draw the pillbox above the tank.
-					setColor(defaultColor);
+				if (!tank.isHidden() || tank.isOwnedByLocalPlayer()) {
+					if (!tank.isHidden()) {
+						setColor(defaultColor);
+					} else {
+						setColor(hiddenColor);
+					}
 					// Draw the pillbox.
 					drawTexture(graphics, frames[colorColumn][0], 0.5f, tank.x(), tank.y(), tank.width() / 2 + 5, 35, tank.rotation());
 				}
