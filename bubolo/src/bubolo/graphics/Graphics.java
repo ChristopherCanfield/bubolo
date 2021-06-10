@@ -179,6 +179,8 @@ public class Graphics implements EntityLifetimeObserver {
 
 		nonScalingBatch = new SpriteBatch(50);
 		nonScalingShapeRenderer = new ShapeRenderer(250);
+		nonScalingBatch.setProjectionMatrix(uiCamera.combined);
+		nonScalingShapeRenderer.setProjectionMatrix(uiCamera.combined);
 
 		spriteSystem = new SpriteSystem();
 
@@ -253,8 +255,8 @@ public class Graphics implements EntityLifetimeObserver {
 	 */
 	public void resize(int newWidth, int newHeight) {
 		uiCamera.setToOrtho(false, newWidth, newHeight);
-		System.out.println(uiCamera.viewportWidth + "," + uiCamera.viewportHeight + "," + uiCamera.zoom);
-		System.out.println(camera.viewportWidth + "," + camera.viewportHeight);
+		nonScalingBatch.setProjectionMatrix(uiCamera.combined);
+		nonScalingShapeRenderer.setProjectionMatrix(uiCamera.combined);
 	}
 
 	/**
@@ -266,9 +268,6 @@ public class Graphics implements EntityLifetimeObserver {
 		var clearColor = screen.clearColor();
 		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-		batch().setProjectionMatrix(uiCamera.combined);
-		shapeRenderer().setProjectionMatrix(uiCamera.combined);
 
 		screen.draw(this);
 		batch.totalRenderCalls = 0;

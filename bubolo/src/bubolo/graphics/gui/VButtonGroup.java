@@ -124,7 +124,7 @@ public class VButtonGroup {
 	}
 
 	public void draw(Graphics graphics) {
-		var renderer = graphics.shapeRenderer();
+		var renderer = graphics.nonScalingShapeRenderer();
 		var camera = graphics.uiCamera();
 
 		drawBackground(renderer, camera);
@@ -132,7 +132,7 @@ public class VButtonGroup {
 
 		drawButtonBackgrounds(renderer, camera);
 		drawButtonBorders(renderer, camera);
-		drawButtonText(graphics.batch(), camera);
+		drawButtonText(graphics.nonScalingBatch(), camera);
 	}
 
 	private void drawBackground(ShapeRenderer renderer, Camera camera) {
