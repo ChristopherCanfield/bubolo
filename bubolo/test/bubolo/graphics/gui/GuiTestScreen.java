@@ -45,7 +45,7 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void resize(int newWidth, int newHeight) {
+	public void onViewportResized(int newWidth, int newHeight) {
 		scaleX = (float) Config.TargetWindowWidth / newWidth;
 		scaleY = (float) Config.TargetWindowHeight / newHeight;
 	}

@@ -25,11 +25,9 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	public MainMenuScreen(BuboloApplication app) {
 		this.app = app;
 
-		var buttonGroupArgs = new VButtonGroup.Args();
-		buttonGroupArgs.left = Config.TargetWindowWidth * 0.5f - 100;
-		buttonGroupArgs.top = 200;
-		buttonGroupArgs.buttonWidth = 300;
-		buttonGroupArgs.buttonHeight = 50;
+		var buttonGroupArgs = new VButtonGroup.Args(Config.TargetWindowWidth, Config.TargetWindowHeight, 300, 50);
+		buttonGroupArgs.centeredHorizontally = true;
+		buttonGroupArgs.centeredVertically = true;
 		buttonGroupArgs.paddingBetweenButtons = 10;
 
 		buttonGroup = new VButtonGroup(buttonGroupArgs);
@@ -66,7 +64,8 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void resize(int newWidth, int newHeight) {
+	public void onViewportResized(int newWidth, int newHeight) {
+		buttonGroup.onViewportResized(newWidth, newHeight);
 //		scaleX = (float) Config.TargetWindowWidth / newWidth;
 //		scaleY = (float) Config.TargetWindowHeight / newHeight;
 	}

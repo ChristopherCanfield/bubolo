@@ -173,6 +173,8 @@ public class Graphics implements EntityLifetimeObserver {
 	public Graphics(int resolutionX, int resolutionY) {
 		camera = new OrthographicCamera(resolutionX, resolutionY);
 		uiCamera = new OrthographicCamera(resolutionX, resolutionY);
+		uiCamera.position.x = uiCamera.position.y = 0;
+		uiCamera.update();
 
 		batch = new SpriteBatch(3500);
 		shapeRenderer = new ShapeRenderer(500);

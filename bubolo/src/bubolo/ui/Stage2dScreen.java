@@ -71,7 +71,7 @@ public abstract class Stage2dScreen implements Screen {
 	}
 
 	@Override
-	public void resize(int width, int height) {
+	public void onViewportResized(int width, int height) {
 		stage.getViewport().update(width, height, true);
 	}
 

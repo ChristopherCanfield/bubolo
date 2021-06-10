@@ -26,7 +26,9 @@ public class VButtonGroup {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
-	private float bottom;
+	private float left;
+	private float top;
+	private float height;
 
 	private int selectedButtonIndex = -1;
 	private int hoveredButtonIndex = -1;
@@ -35,10 +37,25 @@ public class VButtonGroup {
 	 * VButtonGroup arguments.
 	 */
 	public static class Args implements Cloneable {
-		public float left;
-		// The top position, in screen coordinates (0 is at top).
-		public float top;
+		int parentWidth;
+		int parentHeight;
 
+		/**
+		 * The left offset, which is either from 0 (if centeredHorizontally is false) or the
+		 * viewport's horizontal center - width()/2.
+		 */
+		public float leftOffset;
+		/** The top offset, which is either from 0 (if centeredVertically is false) or the
+		 * viewport's vertical center - width()/2.
+		 */
+		public float topOffset;
+
+		/** If true, the object is centered horizontally, and is then offset by {@code -width()/2 + left}. */
+		public boolean centeredHorizontally = false;
+		/** If true, the object is centered vertically, and is then offset by the {@code -width()/2 + top}. */
+		public boolean centeredVertically = false;
+
+		/** The padding between the button edges and the VButtonGroup borders. */
 		public int padding = 20;
 		public int paddingBetweenButtons;
 
@@ -58,6 +75,13 @@ public class VButtonGroup {
 		public Color buttonHoverBackgroundColor = Color.LIGHT_GRAY;
 		public Color buttonHoverTextColor = Color.BLACK;
 
+		public Args(int parentWidth, int parentHeight, int buttonWidth, int buttonHeight) {
+			this.parentWidth = parentWidth;
+			this.parentHeight = parentHeight;
+			this.buttonWidth = buttonWidth;
+			this.buttonHeight = buttonHeight;
+		}
+
 		@Override
 		public Args clone() {
 			try {
@@ -69,6 +93,9 @@ public class VButtonGroup {
 	}
 
 	public VButtonGroup(Args args) {
+		assert args.parentWidth > 0;
+		assert args.parentHeight > 0;
+
 		assert args.borderColor != null;
 		assert args.backgroundColor != null;
 
@@ -88,11 +115,22 @@ public class VButtonGroup {
 
 		this.args = args.clone();
 
-		bottom = args.top + args.padding * 2;
+		if (args.centeredHorizontally) {
+			centerHorizontally();
+		} else {
+			top = args.topOffset;
+		}
+		if (args.centeredVertically) {
+			centerVertically();
+		} else {
+			left = args.leftOffset;
+		}
+
+		height = args.padding * 2;
 	}
 
 	public float right() {
-		return args.left + width();
+		return left + width();
 	}
 
 	public float width() {
@@ -100,11 +138,11 @@ public class VButtonGroup {
 	}
 
 	public float bottom() {
-		return bottom;
+		return top + height();
 	}
 
 	public float height() {
-		return args.top - bottom();
+		return height;
 	}
 
 	public void addButton(String text) {
@@ -114,13 +152,16 @@ public class VButtonGroup {
 	public void addButton(String text, @Nullable Consumer<Button> action) {
 		int buttonTop;
 		if (buttons.isEmpty()) {
-			buttonTop = (int) args.top + args.padding;
-			bottom += args.buttonHeight;
+			buttonTop = (int) top + args.padding;
+			height += args.buttonHeight;
 		} else {
 			buttonTop = (int) buttons.get(buttons.size() - 1).bottom() + args.paddingBetweenButtons;
-			bottom += args.buttonHeight + args.paddingBetweenButtons;
+			height += args.buttonHeight + args.paddingBetweenButtons;
 		}
-		buttons.add(new Button(args.left + args.padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
+		buttons.add(new Button(left + args.padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
+
+		if (args.centeredHorizontally) { centerHorizontally(); }
+		if (args.centeredVertically) { centerVertically(); }
 	}
 
 	public void draw(Graphics graphics) {
@@ -138,19 +179,19 @@ public class VButtonGroup {
 	private void drawBackground(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Filled);
 		renderer.setColor(args.backgroundColor);
-		renderer.rect(args.left, cameraTop(camera), width(), height());
+		renderer.rect(left, cameraTop(camera), width(), height());
 		renderer.end();
 	}
 
 	private void drawBorder(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Line);
 		renderer.setColor(args.borderColor);
-		renderer.rect(args.left, cameraTop(camera), width(), height());
+		renderer.rect(left, cameraTop(camera), width(), height());
 		renderer.end();
 	}
 
 	private float cameraTop(Camera camera) {
-		return Units.screenYToCameraY(camera, args.top);
+		return Units.screenYToCameraY(camera, top + height);
 	}
 
 	private void drawButtonBackgrounds(ShapeRenderer renderer, Camera camera) {
@@ -187,6 +228,34 @@ public class VButtonGroup {
 					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
 		}
 		batch.end();
+	}
+
+	private void centerHorizontally() {
+		int viewportHCenter = args.parentWidth / 2;
+		left = viewportHCenter - (width() / 2) + args.leftOffset;
+		recalculateButtonPositions();
+	}
+
+	private void centerVertically() {
+		int viewportVCenter = args.parentHeight / 2;
+		top = viewportVCenter - (height() / 2) + args.topOffset;
+		recalculateButtonPositions();
+	}
+
+	private void recalculateButtonPositions() {
+		for (int i = 0; i < buttons.size(); i++) {
+			var button = buttons.get(i);
+			button.top = (int) top + args.padding + (i * args.buttonHeight) + (i * args.paddingBetweenButtons);
+			button.left = (int) left + args.padding;
+		}
+	}
+
+	public void onViewportResized(int viewportWidth, int viewportHeight) {
+		args.parentWidth = viewportWidth;
+		args.parentHeight = viewportHeight;
+
+		if (args.centeredHorizontally) { centerHorizontally(); }
+		if (args.centeredVertically) { centerVertically(); }
 	}
 
 	public void selectNext() {
