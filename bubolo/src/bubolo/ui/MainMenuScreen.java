@@ -67,8 +67,8 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public void resize(int newWidth, int newHeight) {
-		scaleX = (float) Config.TargetWindowWidth / newWidth;
-		scaleY = (float) Config.TargetWindowHeight / newHeight;
+//		scaleX = (float) Config.TargetWindowWidth / newWidth;
+//		scaleY = (float) Config.TargetWindowHeight / newHeight;
 	}
 
 	@Override
@@ -127,5 +127,8 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
+		if (Gdx.input.getInputProcessor() == this) {
+			Gdx.input.setInputProcessor(null);
+		}
 	}
 }

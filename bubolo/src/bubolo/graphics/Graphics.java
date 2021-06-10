@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import bubolo.ui.Screen;
 import bubolo.util.Timer;
@@ -44,9 +43,12 @@ public class Graphics implements EntityLifetimeObserver {
 	private static Map<String, TextureRegion[]> textureRegions1d = new HashMap<>();
 	private static Map<String, TextureRegion[][]> textureRegions2d = new HashMap<>();
 
-	private final SpriteBatch batch;
 	private final Camera camera;
+	private final OrthographicCamera uiCamera;
+	private final SpriteBatch batch;
 	private final ShapeRenderer shapeRenderer;
+	private final SpriteBatch nonScalingBatch;
+	private final ShapeRenderer nonScalingShapeRenderer;
 
 	private SpriteSystem spriteSystem;
 
@@ -165,21 +167,43 @@ public class Graphics implements EntityLifetimeObserver {
 	/**
 	 * Creates the graphics system.
 	 *
-	 * @param windowWidth the width of the window, in pixels.
-	 * @param windowHeight the height of the window, in pixels.
+	 * @param resolutionX the x resolution (width) of the game's viewport, in pixels.
+	 * @param resolutionY the y resolution (height) of the game's viewport, in pixels.
 	 */
-	public Graphics(int windowWidth, int windowHeight) {
-		camera = new OrthographicCamera(windowWidth, windowHeight);
-		batch = new SpriteBatch();
-		shapeRenderer = new ShapeRenderer();
+	public Graphics(int resolutionX, int resolutionY) {
+		camera = new OrthographicCamera(resolutionX, resolutionY);
+		uiCamera = new OrthographicCamera(resolutionX, resolutionY);
+
+		batch = new SpriteBatch(3500);
+		shapeRenderer = new ShapeRenderer(500);
+
+		nonScalingBatch = new SpriteBatch(50);
+		nonScalingShapeRenderer = new ShapeRenderer(250);
 
 		spriteSystem = new SpriteSystem();
 
 		loadAllTextures();
 	}
 
+	/**
+	 * Returns the camera used to render the game. This camera uses a y-up coordinate system, and has a fixed resolution that
+	 * scales when the screen size is changed. While that can lead to graphical distortion, it ensures that every player can
+	 * see the same amount of the map, regardless of screen resolution.
+	 *
+	 * @return the camera used to render the game.
+	 */
 	public Camera camera() {
 		return camera;
+	}
+
+	/**
+	 * Returns the camera used to render user interface elements, such as menu. This camera uses screen coordinates (y-down),
+	 * and does not scale when the screen size is increased or decreased.
+	 *
+	 * @return the camera used to render user interface elements.
+	 */
+	public OrthographicCamera uiCamera() {
+		return uiCamera;
 	}
 
 	public Batch batch() {
@@ -188,6 +212,14 @@ public class Graphics implements EntityLifetimeObserver {
 
 	public ShapeRenderer shapeRenderer() {
 		return shapeRenderer;
+	}
+
+	public Batch nonScalingBatch() {
+		return nonScalingBatch;
+	}
+
+	public ShapeRenderer nonScalingShapeRenderer() {
+		return nonScalingShapeRenderer;
 	}
 
 	SpriteSystem sprites() {
@@ -214,6 +246,18 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
+	 * Called when the window is resized.
+	 *
+	 * @param newWidth the new window width.
+	 * @param newHeight the new window height.
+	 */
+	public void resize(int newWidth, int newHeight) {
+		uiCamera.setToOrtho(false, newWidth, newHeight);
+		System.out.println(uiCamera.viewportWidth + "," + uiCamera.viewportHeight + "," + uiCamera.zoom);
+		System.out.println(camera.viewportWidth + "," + camera.viewportHeight);
+	}
+
+	/**
 	 * Draws the specified screen.
 	 *
 	 * @param screen the ui screen to update.
@@ -223,25 +267,19 @@ public class Graphics implements EntityLifetimeObserver {
 		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+		batch().setProjectionMatrix(uiCamera.combined);
+		shapeRenderer().setProjectionMatrix(uiCamera.combined);
+
 		screen.draw(this);
+		batch.totalRenderCalls = 0;
 	}
 
 	/**
-	 * Draws the entities that are within the camera's clipping boundary.
+	 * Draws the entities that are within the camera's clipping boundary. Must be called once per game tick.
 	 *
-	 * @param world reference to the World Model object.
+	 * @param world reference to the game world.
 	 */
 	public void draw(World world) {
-		draw(world, null);
-	}
-
-	/**
-	 * Draws the entities that are within the camera's clipping boundary.
-	 *
-	 * @param world the World Model object.
-	 * @param ui the game user interface.
-	 */
-	public void draw(World world, Stage ui) {
 		Gdx.gl20.glClearColor(0, 0, 0, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
@@ -258,12 +296,6 @@ public class Graphics implements EntityLifetimeObserver {
 		// Render sprites.
 		drawSpritesByLayer(spritesInView);
 		drawTankUiElements(spritesInView);
-
-		// Render the user interface.
-		if (ui != null) {
-			ui.act(Gdx.graphics.getDeltaTime());
-			ui.draw();
-		}
 
 		// Update the camera controller.
 		if (cameraController != null) {
@@ -340,10 +372,9 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @return true if the sprite is within the camera's view, or false otherwise.
 	 */
 	private static boolean withinCameraView(Camera camera, Sprite sprite) {
-		if (sprite instanceof TankSprite tankSprite) {
-			if (tankSprite.getEntity().isOwnedByLocalPlayer()) {
-				return true;
-			}
+		if (sprite instanceof TankSprite tankSprite
+				&& tankSprite.getEntity().isOwnedByLocalPlayer()) {
+			return true;
 		}
 
 		float cameraX = camera.position.x;

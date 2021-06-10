@@ -119,6 +119,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			case NetGameStarting:
 			case NetGameLobby:
 				network.update(this);
+				//$FALL-THROUGH$
 			case MainMenu:
 			case NetGameSetup:
 			case SinglePlayerSetup:
@@ -237,6 +238,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 	@Override
 	public void resize(int width, int height) {
+		graphics.resize(width, height);
 		if (screen != null) {
 			screen.resize(width, height);
 		}

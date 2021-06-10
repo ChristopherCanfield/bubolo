@@ -125,7 +125,7 @@ public class VButtonGroup {
 
 	public void draw(Graphics graphics) {
 		var renderer = graphics.shapeRenderer();
-		var camera = graphics.camera();
+		var camera = graphics.uiCamera();
 
 		drawBackground(renderer, camera);
 		drawBorder(renderer, camera);
@@ -142,12 +142,15 @@ public class VButtonGroup {
 		renderer.end();
 	}
 
-	private float cameraTop(Camera camera) {
-		return Units.screenYToCameraY(camera, args.top);
+	private void drawBorder(ShapeRenderer renderer, Camera camera) {
+		renderer.begin(ShapeType.Line);
+		renderer.setColor(args.borderColor);
+		renderer.rect(args.left, cameraTop(camera), width(), height());
+		renderer.end();
 	}
 
-	private void drawBorder(ShapeRenderer renderer, Camera camera) {
-
+	private float cameraTop(Camera camera) {
+		return Units.screenYToCameraY(camera, args.top);
 	}
 
 	private void drawButtonBackgrounds(ShapeRenderer renderer, Camera camera) {
