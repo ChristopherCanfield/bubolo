@@ -37,6 +37,9 @@ public class VButtonGroup {
 	 * VButtonGroup arguments.
 	 */
 	public static class Args implements Cloneable {
+		public int startLeft;
+		/** The starting top position, in screen coordinates (y-down). */
+		public int startTop;
 		int parentWidth;
 		int parentHeight;
 
@@ -118,12 +121,12 @@ public class VButtonGroup {
 		if (args.centeredHorizontally) {
 			centerHorizontally();
 		} else {
-			top = args.topOffset;
+			top = args.startTop + args.topOffset;
 		}
 		if (args.centeredVertically) {
 			centerVertically();
 		} else {
-			left = args.leftOffset;
+			left = args.startLeft + args.leftOffset;
 		}
 
 		height = args.padding * 2;
@@ -250,12 +253,22 @@ public class VButtonGroup {
 		}
 	}
 
-	public void onViewportResized(int viewportWidth, int viewportHeight) {
-		args.parentWidth = viewportWidth;
-		args.parentHeight = viewportHeight;
+	public void recalculateLayout(int left, int top, int parentWidth, int parentHeight) {
+		args.parentWidth = parentWidth;
+		args.parentHeight = parentHeight;
+		args.startLeft = left;
+		args.startTop = top;
 
-		if (args.centeredHorizontally) { centerHorizontally(); }
-		if (args.centeredVertically) { centerVertically(); }
+		if (args.centeredHorizontally) {
+			centerHorizontally();
+		} else {
+			this.top = args.startTop + args.topOffset;
+		}
+		if (args.centeredVertically) {
+			centerVertically();
+		} else {
+			this.left = args.startLeft + args.leftOffset;
+		}
 	}
 
 	public void selectNext() {

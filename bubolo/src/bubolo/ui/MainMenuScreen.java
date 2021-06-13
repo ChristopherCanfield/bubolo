@@ -1,9 +1,15 @@
 package bubolo.ui;
 
+import java.io.File;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.BuboloApplication;
 import bubolo.Config;
@@ -15,20 +21,23 @@ import bubolo.ui.gui.VButtonGroup;
 public class MainMenuScreen implements Screen, InputProcessor {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
 
-	// For scaling window coordinates to screen coordinates.
-	private float scaleX = 1;
-	private float scaleY = 1;
-
 	private final VButtonGroup buttonGroup;
 	private final BuboloApplication app;
 
+	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0.4f);
+	private final Texture backgroundTexture;
+
 	public MainMenuScreen(BuboloApplication app) {
 		this.app = app;
+
+		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background.png")));
 
 		var buttonGroupArgs = new VButtonGroup.Args(Config.TargetWindowWidth, Config.TargetWindowHeight, 300, 50);
 		buttonGroupArgs.centeredHorizontally = true;
 		buttonGroupArgs.centeredVertically = true;
 		buttonGroupArgs.paddingBetweenButtons = 10;
+		buttonGroupArgs.backgroundColor = new Color(0.4f, 0.4f, 0.4f, 0.8f);
+		buttonGroupArgs.padding = 40;
 
 		buttonGroup = new VButtonGroup(buttonGroupArgs);
 		buttonGroup.addButton("Single Player Game", this::onSinglePlayerButtonActivated);
@@ -60,14 +69,25 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public void draw(Graphics graphics) {
+		graphics.batch().begin();
+		graphics.batch().draw(backgroundTexture, 0, 0);
+		graphics.batch().end();
+
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		var shapeRenderer = graphics.shapeRenderer();
+		shapeRenderer.setColor(backgroundDistortionColor);
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.rect(0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
+		shapeRenderer.end();
+
 		buttonGroup.draw(graphics);
+
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	@Override
 	public void onViewportResized(int newWidth, int newHeight) {
-		buttonGroup.onViewportResized(newWidth, newHeight);
-//		scaleX = (float) Config.TargetWindowWidth / newWidth;
-//		scaleY = (float) Config.TargetWindowHeight / newHeight;
+		buttonGroup.recalculateLayout(0, 0, newWidth, newHeight);
 	}
 
 	@Override
@@ -87,14 +107,14 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		buttonGroup.onMouseClicked((int) (screenX * scaleX), (int) (screenY * scaleY));
+		buttonGroup.onMouseClicked(screenX, screenY);
 		buttonGroup.activateSelectedButton();
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		int buttonIndex = buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY));
+		int buttonIndex = buttonGroup.onMouseMoved(screenX, screenY);
 		buttonGroup.selectButton(buttonIndex);
 		return false;
 	}
