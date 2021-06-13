@@ -21,6 +21,7 @@ import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateTank;
+import bubolo.ui.LoadingScreen;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.MainMenuScreen;
 import bubolo.ui.Screen;
@@ -45,7 +46,8 @@ public class BuboloApplication extends AbstractGameApplication {
 	private Network network;
 	private Screen screen;
 
-	private Path mapPath = FileSystems.getDefault().getPath("res", "maps/Canfield Island.json");
+	private String mapName = "Canfield Island.json";
+	private Path mapPath = FileSystems.getDefault().getPath("res", "maps", mapName);
 
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
@@ -61,7 +63,8 @@ public class BuboloApplication extends AbstractGameApplication {
 
 		// The first command line argument specifies the map to use. If there is no argument, use the default map.
 		if (commandLineArgs.length != 0) {
-			Path argPath = FileSystems.getDefault().getPath("res", "maps/" + commandLineArgs[0]);
+			mapName = commandLineArgs[0];
+			Path argPath = FileSystems.getDefault().getPath("res", "maps", mapName);
 			if (Files.exists(argPath)) {
 				mapPath = argPath;
 			}
@@ -103,6 +106,8 @@ public class BuboloApplication extends AbstractGameApplication {
 		logger.setLevel(Level.WARNING);
 	}
 
+	private boolean readyToLoadGame;
+
 	/**
 	 * Called automatically by the rendering library.
 	 *
@@ -132,6 +137,24 @@ public class BuboloApplication extends AbstractGameApplication {
 				world.update();
 				network.update(this);
 				break;
+			case SinglePlayerLoading:
+				graphics.draw(screen);
+				if (readyToLoadGame && !isReady()) {
+					setUpWorld();
+					Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
+							TargetWindowHeight * DefaultPixelsPerWorldUnit);
+
+					var spawn = world().getRandomSpawn();
+					Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
+
+					Tank tank = world().addEntity(Tank.class, args);
+					tank.setControlledByLocalPlayer(true);
+
+					network.startDebug();
+					setReady(true);
+					setState(State.SinglePlayerGame);
+				}
+				readyToLoadGame = true;
 			}
 
 			// @TODO (cdc 2021-06-08): Remove this.
@@ -191,33 +214,20 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 		}
+		// TODO (cdc - 2021-06-08): Implement this.
 		case SinglePlayerSetup:
 			assert previousState == State.MainMenu;
-
-			// TODO (cdc - 2021-06-08): Implement this.
-			setState(State.SinglePlayerGame);
+			setState(State.SinglePlayerLoading);
+			break;
+		case SinglePlayerLoading:
+			assert previousState == State.SinglePlayerSetup;
+			screen.dispose();
+			screen = new LoadingScreen(mapName);
 			break;
 		case SinglePlayerGame: {
-			assert previousState == State.SinglePlayerSetup;
+			assert previousState == State.SinglePlayerLoading;
 
-			if (screen != null) {
-				screen.dispose();
-			}
-
-			setUpWorld();
-
-			Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
-					TargetWindowHeight * DefaultPixelsPerWorldUnit);
-
-			var spawn = world().getRandomSpawn();
-			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
-
-			Tank tank = world().addEntity(Tank.class, args);
-			tank.setControlledByLocalPlayer(true);
-
-			network.startDebug();
-
-			setReady(true);
+			screen.dispose();
 			break;
 		}
 		case Settings:

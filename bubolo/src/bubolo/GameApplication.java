@@ -34,6 +34,7 @@ public interface GameApplication extends ApplicationListener, WorldOwner {
 		MultiplayerGame,
 
 		SinglePlayerSetup,
+		SinglePlayerLoading,
 
 		/** The single player game state. **/
 		SinglePlayerGame,
