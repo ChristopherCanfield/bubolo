@@ -9,8 +9,8 @@ import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Graphics;
-import bubolo.graphics.gui.Button;
-import bubolo.graphics.gui.VButtonGroup;
+import bubolo.ui.gui.Button;
+import bubolo.ui.gui.VButtonGroup;
 
 public class MainMenuScreen implements Screen, InputProcessor {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);

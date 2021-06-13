@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import bubolo.Config;
 import bubolo.graphics.Graphics;
 import bubolo.ui.Screen;
+import bubolo.ui.gui.VButtonGroup;
 
 public class GuiTestScreen implements Screen, InputProcessor {
 	private final VButtonGroup buttonGroup;

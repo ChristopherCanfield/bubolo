@@ -1,4 +1,4 @@
-package bubolo.graphics.gui;
+package bubolo.ui.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
-import bubolo.graphics.gui.Button.ButtonStatus;
+import bubolo.ui.gui.Button.ButtonStatus;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
 

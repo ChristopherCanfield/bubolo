@@ -1,4 +1,4 @@
-package bubolo.graphics.gui;
+package bubolo.ui.gui;
 
 import java.util.function.Consumer;
 
