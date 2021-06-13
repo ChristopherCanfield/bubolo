@@ -11,6 +11,7 @@ public class LoadingScreen implements Screen {
 	private final Color clearColor =  new Color(0.15f, 0.15f, 0.15f, 1);
 	private final BitmapFont font = Fonts.Arial20;
 	private final String text;
+	private int drawCount;
 
 	public LoadingScreen(String mapName) {
 		this.text = "Loading " + mapName + "...";
@@ -28,6 +29,12 @@ public class LoadingScreen implements Screen {
 		font.setColor(Color.WHITE);
 		font.draw(batch, text, 0, graphics.uiCamera().viewportHeight - 100, 0, text.length(), graphics.uiCamera().viewportWidth, Align.center, false, null);
 		batch.end();
+
+		drawCount++;
+	}
+
+	public int drawCount() {
+		return drawCount;
 	}
 
 	@Override

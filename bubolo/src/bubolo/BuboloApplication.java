@@ -106,8 +106,6 @@ public class BuboloApplication extends AbstractGameApplication {
 		logger.setLevel(Level.WARNING);
 	}
 
-	private boolean readyToLoadGame;
-
 	/**
 	 * Called automatically by the rendering library.
 	 *
@@ -138,8 +136,9 @@ public class BuboloApplication extends AbstractGameApplication {
 				network.update(this);
 				break;
 			case SinglePlayerLoading:
-				graphics.draw(screen);
-				if (readyToLoadGame && !isReady()) {
+				LoadingScreen loadingScreen = (LoadingScreen) screen;
+				graphics.draw(loadingScreen);
+				if (loadingScreen.drawCount() > 1 && !isReady()) {
 					setUpWorld();
 					Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
 							TargetWindowHeight * DefaultPixelsPerWorldUnit);
@@ -154,7 +153,6 @@ public class BuboloApplication extends AbstractGameApplication {
 					setReady(true);
 					setState(State.SinglePlayerGame);
 				}
-				readyToLoadGame = true;
 			}
 
 			// @TODO (cdc 2021-06-08): Remove this.
