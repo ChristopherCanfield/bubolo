@@ -16,6 +16,9 @@ import bubolo.Config;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.Button;
+import bubolo.ui.gui.UiComponent.HOffsetFrom;
+import bubolo.ui.gui.UiComponent.OffsetType;
+import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.ui.gui.VButtonGroup;
 
 public class MainMenuScreen implements Screen, InputProcessor {
@@ -33,13 +36,14 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background_blurred.png")));
 
 		var buttonGroupArgs = new VButtonGroup.Args(Config.TargetWindowWidth, Config.TargetWindowHeight, 300, 50);
-		buttonGroupArgs.centeredHorizontally = true;
-		buttonGroupArgs.centeredVertically = true;
 		buttonGroupArgs.paddingBetweenButtons = 10;
-		buttonGroupArgs.backgroundColor = new Color(0.4f, 0.4f, 0.4f, 0.8f);
-		buttonGroupArgs.padding = 40;
+		buttonGroupArgs.backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
+		buttonGroupArgs.buttonBackgroundColor = new Color(1, 1, 1, 0.75f);
+		buttonGroupArgs.padding = 55;
 
 		buttonGroup = new VButtonGroup(buttonGroupArgs);
+		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		buttonGroup.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Center);
 		buttonGroup.addButton("Single Player Game", this::onSinglePlayerButtonActivated);
 		buttonGroup.addButton("Join Multiplayer Game", this::onJoinMultiplayerButtonActivated);
 		buttonGroup.addButton("Host Multiplayer Game", this::onHostMultiplayerButtonActivated);

@@ -22,7 +22,7 @@ import bubolo.util.Units;
  *
  * @author Christopher D. Canfield
  */
-public class VButtonGroup {
+public class VButtonGroup extends UiComponent {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
@@ -47,16 +47,16 @@ public class VButtonGroup {
 		 * The left offset, which is either from 0 (if centeredHorizontally is false) or the
 		 * viewport's horizontal center - width()/2.
 		 */
-		public float leftOffset;
+//		public float leftOffset;
 		/** The top offset, which is either from 0 (if centeredVertically is false) or the
 		 * viewport's vertical center - width()/2.
 		 */
-		public float topOffset;
+//		public float topOffset;
 
 		/** If true, the object is centered horizontally, and is then offset by {@code -width()/2 + left}. */
-		public boolean centeredHorizontally = false;
+//		public boolean centeredHorizontally = false;
 		/** If true, the object is centered vertically, and is then offset by the {@code -width()/2 + top}. */
-		public boolean centeredVertically = false;
+//		public boolean centeredVertically = false;
 
 		/** The padding between the button edges and the VButtonGroup borders. */
 		public int padding = 20;
@@ -118,16 +118,8 @@ public class VButtonGroup {
 
 		this.args = args.clone();
 
-		if (args.centeredHorizontally) {
-			centerHorizontally();
-		} else {
-			top = args.startTop + args.topOffset;
-		}
-		if (args.centeredVertically) {
-			centerVertically();
-		} else {
-			left = args.startLeft + args.leftOffset;
-		}
+		this.left = horizontalPosition(args.startLeft, args.parentWidth);
+		this.top = verticalPosition(args.startTop, args.parentWidth);
 
 		height = args.padding * 2;
 	}
@@ -136,6 +128,7 @@ public class VButtonGroup {
 		return left + width();
 	}
 
+	@Override
 	public float width() {
 		return args.padding * 2 + args.buttonWidth;
 	}
@@ -144,6 +137,7 @@ public class VButtonGroup {
 		return top + height();
 	}
 
+	@Override
 	public float height() {
 		return height;
 	}
@@ -163,8 +157,7 @@ public class VButtonGroup {
 		}
 		buttons.add(new Button(left + args.padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
 
-		if (args.centeredHorizontally) { centerHorizontally(); }
-		if (args.centeredVertically) { centerVertically(); }
+		recalculateLayout(args.startLeft, args.startTop, args.parentWidth, args.parentHeight);
 	}
 
 	public void draw(Graphics graphics) {
@@ -233,18 +226,6 @@ public class VButtonGroup {
 		batch.end();
 	}
 
-	private void centerHorizontally() {
-		int viewportHCenter = args.parentWidth / 2;
-		left = viewportHCenter - (width() / 2) + args.leftOffset;
-		recalculateButtonPositions();
-	}
-
-	private void centerVertically() {
-		int viewportVCenter = args.parentHeight / 2;
-		top = viewportVCenter - (height() / 2) + args.topOffset;
-		recalculateButtonPositions();
-	}
-
 	private void recalculateButtonPositions() {
 		for (int i = 0; i < buttons.size(); i++) {
 			var button = buttons.get(i);
@@ -253,22 +234,16 @@ public class VButtonGroup {
 		}
 	}
 
+	@Override
 	public void recalculateLayout(int left, int top, int parentWidth, int parentHeight) {
 		args.parentWidth = parentWidth;
 		args.parentHeight = parentHeight;
 		args.startLeft = left;
 		args.startTop = top;
 
-		if (args.centeredHorizontally) {
-			centerHorizontally();
-		} else {
-			this.top = args.startTop + args.topOffset;
-		}
-		if (args.centeredVertically) {
-			centerVertically();
-		} else {
-			this.left = args.startLeft + args.leftOffset;
-		}
+		this.left = horizontalPosition(left, parentWidth);
+		this.top = verticalPosition(top, parentHeight);
+		recalculateButtonPositions();
 	}
 
 	public void selectNext() {
