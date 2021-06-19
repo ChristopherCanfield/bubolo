@@ -24,13 +24,13 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	private final VButtonGroup buttonGroup;
 	private final BuboloApplication app;
 
-	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0.4f);
+	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0f);
 	private final Texture backgroundTexture;
 
 	public MainMenuScreen(BuboloApplication app) {
 		this.app = app;
 
-		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background.png")));
+		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background_blurred.png")));
 
 		var buttonGroupArgs = new VButtonGroup.Args(Config.TargetWindowWidth, Config.TargetWindowHeight, 300, 50);
 		buttonGroupArgs.centeredHorizontally = true;
@@ -70,7 +70,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	@Override
 	public void draw(Graphics graphics) {
 		graphics.batch().begin();
-		graphics.batch().draw(backgroundTexture, 0, 0);
+		graphics.batch().draw(backgroundTexture, 0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
 		graphics.batch().end();
 
 		Gdx.gl.glEnable(GL20.GL_BLEND);
