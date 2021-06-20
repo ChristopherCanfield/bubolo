@@ -144,6 +144,7 @@ public class VButtonGroup extends UiComponent {
 		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
 	}
 
+	@Override
 	public void draw(Graphics graphics) {
 		var renderer = graphics.nonScalingShapeRenderer();
 		var camera = graphics.uiCamera();
@@ -220,9 +221,7 @@ public class VButtonGroup extends UiComponent {
 
 	@Override
 	protected void onRecalculateLayout() {
-		if (buttons != null) {
-			recalculateButtonPositions();
-		}
+		recalculateButtonPositions();
 	}
 
 	public void selectNext() {

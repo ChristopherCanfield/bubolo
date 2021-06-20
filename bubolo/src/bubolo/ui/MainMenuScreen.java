@@ -14,8 +14,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
+import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.Button;
+import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
@@ -25,7 +27,8 @@ import bubolo.ui.gui.VButtonGroup;
 public class MainMenuScreen implements Screen, InputProcessor {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
 
-	private final VButtonGroup buttonGroup;
+	private VButtonGroup buttonGroup;
+	private Label versionText;
 	private final BuboloApplication app;
 
 	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0f);
@@ -36,6 +39,11 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background_blurred.png")));
 
+		addButtonGroup();
+		addVersionText();
+	}
+
+	private void addButtonGroup() {
 		var buttonGroupArgs = new VButtonGroup.Args(300, 50);
 		buttonGroupArgs.paddingBetweenButtons = 10;
 		buttonGroupArgs.backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
@@ -51,6 +59,14 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		buttonGroup.addButton("Host Multiplayer Game", this::onHostMultiplayerButtonActivated);
 		buttonGroup.addButton("Settings", this::onSettingsButtonActivated);
 		buttonGroup.addButton("Exit", button -> { Gdx.app.exit(); });
+	}
+
+	private void addVersionText() {
+		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
+		versionText = new Label(layoutArgs, Fonts.Arial16, Color.WHITE, Config.Version);
+		versionText.setVerticalOffset(0.975f, OffsetType.Percent, VOffsetFrom.Top);
+		versionText.setHorizontalOffset(5, OffsetType.ScreenUnits, HOffsetFrom.Left);
+		versionText.recalculateLayout(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight);
 	}
 
 	private void onSinglePlayerButtonActivated(Button button) {
@@ -87,6 +103,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		shapeRenderer.end();
 
 		buttonGroup.draw(graphics);
+		versionText.draw(graphics);
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
@@ -94,6 +111,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	@Override
 	public void onViewportResized(int newWidth, int newHeight) {
 		buttonGroup.recalculateLayout(0, 0, newWidth, newHeight);
+		versionText.recalculateLayout(0, 0, newWidth, newHeight);
 	}
 
 	@Override

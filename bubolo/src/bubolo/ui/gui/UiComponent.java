@@ -1,5 +1,7 @@
 package bubolo.ui.gui;
 
+import bubolo.graphics.Graphics;
+
 /**
  * Provides layout functionality to user interface elements.
  *
@@ -19,12 +21,12 @@ public abstract class UiComponent {
 	}
 
 	private float horizontalOffset;
-	private OffsetType horizontalOffsetType;
-	private HOffsetFrom horizontalOffsetFrom;
+	private OffsetType horizontalOffsetType = OffsetType.ScreenUnits;
+	private HOffsetFrom horizontalOffsetFrom = HOffsetFrom.Left;
 
 	private float verticalOffset;
-	private OffsetType verticalOffsetType;
-	private VOffsetFrom verticalOffsetFrom;
+	private OffsetType verticalOffsetType = OffsetType.ScreenUnits;
+	private VOffsetFrom verticalOffsetFrom = VOffsetFrom.Top;
 
 	protected int startLeft;
 	/** The starting top position, in screen coordinates (y-down). */
@@ -46,8 +48,6 @@ public abstract class UiComponent {
 		this.parentWidth = layoutArgs.parentWidth();
 		this.parentHeight = layoutArgs.parentHeight();
 		this.padding = layoutArgs.padding();
-
-		recalculateLayout(layoutArgs.startLeft(), layoutArgs.startTop(), layoutArgs.parentWidth(), layoutArgs.parentHeight());
 	}
 
 	/**
@@ -136,8 +136,8 @@ public abstract class UiComponent {
 		this.startLeft = startLeft;
 		this.startTop = startTop;
 
-		this.left = horizontalPosition(left, parentWidth);
-		this.top = verticalPosition(top, parentHeight);
+		this.left = horizontalPosition(startLeft, parentWidth);
+		this.top = verticalPosition(startTop, parentHeight);
 		onRecalculateLayout();
 	}
 
@@ -146,4 +146,6 @@ public abstract class UiComponent {
 	 * are updated before this is called.
 	 */
 	protected abstract void onRecalculateLayout();
+
+	public abstract void draw(Graphics graphics);
 }
