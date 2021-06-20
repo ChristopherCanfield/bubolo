@@ -16,13 +16,12 @@ import bubolo.Config;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.Button;
-import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.ui.gui.VButtonGroup;
 
-public class MainMenuScreen implements Screen, InputProcessor {
+public class MapSelectionScreen implements Screen, InputProcessor {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
 
 	private final VButtonGroup buttonGroup;
@@ -31,19 +30,18 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0f);
 	private final Texture backgroundTexture;
 
-	public MainMenuScreen(BuboloApplication app) {
+	public MapSelectionScreen(BuboloApplication app) {
 		this.app = app;
 
 		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background_blurred.png")));
 
-		var buttonGroupArgs = new VButtonGroup.Args(300, 50);
+		var buttonGroupArgs = new VButtonGroup.Args(Config.TargetWindowWidth, Config.TargetWindowHeight, 300, 50);
 		buttonGroupArgs.paddingBetweenButtons = 10;
 		buttonGroupArgs.backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
 		buttonGroupArgs.buttonBackgroundColor = new Color(1, 1, 1, 0.75f);
+		buttonGroupArgs.padding = 55;
 
-		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 55);
-
-		buttonGroup = new VButtonGroup(layoutArgs, buttonGroupArgs);
+		buttonGroup = new VButtonGroup(buttonGroupArgs);
 		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		buttonGroup.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Center);
 		buttonGroup.addButton("Single Player Game", this::onSinglePlayerButtonActivated);

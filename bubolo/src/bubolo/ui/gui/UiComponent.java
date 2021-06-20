@@ -26,8 +26,29 @@ public abstract class UiComponent {
 	private OffsetType verticalOffsetType;
 	private VOffsetFrom verticalOffsetFrom;
 
+	protected int startLeft;
+	/** The starting top position, in screen coordinates (y-down). */
+	protected int startTop;
+	protected int parentWidth;
+	protected int parentHeight;
+
+	protected float left;
+	protected float top;
+
+	protected int padding;
+
 	protected abstract float width();
 	protected abstract float height();
+
+	protected UiComponent(LayoutArgs layoutArgs) {
+		this.startLeft = layoutArgs.startLeft();
+		this.startTop = layoutArgs.startTop();
+		this.parentWidth = layoutArgs.parentWidth();
+		this.parentHeight = layoutArgs.parentHeight();
+		this.padding = layoutArgs.padding();
+
+		recalculateLayout(layoutArgs.startLeft(), layoutArgs.startTop(), layoutArgs.parentWidth(), layoutArgs.parentHeight());
+	}
 
 	/**
 	 * @param offset the horizontal offset, either in screen units or as a percentage.
@@ -109,5 +130,20 @@ public abstract class UiComponent {
 		}
 	}
 
-	public abstract void recalculateLayout(int left, int startTop, int parentWidth, int parentHeight);
+	public void recalculateLayout(int startLeft, int startTop, int parentWidth, int parentHeight) {
+		this.parentWidth = parentWidth;
+		this.parentHeight = parentHeight;
+		this.startLeft = startLeft;
+		this.startTop = startTop;
+
+		this.left = horizontalPosition(left, parentWidth);
+		this.top = verticalPosition(top, parentHeight);
+		onRecalculateLayout();
+	}
+
+	/**
+	 * Called after recalculateLayout is called. The parentWidth, parentHeight, startLeft, startTop, left, and top variables
+	 * are updated before this is called.
+	 */
+	protected abstract void onRecalculateLayout();
 }

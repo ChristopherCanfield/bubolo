@@ -26,8 +26,6 @@ public class VButtonGroup extends UiComponent {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
-	private float left;
-	private float top;
 	private float height;
 
 	private int selectedButtonIndex = -1;
@@ -37,12 +35,6 @@ public class VButtonGroup extends UiComponent {
 	 * VButtonGroup arguments.
 	 */
 	public static class Args implements Cloneable {
-		public int startLeft;
-		/** The starting top position, in screen coordinates (y-down). */
-		public int startTop;
-		int parentWidth;
-		int parentHeight;
-
 		/**
 		 * The left offset, which is either from 0 (if centeredHorizontally is false) or the
 		 * viewport's horizontal center - width()/2.
@@ -58,8 +50,6 @@ public class VButtonGroup extends UiComponent {
 		/** If true, the object is centered vertically, and is then offset by the {@code -width()/2 + top}. */
 //		public boolean centeredVertically = false;
 
-		/** The padding between the button edges and the VButtonGroup borders. */
-		public int padding = 20;
 		public int paddingBetweenButtons;
 
 		public Color borderColor = Color.BLACK;
@@ -78,9 +68,7 @@ public class VButtonGroup extends UiComponent {
 		public Color buttonHoverBackgroundColor = Color.LIGHT_GRAY;
 		public Color buttonHoverTextColor = Color.BLACK;
 
-		public Args(int parentWidth, int parentHeight, int buttonWidth, int buttonHeight) {
-			this.parentWidth = parentWidth;
-			this.parentHeight = parentHeight;
+		public Args(int buttonWidth, int buttonHeight) {
 			this.buttonWidth = buttonWidth;
 			this.buttonHeight = buttonHeight;
 		}
@@ -95,9 +83,8 @@ public class VButtonGroup extends UiComponent {
 		}
 	}
 
-	public VButtonGroup(Args args) {
-		assert args.parentWidth > 0;
-		assert args.parentHeight > 0;
+	public VButtonGroup(LayoutArgs layoutArgs, VButtonGroup.Args args) {
+		super(layoutArgs);
 
 		assert args.borderColor != null;
 		assert args.backgroundColor != null;
@@ -118,10 +105,7 @@ public class VButtonGroup extends UiComponent {
 
 		this.args = args.clone();
 
-		this.left = horizontalPosition(args.startLeft, args.parentWidth);
-		this.top = verticalPosition(args.startTop, args.parentWidth);
-
-		height = args.padding * 2;
+		height = padding * 2;
 	}
 
 	public float right() {
@@ -130,7 +114,7 @@ public class VButtonGroup extends UiComponent {
 
 	@Override
 	public float width() {
-		return args.padding * 2 + args.buttonWidth;
+		return padding * 2 + args.buttonWidth;
 	}
 
 	public float bottom() {
@@ -149,15 +133,15 @@ public class VButtonGroup extends UiComponent {
 	public void addButton(String text, @Nullable Consumer<Button> action) {
 		int buttonTop;
 		if (buttons.isEmpty()) {
-			buttonTop = (int) top + args.padding;
+			buttonTop = (int) top + padding;
 			height += args.buttonHeight;
 		} else {
 			buttonTop = (int) buttons.get(buttons.size() - 1).bottom() + args.paddingBetweenButtons;
 			height += args.buttonHeight + args.paddingBetweenButtons;
 		}
-		buttons.add(new Button(left + args.padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
+		buttons.add(new Button(left + padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
 
-		recalculateLayout(args.startLeft, args.startTop, args.parentWidth, args.parentHeight);
+		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
 	}
 
 	public void draw(Graphics graphics) {
@@ -229,21 +213,16 @@ public class VButtonGroup extends UiComponent {
 	private void recalculateButtonPositions() {
 		for (int i = 0; i < buttons.size(); i++) {
 			var button = buttons.get(i);
-			button.top = (int) top + args.padding + (i * args.buttonHeight) + (i * args.paddingBetweenButtons);
-			button.left = (int) left + args.padding;
+			button.top = (int) top + padding + (i * args.buttonHeight) + (i * args.paddingBetweenButtons);
+			button.left = (int) left + padding;
 		}
 	}
 
 	@Override
-	public void recalculateLayout(int left, int top, int parentWidth, int parentHeight) {
-		args.parentWidth = parentWidth;
-		args.parentHeight = parentHeight;
-		args.startLeft = left;
-		args.startTop = top;
-
-		this.left = horizontalPosition(left, parentWidth);
-		this.top = verticalPosition(top, parentHeight);
-		recalculateButtonPositions();
+	protected void onRecalculateLayout() {
+		if (buttons != null) {
+			recalculateButtonPositions();
+		}
 	}
 
 	public void selectNext() {
