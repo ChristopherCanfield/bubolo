@@ -34,7 +34,12 @@ import bubolo.net.NetworkSystem;
  *
  * @author Christopher D. Canfield
  */
-public class PlayerInfoScreen extends Stage2dScreen {
+public class MultiplayerSetupScreen extends Stage2dScreen {
+	public enum PlayerType {
+		Server,
+		Client
+	}
+
 	private TextField playerNameField;
 	private TextField ipAddressField;
 	private Label statusLabel1;
@@ -56,11 +61,11 @@ public class PlayerInfoScreen extends Stage2dScreen {
 	 * Constructs the network game lobby.
 	 *
 	 * @param app reference to the Game Application.
-	 * @param isClient true if this is a client player.
+	 * @param playerType whether this is a server or client.
 	 */
-	public PlayerInfoScreen(GameApplication app, boolean isClient) {
+	public MultiplayerSetupScreen(GameApplication app, PlayerType playerType) {
 		this.app = app;
-		this.isClient = isClient;
+		this.isClient = (playerType == PlayerType.Client);
 
 		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath + "skin.atlas"));
 		Skin skin = new Skin(new FileHandle(Config.UiPath + "skin.json"), atlas);
@@ -174,7 +179,7 @@ public class PlayerInfoScreen extends Stage2dScreen {
 	private void startServer() {
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameField.getText());
-		app.setState(State.NetGameLobby);
+		app.setState(State.MultiplayerLobby);
 	}
 
 	private void connectToServer() {
@@ -202,7 +207,7 @@ public class PlayerInfoScreen extends Stage2dScreen {
 					return;
 				}
 
-				app.setState(State.NetGameLobby);
+				app.setState(State.MultiplayerLobby);
 			} else {
 				--ticksUntilConnect;
 			}

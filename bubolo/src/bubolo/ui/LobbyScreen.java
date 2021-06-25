@@ -140,7 +140,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 
 	@Override
 	protected void onUpdate() {
-		if (app.getState() == State.NetGameStarting) {
+		if (app.getState() == State.MultiplayerStarting) {
 			final long currentTime = System.currentTimeMillis();
 			final long secondsRemaining = (startTime - currentTime) / 1000L;
 
@@ -205,7 +205,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 		startTime = currentTime + (secondsUntilStart * 1000);
 		lastSecondsRemaining = secondsUntilStart;
 
-		app.setState(State.NetGameStarting);
+		app.setState(State.MultiplayerStarting);
 	}
 
 	@Override

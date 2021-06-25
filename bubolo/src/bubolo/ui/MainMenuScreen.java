@@ -74,10 +74,11 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	private void onJoinMultiplayerButtonActivated(Button button) {
+		app.setState(State.MultiplayerSetupClient);
 	}
 
 	private void onHostMultiplayerButtonActivated(Button button) {
-
+		app.setState(State.MultiplayerSetupServer);
 	}
 
 	private void onSettingsButtonActivated(Button button) {

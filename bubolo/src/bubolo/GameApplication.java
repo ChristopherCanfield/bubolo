@@ -21,14 +21,16 @@ public interface GameApplication extends ApplicationListener, WorldOwner {
 
 		Settings,
 
+		MultiplayerSetupServer,
+
 		/** The enter player information state. **/
-		NetGameSetup,
+		MultiplayerSetupClient,
 
 		/** The game lobby state. **/
-		NetGameLobby,
+		MultiplayerLobby,
 
 		/** The game is starting. **/
-		NetGameStarting,
+		MultiplayerStarting,
 
 		/** The multiplayer game state. **/
 		MultiplayerGame,

@@ -24,6 +24,8 @@ import bubolo.net.command.CreateTank;
 import bubolo.ui.LoadingScreen;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.MainMenuScreen;
+import bubolo.ui.MultiplayerSetupScreen;
+import bubolo.ui.MultiplayerSetupScreen.PlayerType;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
 import bubolo.world.Entity;
@@ -119,12 +121,13 @@ public class BuboloApplication extends AbstractGameApplication {
 			World world = world();
 
 			switch (state) {
-			case NetGameStarting:
-			case NetGameLobby:
+			case MultiplayerStarting:
+			case MultiplayerLobby:
 				network.update(this);
 				//$FALL-THROUGH$
 			case MainMenu:
-			case NetGameSetup:
+			case MultiplayerSetupClient:
+			case MultiplayerSetupServer:
 			case SinglePlayerSetup:
 			case Settings:
 				graphics.draw(screen);
@@ -182,16 +185,17 @@ public class BuboloApplication extends AbstractGameApplication {
 			graphics.camera().position.set(0, 0, 0);
 			Gdx.input.setInputProcessor((MainMenuScreen) screen);
 			break;
-		case NetGameSetup:
-			// @TODO (cdc 2021-06-08): This screen needs to be reimplemented.
-//			boolean isClient = (playerType == PlayerType.Client);
-//			screen = new PlayerInfoScreen(this, isClient);
+		case MultiplayerSetupClient:
+			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
-		case NetGameLobby:
+		case MultiplayerSetupServer:
+			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
+			break;
+		case MultiplayerLobby:
 			screen = new LobbyScreen(this, world());
 			break;
-		case NetGameStarting:
-			assert previousState == State.NetGameLobby;
+		case MultiplayerStarting:
+			assert previousState == State.MultiplayerLobby;
 			// Do nothing.
 			break;
 		case MultiplayerGame: {
