@@ -93,6 +93,8 @@ public class MultiplayerSetupScreen extends Stage2dScreen {
 							startServer();
 						}
 					}
+				} else if (keycode == Input.Keys.ESCAPE) {
+					app.setState(State.MainMenu);
 				}
 				return false;
 			}
