@@ -1,4 +1,11 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
  "height":64,
  "infinite":false,
  "layers":[
@@ -41,6 +48,22 @@
  "nextlayerid":4,
  "nextobjectid":1,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"author",
+         "type":"string",
+         "value":"Christopher Canfield & Brandon Thompson"
+        }, 
+        {
+         "name":"description",
+         "type":"string",
+         "value":"An island that contains many distinct zones, including a forest, a port, a protected town, a large lake, and multiple rivers."
+        }, 
+        {
+         "name":"mapName",
+         "type":"string",
+         "value":"Canfield Island"
+        }],
  "renderorder":"right-down",
  "tiledversion":"1.3.1",
  "tileheight":32,

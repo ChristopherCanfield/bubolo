@@ -34,9 +34,9 @@ public class MapImporterTest {
 	}
 
 	@Test
-	public void importEverardIsland() throws IOException {
+	public void importCanfieldIsland() throws IOException {
 		MapImporter importer = new MapImporter();
-		Path mapPath = FileSystems.getDefault().getPath("res", "maps/Everard Island.json");
+		Path mapPath = FileSystems.getDefault().getPath("res", "maps/Canfield Island.json");
 		var results = importer.importJsonMapWithDiagnostics(mapPath);
 
 		World world = results.world();
@@ -47,8 +47,22 @@ public class MapImporterTest {
 		assertEquals(64, world.getHeight() / Units.TileToWorldScale);
 		assertEquals(3, diagnostics.layerCount());
 		assertEquals(2, diagnostics.tilesetCount());
-		assertEquals(10, diagnostics.typesImported().size());
+		assertEquals(11, diagnostics.typesImported().size());
 		assertEquals(114, diagnostics.tileWidth());
 		assertEquals(64, diagnostics.tileHeight());
+	}
+
+	@Test
+	public void loadMapInfoForCanfieldIsland() throws IOException {
+		MapImporter importer = new MapImporter();
+		Path mapPath = FileSystems.getDefault().getPath("res", "maps/Canfield Island.json");
+		var mapInfo = importer.loadMapInfo(mapPath);
+
+		assertEquals(114, mapInfo.tileColumns());
+		assertEquals(64, mapInfo.tileRows());
+		assertEquals("Christopher Canfield & Brandon Thompson", mapInfo.author());
+		assertEquals("An island that contains many distinct zones, including a forest, a port, a protected town, a large lake, and multiple rivers.", mapInfo.description());
+		assertEquals(mapPath, mapInfo.fullPath());
+		assertEquals("Canfield Island", mapInfo.mapName());
 	}
 }
