@@ -67,8 +67,8 @@ public class MultiplayerSetupScreen extends Stage2dScreen {
 		this.app = app;
 		this.isClient = (playerType == PlayerType.Client);
 
-		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath + "skin.atlas"));
-		Skin skin = new Skin(new FileHandle(Config.UiPath + "skin.json"), atlas);
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath.resolve("skin.atlas").toString()));
+		Skin skin = new Skin(new FileHandle(Config.UiPath.resolve("skin.json").toString()), atlas);
 
 		createPlayerNameRow(skin);
 		createIpAddressRow(skin);

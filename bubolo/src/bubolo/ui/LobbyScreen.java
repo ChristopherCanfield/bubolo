@@ -63,8 +63,8 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 		this.app = app;
 		this.world = world;
 
-		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath + "skin.atlas"));
-		Skin skin = new Skin(new FileHandle(Config.UiPath + "skin.json"), atlas);
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath.resolve("skin.atlas").toString()));
+		Skin skin = new Skin(new FileHandle(Config.UiPath.resolve("skin.json").toString()), atlas);
 
 		createMessageHistoryBox(skin);
 		createSendMessageRow(skin);

@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.BuboloApplication;
 import bubolo.Config;
+import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.map.InvalidMapException;
@@ -168,7 +169,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
 			mapPathsGroup.activateSelectedButton();
 		} else if (keycode == Keys.ESCAPE) {
-			Gdx.app.exit();
+			app.setState(State.MainMenu);
 		}
 
 		onMapSelected();
