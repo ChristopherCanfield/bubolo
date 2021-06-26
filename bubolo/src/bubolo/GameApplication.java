@@ -21,6 +21,7 @@ public interface GameApplication extends ApplicationListener, WorldOwner {
 
 		Settings,
 
+		MultiplayerMapSelection,
 		MultiplayerSetupServer,
 
 		/** The enter player information state. **/

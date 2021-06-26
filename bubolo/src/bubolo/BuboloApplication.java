@@ -24,6 +24,7 @@ import bubolo.net.command.CreateTank;
 import bubolo.ui.LoadingScreen;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.MainMenuScreen;
+import bubolo.ui.MapSelectionScreen;
 import bubolo.ui.MultiplayerSetupScreen;
 import bubolo.ui.MultiplayerSetupScreen.PlayerType;
 import bubolo.ui.Screen;
@@ -126,6 +127,7 @@ public class BuboloApplication extends AbstractGameApplication {
 				network.update(this);
 				//$FALL-THROUGH$
 			case MainMenu:
+			case MultiplayerMapSelection:
 			case MultiplayerSetupClient:
 			case MultiplayerSetupServer:
 			case SinglePlayerSetup:
@@ -179,17 +181,27 @@ public class BuboloApplication extends AbstractGameApplication {
 
 	@Override
 	protected void onStateChanged(State previousState, State newState) {
+		if (screen != null) {
+			screen.dispose();
+		}
+
 		switch (newState) {
 		case MainMenu:
 			screen = new MainMenuScreen(this);
 			graphics.camera().position.set(0, 0, 0);
 			Gdx.input.setInputProcessor((MainMenuScreen) screen);
 			break;
-		case MultiplayerSetupClient:
-			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
+		case MultiplayerMapSelection:
+		case SinglePlayerSetup:
+			assert previousState == State.MainMenu || previousState == State.MultiplayerSetupServer;
+			screen = new MapSelectionScreen(this);
 			break;
 		case MultiplayerSetupServer:
+			assert previousState == State.MultiplayerMapSelection;
 			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
+			break;
+		case MultiplayerSetupClient:
+			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
 		case MultiplayerLobby:
 			screen = new LobbyScreen(this, world());
@@ -199,8 +211,6 @@ public class BuboloApplication extends AbstractGameApplication {
 			// Do nothing.
 			break;
 		case MultiplayerGame: {
-			screen.dispose();
-
 			Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
 					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
@@ -216,20 +226,12 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 		}
-		// TODO (cdc - 2021-06-08): Implement this.
-		case SinglePlayerSetup:
-			assert previousState == State.MainMenu;
-			setState(State.SinglePlayerLoading);
-			break;
 		case SinglePlayerLoading:
 			assert previousState == State.SinglePlayerSetup;
-			screen.dispose();
 			screen = new LoadingScreen(mapName);
 			break;
 		case SinglePlayerGame: {
 			assert previousState == State.SinglePlayerLoading;
-
-			screen.dispose();
 			break;
 		}
 		case Settings:
