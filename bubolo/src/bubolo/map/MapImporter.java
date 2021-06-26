@@ -257,13 +257,16 @@ public class MapImporter {
 			String mapName = mapPath.getFileName().toString();
 			String author = "Unknown";
 			String description = "";
-			Collection<JsonObject> customProperties = jsonTiledMap.getCollection(Key.CustomProperties);
-			for (JsonObject property : customProperties) {
-				var propertyName = property.getString(Key.CustomPropertyName);
-				switch (propertyName) {
-					case "mapName" -> mapName = property.getString(Key.CustomPropertyValue);
-					case "author" -> author = property.getString(Key.CustomPropertyValue);
-					case "description" -> description = property.getString(Key.CustomPropertyValue);
+			// Maps may not have a custom properties collection.
+			if (jsonTiledMap.containsKey(Key.CustomProperties.getKey())) {
+				Collection<JsonObject> customProperties = jsonTiledMap.getCollection(Key.CustomProperties);
+				for (JsonObject property : customProperties) {
+					var propertyName = property.getString(Key.CustomPropertyName);
+					switch (propertyName) {
+						case "mapName" -> mapName = property.getString(Key.CustomPropertyValue);
+						case "author" -> author = property.getString(Key.CustomPropertyValue);
+						case "description" -> description = property.getString(Key.CustomPropertyValue);
+					}
 				}
 			}
 

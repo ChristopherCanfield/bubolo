@@ -3,6 +3,7 @@ package bubolo.ui;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.map.InvalidMapException;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
 import bubolo.ui.gui.Label;
@@ -37,7 +39,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	private final MapImporter mapImporter = new MapImporter();
 
-	private Map<String, MapInfo> mapInfo;
+	private Map<String, MapInfo> mapInfo = new HashMap<>();
 
 	private final List<UiComponent> uiComponents = new ArrayList<>();
 
@@ -52,7 +54,15 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		this.app = app;
 
 		addTitle();
-		addMapPaths();
+		List<Path> paths;
+		try {
+			paths = mapImporter.loadMapFilePaths();
+		} catch (IOException e) {
+			throw new GameRuntimeException("Unable to load map file names.\n\n" + e.toString());
+		}
+		addMapPaths(paths);
+
+		importMapInfo(paths);
 		addMapInfoLabels();
 
 		Gdx.input.setInputProcessor(this);
@@ -66,7 +76,18 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		uiComponents.add(screenTitleLabel);
 	}
 
-	private void addMapPaths() {
+	private void importMapInfo(List<Path> mapPaths) {
+		try {
+			for (Path path : mapPaths) {
+				var info = mapImporter.loadMapInfo(path);
+				mapInfo.put(path.getFileName().toString(), info);
+			}
+		} catch (IOException e) {
+			throw new InvalidMapException("Unable to load map information.\n\n" + e);
+		}
+	}
+
+	private void addMapPaths(List<Path> mapPaths) {
 		var mapPathsVGroupArgs = new VButtonGroup.Args(500, 30);
 		mapPathsVGroupArgs.paddingBetweenButtons = 5;
 		Color transparent = new Color(0, 0, 0, 0);
@@ -87,13 +108,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPathsGroup.setVerticalOffset(200, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
-		List<Path> mapPaths;
-		try {
-			mapPaths = mapImporter.loadMapFilePaths();
-			mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString()));
-		} catch (IOException e) {
-			throw new GameRuntimeException("Unable to load map file names.\n\n" + e.toString());
-		}
+		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString()));
 
 		uiComponents.add(mapPathsGroup);
 	}
@@ -136,6 +151,14 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPathsGroup.recalculateLayout(0, 0, newWidth, newHeight);
 	}
 
+	private void onMapSelected() {
+		var selectedMapFileName = mapPathsGroup.selectedButtonText();
+		if (selectedMapFileName != null) {
+			var selectedMapInfo = mapInfo.get(selectedMapFileName);
+			System.out.println("Selected map: " + selectedMapInfo);
+		}
+	}
+
 	@Override
 	public boolean keyUp(int keycode) {
 		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
@@ -148,6 +171,8 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 			Gdx.app.exit();
 		}
 
+		onMapSelected();
+
 		return false;
 	}
 
@@ -155,6 +180,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		mapPathsGroup.onMouseClicked(screenX, screenY);
 		mapPathsGroup.activateSelectedButton();
+		onMapSelected();
 		return false;
 	}
 
