@@ -35,6 +35,8 @@ public class VButtonGroup extends UiComponent {
 	 * VButtonGroup arguments.
 	 */
 	public static class Args implements Cloneable {
+		public static final Color Transparent = new Color(0, 0, 0, 0);
+
 		/**
 		 * The left offset, which is either from 0 (if centeredHorizontally is false) or the
 		 * viewport's horizontal center - width()/2.

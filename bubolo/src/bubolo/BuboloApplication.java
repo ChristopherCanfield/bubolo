@@ -12,8 +12,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.badlogic.gdx.Gdx;
-
 import bubolo.audio.Audio;
 import bubolo.controllers.ai.ForestGrowthController;
 import bubolo.graphics.Graphics;
@@ -189,7 +187,6 @@ public class BuboloApplication extends AbstractGameApplication {
 		case MainMenu:
 			screen = new MainMenuScreen(this);
 			graphics.camera().position.set(0, 0, 0);
-			Gdx.input.setInputProcessor((MainMenuScreen) screen);
 			break;
 		case MultiplayerMapSelection:
 		case SinglePlayerSetup:

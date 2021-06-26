@@ -1,7 +1,5 @@
 package bubolo.ui;
 
-import java.io.File;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -37,10 +35,12 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	public MainMenuScreen(BuboloApplication app) {
 		this.app = app;
 
-		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background_blurred.png")));
+		this.backgroundTexture = new Texture(new FileHandle(Config.UiPath.resolve("main_menu_background_blurred.png").toFile()));
 
 		addButtonGroup();
 		addVersionText();
+
+		Gdx.input.setInputProcessor(this);
 	}
 
 	private void addButtonGroup() {

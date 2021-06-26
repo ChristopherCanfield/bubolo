@@ -1,87 +1,93 @@
 package bubolo.ui;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.BuboloApplication;
 import bubolo.Config;
-import bubolo.GameApplication.State;
-import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
-import bubolo.ui.gui.Button;
+import bubolo.map.MapImporter;
+import bubolo.map.MapImporter.MapInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.ui.gui.VButtonGroup;
+import bubolo.util.GameRuntimeException;
 
 public class MapSelectionScreen implements Screen, InputProcessor {
-	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
+	private final Color clearColor = Color.WHITE;
 
-	private VButtonGroup buttonGroup;
-	private Label versionText;
+	private VButtonGroup mapPathsGroup;
 	private final BuboloApplication app;
 
 	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0f);
-	private final Texture backgroundTexture;
+
+	private final MapImporter mapImporter = new MapImporter();
+
+	private Map<String, MapInfo> mapInfo;
+
+	private Label mapNameLabel;
+	private Label mapAuthorLabel;
+	private Label mapSizeLabel;
+	private Label mapDescriptionLabel;
 
 	public MapSelectionScreen(BuboloApplication app) {
 		this.app = app;
 
-		this.backgroundTexture = new Texture(new FileHandle(new File(Config.UiPath + "main_menu_background_blurred.png")));
+		addMapPaths();
+		addMapInfoLabels();
 
-		addButtonGroup();
-		addVersionText();
+		Gdx.input.setInputProcessor(this);
 	}
 
-	private void addButtonGroup() {
-		var buttonGroupArgs = new VButtonGroup.Args(300, 50);
-		buttonGroupArgs.paddingBetweenButtons = 10;
-		buttonGroupArgs.backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
-		buttonGroupArgs.buttonBackgroundColor = new Color(1, 1, 1, 0.75f);
+	private void addMapPaths() {
+		var mapPathsVGroupArgs = new VButtonGroup.Args(500, 30);
+		mapPathsVGroupArgs.paddingBetweenButtons = 5;
+		Color transparent = new Color(0, 0, 0, 0);
+		mapPathsVGroupArgs.backgroundColor = Color.WHITE;
+		mapPathsVGroupArgs.buttonBackgroundColor = transparent;
+		mapPathsVGroupArgs.borderColor = transparent;
+		mapPathsVGroupArgs.buttonBorderColor = transparent;
+		mapPathsVGroupArgs.buttonTextColor = Color.DARK_GRAY;
+		mapPathsVGroupArgs.buttonSelectedBorderColor = Color.BLACK;
+		mapPathsVGroupArgs.buttonSelectedTextColor = Color.BLACK;
+		mapPathsVGroupArgs.buttonSelectedBackgroundColor = transparent;
+		mapPathsVGroupArgs.buttonHoverBackgroundColor = transparent;
+		mapPathsVGroupArgs.buttonHoverBorderColor = transparent;
 
-		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 55);
+		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 10);
 
-		buttonGroup = new VButtonGroup(layoutArgs, buttonGroupArgs);
-		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		buttonGroup.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Center);
-		buttonGroup.addButton("Single Player Game", this::onSinglePlayerButtonActivated);
-		buttonGroup.addButton("Join Multiplayer Game", this::onJoinMultiplayerButtonActivated);
-		buttonGroup.addButton("Host Multiplayer Game", this::onHostMultiplayerButtonActivated);
-		buttonGroup.addButton("Settings", this::onSettingsButtonActivated);
-		buttonGroup.addButton("Exit", button -> { Gdx.app.exit(); });
+		mapPathsGroup = new VButtonGroup(layoutArgs, mapPathsVGroupArgs);
+		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
+		mapPathsGroup.setVerticalOffset(200, OffsetType.ScreenUnits, VOffsetFrom.Top);
+
+		List<Path> mapPaths;
+		try {
+			mapPaths = mapImporter.loadMapFilePaths();
+			mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString()));
+		} catch (IOException e) {
+			throw new GameRuntimeException("Unable to load map file names.\n\n" + e.toString());
+		}
 	}
 
-	private void addVersionText() {
-		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
-		versionText = new Label(layoutArgs, Fonts.Arial16, Color.WHITE, Config.Version);
-		versionText.setVerticalOffset(0.975f, OffsetType.Percent, VOffsetFrom.Top);
-		versionText.setHorizontalOffset(5, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		versionText.recalculateLayout(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight);
-	}
-
-	private void onSinglePlayerButtonActivated(Button button) {
-		app.setState(State.SinglePlayerSetup);
-	}
-
-	private void onJoinMultiplayerButtonActivated(Button button) {
-	}
-
-	private void onHostMultiplayerButtonActivated(Button button) {
-
-	}
-
-	private void onSettingsButtonActivated(Button button) {
-
+	private void addMapInfoLabels() {
+//		LayoutArgs
+//		mapNameLabel = new Label()
+//
+//		private Label mapAuthorLabel;
+//		private Label mapSizeLabel;
+//		private Label mapDescriptionLabel;
 	}
 
 	@Override
@@ -91,10 +97,6 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	@Override
 	public void draw(Graphics graphics) {
-		graphics.batch().begin();
-		graphics.batch().draw(backgroundTexture, 0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
-		graphics.batch().end();
-
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		var shapeRenderer = graphics.shapeRenderer();
 		shapeRenderer.setColor(backgroundDistortionColor);
@@ -102,26 +104,24 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		shapeRenderer.rect(0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
 		shapeRenderer.end();
 
-		buttonGroup.draw(graphics);
-		versionText.draw(graphics);
+		mapPathsGroup.draw(graphics);
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	@Override
 	public void onViewportResized(int newWidth, int newHeight) {
-		buttonGroup.recalculateLayout(0, 0, newWidth, newHeight);
-		versionText.recalculateLayout(0, 0, newWidth, newHeight);
+		mapPathsGroup.recalculateLayout(0, 0, newWidth, newHeight);
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
 		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
-			buttonGroup.selectPrevious();
+			mapPathsGroup.selectPrevious();
 		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
-			buttonGroup.selectNext();
+			mapPathsGroup.selectNext();
 		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-			buttonGroup.activateSelectedButton();
+			mapPathsGroup.activateSelectedButton();
 		} else if (keycode == Keys.ESCAPE) {
 			Gdx.app.exit();
 		}
@@ -131,15 +131,13 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		buttonGroup.onMouseClicked(screenX, screenY);
-		buttonGroup.activateSelectedButton();
+		mapPathsGroup.onMouseClicked(screenX, screenY);
+		mapPathsGroup.activateSelectedButton();
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		int buttonIndex = buttonGroup.onMouseMoved(screenX, screenY);
-		buttonGroup.selectButton(buttonIndex);
 		return false;
 	}
 
