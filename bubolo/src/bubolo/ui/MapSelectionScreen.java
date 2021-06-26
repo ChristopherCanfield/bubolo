@@ -60,7 +60,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	private void addTitle() {
 		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowWidth, 0);
-		screenTitleLabel = new Label(layoutArgs, Fonts.Arial20, Color.BLACK, "Map Selection");
+		screenTitleLabel = new Label(layoutArgs, Fonts.Arial32, Color.BLACK, "Map Selection");
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		uiComponents.add(screenTitleLabel);
