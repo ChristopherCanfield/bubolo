@@ -2,6 +2,7 @@ package bubolo.map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -64,5 +65,12 @@ public class MapImporterTest {
 		assertEquals("An island that contains many distinct zones, including a forest, a port, a protected town, a large lake, and multiple rivers.", mapInfo.description());
 		assertEquals(mapPath, mapInfo.fullPath());
 		assertEquals("Canfield Island", mapInfo.mapName());
+	}
+
+	@Test
+	public void loadMapFilePaths() throws IOException {
+		MapImporter importer = new MapImporter();
+		var mapPaths = importer.loadMapFilePaths();
+		assertFalse(mapPaths.isEmpty());
 	}
 }

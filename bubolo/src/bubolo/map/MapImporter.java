@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -200,6 +203,20 @@ public class MapImporter {
 		@Override
 		public Object getValue(){
 			return null;
+		}
+	}
+
+	/**
+	 * @return a list of paths to map files.
+	 * @throws IOException if the maps folder does not exist.
+	 */
+	public List<Path> loadMapFilePaths() throws IOException {
+		var maps = new ArrayList<Path>();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Config.MapsPath, "*.json")) {
+			for (Path entry: stream) {
+				maps.add(entry);
+			}
+			return maps;
 		}
 	}
 

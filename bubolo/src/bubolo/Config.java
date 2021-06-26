@@ -1,5 +1,8 @@
 package bubolo;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import bubolo.util.Units;
 
 /**
@@ -13,12 +16,13 @@ public class Config {
 	public static final String AppProgramaticTitle = "bubolo";
 	public static final String AppAuthor = "Clone Productions";
 
-	public static final String IconPath = "res/icons/";
-	public static final String AppIcon16x16 = IconPath + "tank_icon16x16.png";
-	public static final String AppIcon32x32 = IconPath + "tank_icon32x32.png";
-	public static final String AppIcon48x48 = IconPath + "tank_icon48x48.png";
+	public static final Path IconPath = Paths.get("res", "icons");
+	public static final Path AppIcon16x16 = IconPath.resolve("tank_icon16x16.png");
+	public static final Path AppIcon32x32 = IconPath.resolve("tank_icon32x32.png");
+	public static final Path AppIcon48x48 = IconPath.resolve("tank_icon48x48.png");
 
-	public static final String UiPath = "res/ui/";
+	public static final Path UiPath = Paths.get("res", "ui");
+	public static final Path MapsPath = Paths.get("res", "maps");
 
 	public static final int FPS = 60;
 	public static final double SecondsPerFrame = 1.0 / FPS;
