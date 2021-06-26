@@ -204,7 +204,7 @@ public class VButtonGroup extends UiComponent {
 	private void drawButtonText(Batch batch, Camera camera) {
 		batch.begin();
 		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).drawBatch(batch, camera,
+			buttons.get(i).drawText(batch, camera,
 					args.buttonTextColor,
 					args.buttonHoverTextColor,
 					args.buttonSelectedTextColor,

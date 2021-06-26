@@ -2,6 +2,7 @@ package bubolo.ui;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.BuboloApplication;
 import bubolo.Config;
+import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
+import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
@@ -28,7 +31,6 @@ import bubolo.util.GameRuntimeException;
 public class MapSelectionScreen implements Screen, InputProcessor {
 	private final Color clearColor = Color.WHITE;
 
-	private VButtonGroup mapPathsGroup;
 	private final BuboloApplication app;
 
 	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0f);
@@ -37,6 +39,10 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	private Map<String, MapInfo> mapInfo;
 
+	private final List<UiComponent> uiComponents = new ArrayList<>();
+
+	private VButtonGroup mapPathsGroup;
+	private Label screenTitleLabel;
 	private Label mapNameLabel;
 	private Label mapAuthorLabel;
 	private Label mapSizeLabel;
@@ -45,10 +51,19 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	public MapSelectionScreen(BuboloApplication app) {
 		this.app = app;
 
+		addTitle();
 		addMapPaths();
 		addMapInfoLabels();
 
 		Gdx.input.setInputProcessor(this);
+	}
+
+	private void addTitle() {
+		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowWidth, 0);
+		screenTitleLabel = new Label(layoutArgs, Fonts.Arial20, Color.BLACK, "Map Selection");
+		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		uiComponents.add(screenTitleLabel);
 	}
 
 	private void addMapPaths() {
@@ -79,6 +94,8 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		} catch (IOException e) {
 			throw new GameRuntimeException("Unable to load map file names.\n\n" + e.toString());
 		}
+
+		uiComponents.add(mapPathsGroup);
 	}
 
 	private void addMapInfoLabels() {
@@ -98,13 +115,18 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	@Override
 	public void draw(Graphics graphics) {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
+
 		var shapeRenderer = graphics.shapeRenderer();
 		shapeRenderer.setColor(backgroundDistortionColor);
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
 		shapeRenderer.end();
 
-		mapPathsGroup.draw(graphics);
+		for (var uiComponent : uiComponents) {
+			// Rendering fonts seems to disable blending.
+			Gdx.gl.glEnable(GL20.GL_BLEND);
+			uiComponent.draw(graphics);
+		}
 
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}

@@ -104,7 +104,7 @@ public class Button {
 		}
 	}
 
-	public void drawBatch(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
+	public void drawText(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
 		font.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
 		font.draw(batch, text, left, cameraTop(camera) + (font.getCapHeight() + height) / 2, 0, text.length(), width, Align.center, false);
 	}

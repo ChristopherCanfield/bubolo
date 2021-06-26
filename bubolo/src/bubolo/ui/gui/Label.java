@@ -20,18 +20,20 @@ public class Label extends UiComponent {
 		this.font = font;
 		this.color = color;
 		this.text = text;
-
-		recalculateLayout(layoutArgs.startLeft(), layoutArgs.startTop(), layoutArgs.parentWidth(), layoutArgs.parentHeight());
 	}
 
 	@Override
 	public void draw(Graphics graphics) {
+		Color previousFontColor = font.getColor();
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
 		font.setColor(color);
 		var screenTop = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
 		layout = font.draw(batch, text, left + padding, screenTop, 0, text.length(), 0, Align.left, false, null);
 		batch.end();
+		font.setColor(previousFontColor);
+
+		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
 	}
 
 	@Override
