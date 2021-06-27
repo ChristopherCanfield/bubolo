@@ -4,6 +4,7 @@
 
 package bubolo;
 
+import bubolo.util.Nullable;
 import bubolo.world.World;
 
 /**
@@ -52,9 +53,14 @@ public abstract class AbstractGameApplication implements GameApplication {
 
 	@Override
 	public void setState(State state) {
+		setState(state, null);
+	}
+
+	@Override
+	public void setState(State state, @Nullable Object arg) {
 		var previousState = this.state;
 		this.state = state;
-		onStateChanged(previousState, state);
+		onStateChanged(previousState, state, arg);
 	}
 
 	@Override
@@ -67,8 +73,9 @@ public abstract class AbstractGameApplication implements GameApplication {
 	 *
 	 * @param previousState the previous application state.
 	 * @param newState the new state that the application has entered.
+	 * @param arg [optional] an optional additional argument. May be null.
 	 */
-	protected void onStateChanged(State previousState, State newState) {
+	protected void onStateChanged(State previousState, State newState, @Nullable Object arg) {
 	}
 
 	@Override

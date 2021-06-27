@@ -27,6 +27,7 @@ import bubolo.ui.MultiplayerSetupScreen;
 import bubolo.ui.MultiplayerSetupScreen.PlayerType;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
+import bubolo.util.Nullable;
 import bubolo.world.Entity;
 import bubolo.world.Tank;
 import bubolo.world.World;
@@ -178,7 +179,7 @@ public class BuboloApplication extends AbstractGameApplication {
 	}
 
 	@Override
-	protected void onStateChanged(State previousState, State newState) {
+	protected void onStateChanged(State previousState, State newState, @Nullable Object arg) {
 		if (screen != null) {
 			screen.dispose();
 		}

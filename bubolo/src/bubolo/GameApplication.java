@@ -3,6 +3,7 @@ package bubolo;
 import com.badlogic.gdx.ApplicationListener;
 
 import bubolo.net.WorldOwner;
+import bubolo.util.Nullable;
 
 /**
  * Defines the interface for the main game class.
@@ -60,9 +61,17 @@ public interface GameApplication extends ApplicationListener, WorldOwner {
 	/**
 	 * Sets the application's state.
 	 *
-	 * @param state the application's state.
+	 * @param state the application's new state.
 	 */
 	void setState(State state);
+
+	/**
+	 * Sets the application's state, and provides an argument to the state change functionality.
+	 *
+	 * @param state the application's new state.
+	 * @param arg [optional] an optional additional argument that can be passed to the state change functionality.
+	 */
+	void setState(State state, @Nullable Object arg);
 
 	/**
 	 * Gets the application's state.
