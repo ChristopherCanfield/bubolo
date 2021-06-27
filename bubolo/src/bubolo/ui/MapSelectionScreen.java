@@ -64,7 +64,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	private static final String mapFileExtension = ".json";
 
-	private static final int secondRowTopOffset = 125;
+	private static final int secondRowTopOffset = 135;
 	private static final BitmapFont primaryFont = Fonts.Arial20;
 	private static final int mapInfoLabelPadding = 10;
 
@@ -110,11 +110,10 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	}
 
 	private void addTitle() {
-		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowWidth, 0);
+		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		screenTitleLabel = new Label(layoutArgs, Fonts.Arial32, Color.BLACK, "Map Selection");
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		screenTitleLabel.recalculateLayout(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight);
 		uiComponents.add(screenTitleLabel);
 	}
 
