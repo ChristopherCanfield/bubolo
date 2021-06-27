@@ -157,21 +157,6 @@ public class BuboloApplication extends AbstractGameApplication {
 					setState(State.SinglePlayerGame);
 				}
 			}
-
-			// @TODO (cdc 2021-06-08): Remove this.
-//			if (state == State.MultiplayerGame) {
-//				graphics.draw(world);
-//				world.update();
-//				network.update(this);
-//			} else if (state == State.SinglePlayerGame) {
-//				graphics.draw(world);
-//				world.update();
-//			} else if (state == State.NetGameLobby || state == State.NetGameStarting) {
-//				graphics.draw(screen);
-//				network.update(this);
-//			} else if (state == State.NetGameSetup) {
-//				graphics.draw(screen);
-//			}
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, e.toString(), e);
 		}
