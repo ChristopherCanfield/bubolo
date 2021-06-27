@@ -20,6 +20,9 @@ public class Label extends UiComponent {
 		this.font = font;
 		this.color = color;
 		this.text = text;
+
+		this.layout = new GlyphLayout(font, text, 0, text.length(), color, 0, text.length(), false, null);
+		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
 	}
 
 	@Override
@@ -33,7 +36,7 @@ public class Label extends UiComponent {
 		batch.end();
 		font.setColor(previousFontColor);
 
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		//recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
 	}
 
 	@Override

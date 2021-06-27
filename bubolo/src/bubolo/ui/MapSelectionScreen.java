@@ -74,6 +74,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		screenTitleLabel = new Label(layoutArgs, Fonts.Arial32, Color.BLACK, "Map Selection");
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		screenTitleLabel.recalculateLayout(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight);
 		uiComponents.add(screenTitleLabel);
 	}
 
@@ -81,7 +82,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		try {
 			for (Path path : mapPaths) {
 				var info = mapImporter.loadMapInfo(path);
-				mapInfo.put(path.getFileName().toString(), info);
+				mapInfo.put(path.getFileName().toString().replace(".json", ""), info);
 			}
 		} catch (IOException e) {
 			throw new InvalidMapException("Unable to load map information.\n\n" + e);
@@ -109,7 +110,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPathsGroup.setVerticalOffset(200, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
-		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString()));
+		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString().replace(".json", "")));
 
 		uiComponents.add(mapPathsGroup);
 	}
@@ -149,6 +150,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	@Override
 	public void onViewportResized(int newWidth, int newHeight) {
+		screenTitleLabel.recalculateLayout(0, 0, newWidth, newHeight);
 		mapPathsGroup.recalculateLayout(0, 0, newWidth, newHeight);
 	}
 

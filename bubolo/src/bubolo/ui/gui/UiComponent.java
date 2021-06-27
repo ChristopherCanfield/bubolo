@@ -59,6 +59,7 @@ public abstract class UiComponent {
 		this.horizontalOffset = offset;
 		this.horizontalOffsetType = offsetType;
 		this.horizontalOffsetFrom = offsetFrom;
+		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
 	}
 
 	/**
@@ -70,6 +71,7 @@ public abstract class UiComponent {
 		this.verticalOffset = offset;
 		this.verticalOffsetType = offsetType;
 		this.verticalOffsetFrom = offsetFrom;
+		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
 	}
 
 	/**
