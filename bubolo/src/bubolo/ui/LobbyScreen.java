@@ -14,8 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import bubolo.BuboloApplication;
 import bubolo.Config;
-import bubolo.GameApplication;
 import bubolo.GameApplication.State;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
@@ -36,7 +36,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 	private TextField sendMessageField;
 	private TextButton startGameButton;
 
-	private final GameApplication app;
+	private final BuboloApplication app;
 	private final World world;
 
 	private long startTime;
@@ -59,7 +59,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 	 * @param app reference to the Game Application.
 	 * @param world reference to the game world.
 	 */
-	public LobbyScreen(GameApplication app, World world) {
+	public LobbyScreen(BuboloApplication app, World world) {
 		this.app = app;
 		this.world = world;
 
@@ -166,7 +166,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 
 	@Override
 	public void onConnect(String clientName, String serverName) {
-		appendToMessageHistory(messageHistory, "Welcome " + clientName + ". The host is " + serverName + ".");
+		appendToMessageHistory(messageHistory, "Welcome " + clientName + ". The host is " + serverName + ". We're playing map " + app.mapName() + ".");
 	}
 
 	@Override

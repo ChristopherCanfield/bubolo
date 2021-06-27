@@ -78,6 +78,10 @@ public class BuboloApplication extends AbstractGameApplication {
 		world.addEntityLifetimeObserver(graphics);
 	}
 
+	public String mapName() {
+		return mapPath.getFileName().toString().replace(Config.MapFileExtension, "");
+	}
+
 	/**
 	 * Create anything that relies on graphics, sound, windowing, or input devices here.
 	 *
@@ -182,6 +186,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			break;
 		case MultiplayerSetupServer:
 			assert previousState == State.MultiplayerMapSelection;
+			assert mapPath != null;
 			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
 			mapPath = (Path) arg;
 			break;
@@ -222,8 +227,9 @@ public class BuboloApplication extends AbstractGameApplication {
 		}
 		case SinglePlayerLoading:
 			assert previousState == State.SinglePlayerSetup;
+			assert mapPath != null;
 			mapPath = (Path) arg;
-			screen = new LoadingScreen(mapName);
+			screen = new LoadingScreen(mapName());
 			break;
 		case SinglePlayerGame: {
 			assert previousState == State.SinglePlayerLoading;

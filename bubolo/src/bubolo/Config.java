@@ -24,6 +24,7 @@ public class Config {
 	public static final Path TextureFilePath = Path.of("res", "textures");
 	public static final Path UiPath = Path.of("res", "ui");
 	public static final Path MapsPath = Path.of("res", "maps");
+	public static final String MapFileExtension = ".json";
 
 	public static final int FPS = 60;
 	public static final double SecondsPerFrame = 1.0 / FPS;
