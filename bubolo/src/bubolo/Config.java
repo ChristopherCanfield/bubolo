@@ -21,8 +21,9 @@ public class Config {
 	public static final Path AppIcon32x32 = IconPath.resolve("tank_icon32x32.png");
 	public static final Path AppIcon48x48 = IconPath.resolve("tank_icon48x48.png");
 
-	public static final Path UiPath = Paths.get("res", "ui");
-	public static final Path MapsPath = Paths.get("res", "maps");
+	public static final Path TextureFilePath = Path.of("res", "textures");
+	public static final Path UiPath = Path.of("res", "ui");
+	public static final Path MapsPath = Path.of("res", "maps");
 
 	public static final int FPS = 60;
 	public static final double SecondsPerFrame = 1.0 / FPS;

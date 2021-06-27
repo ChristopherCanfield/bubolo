@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import bubolo.Config;
 import bubolo.ui.Screen;
 import bubolo.util.Timer;
 import bubolo.world.Entity;
@@ -33,11 +34,6 @@ import bubolo.world.World;
  * @author Christopher D. Canfield
  */
 public class Graphics implements EntityLifetimeObserver {
-	/**
-	 * Textures file path.
-	 */
-	private static final String TEXTURE_PATH = "res/textures/";
-
 	// Stores the textures, so that only one copy is stored in memory.
 	private static Map<String, Texture> textures = new HashMap<>();
 	private static Map<String, TextureRegion[]> textureRegions1d = new HashMap<>();
@@ -73,7 +69,7 @@ public class Graphics implements EntityLifetimeObserver {
 	static Texture getTexture(String fileName) {
 		Texture texture = textures.get(fileName);
 		if (texture == null) {
-			texture = new Texture(new FileHandle(new File(TEXTURE_PATH + fileName)));
+			texture = new Texture(new FileHandle(Config.TextureFilePath.resolve(fileName).toFile()));
 			textures.put(fileName, texture);
 		}
 
@@ -397,7 +393,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * pngs.
 	 */
 	private static void loadAllTextures() {
-		File textureDirectory = new File(TEXTURE_PATH);
+		File textureDirectory = Config.TextureFilePath.toFile();
 		for (File file : textureDirectory.listFiles()) {
 			if (file.getName().endsWith("png")) {
 				getTexture(file.getName());

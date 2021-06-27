@@ -229,6 +229,8 @@ public class MapImporter {
 	public static record MapInfo(Path fullPath, String mapName, String author, String description, int tileColumns, int tileRows, String lastUpdated, @Nullable Texture previewTexture) {
 	}
 
+	private static final Path noMapPreviewImageTexture = Config.TextureFilePath.resolve("no-map-preview.png");
+
 	/**
 	 * Loads information about a map, including:
 	 * <ul>
@@ -254,9 +256,11 @@ public class MapImporter {
 		String lastUpdated = DateTimeFormatter.ofPattern("uuuu-MM-dd").format(LocalDateTime.ofInstant(lastModifiedTime.toInstant(), ZoneId.systemDefault()));
 
 		var previewTexturePath = Paths.get(mapPath.toString().replace(".json", ".png"));
-		Texture previewTexture = null;
+		Texture previewTexture;
 		if (Files.exists(previewTexturePath)) {
 			previewTexture = new Texture(previewTexturePath.toString());
+		} else {
+			previewTexture = new Texture(noMapPreviewImageTexture.toString());
 		}
 
 		try (BufferedReader mapReader = Files.newBufferedReader(mapPath)) {
