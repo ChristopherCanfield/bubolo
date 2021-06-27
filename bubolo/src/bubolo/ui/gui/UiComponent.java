@@ -50,6 +50,22 @@ public abstract class UiComponent {
 		this.padding = layoutArgs.padding();
 	}
 
+	public float left() {
+		return left;
+	}
+
+	public float right() {
+		return left + width();
+	}
+
+	public float top() {
+		return top;
+	}
+
+	public float bottom() {
+		return top + height();
+	}
+
 	/**
 	 * @param offset the horizontal offset, either in screen units or as a percentage.
 	 * @param offsetType the units of the horizontal offset, either screen units or percentage.

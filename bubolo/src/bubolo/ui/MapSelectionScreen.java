@@ -12,6 +12,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.BuboloApplication;
@@ -48,8 +49,21 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	private Label screenTitleLabel;
 	private Label mapNameLabel;
 	private Label mapAuthorLabel;
+	private Label mapLastUpdatedLabel;
 	private Label mapSizeLabel;
 	private Label mapDescriptionLabel;
+
+	private final String mapNameText = "Name: ";
+	private final String authorNameText = "Author: ";
+	private final String mapDescriptionText = "Description: ";
+	private final String mapSizeText = "Size: ";
+	private final String lastUpdatedText = "Last Updated: ";
+
+	private static final int secondRowTopOffset = 200;
+	private static final BitmapFont primaryFont = Fonts.Arial20;
+	private static final int mapInfoLabelPadding = 10;
+	private static final int minDescriptionRowSize = 450;
+	private static final float targetDescriptionRowSizePct = 0.4f;
 
 	public MapSelectionScreen(BuboloApplication app) {
 		this.app = app;
@@ -104,11 +118,11 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPathsVGroupArgs.buttonHoverBackgroundColor = transparent;
 		mapPathsVGroupArgs.buttonHoverBorderColor = transparent;
 
-		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 10);
+		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
 
 		mapPathsGroup = new VButtonGroup(layoutArgs, mapPathsVGroupArgs);
 		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
-		mapPathsGroup.setVerticalOffset(200, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		mapPathsGroup.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
 		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString().replace(".json", "")));
 
@@ -116,12 +130,40 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	}
 
 	private void addMapInfoLabels() {
-//		LayoutArgs
-//		mapNameLabel = new Label()
-//
-//		private Label mapAuthorLabel;
-//		private Label mapSizeLabel;
-//		private Label mapDescriptionLabel;
+		LayoutArgs mapNameArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		mapNameLabel = new Label(mapNameArgs, primaryFont, Color.BLACK, mapNameText);
+		mapNameLabel.setHorizontalOffset(0.55f, OffsetType.Percent, HOffsetFrom.Left);
+		mapNameLabel.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		uiComponents.add(mapNameLabel);
+
+		LayoutArgs mapAuthorArgs = new LayoutArgs(0, (int) mapNameLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		mapAuthorLabel = new Label(mapAuthorArgs, primaryFont, Color.BLACK, authorNameText);
+		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapAuthorLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		uiComponents.add(mapAuthorLabel);
+
+		LayoutArgs lastUpdatedArgs = new LayoutArgs(0, (int) mapAuthorLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		mapLastUpdatedLabel = new Label(lastUpdatedArgs, primaryFont, Color.BLACK, lastUpdatedText);
+		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapLastUpdatedLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		uiComponents.add(mapLastUpdatedLabel);
+
+		LayoutArgs mapSizeArgs = new LayoutArgs(0, (int) mapLastUpdatedLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		mapSizeLabel = new Label(mapSizeArgs, primaryFont, Color.BLACK, mapSizeText);
+		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapSizeLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		uiComponents.add(mapSizeLabel);
+
+		LayoutArgs mapDescriptionArgs = new LayoutArgs(0, (int) mapSizeLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		mapDescriptionLabel = new Label(mapDescriptionArgs, primaryFont, Color.BLACK, mapDescriptionText, true, calculateDescriptionRowSize());
+		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapDescriptionLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		uiComponents.add(mapDescriptionLabel);
+	}
+
+	private int calculateDescriptionRowSize() {
+		float sizeFromPct = Gdx.graphics.getWidth() * targetDescriptionRowSizePct;
+		return (sizeFromPct > minDescriptionRowSize) ? (int) sizeFromPct : minDescriptionRowSize;
 	}
 
 	@Override
@@ -152,13 +194,24 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	public void onViewportResized(int newWidth, int newHeight) {
 		screenTitleLabel.recalculateLayout(0, 0, newWidth, newHeight);
 		mapPathsGroup.recalculateLayout(0, 0, newWidth, newHeight);
+
+		mapNameLabel.recalculateLayout(0, 0, newWidth, newHeight);
+		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapDescriptionLabel.setMaxRowSize(calculateDescriptionRowSize());
 	}
 
-	private void onMapSelected() {
+	private void onSelectedMapChanged() {
 		var selectedMapFileName = mapPathsGroup.selectedButtonText();
 		if (selectedMapFileName != null) {
 			var selectedMapInfo = mapInfo.get(selectedMapFileName);
-			System.out.println("Selected map: " + selectedMapInfo);
+			mapNameLabel.setText(mapNameText + selectedMapInfo.mapName());
+			mapAuthorLabel.setText(authorNameText + selectedMapInfo.author());
+			mapLastUpdatedLabel.setText(lastUpdatedText + selectedMapInfo.lastUpdated());
+			mapSizeLabel.setText(mapSizeText + selectedMapInfo.tileColumns() + " x " + selectedMapInfo.tileRows());
+			mapDescriptionLabel.setText(mapDescriptionText + selectedMapInfo.description());
 		}
 	}
 
@@ -174,21 +227,22 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 			app.setState(State.MainMenu);
 		}
 
-		onMapSelected();
+		onSelectedMapChanged();
 
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		mapPathsGroup.onMouseClicked(screenX, screenY);
-		mapPathsGroup.activateSelectedButton();
-		onMapSelected();
+		// @TODO (cdc 2021-06-27): Load the selected map.
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
+		int buttonIndex = mapPathsGroup.onMouseMoved(screenX, screenY);
+		mapPathsGroup.selectButton(buttonIndex);
+		onSelectedMapChanged();
 		return false;
 	}
 

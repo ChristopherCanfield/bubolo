@@ -7,6 +7,9 @@ import java.io.Reader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -245,7 +248,7 @@ public class MapImporter {
 		}
 
 		var lastModifiedTime = Files.getLastModifiedTime(mapPath);
-		String lastUpdated = lastModifiedTime.toString();
+		String lastUpdated = DateTimeFormatter.ofPattern("uuuu-MM-dd").format(LocalDateTime.ofInstant(lastModifiedTime.toInstant(), ZoneId.systemDefault()));
 
 		try (BufferedReader mapReader = Files.newBufferedReader(mapPath)) {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
