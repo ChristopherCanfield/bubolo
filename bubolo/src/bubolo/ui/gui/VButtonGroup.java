@@ -228,13 +228,6 @@ public class VButtonGroup extends UiComponent {
 		recalculateButtonPositions();
 	}
 
-	public void setSelected(int index) {
-		assert !buttons.isEmpty();
-		assert index >= 0 && index < buttons.size();
-
-		selectedButtonIndex = index;
-	}
-
 	public void selectNext() {
 		assert !buttons.isEmpty();
 

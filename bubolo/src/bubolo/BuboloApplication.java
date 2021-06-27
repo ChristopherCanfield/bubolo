@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import bubolo.audio.Audio;
-import bubolo.controllers.ai.ForestGrowthController;
 import bubolo.graphics.Graphics;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
@@ -192,23 +191,26 @@ public class BuboloApplication extends AbstractGameApplication {
 		case MultiplayerMapSelection:
 		case SinglePlayerSetup:
 			assert previousState == State.MainMenu || previousState == State.MultiplayerSetupServer;
-			screen = new MapSelectionScreen(this);
+			State nextState = (newState == State.SinglePlayerSetup) ? State.SinglePlayerLoading : State.MultiplayerSetupServer;
+			screen = new MapSelectionScreen(this, nextState);
 			break;
 		case MultiplayerSetupServer:
 			assert previousState == State.MultiplayerMapSelection;
 			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
+			mapPath = (Path) arg;
 			break;
 		case MultiplayerSetupClient:
+			assert previousState == State.MainMenu;
 			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
 		case MultiplayerLobby:
 			screen = new LobbyScreen(this, world());
+			if (previousState == State.MultiplayerSetupServer) {
+				setUpWorld();
+			}
 			break;
 		case MultiplayerStarting:
 			assert previousState == State.MultiplayerLobby;
-			// Do nothing.
-			break;
-		case MultiplayerGame: {
 			Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
 					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
@@ -223,9 +225,13 @@ public class BuboloApplication extends AbstractGameApplication {
 
 			setReady(true);
 			break;
+		case MultiplayerGame: {
+			// Do nothing.
+			break;
 		}
 		case SinglePlayerLoading:
 			assert previousState == State.SinglePlayerSetup;
+			mapPath = (Path) arg;
 			screen = new LoadingScreen(mapName);
 			break;
 		case SinglePlayerGame: {
@@ -242,7 +248,6 @@ public class BuboloApplication extends AbstractGameApplication {
 			MapImporter importer = new MapImporter();
 			World world = importer.importJsonMap(mapPath);
 			setWorld(world);
-			world.addEntityLifetimeObserver(new ForestGrowthController());
 		} catch (IOException e) {
 			throw new GameRuntimeException(e);
 		}

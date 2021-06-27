@@ -78,7 +78,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	private void onHostMultiplayerButtonActivated(Button button) {
-		app.setState(State.MultiplayerSetupServer);
+		app.setState(State.MultiplayerMapSelection);
 	}
 
 	private void onSettingsButtonActivated(Button button) {

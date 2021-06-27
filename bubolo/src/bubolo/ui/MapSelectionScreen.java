@@ -37,6 +37,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	private final Color clearColor = Color.WHITE;
 
 	private final BuboloApplication app;
+	private final State nextState;
 
 	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0f);
 
@@ -61,6 +62,8 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	private final String mapSizeText = "Size: ";
 	private final String lastUpdatedText = "Last Updated: ";
 
+	private static final String mapFileExtension = ".json";
+
 	private static final int secondRowTopOffset = 125;
 	private static final BitmapFont primaryFont = Fonts.Arial20;
 	private static final int mapInfoLabelPadding = 10;
@@ -71,8 +74,20 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	private static final float targetPreviewImageWidthPct = 0.4f;
 	private static final float targetPreviewImageHeightPct = targetPreviewImageWidthPct * 0.57f;
 
-	public MapSelectionScreen(BuboloApplication app) {
+	private enum TabGroup {
+		MapNames,
+		OkCancel
+	}
+
+	private TabGroup activeGroup = TabGroup.MapNames;
+
+	/**
+	 * @param app reference to the game application.
+	 * @param nextState the next app state. Used to enable this screen to be used with both single and multiplayer games.
+	 */
+	public MapSelectionScreen(BuboloApplication app, State nextState) {
 		this.app = app;
+		this.nextState = nextState;
 
 		addTitle();
 		List<Path> paths;
@@ -87,7 +102,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		addMapInfoUiComponents();
 
 		if (!paths.isEmpty()) {
-			mapPathsGroup.setSelected(0);
+			mapPathsGroup.selectButton(0);
 			onSelectedMapChanged();
 		}
 
@@ -107,7 +122,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		try {
 			for (Path path : mapPaths) {
 				var info = mapImporter.loadMapInfo(path);
-				mapInfo.put(path.getFileName().toString().replace(".json", ""), info);
+				mapInfo.put(path.getFileName().toString().replace(mapFileExtension, ""), info);
 			}
 		} catch (IOException e) {
 			throw new InvalidMapException("Unable to load map information.\n\n" + e);
@@ -135,7 +150,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPathsGroup.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
-		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString().replace(".json", "")));
+		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString().replace(mapFileExtension, "")));
 
 		uiComponents.add(mapPathsGroup);
 	}
@@ -230,6 +245,9 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapDescriptionLabel.setMaxRowSize(calculateDescriptionRowSize());
 	}
 
+	/**
+	 * Call this when the map selection changes.
+	 */
 	private void onSelectedMapChanged() {
 		var selectedMapFileName = mapPathsGroup.selectedButtonText();
 		if (selectedMapFileName != null) {
@@ -243,16 +261,31 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		}
 	}
 
+	/**
+	 * Call this when the user completes their map selection, such as by pressing the OK button.
+	 */
+	private void onMapActivated() {
+		var selectedMapFileName = mapPathsGroup.selectedButtonText();
+		if (selectedMapFileName != null) {
+			app.setState(nextState, Config.MapsPath.resolve(selectedMapFileName + mapFileExtension));
+		}
+	}
+
+	private void switchTabGroup() {
+		activeGroup = (activeGroup == TabGroup.MapNames) ? TabGroup.OkCancel : TabGroup.MapNames;
+	}
+
 	@Override
 	public boolean keyUp(int keycode) {
-		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
-			mapPathsGroup.selectPrevious();
-		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
-			mapPathsGroup.selectNext();
-		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-			mapPathsGroup.activateSelectedButton();
-		} else if (keycode == Keys.ESCAPE) {
-			app.setState(State.MainMenu);
+		switch (keycode) {
+			case Keys.UP, Keys.W, Keys.NUMPAD_8 -> mapPathsGroup.selectPrevious();
+			case Keys.DOWN, Keys.S, Keys.NUMPAD_5, Keys.NUMPAD_2 -> mapPathsGroup.selectNext();
+			case Keys.SPACE, Keys.ENTER, Keys.NUMPAD_ENTER -> {
+				mapPathsGroup.activateSelectedButton();
+				onMapActivated();
+			}
+			case Keys.TAB -> switchTabGroup();
+			case Keys.ESCAPE -> app.setState(State.MainMenu);
 		}
 
 		onSelectedMapChanged();
@@ -262,7 +295,13 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// @TODO (cdc 2021-06-27): Load the selected map.
+		int buttonIndex = mapPathsGroup.onMouseClicked(screenX, screenY);
+		if (buttonIndex != -1) {
+			mapPathsGroup.selectButton(buttonIndex);
+			onSelectedMapChanged();
+			onMapActivated();
+		}
+
 		return false;
 	}
 
