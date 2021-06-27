@@ -217,6 +217,6 @@ public class MultiplayerSetupScreen extends Stage2dScreen {
 	}
 
 	@Override
-	public void dispose() {
+	protected void onDispose() {
 	}
 }

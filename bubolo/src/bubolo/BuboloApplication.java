@@ -179,8 +179,9 @@ public class BuboloApplication extends AbstractGameApplication {
 
 	@Override
 	protected void onStateChanged(State previousState, State newState, @Nullable Object arg) {
-		if (screen != null) {
+		if (screen != null && !(screen instanceof LobbyScreen)) {
 			screen.dispose();
+			screen = null;
 		}
 
 		switch (newState) {
@@ -204,13 +205,15 @@ public class BuboloApplication extends AbstractGameApplication {
 			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
 		case MultiplayerLobby:
-			screen = new LobbyScreen(this, world());
 			if (previousState == State.MultiplayerSetupServer) {
 				setUpWorld();
 			}
+			screen = new LobbyScreen(this, world());
 			break;
 		case MultiplayerStarting:
 			assert previousState == State.MultiplayerLobby;
+			assert screen != null;
+
 			Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
 					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
@@ -226,7 +229,10 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 		case MultiplayerGame: {
-			// Do nothing.
+			if (screen != null) {
+				screen.dispose();
+				screen = null;
+			}
 			break;
 		}
 		case SinglePlayerLoading:

@@ -79,5 +79,12 @@ public abstract class Stage2dScreen implements Screen {
 	 * Releases all heavy-weight resources.
 	 */
 	@Override
-	public abstract void dispose();
+	public final void dispose() {
+		if (Gdx.input.getInputProcessor() == this) {
+			Gdx.input.setInputProcessor(null);
+		}
+		onDispose();
+	}
+
+	protected abstract void onDispose();
 }

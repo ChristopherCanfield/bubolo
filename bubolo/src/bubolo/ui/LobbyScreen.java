@@ -125,9 +125,9 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 				public void clicked(InputEvent event, float x, float y) {
 					if (clientCount > 0) {
 						if (!startingGame) {
+							startingGame = true;
 							appendToMessageHistory(messageHistory, "Sending map data...\n");
 							net.send(new SendMessage("Sending map data...\n"));
-							startingGame = true;
 							net.send(new SendMap(world));
 						}
 					} else {
@@ -225,9 +225,8 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 	}
 
 	@Override
-	public void dispose() {
+	protected void onDispose() {
 		Network net = NetworkSystem.getInstance();
 		net.removeObserver(this);
-		Gdx.input.setInputProcessor(null);
 	}
 }
