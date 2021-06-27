@@ -23,6 +23,7 @@ import bubolo.graphics.Graphics;
 import bubolo.map.InvalidMapException;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
+import bubolo.ui.gui.Image;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent;
@@ -46,6 +47,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	private final List<UiComponent> uiComponents = new ArrayList<>();
 
 	private VButtonGroup mapPathsGroup;
+	private Image mapPreviewImage;
 	private Label screenTitleLabel;
 	private Label mapNameLabel;
 	private Label mapAuthorLabel;
@@ -59,11 +61,15 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	private final String mapSizeText = "Size: ";
 	private final String lastUpdatedText = "Last Updated: ";
 
-	private static final int secondRowTopOffset = 200;
+	private static final int secondRowTopOffset = 125;
 	private static final BitmapFont primaryFont = Fonts.Arial20;
 	private static final int mapInfoLabelPadding = 10;
+
 	private static final int minDescriptionRowSize = 450;
 	private static final float targetDescriptionRowSizePct = 0.4f;
+
+	private static final float targetPreviewImageWidthPct = 0.4f;
+	private static final float targetPreviewImageHeightPct = targetPreviewImageWidthPct * 0.57f;
 
 	public MapSelectionScreen(BuboloApplication app) {
 		this.app = app;
@@ -78,7 +84,12 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		addMapPaths(paths);
 
 		importMapInfo(paths);
-		addMapInfoLabels();
+		addMapInfoUiComponents();
+
+		if (!paths.isEmpty()) {
+			mapPathsGroup.setSelected(0);
+			onSelectedMapChanged();
+		}
 
 		Gdx.input.setInputProcessor(this);
 	}
@@ -129,39 +140,43 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		uiComponents.add(mapPathsGroup);
 	}
 
-	private void addMapInfoLabels() {
-		LayoutArgs mapNameArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+	private void addMapInfoUiComponents() {
+		int windowWidth = Gdx.graphics.getWidth();
+		int windowHeight = Gdx.graphics.getHeight();
+
+		LayoutArgs mapPreviewArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		mapPreviewImage = new Image(mapPreviewArgs, null, (int) (targetPreviewImageWidthPct * windowWidth), (int) (targetPreviewImageHeightPct * windowHeight));
+		mapPreviewImage.setHorizontalOffset(0.55f, OffsetType.Percent, HOffsetFrom.Left);
+		mapPreviewImage.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		uiComponents.add(mapPreviewImage);
+
+		LayoutArgs mapNameArgs = new LayoutArgs(0, (int) mapPreviewImage.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
 		mapNameLabel = new Label(mapNameArgs, primaryFont, Color.BLACK, mapNameText);
-		mapNameLabel.setHorizontalOffset(0.55f, OffsetType.Percent, HOffsetFrom.Left);
-		mapNameLabel.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		mapNameLabel.setHorizontalOffset(mapPreviewImage.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapNameLabel);
 
-		LayoutArgs mapAuthorArgs = new LayoutArgs(0, (int) mapNameLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		LayoutArgs mapAuthorArgs = new LayoutArgs(0, (int) mapNameLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
 		mapAuthorLabel = new Label(mapAuthorArgs, primaryFont, Color.BLACK, authorNameText);
 		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapAuthorLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		uiComponents.add(mapAuthorLabel);
 
-		LayoutArgs lastUpdatedArgs = new LayoutArgs(0, (int) mapAuthorLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		LayoutArgs lastUpdatedArgs = new LayoutArgs(0, (int) mapAuthorLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
 		mapLastUpdatedLabel = new Label(lastUpdatedArgs, primaryFont, Color.BLACK, lastUpdatedText);
 		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapLastUpdatedLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		uiComponents.add(mapLastUpdatedLabel);
 
-		LayoutArgs mapSizeArgs = new LayoutArgs(0, (int) mapLastUpdatedLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		LayoutArgs mapSizeArgs = new LayoutArgs(0, (int) mapLastUpdatedLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
 		mapSizeLabel = new Label(mapSizeArgs, primaryFont, Color.BLACK, mapSizeText);
 		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapSizeLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		uiComponents.add(mapSizeLabel);
 
-		LayoutArgs mapDescriptionArgs = new LayoutArgs(0, (int) mapSizeLabel.bottom(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		LayoutArgs mapDescriptionArgs = new LayoutArgs(0, (int) mapSizeLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
 		mapDescriptionLabel = new Label(mapDescriptionArgs, primaryFont, Color.BLACK, mapDescriptionText, true, calculateDescriptionRowSize());
 		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapDescriptionLabel.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		uiComponents.add(mapDescriptionLabel);
 	}
 
-	private int calculateDescriptionRowSize() {
+	private static int calculateDescriptionRowSize() {
 		float sizeFromPct = Gdx.graphics.getWidth() * targetDescriptionRowSizePct;
 		return (sizeFromPct > minDescriptionRowSize) ? (int) sizeFromPct : minDescriptionRowSize;
 	}
@@ -195,10 +210,22 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		screenTitleLabel.recalculateLayout(0, 0, newWidth, newHeight);
 		mapPathsGroup.recalculateLayout(0, 0, newWidth, newHeight);
 
-		mapNameLabel.recalculateLayout(0, 0, newWidth, newHeight);
+		mapPreviewImage.setSize((int) (targetPreviewImageWidthPct * newWidth), (int) (targetPreviewImageHeightPct * newHeight));
+		mapPreviewImage.recalculateLayout(0, 0, newWidth, newHeight);
+
+		mapNameLabel.setHorizontalOffset(mapPreviewImage.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapNameLabel.recalculateLayout(0, (int) mapPreviewImage.bottom(), newWidth, newHeight);
+
 		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapAuthorLabel.recalculateLayout(0, (int) mapNameLabel.bottom(), newWidth, newHeight);
+
 		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapLastUpdatedLabel.recalculateLayout(0, (int) mapAuthorLabel.bottom(), newWidth, newHeight);
+
 		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapSizeLabel.recalculateLayout(0, (int) mapLastUpdatedLabel.bottom(), newWidth, newHeight);
+
+		mapDescriptionLabel.recalculateLayout(0, (int) mapSizeLabel.bottom(), newWidth, newHeight);
 		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		mapDescriptionLabel.setMaxRowSize(calculateDescriptionRowSize());
 	}
@@ -207,6 +234,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		var selectedMapFileName = mapPathsGroup.selectedButtonText();
 		if (selectedMapFileName != null) {
 			var selectedMapInfo = mapInfo.get(selectedMapFileName);
+			mapPreviewImage.setTexture(selectedMapInfo.previewTexture());
 			mapNameLabel.setText(mapNameText + selectedMapInfo.mapName());
 			mapAuthorLabel.setText(authorNameText + selectedMapInfo.author());
 			mapLastUpdatedLabel.setText(lastUpdatedText + selectedMapInfo.lastUpdated());
@@ -241,8 +269,10 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
 		int buttonIndex = mapPathsGroup.onMouseMoved(screenX, screenY);
-		mapPathsGroup.selectButton(buttonIndex);
-		onSelectedMapChanged();
+		if (buttonIndex != -1) {
+			mapPathsGroup.selectButton(buttonIndex);
+			onSelectedMapChanged();
+		}
 		return false;
 	}
 

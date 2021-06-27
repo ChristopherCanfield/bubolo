@@ -55,16 +55,17 @@ public class Label extends UiComponent {
 	}
 
 	@Override
-	protected float width() {
+	public float width() {
 		return layout.width + padding * 2;
 	}
 
 	@Override
-	protected float height() {
+	public float height() {
 		return layout.height + padding * 2;
 	}
 
 	@Override
 	protected void onRecalculateLayout() {
+		this.layout = new GlyphLayout(font, text, 0, text.length(), color, maxWidth, Align.left, canWrap, null);
 	}
 }

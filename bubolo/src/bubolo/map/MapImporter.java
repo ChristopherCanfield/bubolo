@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonKey;
@@ -28,6 +30,7 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
 import bubolo.Config;
+import bubolo.util.Nullable;
 import bubolo.util.Units;
 import bubolo.world.Base;
 import bubolo.world.Building;
@@ -223,7 +226,7 @@ public class MapImporter {
 		}
 	}
 
-	public static record MapInfo(Path fullPath, String mapName, String author, String description, int tileColumns, int tileRows, String lastUpdated) {
+	public static record MapInfo(Path fullPath, String mapName, String author, String description, int tileColumns, int tileRows, String lastUpdated, @Nullable Texture previewTexture) {
 	}
 
 	/**
@@ -250,6 +253,12 @@ public class MapImporter {
 		var lastModifiedTime = Files.getLastModifiedTime(mapPath);
 		String lastUpdated = DateTimeFormatter.ofPattern("uuuu-MM-dd").format(LocalDateTime.ofInstant(lastModifiedTime.toInstant(), ZoneId.systemDefault()));
 
+		var previewTexturePath = Paths.get(mapPath.toString().replace(".json", ".png"));
+		Texture previewTexture = null;
+		if (Files.exists(previewTexturePath)) {
+			previewTexture = new Texture(previewTexturePath.toString());
+		}
+
 		try (BufferedReader mapReader = Files.newBufferedReader(mapPath)) {
 			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
 			jsonTiledMap.requireKeys(Key.MapHeight, Key.MapWidth);
@@ -273,7 +282,7 @@ public class MapImporter {
 				}
 			}
 
-			return new MapInfo(mapPath, mapName, author, description, tileColumns, tileRows, lastUpdated);
+			return new MapInfo(mapPath, mapName, author, description, tileColumns, tileRows, lastUpdated, previewTexture);
 
 		} catch (JsonException e) {
 			throw new InvalidMapException(e);

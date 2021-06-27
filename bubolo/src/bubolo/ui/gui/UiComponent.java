@@ -39,8 +39,8 @@ public abstract class UiComponent {
 
 	protected int padding;
 
-	protected abstract float width();
-	protected abstract float height();
+	public abstract float width();
+	public abstract float height();
 
 	protected UiComponent(LayoutArgs layoutArgs) {
 		this.startLeft = layoutArgs.startLeft();
@@ -156,6 +156,7 @@ public abstract class UiComponent {
 
 		this.left = horizontalPosition(startLeft, parentWidth);
 		this.top = verticalPosition(startTop, parentHeight);
+
 		onRecalculateLayout();
 	}
 

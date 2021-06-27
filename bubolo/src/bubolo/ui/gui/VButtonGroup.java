@@ -110,6 +110,7 @@ public class VButtonGroup extends UiComponent {
 		height = padding * 2;
 	}
 
+	@Override
 	public float right() {
 		return left + width();
 	}
@@ -119,6 +120,7 @@ public class VButtonGroup extends UiComponent {
 		return padding * 2 + args.buttonWidth;
 	}
 
+	@Override
 	public float bottom() {
 		return top + height();
 	}
@@ -224,6 +226,13 @@ public class VButtonGroup extends UiComponent {
 	@Override
 	protected void onRecalculateLayout() {
 		recalculateButtonPositions();
+	}
+
+	public void setSelected(int index) {
+		assert !buttons.isEmpty();
+		assert index >= 0 && index < buttons.size();
+
+		selectedButtonIndex = index;
 	}
 
 	public void selectNext() {
