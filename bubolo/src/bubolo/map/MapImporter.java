@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonException;
@@ -258,9 +259,9 @@ public class MapImporter {
 		var previewTexturePath = Paths.get(mapPath.toString().replace(".json", ".png"));
 		Texture previewTexture;
 		if (Files.exists(previewTexturePath)) {
-			previewTexture = new Texture(previewTexturePath.toString());
+			previewTexture = new Texture(new FileHandle(previewTexturePath.toFile()));
 		} else {
-			previewTexture = new Texture(noMapPreviewImageTexture.toString());
+			previewTexture = new Texture(new FileHandle(noMapPreviewImageTexture.toFile()));
 		}
 
 		try (BufferedReader mapReader = Files.newBufferedReader(mapPath)) {
