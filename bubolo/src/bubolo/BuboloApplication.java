@@ -146,7 +146,7 @@ public class BuboloApplication extends AbstractGameApplication {
 				LoadingScreen loadingScreen = (LoadingScreen) screen;
 				graphics.draw(loadingScreen);
 				if (loadingScreen.drawCount() > 1 && !isReady()) {
-					setUpWorld();
+					setWorld(importWorld());
 					Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
 							TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
@@ -196,7 +196,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			break;
 		case MultiplayerLobby:
 			if (previousState == State.MultiplayerSetupServer) {
-				setUpWorld();
+				setWorld(importWorld());
 			}
 			screen = new LobbyScreen(this, world());
 			break;
@@ -240,11 +240,11 @@ public class BuboloApplication extends AbstractGameApplication {
 		}
 	}
 
-	private void setUpWorld() {
+	private World importWorld() {
 		try {
 			MapImporter importer = new MapImporter();
 			World world = importer.importJsonMap(mapPath);
-			setWorld(world);
+			return world;
 		} catch (IOException e) {
 			throw new GameRuntimeException(e);
 		}

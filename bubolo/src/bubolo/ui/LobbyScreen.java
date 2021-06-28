@@ -83,6 +83,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 		messageHistory.setAlignment(Align.top + Align.left);
 
 		ScrollPane scrollpane = new ScrollPane(messageHistory, skin);
+		scrollpane.setFadeScrollBars(false);
 		table.add(scrollpane).expand();
 	}
 
