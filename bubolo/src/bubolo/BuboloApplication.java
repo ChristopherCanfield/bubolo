@@ -187,18 +187,18 @@ public class BuboloApplication extends AbstractGameApplication {
 		case MultiplayerSetupServer:
 			assert previousState == State.MultiplayerMapSelection;
 			assert mapPath != null;
-			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
+			screen = new MultiplayerSetupScreen(this, graphics, PlayerType.Server);
 			mapPath = (Path) arg;
 			break;
 		case MultiplayerSetupClient:
 			assert previousState == State.MainMenu;
-			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
+			screen = new MultiplayerSetupScreen(this, graphics, PlayerType.Client);
 			break;
 		case MultiplayerLobby:
 			if (previousState == State.MultiplayerSetupServer) {
 				setWorld(importWorld());
 			}
-			screen = new LobbyScreen(this, world());
+			screen = new LobbyScreen(this, graphics, world());
 			break;
 		case MultiplayerStarting:
 			assert previousState == State.MultiplayerLobby;

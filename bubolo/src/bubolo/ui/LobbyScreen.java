@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.utils.Align;
 import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
+import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
 import bubolo.net.NetworkSystem;
@@ -30,7 +32,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
+public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver {
 	private Label messageHistory;
 	private TextButton sendMessageButton;
 	private TextField sendMessageField;
@@ -59,7 +61,11 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 	 * @param app reference to the Game Application.
 	 * @param world reference to the game world.
 	 */
-	public LobbyScreen(BuboloApplication app, World world) {
+	public LobbyScreen(BuboloApplication app, Graphics graphics, World world) {
+		super(graphics, new Table());
+		root.setFillParent(true);
+		root.top();
+
 		this.app = app;
 		this.world = world;
 
@@ -76,7 +82,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 	}
 
 	private void createMessageHistoryBox(Skin skin) {
-		table.row().colspan(3).width(Gdx.graphics.getWidth() - 20.f).height(Gdx.graphics.getHeight() - 100.f);
+		root.row().colspan(3).width(Gdx.graphics.getWidth() - 20.f).height(Gdx.graphics.getHeight() - 100.f);
 
 		messageHistory = new Label("", skin);
 		messageHistory.setWrap(true);
@@ -84,11 +90,11 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 
 		ScrollPane scrollpane = new ScrollPane(messageHistory, skin);
 		scrollpane.setFadeScrollBars(false);
-		table.add(scrollpane).expand();
+		root.add(scrollpane).expand();
 	}
 
 	private void createSendMessageRow(Skin skin) {
-		table.row().padBottom(15.f);
+		root.row().padBottom(15.f);
 
 		final Network net = NetworkSystem.getInstance();
 
@@ -101,11 +107,11 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 			}
 		});
 
-		table.add(sendMessageButton).expandX().width(100.f);
+		root.add(sendMessageButton).expandX().width(100.f);
 
 		sendMessageField = new TextField("", skin);
 		final float width = net.isServer() ? Gdx.graphics.getWidth() - 250.f : Gdx.graphics.getWidth() - 150.f;
-		table.add(sendMessageField).expandX().width(width);
+		root.add(sendMessageField).expandX().width(width);
 
 		stage.addListener(new InputListener() {
 			@Override
@@ -119,7 +125,7 @@ public class LobbyScreen extends Stage2dScreen implements NetworkObserver {
 
 		if (net.isServer()) {
 			startGameButton = new TextButton("Start", skin);
-			table.add(startGameButton).expandX().width(100.f);
+			root.add(startGameButton).expandX().width(100.f);
 
 			startGameButton.addListener(new ClickListener() {
 				@Override

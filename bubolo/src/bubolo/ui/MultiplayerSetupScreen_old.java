@@ -15,21 +15,16 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import bubolo.Config;
 import bubolo.GameApplication;
 import bubolo.GameApplication.State;
-import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
 import bubolo.net.NetworkSystem;
@@ -39,7 +34,7 @@ import bubolo.net.NetworkSystem;
  *
  * @author Christopher D. Canfield
  */
-public class MultiplayerSetupScreen extends Stage2dScreen<VerticalGroup> {
+public class MultiplayerSetupScreen_old extends Stage2dScreen {
 	public enum PlayerType {
 		Server,
 		Client
@@ -47,7 +42,6 @@ public class MultiplayerSetupScreen extends Stage2dScreen<VerticalGroup> {
 
 	private TextField playerNameField;
 	private TextField ipAddressField;
-	private List<String> availableGamesList;
 	private Label statusLabel1;
 	private Label statusLabel2;
 
@@ -69,24 +63,24 @@ public class MultiplayerSetupScreen extends Stage2dScreen<VerticalGroup> {
 	 * @param app reference to the Game Application.
 	 * @param playerType whether this is a server or client.
 	 */
-	public MultiplayerSetupScreen(GameApplication app, Graphics graphics, PlayerType playerType) {
-		super(graphics, new VerticalGroup());
-		root.setSize(Config.TargetWindowWidth, Config.TargetWindowHeight);
-		root.align(Align.topLeft);
-
+	public MultiplayerSetupScreen_old(GameApplication app, PlayerType playerType) {
 		this.app = app;
 		this.isClient = (playerType == PlayerType.Client);
 
 		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath.resolve("skin.atlas").toString()));
 		Skin skin = new Skin(new FileHandle(Config.UiPath.resolve("skin.json").toString()), atlas);
 
-		addPlayerNameRow(skin);
-		addIpAddressRow(skin);
-		addAvailableGames(skin);
-		addButtonRow(skin);
-		addStatusLabels(skin);
+		createPlayerNameRow(skin);
+		createIpAddressRow(skin);
+		addOkButtonRow(skin);
 
-		root.invalidateHierarchy();
+		table.row().colspan(8).padTop(50.f).center();
+		statusLabel1 = new Label("", skin);
+		table.add(statusLabel1);
+
+		table.row().colspan(8).padTop(50.f).left().padLeft(leftPadding);
+		statusLabel2 = new Label("", skin);
+		table.add(statusLabel2);
 
 		stage.addListener(new InputListener() {
 			@Override
@@ -100,63 +94,40 @@ public class MultiplayerSetupScreen extends Stage2dScreen<VerticalGroup> {
 						}
 					}
 				} else if (keycode == Input.Keys.ESCAPE) {
-					if (isClient) {
-						app.setState(State.MainMenu);
-					} else {
-						app.setState(State.MultiplayerMapSelection);
-					}
+					app.setState(State.MainMenu);
 				}
 				return false;
 			}
 		});
 	}
 
-	private void addPlayerNameRow(Skin skin) {
-		HorizontalGroup playerNameRow = new HorizontalGroup();
-		playerNameRow.padTop(75);
-		playerNameRow.padLeft(leftPadding);
-		playerNameRow.align(Align.left);
-		playerNameRow.space(100);
+	private void createPlayerNameRow(Skin skin) {
+		table.row().align(Align.left).padTop(100.f);
 
-		var playerNameLabel = new Label("Name:", skin);
-		playerNameRow.addActor(playerNameLabel);
+		table.add(new Label("Name:", skin)).padLeft(leftPadding);
 
 		playerNameField = new TextField("", skin);
-		playerNameField.setWidth(250);
-		playerNameRow.addActor(playerNameField);
-
-		root.addActor(playerNameRow);
+		table.add(playerNameField).width(250.f);
 	}
 
-	private void addIpAddressRow(Skin skin) {
-		var ipAddressRow = new HorizontalGroup();
-		ipAddressRow.padLeft(leftPadding);
-		ipAddressRow.align(Align.left).padTop(5.0f);
+	private void createIpAddressRow(Skin skin) {
+		table.row().align(Align.left).padTop(5.f);
 
 		if (isClient) {
-			ipAddressRow.space(18);
-
-			var hostIpAddressLabel = new Label("Host IP Address:", skin);
-			ipAddressRow.addActor(hostIpAddressLabel);
+			table.add(new Label("Host IP Address:", skin)).padLeft(leftPadding);
 
 			ipAddressField = new TextField("", skin);
-			ipAddressField.setWidth(160.0f);
-			ipAddressRow.addActor(ipAddressField);
+			table.add(ipAddressField).width(160.f);
 		} else {
 			try {
-				ipAddressRow.space(98);
-
-				var ipAddressLabel = new Label("IP Address:", skin);
-				ipAddressRow.addActor(ipAddressLabel);
+				table.add(new Label("IP Address:", skin)).padLeft(leftPadding);
 
 				String ipAddresses = getIpAddresses();
-				ipAddressRow.addActor(new Label(ipAddresses, skin));
+				table.add(new Label(ipAddresses, skin));
 			} catch (SocketException e) {
 				e.printStackTrace();
 			}
 		}
-
-		root.addActor(ipAddressRow);
 	}
 
 	private static String getIpAddresses() throws SocketException {
@@ -182,38 +153,10 @@ public class MultiplayerSetupScreen extends Stage2dScreen<VerticalGroup> {
 		return ipAddresses.toString();
 	}
 
-	private void addAvailableGames(Skin skin) {
-		if (isClient) {
-			VerticalGroup layoutGroup = new VerticalGroup();
-			layoutGroup.padTop(30);
-			layoutGroup.padLeft(leftPadding);
-			layoutGroup.space(10);
-
-			Label availableGamesLabel = new Label("Available Games:", skin);
-			layoutGroup.addActor(availableGamesLabel);
-
-			availableGamesList = new List<>(skin);
-			availableGamesList.setItems("Hello", "Game 2");
-
-			ScrollPane scrollpane = new ScrollPane(availableGamesList, skin);
-			scrollpane.setWidth(200);
-			layoutGroup.addActor(scrollpane);
-			root.addActor(layoutGroup);
-		}
-	}
-
-	private void addButtonRow(Skin skin) {
-		HorizontalGroup buttonGroup = new HorizontalGroup();
-		buttonGroup.align(Align.center);
-		buttonGroup.padLeft(leftPadding);
-		buttonGroup.padTop(25);
-		buttonGroup.space(10);
+	private void addOkButtonRow(Skin skin) {
+		table.row().colspan(8).padTop(25.f);
 
 		TextButton okButton = new TextButton("OK", skin);
-		okButton.pad(5);
-		okButton.padLeft(30);
-		okButton.padRight(30);
-		buttonGroup.addActor(okButton);
 
 		okButton.addListener(new ClickListener() {
 			@Override
@@ -228,38 +171,7 @@ public class MultiplayerSetupScreen extends Stage2dScreen<VerticalGroup> {
 			}
 		});
 
-		TextButton cancelButton = new TextButton("Cancel", skin);
-		cancelButton.pad(5);
-		cancelButton.padLeft(15);
-		cancelButton.padRight(15);
-		buttonGroup.addActor(cancelButton);
-		cancelButton.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (isClient) {
-					app.setState(State.MainMenu);
-				} else {
-					app.setState(State.MultiplayerMapSelection);
-				}
-			}
-		});
-
-		root.addActor(buttonGroup);
-	}
-
-	private void addStatusLabels(Skin skin) {
-		VerticalGroup statusGroup = new VerticalGroup();
-		statusGroup.align(Align.center);
-		statusGroup.padTop(50);
-		statusGroup.padLeft(leftPadding);
-
-		statusLabel1 = new Label("Test", skin);
-		statusGroup.addActor(statusLabel1);
-
-		statusLabel2 = new Label("Test2", skin);
-		statusGroup.addActor(statusLabel2);
-
-		root.addActor(statusGroup);
+		table.add(okButton).expandX().width(100.f);
 	}
 
 	private boolean textFieldsPopulated() {

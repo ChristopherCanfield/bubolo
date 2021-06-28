@@ -2,8 +2,12 @@ package bubolo.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import bubolo.graphics.Graphics;
 
@@ -11,27 +15,27 @@ import bubolo.graphics.Graphics;
  * Base class for libGDX stage 2d ui screens that are drawn in the LWJGL window.
  *
  * @author Christopher D. Canfield
+ * @param <T> the screen's root UI component type.
  * @since 0.3.0
  */
-public abstract class Stage2dScreen implements Screen {
+public abstract class Stage2dScreen<T extends WidgetGroup> implements Screen {
 	/** The scene2d.ui stage. **/
 	protected final Stage stage;
 
-	/** The base table for the screen. **/
-	protected final Table table;
+	protected final T root;
 
 	private final Color clearColor = new Color(0.45f, 0.45f, 0.45f, 1);
 
 	/**
 	 * Default constructor.
 	 */
-	protected Stage2dScreen() {
-		stage = new Stage();
-		table = new Table();
+	protected Stage2dScreen(Graphics graphics, T root) {
+		Viewport viewport = new ScalingViewport(Scaling.none, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
 
-		table.setFillParent(true);
-		table.top();
-		stage.addActor(table);
+		stage = new Stage(viewport, graphics.nonScalingBatch());
+
+		this.root = root;
+		stage.addActor(root);
 
 		Gdx.input.setInputProcessor(stage);
 	}
@@ -56,7 +60,7 @@ public abstract class Stage2dScreen implements Screen {
 	 */
 	public final void draw(boolean debug) {
 		if (debug) {
-			table.debug();
+			root.debug();
 		}
 
 		stage.act();
