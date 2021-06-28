@@ -97,7 +97,6 @@ public class TextBox extends UiComponent {
 				}
 			}
 		}
-
 	}
 
 	public boolean onMouseClicked(int screenX, int screenY) {
