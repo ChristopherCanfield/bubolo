@@ -194,6 +194,7 @@ public class MultiplayerSetupScreen extends Stage2dScreen<VerticalGroup> {
 
 			availableGamesList = new List<>(skin);
 			availableGamesList.setItems("Hello", "Game 2");
+			availableGamesList.setSelectedIndex(-1);
 
 			ScrollPane scrollpane = new ScrollPane(availableGamesList, skin);
 			scrollpane.setWidth(200);
