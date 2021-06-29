@@ -30,6 +30,7 @@ public class ButtonGroup extends UiComponent {
 
 	private final Args args;
 	private float height;
+	private float width;
 
 	private int selectedButtonIndex = -1;
 	private int hoveredButtonIndex = -1;
@@ -118,6 +119,7 @@ public class ButtonGroup extends UiComponent {
 		this.args = args.clone();
 
 		height = padding * 2;
+		width = padding * 2;
 	}
 
 	@Override
@@ -127,7 +129,8 @@ public class ButtonGroup extends UiComponent {
 
 	@Override
 	public float width() {
-		return padding * 2 + args.buttonWidth;
+//		return padding * 2 + args.buttonWidth;
+		return width;
 	}
 
 	@Override
@@ -163,11 +166,21 @@ public class ButtonGroup extends UiComponent {
 			buttonTop = (int) buttons.get(buttons.size() - 1).bottom() + args.paddingBetweenButtons;
 			height += args.buttonHeight + args.paddingBetweenButtons;
 		}
+		width = padding * 2 + args.buttonWidth;
 		buttons.add(new Button(left + padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
 	}
 
 	private void addButtonHorizontal(String text, @Nullable Consumer<Button> action) {
-
+		int buttonLeft;
+		if (buttons.isEmpty()) {
+			buttonLeft = (int) top + padding;
+			width += args.buttonWidth;
+		} else {
+			buttonLeft = (int) buttons.get(buttons.size() - 1).right() + args.paddingBetweenButtons;
+			width += args.buttonWidth + args.paddingBetweenButtons;
+		}
+		height = padding * 2 + args.buttonHeight;
+		buttons.add(new Button(buttonLeft, top + padding, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
 	}
 
 	@Override
@@ -261,8 +274,8 @@ public class ButtonGroup extends UiComponent {
 	private void recalculateButtonPositionsHorizontal() {
 		for (int i = 0; i < buttons.size(); i++) {
 			var button = buttons.get(i);
-			button.top = (int) top + padding + (i * args.buttonHeight) + (i * args.paddingBetweenButtons);
-			button.left = (int) left + padding;
+			button.top = (int) top + padding;
+			button.left = (int) left + padding + (i * args.buttonWidth) + (i * args.paddingBetweenButtons);
 		}
 	}
 

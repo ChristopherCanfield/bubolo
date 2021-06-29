@@ -15,12 +15,12 @@ import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.Button;
+import bubolo.ui.gui.ButtonGroup;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.ButtonGroup;
 
 public class MainMenuScreen implements Screen, InputProcessor {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
