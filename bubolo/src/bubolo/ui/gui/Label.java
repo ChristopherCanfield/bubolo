@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
 
+import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.util.Units;
 
@@ -16,11 +17,15 @@ public class Label extends UiComponent {
 	private int maxWidth;
 	private GlyphLayout layout;
 
-	public Label(LayoutArgs layoutArgs, BitmapFont font, Color color, String text) {
-		this(layoutArgs, font, color, text, false, 0);
+	public Label(LayoutArgs layoutArgs, String text) {
+		this(layoutArgs, text, Fonts.UiGeneralTextFont, Color.BLACK, false, 0);
 	}
 
-	public Label(LayoutArgs layoutArgs, BitmapFont font, Color color, String text, boolean canWrap, int maxWidth) {
+	public Label(LayoutArgs layoutArgs, String text, BitmapFont font, Color color) {
+		this(layoutArgs, text, font, color, false, 0);
+	}
+
+	public Label(LayoutArgs layoutArgs, String text, BitmapFont font, Color color, boolean canWrap, int maxWidth) {
 		super(layoutArgs);
 
 		this.font = font;

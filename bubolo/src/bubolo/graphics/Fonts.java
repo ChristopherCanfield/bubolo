@@ -11,5 +11,6 @@ public abstract class Fonts {
 	public static final BitmapFont Arial20 = new BitmapFont(Gdx.files.internal(Config.UiPath.resolve("arial-20.fnt").toString()));
 	public static final BitmapFont Arial32 = new BitmapFont(Gdx.files.internal(Config.UiPath.resolve("arial-32.fnt").toString()));
 
-	public static final BitmapFont DefaultUiFont = Arial18;
+	public static final BitmapFont UiGeneralTextFont = Arial18;
+	public static final BitmapFont UiTitleFont = Arial32;
 }

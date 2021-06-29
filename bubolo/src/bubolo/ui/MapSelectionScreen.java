@@ -12,7 +12,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.BuboloApplication;
@@ -65,7 +64,6 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	private static final String mapFileExtension = ".json";
 
 	private static final int secondRowTopOffset = 135;
-	private static final BitmapFont primaryFont = Fonts.Arial20;
 	private static final int mapInfoLabelPadding = 10;
 
 	private static final int minDescriptionRowSize = 450;
@@ -111,7 +109,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	private void addTitle() {
 		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-		screenTitleLabel = new Label(layoutArgs, Fonts.Arial32, Color.BLACK, "Map Selection");
+		screenTitleLabel = new Label(layoutArgs, "Map Selection", Fonts.UiTitleFont, Color.BLACK);
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		uiComponents.add(screenTitleLabel);
@@ -165,27 +163,27 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		uiComponents.add(mapPreviewImage);
 
 		LayoutArgs mapNameArgs = new LayoutArgs(0, (int) mapPreviewImage.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
-		mapNameLabel = new Label(mapNameArgs, primaryFont, Color.BLACK, mapNameText);
+		mapNameLabel = new Label(mapNameArgs, mapNameText);
 		mapNameLabel.setHorizontalOffset(mapPreviewImage.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapNameLabel);
 
 		LayoutArgs mapAuthorArgs = new LayoutArgs(0, (int) mapNameLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
-		mapAuthorLabel = new Label(mapAuthorArgs, primaryFont, Color.BLACK, authorNameText);
+		mapAuthorLabel = new Label(mapAuthorArgs, authorNameText);
 		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapAuthorLabel);
 
 		LayoutArgs lastUpdatedArgs = new LayoutArgs(0, (int) mapAuthorLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
-		mapLastUpdatedLabel = new Label(lastUpdatedArgs, primaryFont, Color.BLACK, lastUpdatedText);
+		mapLastUpdatedLabel = new Label(lastUpdatedArgs, lastUpdatedText);
 		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapLastUpdatedLabel);
 
 		LayoutArgs mapSizeArgs = new LayoutArgs(0, (int) mapLastUpdatedLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
-		mapSizeLabel = new Label(mapSizeArgs, primaryFont, Color.BLACK, mapSizeText);
+		mapSizeLabel = new Label(mapSizeArgs, mapSizeText);
 		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapSizeLabel);
 
 		LayoutArgs mapDescriptionArgs = new LayoutArgs(0, (int) mapSizeLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
-		mapDescriptionLabel = new Label(mapDescriptionArgs, primaryFont, Color.BLACK, mapDescriptionText, true, calculateDescriptionRowSize());
+		mapDescriptionLabel = new Label(mapDescriptionArgs, mapDescriptionText, Fonts.UiGeneralTextFont, Color.BLACK, true, calculateDescriptionRowSize());
 		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapDescriptionLabel);
 	}

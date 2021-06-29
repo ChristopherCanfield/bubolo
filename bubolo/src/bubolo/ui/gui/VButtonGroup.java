@@ -59,7 +59,7 @@ public class VButtonGroup extends UiComponent {
 
 		public int buttonWidth;
 		public int buttonHeight;
-		public BitmapFont buttonFont = Fonts.Arial18;
+		public BitmapFont buttonFont = Fonts.UiGeneralTextFont;
 		public Color buttonBorderColor = Color.DARK_GRAY;
 		public Color buttonBackgroundColor = Color.WHITE;
 		public Color buttonTextColor = Color.BLACK;

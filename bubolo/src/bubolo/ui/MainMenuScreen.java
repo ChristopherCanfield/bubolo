@@ -63,7 +63,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 
 	private void addVersionText() {
 		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
-		versionText = new Label(layoutArgs, Fonts.Arial16, Color.WHITE, Config.Version);
+		versionText = new Label(layoutArgs, Config.Version, Fonts.Arial16, Color.WHITE);
 		versionText.setVerticalOffset(0.975f, OffsetType.Percent, VOffsetFrom.Top);
 		versionText.setHorizontalOffset(5, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		versionText.recalculateLayout(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight);

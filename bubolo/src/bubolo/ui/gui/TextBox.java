@@ -22,7 +22,7 @@ public class TextBox extends UiComponent {
 	private GlyphLayout layout;
 
 	public static class Args implements Cloneable {
-		public BitmapFont font = Fonts.Arial18;
+		public BitmapFont font = Fonts.UiGeneralTextFont;
 		public Color textColor = Color.BLACK;
 		/** The text box's width. Does not include the label's width. */
 		public int textWidth;
@@ -71,7 +71,6 @@ public class TextBox extends UiComponent {
 	}
 
 	public void setSelected(boolean selected) {
-		System.out.println("Selected: " + selected);
 		this.isSelected = selected;
 	}
 

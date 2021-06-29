@@ -47,6 +47,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 	private final List<UiComponent> uiComponents = new ArrayList<>();
 	private final List<TextBox> textBoxes = new ArrayList<>();
 
+	private Label screenTitleLabel;
 	private TextBox playerNameTextBox;
 	private TextBox serverIpAddressTextBox;
 	private Label ipAddressLabel;
@@ -69,6 +70,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 		this.app = app;
 		this.isClient = (playerType == PlayerType.Client);
 
+		addScreenTitleRow();
 		addPlayerNameRow();
 		addIpAddressRow();
 //		addAvailableGames();
@@ -95,7 +97,11 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 	}
 
 	private void recalculateLayout(int screenWidth, int screenHeight) {
-		playerNameTextBox.setVerticalOffset(100, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		screenTitleLabel.recalculateLayout(0, 0, screenWidth, screenHeight);
+
+		playerNameTextBox.setVerticalOffset(135, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		playerNameTextBox.setHorizontalOffset(horizontalOffsetFromLeftPct, OffsetType.Percent, HOffsetFrom.Left);
 		playerNameTextBox.recalculateLayout(0, 0, screenWidth, screenHeight);
 
@@ -118,6 +124,13 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 		addComponent(playerNameTextBox);
 	}
 
+	private void addScreenTitleRow() {
+		String title = (isClient) ? "Select Server" : "Server Setup";
+		LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+		screenTitleLabel = new Label(args, title, Fonts.UiTitleFont, Color.BLACK);
+		addComponent(screenTitleLabel);
+	}
+
 	private void addIpAddressRow() {
 		if (isClient) {
 			LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
@@ -131,8 +144,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 				String ipAddresses = getIpAddresses();
 
 				LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-				ipAddressLabel = new Label(args, Fonts.DefaultUiFont, Color.BLACK, "IP Address:       " + ipAddresses);
-				uiComponents.add(ipAddressLabel);
+				ipAddressLabel = new Label(args, "IP Address:            " + ipAddresses);
 				addComponent(ipAddressLabel);
 			} catch (SocketException e) {
 				e.printStackTrace();
