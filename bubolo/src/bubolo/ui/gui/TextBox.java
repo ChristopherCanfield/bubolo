@@ -126,7 +126,7 @@ public class TextBox extends UiComponent {
 		var shapeRenderer = graphics.nonScalingShapeRenderer();
 		shapeRenderer.setColor(args.backgroundColor);
 		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.rect(boxLeft(), screenTop - height(), width(), height());
+		shapeRenderer.rect(boxLeft(), screenTop - height() - 2, args.textWidth + 4, height() + 4);
 		shapeRenderer.end();
 	}
 
@@ -138,7 +138,7 @@ public class TextBox extends UiComponent {
 			shapeRenderer.setColor(args.borderColor);
 		}
 		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.rect(boxLeft(), screenTop - 1 - height(), width(), height() + 2);
+		shapeRenderer.rect(boxLeft(), screenTop - height() - 4 , args.textWidth + 4, height() + 6);
 		shapeRenderer.end();
 	}
 
@@ -146,7 +146,7 @@ public class TextBox extends UiComponent {
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
 		args.font.setColor(args.textColor);
-		this.layout = args.font.draw(batch, text, boxLeft(), screenTop - 1, 0, text.length(), args.textWidth, Align.left, false, null);
+		this.layout = args.font.draw(batch, text, boxLeft() + 2, screenTop - 2, 0, text.length(), args.textWidth, Align.left, false, null);
 		batch.end();
 	}
 
