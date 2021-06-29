@@ -53,8 +53,8 @@ public class Label extends UiComponent {
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
 		font.setColor(color);
-		var screenTop = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
-		layout = font.draw(batch, text, left + padding, screenTop, 0, text.length(), maxWidth, Align.left, canWrap, null);
+		var cameraY = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
+		layout = font.draw(batch, text, left + padding, cameraY, 0, text.length(), maxWidth, Align.left, canWrap, null);
 		batch.end();
 		font.setColor(previousFontColor);
 	}

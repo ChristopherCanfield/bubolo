@@ -22,11 +22,13 @@ import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
+import bubolo.ui.gui.Line;
 import bubolo.ui.gui.TextBox;
 import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
+import bubolo.ui.gui.VButtonGroup;
 
 /**
  * The join game screen, which allows the user to enter a name and ip address.
@@ -46,11 +48,18 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 
 	private final List<UiComponent> uiComponents = new ArrayList<>();
 	private final List<TextBox> textBoxes = new ArrayList<>();
+	private final List<VButtonGroup> buttonGroups = new ArrayList<>();
 
 	private Label screenTitleLabel;
+
 	private TextBox playerNameTextBox;
+
+	private Line sectionDivider;
 	private TextBox serverIpAddressTextBox;
 	private Label ipAddressLabel;
+
+	private Label orSelectServerLabel;
+	private VButtonGroup availableGamesList;
 
 	// These variables enable the screen to be updated with a message before the connection attempt
 	// is made. This is useful because the connection attempt may take a few seconds, and the screen
@@ -73,7 +82,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 		addScreenTitleRow();
 		addPlayerNameRow();
 		addIpAddressRow();
-//		addAvailableGames();
+		addAvailableGames();
 //		addButtonRow();
 //		addStatusLabels();
 
@@ -93,6 +102,8 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 		uiComponents.add(component);
 		if (component instanceof TextBox textBox) {
 			textBoxes.add(textBox);
+		} else if (component instanceof VButtonGroup buttonGroup) {
+			buttonGroups.add(buttonGroup);
 		}
 	}
 
@@ -106,11 +117,23 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 		playerNameTextBox.recalculateLayout(0, 0, screenWidth, screenHeight);
 
 		if (isClient) {
-			serverIpAddressTextBox.setVerticalOffset(playerNameTextBox.bottom() + 15, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			sectionDivider.setVerticalOffset(playerNameTextBox.bottom() + 35, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			sectionDivider.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+			sectionDivider.recalculateLayout(0, 0, screenWidth, screenHeight);
+
+			serverIpAddressTextBox.setVerticalOffset(sectionDivider.bottom() + 35, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			serverIpAddressTextBox.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 			serverIpAddressTextBox.recalculateLayout(0, 0, screenWidth, screenHeight);
+
+			orSelectServerLabel.setVerticalOffset(serverIpAddressTextBox.bottom() + 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			orSelectServerLabel.setHorizontalOffset(serverIpAddressTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+			orSelectServerLabel.recalculateLayout(0, 0, screenWidth, screenHeight);
+
+			availableGamesList.setVerticalOffset(orSelectServerLabel.bottom() + 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			availableGamesList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+			availableGamesList.recalculateLayout(0, 0, screenWidth, screenHeight);
 		} else {
-			ipAddressLabel.setVerticalOffset(playerNameTextBox.bottom() + 15, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			ipAddressLabel.setVerticalOffset(playerNameTextBox.bottom() + 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			ipAddressLabel.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 			ipAddressLabel.recalculateLayout(0, 0, screenWidth, screenHeight);
 		}
@@ -125,7 +148,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 	}
 
 	private void addScreenTitleRow() {
-		String title = (isClient) ? "Select Server" : "Server Setup";
+		String title = (isClient) ? "Join Multiplayer Game" : "Multiplayer Game Server Setup";
 		LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		screenTitleLabel = new Label(args, title, Fonts.UiTitleFont, Color.BLACK);
 		addComponent(screenTitleLabel);
@@ -175,33 +198,39 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 		return ipAddresses.toString();
 	}
 
-//	private void addAvailableGames() {
-//		if (isClient) {
-//			VerticalGroup layoutGroup = new VerticalGroup();
-//			layoutGroup.padTop(30);
-//			layoutGroup.padLeft(leftPadding);
-//			layoutGroup.space(10);
-//
-//			Label availableGamesLabel = new Label("Available Games:", skin);
-//			layoutGroup.addActor(availableGamesLabel);
-//
-//			availableGamesList = new List<>(skin);
-//			availableGamesList.setItems("Hello", "Game 2");
-//			availableGamesList.setSelectedIndex(-1);
-//
-//			ScrollPane scrollpane = new ScrollPane(availableGamesList, skin);
-//			scrollpane.setWidth(200);
-//			layoutGroup.addActor(scrollpane);
-//			root.addActor(layoutGroup);
-//		}
-//	}
-//
+	private void addAvailableGames() {
+		if (isClient) {
+			var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+			var availableGamesListArgs = new VButtonGroup.Args(500, 30);
+			availableGamesListArgs.paddingBetweenButtons = 5;
+			Color transparent = new Color(0, 0, 0, 0);
+			availableGamesListArgs.backgroundColor = Color.WHITE;
+			availableGamesListArgs.buttonBackgroundColor = transparent;
+			availableGamesListArgs.borderColor = transparent;
+			availableGamesListArgs.buttonBorderColor = transparent;
+			availableGamesListArgs.buttonTextColor = Color.DARK_GRAY;
+			availableGamesListArgs.buttonSelectedBorderColor = Color.BLACK;
+			availableGamesListArgs.buttonSelectedTextColor = Color.BLACK;
+			availableGamesListArgs.buttonSelectedBackgroundColor = transparent;
+			availableGamesListArgs.buttonHoverBackgroundColor = transparent;
+			availableGamesListArgs.buttonHoverBorderColor = transparent;
+
+			sectionDivider = new Line(layoutArgs, Color.GRAY, (int) playerNameTextBox.width(), 3);
+			addComponent(sectionDivider);
+
+			orSelectServerLabel = new Label(layoutArgs, "Or, select server:");
+			addComponent(orSelectServerLabel);
+
+			availableGamesList = new VButtonGroup(layoutArgs, availableGamesListArgs);
+			availableGamesList.addButton("Game 1 (Canfield Island)");
+			availableGamesList.addButton("Plenty Fun (Old Bolo Island)");
+			addComponent(availableGamesList);
+		}
+	}
+
 //	private void addButtonRow() {
-//		HorizontalGroup buttonGroup = new HorizontalGroup();
-//		buttonGroup.align(Align.center);
-//		buttonGroup.padLeft(leftPadding);
-//		buttonGroup.padTop(25);
-//		buttonGroup.space(10);
+//		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+//		okButton =
 //
 //		TextButton okButton = new TextButton("OK", skin);
 //		okButton.pad(5);
@@ -240,7 +269,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 //
 //		root.addActor(buttonGroup);
 //	}
-//
+
 //	private void addStatusLabels() {
 //		VerticalGroup statusGroup = new VerticalGroup();
 //		statusGroup.align(Align.center);
@@ -343,6 +372,9 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 			textBox.setSelected(false);
 			textBox.onMouseClicked(screenX, screenY);
 		}
+		for (VButtonGroup buttonGroup : buttonGroups) {
+			buttonGroup.onMouseClicked(screenX, screenY);
+		}
 
 		return false;
 	}
@@ -359,6 +391,10 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
+		for (VButtonGroup buttonGroup : buttonGroups) {
+			buttonGroup.onMouseClicked(screenX, screenY);
+		}
+
 		return false;
 	}
 

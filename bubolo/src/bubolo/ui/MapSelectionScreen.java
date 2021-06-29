@@ -209,8 +209,6 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		shapeRenderer.end();
 
 		for (var uiComponent : uiComponents) {
-			// Rendering fonts seems to disable blending.
-			Gdx.gl.glEnable(GL20.GL_BLEND);
 			uiComponent.draw(graphics);
 		}
 

@@ -74,21 +74,21 @@ public class Button {
 				top <= screenY && bottom() >= screenY;
 	}
 
-	private float cameraTop(Camera camera) {
+	private float cameraY(Camera camera) {
 		return Units.screenYToCameraY(camera, top + height);
 	}
 
 	public void drawBorder(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
 		renderer.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
-		renderer.rect(left, cameraTop(camera), width, height);
+		renderer.rect(left, cameraY(camera), width, height);
 		if (status == ButtonStatus.Selected) {
-			renderer.rect(left + 1, cameraTop(camera) + 1, width - 2, height - 2);
+			renderer.rect(left + 1, cameraY(camera) + 1, width - 2, height - 2);
 		}
 	}
 
 	public void drawBackground(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
 		renderer.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
-		renderer.rect(left, cameraTop(camera), width, height);
+		renderer.rect(left, cameraY(camera), width, height);
 	}
 
 	private static Color getColorForState(Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
@@ -106,7 +106,7 @@ public class Button {
 
 	public void drawText(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
 		font.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
-		font.draw(batch, text, left, cameraTop(camera) + (font.getCapHeight() + height) / 2, 0, text.length(), width, Align.center, false);
+		font.draw(batch, text, left, cameraY(camera) + (font.getCapHeight() + height) / 2, 0, text.length(), width, Align.center, false);
 	}
 
 	protected void onAction() {

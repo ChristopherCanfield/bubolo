@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -161,26 +163,29 @@ public class VButtonGroup extends UiComponent {
 		drawButtonText(graphics.nonScalingBatch(), camera);
 	}
 
+	private float cameraY(Camera camera) {
+		return Units.screenYToCameraY(camera, top + height);
+	}
+
 	private void drawBackground(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Filled);
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
 		renderer.setColor(args.backgroundColor);
-		renderer.rect(left, cameraTop(camera), width(), height());
+		renderer.rect(left, cameraY(camera), width(), height());
 		renderer.end();
 	}
 
 	private void drawBorder(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Line);
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
 		renderer.setColor(args.borderColor);
-		renderer.rect(left, cameraTop(camera), width(), height());
+		renderer.rect(left, cameraY(camera), width(), height());
 		renderer.end();
-	}
-
-	private float cameraTop(Camera camera) {
-		return Units.screenYToCameraY(camera, top + height);
 	}
 
 	private void drawButtonBackgrounds(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Filled);
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).drawBackground(renderer, camera,
 					args.buttonBackgroundColor,
@@ -193,6 +198,7 @@ public class VButtonGroup extends UiComponent {
 
 	private void drawButtonBorders(ShapeRenderer renderer, Camera camera) {
 		renderer.begin(ShapeType.Line);
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).drawBorder(renderer, camera,
 					args.buttonBorderColor,
@@ -205,6 +211,7 @@ public class VButtonGroup extends UiComponent {
 
 	private void drawButtonText(Batch batch, Camera camera) {
 		batch.begin();
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).drawText(batch, camera,
 					args.buttonTextColor,
