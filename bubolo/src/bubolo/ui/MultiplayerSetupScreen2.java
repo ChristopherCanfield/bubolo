@@ -28,7 +28,7 @@ import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.VButtonGroup;
+import bubolo.ui.gui.ButtonGroup;
 
 /**
  * The join game screen, which allows the user to enter a name and ip address.
@@ -48,7 +48,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 
 	private final List<UiComponent> uiComponents = new ArrayList<>();
 	private final List<TextBox> textBoxes = new ArrayList<>();
-	private final List<VButtonGroup> buttonGroups = new ArrayList<>();
+	private final List<ButtonGroup> buttonGroups = new ArrayList<>();
 
 	private Label screenTitleLabel;
 
@@ -59,7 +59,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 	private Label ipAddressLabel;
 
 	private Label orSelectServerLabel;
-	private VButtonGroup availableGamesList;
+	private ButtonGroup availableGamesList;
 
 	// These variables enable the screen to be updated with a message before the connection attempt
 	// is made. This is useful because the connection attempt may take a few seconds, and the screen
@@ -102,7 +102,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 		uiComponents.add(component);
 		if (component instanceof TextBox textBox) {
 			textBoxes.add(textBox);
-		} else if (component instanceof VButtonGroup buttonGroup) {
+		} else if (component instanceof ButtonGroup buttonGroup) {
 			buttonGroups.add(buttonGroup);
 		}
 	}
@@ -201,7 +201,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 	private void addAvailableGames() {
 		if (isClient) {
 			var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-			var availableGamesListArgs = new VButtonGroup.Args(500, 30);
+			var availableGamesListArgs = new ButtonGroup.Args(500, 30);
 			availableGamesListArgs.paddingBetweenButtons = 5;
 			Color transparent = new Color(0, 0, 0, 0);
 			availableGamesListArgs.backgroundColor = Color.WHITE;
@@ -221,7 +221,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 			orSelectServerLabel = new Label(layoutArgs, "Or, select server:");
 			addComponent(orSelectServerLabel);
 
-			availableGamesList = new VButtonGroup(layoutArgs, availableGamesListArgs);
+			availableGamesList = new ButtonGroup(layoutArgs, availableGamesListArgs);
 			availableGamesList.addButton("Game 1 (Canfield Island)");
 			availableGamesList.addButton("Plenty Fun (Old Bolo Island)");
 			addComponent(availableGamesList);
@@ -372,7 +372,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 			textBox.setSelected(false);
 			textBox.onMouseClicked(screenX, screenY);
 		}
-		for (VButtonGroup buttonGroup : buttonGroups) {
+		for (ButtonGroup buttonGroup : buttonGroups) {
 			buttonGroup.onMouseClicked(screenX, screenY);
 		}
 
@@ -391,7 +391,7 @@ public class MultiplayerSetupScreen2 implements Screen, InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		for (VButtonGroup buttonGroup : buttonGroups) {
+		for (ButtonGroup buttonGroup : buttonGroups) {
 			buttonGroup.onMouseClicked(screenX, screenY);
 		}
 

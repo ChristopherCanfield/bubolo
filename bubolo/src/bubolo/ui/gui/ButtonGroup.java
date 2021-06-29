@@ -20,11 +20,12 @@ import bubolo.util.Nullable;
 import bubolo.util.Units;
 
 /**
- * A vertical grouping of buttons. VButtonGroup objects use screen coordinates (y down; 0 is at top of screen).
+ * A group of buttons. The buttons can be laid out vertically (default) or horizontally.
+ * ButtonGroup objects use screen coordinates (y down; 0 is at top of screen).
  *
  * @author Christopher D. Canfield
  */
-public class VButtonGroup extends UiComponent {
+public class ButtonGroup extends UiComponent {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
@@ -32,6 +33,11 @@ public class VButtonGroup extends UiComponent {
 
 	private int selectedButtonIndex = -1;
 	private int hoveredButtonIndex = -1;
+
+	public enum Layout {
+		Vertical,
+		Horizontal
+	}
 
 	/**
 	 * VButtonGroup arguments.
@@ -53,6 +59,8 @@ public class VButtonGroup extends UiComponent {
 //		public boolean centeredHorizontally = false;
 		/** If true, the object is centered vertically, and is then offset by the {@code -width()/2 + top}. */
 //		public boolean centeredVertically = false;
+
+		public Layout buttonListLayout = Layout.Vertical;
 
 		public int paddingBetweenButtons;
 
@@ -87,7 +95,7 @@ public class VButtonGroup extends UiComponent {
 		}
 	}
 
-	public VButtonGroup(LayoutArgs layoutArgs, VButtonGroup.Args args) {
+	public ButtonGroup(LayoutArgs layoutArgs, ButtonGroup.Args args) {
 		super(layoutArgs);
 
 		assert args.borderColor != null;
@@ -137,6 +145,16 @@ public class VButtonGroup extends UiComponent {
 	}
 
 	public void addButton(String text, @Nullable Consumer<Button> action) {
+		if (args.buttonListLayout == Layout.Vertical) {
+			addButtonVertical(text, action);
+		} else {
+			addButtonHorizontal(text, action);
+		}
+
+		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+	}
+
+	private void addButtonVertical(String text, @Nullable Consumer<Button> action) {
 		int buttonTop;
 		if (buttons.isEmpty()) {
 			buttonTop = (int) top + padding;
@@ -146,8 +164,10 @@ public class VButtonGroup extends UiComponent {
 			height += args.buttonHeight + args.paddingBetweenButtons;
 		}
 		buttons.add(new Button(left + padding, buttonTop, args.buttonWidth, args.buttonHeight, args.buttonFont, text, action));
+	}
 
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+	private void addButtonHorizontal(String text, @Nullable Consumer<Button> action) {
+
 	}
 
 	@Override
@@ -223,6 +243,22 @@ public class VButtonGroup extends UiComponent {
 	}
 
 	private void recalculateButtonPositions() {
+		if (args.buttonListLayout == Layout.Vertical) {
+			recalculateButtonPositionsVertical();
+		} else {
+			recalculateButtonPositionsHorizontal();
+		}
+	}
+
+	private void recalculateButtonPositionsVertical() {
+		for (int i = 0; i < buttons.size(); i++) {
+			var button = buttons.get(i);
+			button.top = (int) top + padding + (i * args.buttonHeight) + (i * args.paddingBetweenButtons);
+			button.left = (int) left + padding;
+		}
+	}
+
+	private void recalculateButtonPositionsHorizontal() {
 		for (int i = 0; i < buttons.size(); i++) {
 			var button = buttons.get(i);
 			button.top = (int) top + padding + (i * args.buttonHeight) + (i * args.paddingBetweenButtons);

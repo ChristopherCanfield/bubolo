@@ -8,10 +8,11 @@ import com.badlogic.gdx.graphics.Color;
 import bubolo.Config;
 import bubolo.graphics.Graphics;
 import bubolo.ui.Screen;
-import bubolo.ui.gui.VButtonGroup;
+import bubolo.ui.gui.ButtonGroup;
+import bubolo.ui.gui.LayoutArgs;
 
 public class GuiTestScreen implements Screen, InputProcessor {
-	private final VButtonGroup buttonGroup;
+	private final ButtonGroup buttonGroup;
 	private final Color clearColor = new Color(0.85f, 0.85f, 0.85f, 1);
 
 	// For scaling window coordinates to screen coordinates.
@@ -19,14 +20,11 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	private float scaleY = 1;
 
 	public GuiTestScreen() {
-		var buttonGroupArgs = new VButtonGroup.Args();
-		buttonGroupArgs.left = Config.TargetWindowWidth * 0.5f - 100;
-		buttonGroupArgs.top = 200;
-		buttonGroupArgs.buttonWidth = 300;
-		buttonGroupArgs.buttonHeight = 50;
+		var buttonGroupArgs = new ButtonGroup.Args(300, 50);
 		buttonGroupArgs.paddingBetweenButtons = 10;
+		var layoutArgs = new LayoutArgs((int) (Config.TargetWindowWidth * 0.5f - 100), 200, Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
 
-		buttonGroup = new VButtonGroup(buttonGroupArgs);
+		buttonGroup = new ButtonGroup(layoutArgs, buttonGroupArgs);
 		buttonGroup.addButton("Single Player Game", button -> { System.out.println("I'm an action attached to Single Player Game!"); });
 		buttonGroup.addButton("Join Multiplayer Game");
 		buttonGroup.addButton("Host Multiplayer Game");

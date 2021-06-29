@@ -20,12 +20,12 @@ import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.VButtonGroup;
+import bubolo.ui.gui.ButtonGroup;
 
 public class MainMenuScreen implements Screen, InputProcessor {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
 
-	private VButtonGroup buttonGroup;
+	private ButtonGroup buttonGroup;
 	private Label versionText;
 	private final BuboloApplication app;
 
@@ -44,14 +44,14 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	private void addButtonGroup() {
-		var buttonGroupArgs = new VButtonGroup.Args(300, 50);
+		var buttonGroupArgs = new ButtonGroup.Args(300, 50);
 		buttonGroupArgs.paddingBetweenButtons = 10;
 		buttonGroupArgs.backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
 		buttonGroupArgs.buttonBackgroundColor = new Color(1, 1, 1, 0.75f);
 
 		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 55);
 
-		buttonGroup = new VButtonGroup(layoutArgs, buttonGroupArgs);
+		buttonGroup = new ButtonGroup(layoutArgs, buttonGroupArgs);
 		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		buttonGroup.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Center);
 		buttonGroup.addButton("Single Player Game", this::onSinglePlayerButtonActivated);

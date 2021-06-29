@@ -29,7 +29,7 @@ import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.VButtonGroup;
+import bubolo.ui.gui.ButtonGroup;
 import bubolo.util.GameRuntimeException;
 
 public class MapSelectionScreen implements Screen, InputProcessor {
@@ -46,7 +46,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	private final List<UiComponent> uiComponents = new ArrayList<>();
 
-	private VButtonGroup mapPathsGroup;
+	private ButtonGroup mapPathsGroup;
 	private Image mapPreviewImage;
 	private Label screenTitleLabel;
 	private Label mapNameLabel;
@@ -127,7 +127,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	}
 
 	private void addMapPaths(List<Path> mapPaths) {
-		var mapPathsVGroupArgs = new VButtonGroup.Args(500, 30);
+		var mapPathsVGroupArgs = new ButtonGroup.Args(500, 30);
 		mapPathsVGroupArgs.paddingBetweenButtons = 5;
 		Color transparent = new Color(0, 0, 0, 0);
 		mapPathsVGroupArgs.backgroundColor = Color.WHITE;
@@ -143,7 +143,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
 
-		mapPathsGroup = new VButtonGroup(layoutArgs, mapPathsVGroupArgs);
+		mapPathsGroup = new ButtonGroup(layoutArgs, mapPathsVGroupArgs);
 		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPathsGroup.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
