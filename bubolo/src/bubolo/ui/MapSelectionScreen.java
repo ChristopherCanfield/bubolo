@@ -22,14 +22,16 @@ import bubolo.graphics.Graphics;
 import bubolo.map.InvalidMapException;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
+import bubolo.ui.gui.ButtonGroup;
 import bubolo.ui.gui.Image;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
+import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.ButtonGroup;
+import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
 import bubolo.util.GameRuntimeException;
 
 public class MapSelectionScreen implements Screen, InputProcessor {
@@ -108,7 +110,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	}
 
 	private void addTitle() {
-		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+		var layoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		screenTitleLabel = new Label(layoutArgs, "Map Selection", Fonts.UiTitleFont, Color.BLACK);
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
@@ -141,8 +143,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPathsVGroupArgs.buttonHoverBackgroundColor = transparent;
 		mapPathsVGroupArgs.buttonHoverBorderColor = transparent;
 
-		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
-
+		var layoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
 		mapPathsGroup = new ButtonGroup(layoutArgs, mapPathsVGroupArgs);
 		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPathsGroup.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
@@ -156,35 +157,40 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		int windowWidth = Gdx.graphics.getWidth();
 		int windowHeight = Gdx.graphics.getHeight();
 
-		LayoutArgs mapPreviewArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
+		LayoutArgs mapPreviewArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), mapInfoLabelPadding);
 		mapPreviewImage = new Image(mapPreviewArgs, null, (int) (targetPreviewImageWidthPct * windowWidth), (int) (targetPreviewImageHeightPct * windowHeight));
 		mapPreviewImage.setHorizontalOffset(0.55f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPreviewImage.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		uiComponents.add(mapPreviewImage);
 
-		LayoutArgs mapNameArgs = new LayoutArgs(0, (int) mapPreviewImage.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
+		LayoutArgs mapNameArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapNameLabel = new Label(mapNameArgs, mapNameText);
-		mapNameLabel.setHorizontalOffset(mapPreviewImage.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapNameLabel.setVerticalOffset(mapPreviewImage, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		mapNameLabel.setHorizontalOffset(mapPreviewImage, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapNameLabel);
 
-		LayoutArgs mapAuthorArgs = new LayoutArgs(0, (int) mapNameLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
+		LayoutArgs mapAuthorArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapAuthorLabel = new Label(mapAuthorArgs, authorNameText);
-		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapAuthorLabel.setVerticalOffset(mapNameLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		mapAuthorLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapAuthorLabel);
 
-		LayoutArgs lastUpdatedArgs = new LayoutArgs(0, (int) mapAuthorLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
+		LayoutArgs lastUpdatedArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapLastUpdatedLabel = new Label(lastUpdatedArgs, lastUpdatedText);
-		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapLastUpdatedLabel.setVerticalOffset(mapAuthorLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapLastUpdatedLabel);
 
-		LayoutArgs mapSizeArgs = new LayoutArgs(0, (int) mapLastUpdatedLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
+		LayoutArgs mapSizeArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapSizeLabel = new Label(mapSizeArgs, mapSizeText);
-		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapSizeLabel.setVerticalOffset(mapLastUpdatedLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		mapSizeLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapSizeLabel);
 
-		LayoutArgs mapDescriptionArgs = new LayoutArgs(0, (int) mapSizeLabel.bottom(), windowWidth, windowHeight, mapInfoLabelPadding);
+		LayoutArgs mapDescriptionArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapDescriptionLabel = new Label(mapDescriptionArgs, mapDescriptionText, Fonts.UiGeneralTextFont, Color.BLACK, true, calculateDescriptionRowSize());
-		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
+		mapDescriptionLabel.setVerticalOffset(mapSizeLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		mapDescriptionLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		uiComponents.add(mapDescriptionLabel);
 	}
 
@@ -217,25 +223,25 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 	@Override
 	public void onViewportResized(int newWidth, int newHeight) {
-		screenTitleLabel.recalculateLayout(0, 0, newWidth, newHeight);
-		mapPathsGroup.recalculateLayout(0, 0, newWidth, newHeight);
+		screenTitleLabel.recalculateLayout(newWidth, newHeight);
+		mapPathsGroup.recalculateLayout(newWidth, newHeight);
 
 		mapPreviewImage.setSize((int) (targetPreviewImageWidthPct * newWidth), (int) (targetPreviewImageHeightPct * newHeight));
-		mapPreviewImage.recalculateLayout(0, 0, newWidth, newHeight);
+		mapPreviewImage.recalculateLayout(newWidth, newHeight);
 
 		mapNameLabel.setHorizontalOffset(mapPreviewImage.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapNameLabel.recalculateLayout(0, (int) mapPreviewImage.bottom(), newWidth, newHeight);
+		mapNameLabel.recalculateLayout(newWidth, newHeight);
 
 		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapAuthorLabel.recalculateLayout(0, (int) mapNameLabel.bottom(), newWidth, newHeight);
+		mapAuthorLabel.recalculateLayout(newWidth, newHeight);
 
 		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapLastUpdatedLabel.recalculateLayout(0, (int) mapAuthorLabel.bottom(), newWidth, newHeight);
+		mapLastUpdatedLabel.recalculateLayout(newWidth, newHeight);
 
 		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-		mapSizeLabel.recalculateLayout(0, (int) mapLastUpdatedLabel.bottom(), newWidth, newHeight);
+		mapSizeLabel.recalculateLayout(newWidth, newHeight);
 
-		mapDescriptionLabel.recalculateLayout(0, (int) mapSizeLabel.bottom(), newWidth, newHeight);
+		mapDescriptionLabel.recalculateLayout(newWidth, newHeight);
 		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		mapDescriptionLabel.setMaxRowSize(calculateDescriptionRowSize());
 	}

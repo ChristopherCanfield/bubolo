@@ -112,45 +112,45 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	private void recalculateLayout(int screenWidth, int screenHeight) {
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		screenTitleLabel.recalculateLayout(0, 0, screenWidth, screenHeight);
+		screenTitleLabel.recalculateLayout(screenWidth, screenHeight);
 
 		playerNameTextBox.setVerticalOffset(135, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		playerNameTextBox.setHorizontalOffset(0, OffsetType.Percent, HOffsetFrom.Center);
-		playerNameTextBox.recalculateLayout(0, 0, screenWidth, screenHeight);
+		playerNameTextBox.recalculateLayout(screenWidth, screenHeight);
 
 		if (isClient) {
 			sectionDivider.setVerticalOffset(playerNameTextBox.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			sectionDivider.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-			sectionDivider.recalculateLayout(0, 0, screenWidth, screenHeight);
+			sectionDivider.recalculateLayout(screenWidth, screenHeight);
 
 			serverIpAddressTextBox.setVerticalOffset(sectionDivider.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			serverIpAddressTextBox.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-			serverIpAddressTextBox.recalculateLayout(0, 0, screenWidth, screenHeight);
+			serverIpAddressTextBox.recalculateLayout(screenWidth, screenHeight);
 
 			orSelectServerLabel.setVerticalOffset(serverIpAddressTextBox.bottom() + 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			orSelectServerLabel.setHorizontalOffset(serverIpAddressTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-			orSelectServerLabel.recalculateLayout(0, 0, screenWidth, screenHeight);
+			orSelectServerLabel.recalculateLayout(screenWidth, screenHeight);
 
 			availableGamesList.setVerticalOffset(orSelectServerLabel.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			availableGamesList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-			availableGamesList.recalculateLayout(0, 0, screenWidth, screenHeight);
+			availableGamesList.recalculateLayout(screenWidth, screenHeight);
 
 			okCancelButtons.setVerticalOffset(availableGamesList.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-			okCancelButtons.recalculateLayout(0, 0, screenWidth, screenHeight);
+			okCancelButtons.recalculateLayout(screenWidth, screenHeight);
 		} else {
 			ipAddressLabel.setVerticalOffset(playerNameTextBox.bottom() + 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			ipAddressLabel.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
-			ipAddressLabel.recalculateLayout(0, 0, screenWidth, screenHeight);
+			ipAddressLabel.recalculateLayout(screenWidth, screenHeight);
 
 			okCancelButtons.setVerticalOffset(ipAddressLabel.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-			okCancelButtons.recalculateLayout(0, 0, screenWidth, screenHeight);
+			okCancelButtons.recalculateLayout(screenWidth, screenHeight);
 		}
 	}
 
 	private void addPlayerNameRow() {
-		LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+		LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		var textBoxArgs = defaultTextBoxArgs();
 		textBoxArgs.labelText = "Name:";
 		playerNameTextBox = new TextBox(args, textBoxArgs);
@@ -159,14 +159,14 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 
 	private void addScreenTitleRow() {
 		String title = (isClient) ? "Join Multiplayer Game" : "Multiplayer Game Server Setup";
-		LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+		LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		screenTitleLabel = new Label(args, title, Fonts.UiTitleFont, Color.BLACK);
 		addComponent(screenTitleLabel);
 	}
 
 	private void addIpAddressRow() {
 		if (isClient) {
-			LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+			LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 			var textBoxArgs = defaultTextBoxArgs();
 			textBoxArgs.labelText = "Host IP Address:";
 			serverIpAddressTextBox = new TextBox(args, textBoxArgs);
@@ -176,7 +176,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 			try {
 				String ipAddresses = getIpAddresses();
 
-				LayoutArgs args = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+				LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 				ipAddressLabel = new Label(args, "IP Address:            " + ipAddresses);
 				addComponent(ipAddressLabel);
 			} catch (SocketException e) {
@@ -210,7 +210,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 
 	private void addAvailableGames() {
 		if (isClient) {
-			var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+			var layoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 			var availableGamesListArgs = new ButtonGroup.Args(500, 30);
 			availableGamesListArgs.paddingBetweenButtons = 5;
 			Color transparent = new Color(0, 0, 0, 0);
@@ -239,8 +239,8 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	}
 
 	private void addButtonRow() {
-		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
-		var buttonArgs = new ButtonGroup.Args(125, 35);
+		var layoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
+		var buttonArgs = new ButtonGroup.Args(140, 35);
 		buttonArgs.buttonListLayout = ButtonGroup.Layout.Horizontal;
 		buttonArgs.paddingBetweenButtons = 10;
 		buttonArgs.borderColor = ButtonGroup.Args.Transparent;

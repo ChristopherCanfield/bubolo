@@ -154,7 +154,7 @@ public class ButtonGroup extends UiComponent {
 			addButtonHorizontal(text, action);
 		}
 
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	private void addButtonVertical(String text, @Nullable Consumer<Button> action) {

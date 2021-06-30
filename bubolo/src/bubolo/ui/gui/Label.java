@@ -35,12 +35,12 @@ public class Label extends UiComponent {
 		this.maxWidth = maxWidth;
 
 		this.layout = new GlyphLayout(font, text, 0, text.length(), color, maxWidth, Align.left, canWrap, null);
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	public void setText(String text) {
 		this.text = text;
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	public void setMaxRowSize(int maxRowSize) {

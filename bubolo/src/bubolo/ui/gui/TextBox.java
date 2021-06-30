@@ -62,12 +62,12 @@ public class TextBox extends UiComponent {
 		this.args = args.clone();
 
 		this.layout = new GlyphLayout(args.font, text, 0, text.length(), args.textColor, args.textWidth, Align.left, false, null);
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	public void setText(String text) {
 		this.text = text;
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	public void setSelected(boolean selected) {

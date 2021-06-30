@@ -20,17 +20,29 @@ public abstract class UiComponent {
 		Top, Center;
 	}
 
+	public enum HOffsetFromObjectSide {
+		Left, Right;
+	}
+
+	public enum VOffsetFromObjectSide {
+		Top, Bottom;
+	}
+
 	private float horizontalOffset;
 	private OffsetType horizontalOffsetType = OffsetType.ScreenUnits;
 	private HOffsetFrom horizontalOffsetFrom = HOffsetFrom.Left;
+	private UiComponent horizontalOffsetFromObject;
+	private HOffsetFromObjectSide horizontalOffsetFromObjectSide;
 
 	private float verticalOffset;
 	private OffsetType verticalOffsetType = OffsetType.ScreenUnits;
 	private VOffsetFrom verticalOffsetFrom = VOffsetFrom.Top;
+	private UiComponent verticalOffsetFromObject;
+	private VOffsetFromObjectSide verticalOffsetFromObjectSide;
 
-	protected int startLeft;
+	protected float startLeft;
 	/** The starting top position, in screen coordinates (y-down). */
-	protected int startTop;
+	protected float startTop;
 	protected int parentWidth;
 	protected int parentHeight;
 
@@ -43,8 +55,6 @@ public abstract class UiComponent {
 	public abstract float height();
 
 	protected UiComponent(LayoutArgs layoutArgs) {
-		this.startLeft = layoutArgs.startLeft();
-		this.startTop = layoutArgs.startTop();
 		this.parentWidth = layoutArgs.parentWidth();
 		this.parentHeight = layoutArgs.parentHeight();
 		this.padding = layoutArgs.padding();
@@ -72,10 +82,26 @@ public abstract class UiComponent {
 	 * @param offsetFrom whether to offset the horizontal position from the left or horizontal center.
 	 */
 	public void setHorizontalOffset(float offset, OffsetType offsetType, HOffsetFrom offsetFrom) {
+		setHorizontalOffset(null, null, offset, offsetType, offsetFrom);
+	}
+
+	/**
+	 * @param offsetFromObject the object that determines the start of the offset. Use the other overload if no object is used for this.
+	 * @param offsetFromObjectSide the side of the offsetFromObject to use when determining the start of the offset.
+	 * @param offset the horizontal offset, either in screen units or as a percentage.
+	 * @param offsetType the units of the horizontal offset, either screen units or percentage.
+	 * @param offsetFrom whether to offset the horizontal position from the left or horizontal center.
+	 */
+	public void setHorizontalOffset(UiComponent offsetFromObject, HOffsetFromObjectSide offsetFromObjectSide, float offset, OffsetType offsetType, HOffsetFrom offsetFrom) {
+		this.horizontalOffsetFromObject = offsetFromObject;
+		if (offsetFromObject != null) {
+			assert offsetFromObjectSide != null;
+			this.horizontalOffsetFromObjectSide = offsetFromObjectSide;
+		}
 		this.horizontalOffset = offset;
 		this.horizontalOffsetType = offsetType;
 		this.horizontalOffsetFrom = offsetFrom;
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	/**
@@ -84,33 +110,56 @@ public abstract class UiComponent {
 	 * @param offsetFrom whether to offset the vertical position from the top or vertical center.
 	 */
 	public void setVerticalOffset(float offset, OffsetType offsetType, VOffsetFrom offsetFrom) {
+		setVerticalOffset(null, null, offset, offsetType, offsetFrom);
+	}
+
+	/**
+	 * @param offsetFromObject the object that determines the start of the offset. Use the other overload if no object is used for this.
+	 * @param offsetFromObjectSide the side of the offsetFromObject to use when determining the start of the offset.
+	 * @param offset the vertical offset, either in screen units or as a percentage.
+	 * @param offsetType the units of the vertical offset, either screen units or percentage.
+	 * @param offsetFrom whether to offset the vertical position from the top or vertical center.
+	 */
+	public void setVerticalOffset(UiComponent offsetFromObject, VOffsetFromObjectSide offsetFromObjectSide, float offset, OffsetType offsetType, VOffsetFrom offsetFrom) {
+		this.verticalOffsetFromObject = offsetFromObject;
+		if (offsetFromObject != null) {
+			assert offsetFromObjectSide != null;
+			this.verticalOffsetFromObjectSide = offsetFromObjectSide;
+		}
 		this.verticalOffset = offset;
 		this.verticalOffsetType = offsetType;
 		this.verticalOffsetFrom = offsetFrom;
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	/**
 	 * Calculates the left position of this user interface component.
 	 *
-	 * @param startLeft the starting left position.
 	 * @param parentWidth the parent's width.
 	 * @return the left position of this user interface component.
 	 */
-	protected float horizontalPosition(float startLeft, float parentWidth) {
+	protected float horizontalPosition(float parentWidth) {
+		if (horizontalOffsetFromObject != null) {
+			if (horizontalOffsetFromObjectSide == HOffsetFromObjectSide.Left) {
+				this.startLeft = horizontalOffsetFromObject.left();
+			} else {
+				this.startLeft = horizontalOffsetFromObject.right();
+			}
+		}
+
 		if (horizontalOffsetType == OffsetType.Percent) {
-			return horizontalPositionPct(startLeft, parentWidth);
+			return horizontalPositionPct(parentWidth);
 		} else {
-			return horizontalPositionScreenUnits(startLeft, parentWidth, horizontalOffset);
+			return horizontalPositionScreenUnits(parentWidth, horizontalOffset);
 		}
 	}
 
-	private float horizontalPositionPct(float startLeft, float parentWidth) {
+	private float horizontalPositionPct(float parentWidth) {
 		float hOffsetScreenUnits = parentWidth * horizontalOffset;
-		return horizontalPositionScreenUnits(startLeft, parentWidth, hOffsetScreenUnits);
+		return horizontalPositionScreenUnits(parentWidth, hOffsetScreenUnits);
 	}
 
-	private float horizontalPositionScreenUnits(float startLeft, float parentWidth, float hOffsetScreenUnits) {
+	private float horizontalPositionScreenUnits(float parentWidth, float hOffsetScreenUnits) {
 		if (horizontalOffsetFrom == HOffsetFrom.Center) {
 			float viewportHCenter = parentWidth / 2;
 			return viewportHCenter - (width() / 2) + hOffsetScreenUnits;
@@ -122,24 +171,31 @@ public abstract class UiComponent {
 	/**
 	 * Calculates the top position of this user interface component.
 	 *
-	 * @param startTop the starting top position.
 	 * @param parentHeight the parent's height.
 	 * @return the top position of this user interface component.
 	 */
-	protected float verticalPosition(float startTop, float parentHeight) {
+	protected float verticalPosition(float parentHeight) {
+		if (verticalOffsetFromObject != null) {
+			if (verticalOffsetFromObjectSide == VOffsetFromObjectSide.Bottom) {
+				this.startTop = verticalOffsetFromObject.bottom();
+			} else {
+				this.startTop = verticalOffsetFromObject.top();
+			}
+		}
+
 		if (verticalOffsetType == OffsetType.Percent) {
-			return verticalPositionPct(startTop, parentHeight);
+			return verticalPositionPct(parentHeight);
 		} else {
-			return verticalPositionScreenUnits(startTop, parentHeight, verticalOffset);
+			return verticalPositionScreenUnits(parentHeight, verticalOffset);
 		}
 	}
 
-	private float verticalPositionPct(float startTop, float parentHeight) {
+	private float verticalPositionPct(float parentHeight) {
 		float vOffsetScreenUnits = parentHeight * verticalOffset;
-		return verticalPositionScreenUnits(startTop, parentHeight, vOffsetScreenUnits);
+		return verticalPositionScreenUnits(parentHeight, vOffsetScreenUnits);
 	}
 
-	private float verticalPositionScreenUnits(float startTop, float parentHeight, float vOffsetScreenUnits) {
+	private float verticalPositionScreenUnits(float parentHeight, float vOffsetScreenUnits) {
 		if (verticalOffsetFrom == VOffsetFrom.Center) {
 			float viewportVCenter = parentHeight / 2;
 			return viewportVCenter - (height() / 2) + vOffsetScreenUnits;
@@ -148,14 +204,12 @@ public abstract class UiComponent {
 		}
 	}
 
-	public void recalculateLayout(int startLeft, int startTop, int parentWidth, int parentHeight) {
+	public void recalculateLayout(int parentWidth, int parentHeight) {
 		this.parentWidth = parentWidth;
 		this.parentHeight = parentHeight;
-		this.startLeft = startLeft;
-		this.startTop = startTop;
 
-		this.left = horizontalPosition(startLeft, parentWidth);
-		this.top = verticalPosition(startTop, parentHeight);
+		this.left = horizontalPosition(parentWidth);
+		this.top = verticalPosition(parentHeight);
 
 		onRecalculateLayout();
 	}

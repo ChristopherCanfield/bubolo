@@ -17,12 +17,12 @@ public class Image extends UiComponent {
 		this.width = width;
 		this.height = height;
 
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	public void setTexture(Texture texture) {
 		this.texture = texture;
-		recalculateLayout(startLeft, startTop, parentWidth, parentHeight);
+		recalculateLayout(parentWidth, parentHeight);
 	}
 
 	public void setSize(int width, int height) {
