@@ -229,20 +229,13 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPreviewImage.setSize((int) (targetPreviewImageWidthPct * newWidth), (int) (targetPreviewImageHeightPct * newHeight));
 		mapPreviewImage.recalculateLayout(newWidth, newHeight);
 
-		mapNameLabel.setHorizontalOffset(mapPreviewImage.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		mapNameLabel.recalculateLayout(newWidth, newHeight);
-
-		mapAuthorLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		mapAuthorLabel.recalculateLayout(newWidth, newHeight);
 
-		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		mapLastUpdatedLabel.recalculateLayout(newWidth, newHeight);
-
-		mapSizeLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		mapSizeLabel.recalculateLayout(newWidth, newHeight);
 
 		mapDescriptionLabel.recalculateLayout(newWidth, newHeight);
-		mapDescriptionLabel.setHorizontalOffset(mapNameLabel.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 		mapDescriptionLabel.setMaxRowSize(calculateDescriptionRowSize());
 	}
 

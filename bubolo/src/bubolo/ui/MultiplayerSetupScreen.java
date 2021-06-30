@@ -27,8 +27,10 @@ import bubolo.ui.gui.Line;
 import bubolo.ui.gui.TextBox;
 import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
+import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
+import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
 
 /**
  * The join game screen, which allows the user to enter a name and ip address.
@@ -110,43 +112,28 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	}
 
 	private void recalculateLayout(int screenWidth, int screenHeight) {
-		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		screenTitleLabel.recalculateLayout(screenWidth, screenHeight);
-
-		playerNameTextBox.setVerticalOffset(135, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		playerNameTextBox.setHorizontalOffset(0, OffsetType.Percent, HOffsetFrom.Center);
 		playerNameTextBox.recalculateLayout(screenWidth, screenHeight);
 
 		if (isClient) {
-			sectionDivider.setVerticalOffset(playerNameTextBox.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			sectionDivider.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 			sectionDivider.recalculateLayout(screenWidth, screenHeight);
-
-			serverIpAddressTextBox.setVerticalOffset(sectionDivider.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			serverIpAddressTextBox.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 			serverIpAddressTextBox.recalculateLayout(screenWidth, screenHeight);
-
-			orSelectServerLabel.setVerticalOffset(serverIpAddressTextBox.bottom() + 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			orSelectServerLabel.setHorizontalOffset(serverIpAddressTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 			orSelectServerLabel.recalculateLayout(screenWidth, screenHeight);
-
-			availableGamesList.setVerticalOffset(orSelectServerLabel.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			availableGamesList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 			availableGamesList.recalculateLayout(screenWidth, screenHeight);
-
-			okCancelButtons.setVerticalOffset(availableGamesList.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 			okCancelButtons.recalculateLayout(screenWidth, screenHeight);
 		} else {
-			ipAddressLabel.setVerticalOffset(playerNameTextBox.bottom() + 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			ipAddressLabel.setHorizontalOffset(playerNameTextBox.left(), OffsetType.ScreenUnits, HOffsetFrom.Left);
 			ipAddressLabel.recalculateLayout(screenWidth, screenHeight);
-
-			okCancelButtons.setVerticalOffset(ipAddressLabel.bottom() + 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 			okCancelButtons.recalculateLayout(screenWidth, screenHeight);
 		}
+	}
+
+	private void addScreenTitleRow() {
+		String title = (isClient) ? "Join Multiplayer Game" : "Multiplayer Game Server Setup";
+		LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+		screenTitleLabel = new Label(args, title, Fonts.UiTitleFont, Color.BLACK);
+		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		addComponent(screenTitleLabel);
 	}
 
 	private void addPlayerNameRow() {
@@ -154,30 +141,20 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 		var textBoxArgs = defaultTextBoxArgs();
 		textBoxArgs.labelText = "Name:";
 		playerNameTextBox = new TextBox(args, textBoxArgs);
+		playerNameTextBox.setVerticalOffset(135, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		playerNameTextBox.setHorizontalOffset(0, OffsetType.Percent, HOffsetFrom.Center);
 		addComponent(playerNameTextBox);
 	}
 
-	private void addScreenTitleRow() {
-		String title = (isClient) ? "Join Multiplayer Game" : "Multiplayer Game Server Setup";
-		LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-		screenTitleLabel = new Label(args, title, Fonts.UiTitleFont, Color.BLACK);
-		addComponent(screenTitleLabel);
-	}
-
 	private void addIpAddressRow() {
-		if (isClient) {
-			LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-			var textBoxArgs = defaultTextBoxArgs();
-			textBoxArgs.labelText = "Host IP Address:";
-			serverIpAddressTextBox = new TextBox(args, textBoxArgs);
-			addComponent(serverIpAddressTextBox);
-
-		} else {
+		if (!isClient) {
 			try {
 				String ipAddresses = getIpAddresses();
 
 				LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 				ipAddressLabel = new Label(args, "IP Address:            " + ipAddresses);
+				ipAddressLabel.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
+				ipAddressLabel.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 				addComponent(ipAddressLabel);
 			} catch (SocketException e) {
 				e.printStackTrace();
@@ -226,14 +203,28 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 			availableGamesListArgs.buttonHoverBorderColor = transparent;
 
 			sectionDivider = new Line(layoutArgs, Color.GRAY, (int) playerNameTextBox.width(), 3);
+			sectionDivider.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			sectionDivider.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 			addComponent(sectionDivider);
 
+			LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+			var textBoxArgs = defaultTextBoxArgs();
+			textBoxArgs.labelText = "Host IP Address:";
+			serverIpAddressTextBox = new TextBox(args, textBoxArgs);
+			serverIpAddressTextBox.setVerticalOffset(sectionDivider, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			serverIpAddressTextBox.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
+			addComponent(serverIpAddressTextBox);
+
 			orSelectServerLabel = new Label(layoutArgs, "Or, select server:");
+			orSelectServerLabel.setVerticalOffset(serverIpAddressTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			orSelectServerLabel.setHorizontalOffset(serverIpAddressTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 			addComponent(orSelectServerLabel);
 
 			availableGamesList = new ButtonGroup(layoutArgs, availableGamesListArgs);
 			availableGamesList.addButton("Game 1 (Canfield Island)");
 			availableGamesList.addButton("Plenty Fun (Old Bolo Island)");
+			availableGamesList.setVerticalOffset(orSelectServerLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			availableGamesList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 			addComponent(availableGamesList);
 		}
 	}
@@ -258,6 +249,14 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 			System.out.println("Back clicked");
 			goBackOneScreen();
 		});
+
+		if (isClient) {
+			okCancelButtons.setVerticalOffset(availableGamesList, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		} else {
+			okCancelButtons.setVerticalOffset(ipAddressLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		}
 
 		addComponent(okCancelButtons);
 	}
