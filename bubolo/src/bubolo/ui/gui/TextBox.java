@@ -125,7 +125,7 @@ public class TextBox extends UiComponent {
 		var shapeRenderer = graphics.nonScalingShapeRenderer();
 		shapeRenderer.setColor(args.backgroundColor);
 		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.rect(boxLeft(), screenTop - height() - 2, args.textWidth + 4, height() + 4);
+		shapeRenderer.rect(boxLeft(), screenTop - height() - 3, args.textWidth + 4, height() + 5);
 		shapeRenderer.end();
 	}
 

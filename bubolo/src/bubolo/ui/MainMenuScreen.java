@@ -49,7 +49,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		buttonGroupArgs.backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
 		buttonGroupArgs.buttonBackgroundColor = new Color(1, 1, 1, 0.75f);
 
-		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 55);
+		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 55);
 
 		buttonGroup = new ButtonGroup(layoutArgs, buttonGroupArgs);
 		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
@@ -62,7 +62,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	private void addVersionText() {
-		var layoutArgs = new LayoutArgs(0, 0, Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
+		var layoutArgs = new LayoutArgs(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		versionText = new Label(layoutArgs, Config.Version, Fonts.Arial16, Color.WHITE);
 		versionText.setVerticalOffset(0.975f, OffsetType.Percent, VOffsetFrom.Top);
 		versionText.setHorizontalOffset(5, OffsetType.ScreenUnits, HOffsetFrom.Left);
@@ -133,7 +133,6 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		buttonGroup.onMouseClicked(screenX, screenY);
-		buttonGroup.activateSelectedButton();
 		return false;
 	}
 

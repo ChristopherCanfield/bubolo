@@ -22,8 +22,8 @@ import bubolo.ui.LoadingScreen;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.MainMenuScreen;
 import bubolo.ui.MapSelectionScreen;
-import bubolo.ui.MultiplayerSetupScreen2;
-import bubolo.ui.MultiplayerSetupScreen2.PlayerType;
+import bubolo.ui.MultiplayerSetupScreen;
+import bubolo.ui.MultiplayerSetupScreen.PlayerType;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
 import bubolo.util.Nullable;
@@ -187,12 +187,12 @@ public class BuboloApplication extends AbstractGameApplication {
 		case MultiplayerSetupServer:
 			assert previousState == State.MultiplayerMapSelection;
 			assert mapPath != null;
-			screen = new MultiplayerSetupScreen2(this, PlayerType.Server);
+			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
 			mapPath = (Path) arg;
 			break;
 		case MultiplayerSetupClient:
 			assert previousState == State.MainMenu;
-			screen = new MultiplayerSetupScreen2(this, PlayerType.Client);
+			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
 		case MultiplayerLobby:
 			if (previousState == State.MultiplayerSetupServer) {

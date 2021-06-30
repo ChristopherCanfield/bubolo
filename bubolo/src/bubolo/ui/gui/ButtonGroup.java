@@ -66,7 +66,7 @@ public class ButtonGroup extends UiComponent {
 		public int paddingBetweenButtons;
 
 		public Color borderColor = Color.BLACK;
-		public Color backgroundColor = Color.GREEN;
+		public Color backgroundColor = Transparent;
 
 		public int buttonWidth;
 		public int buttonHeight;
@@ -350,6 +350,7 @@ public class ButtonGroup extends UiComponent {
 
 	public int onMouseClicked(int screenX, int screenY) {
 		selectedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+		activateSelectedButton();
 		return selectedButtonIndex;
 	}
 
