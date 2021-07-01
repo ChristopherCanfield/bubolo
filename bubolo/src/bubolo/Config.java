@@ -40,5 +40,5 @@ public class Config {
 	public static final int MaxWorldX = MaxWorldColumns * Units.TileToWorldScale - 1;
 	public static final int MaxWorldY = MaxWorldRows * Units.TileToWorldScale - 1;
 
-	public static final String Version = "0.210620";
+	public static final String Version = "0.21.07.01";
 }

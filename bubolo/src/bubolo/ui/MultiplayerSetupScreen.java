@@ -48,6 +48,8 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	private final GameApplication app;
 	private final boolean isClient;
 
+	private InetAddress ipAddress;
+
 	private final List<UiComponent> uiComponents = new ArrayList<>();
 	private final List<TextBox> textBoxes = new ArrayList<>();
 	private final List<ButtonGroup> buttonGroups = new ArrayList<>();
@@ -149,10 +151,11 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	private void addIpAddressRow() {
 		if (!isClient) {
 			try {
-				String ipAddresses = getIpAddresses();
+				var ipAddressInfo = getIpAddresses();
+				ipAddress = ipAddressInfo.firstIpAddress();
 
 				LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-				ipAddressLabel = new Label(args, "IP Address:            " + ipAddresses);
+				ipAddressLabel = new Label(args, "IP Address:            " + ipAddressInfo.ipAddresses());
 				ipAddressLabel.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
 				ipAddressLabel.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 				addComponent(ipAddressLabel);
@@ -162,7 +165,11 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 		}
 	}
 
-	private static String getIpAddresses() throws SocketException {
+	record IpAddressInfo(InetAddress firstIpAddress, String ipAddresses) {
+	}
+
+	private static IpAddressInfo getIpAddresses() throws SocketException {
+		InetAddress firstIpAddress = null;
 		StringBuilder ipAddresses = new StringBuilder();
 		var networkInterfaces = NetworkInterface.getNetworkInterfaces();
 		while (networkInterfaces.hasMoreElements()) {
@@ -176,13 +183,15 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 					if (address instanceof Inet4Address) {
 						if (!ipAddresses.isEmpty()) {
 							ipAddresses.append(", ");
+						} else {
+							firstIpAddress = address;
 						}
 						ipAddresses.append(address.getHostAddress());
 					}
 				}
 			}
 		}
-		return ipAddresses.toString();
+		return new IpAddressInfo(firstIpAddress, ipAddresses.toString());
 	}
 
 	private void addAvailableGames() {
