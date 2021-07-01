@@ -20,6 +20,8 @@ import bubolo.GameApplication;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.net.Network;
+import bubolo.net.NetworkSystem;
 import bubolo.ui.gui.ButtonGroup;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
@@ -290,9 +292,9 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 //	}
 
 	private void startServer() {
-//		final Network network = NetworkSystem.getInstance();
-//		network.startServer(playerNameField.getText());
-//		app.setState(State.MultiplayerLobby);
+		final Network network = NetworkSystem.getInstance();
+		network.startServer(playerNameTextBox.text());
+		app.setState(State.MultiplayerLobby);
 	}
 
 	private void connectToServer() {

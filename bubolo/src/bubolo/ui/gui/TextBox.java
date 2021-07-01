@@ -70,6 +70,10 @@ public class TextBox extends UiComponent {
 		recalculateLayout(parentWidth, parentHeight);
 	}
 
+	public String text() {
+		return text;
+	}
+
 	public void setSelected(boolean selected) {
 		this.isSelected = selected;
 	}
