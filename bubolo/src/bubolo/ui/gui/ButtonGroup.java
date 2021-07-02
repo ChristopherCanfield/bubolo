@@ -32,8 +32,8 @@ public class ButtonGroup extends UiComponent {
 	private float height;
 	private float width;
 
-	private int selectedButtonIndex = -1;
-	private int hoveredButtonIndex = -1;
+	private int selectedButtonIndex = NoIndex;
+	private int hoveredButtonIndex = NoIndex;
 
 	public enum Layout {
 		Vertical,
@@ -287,7 +287,7 @@ public class ButtonGroup extends UiComponent {
 	public void selectNext() {
 		assert !buttons.isEmpty();
 
-		if (selectedButtonIndex == -1) {
+		if (selectedButtonIndex == NoIndex) {
 			selectedButtonIndex = 0;
 		} else {
 			selectedButtonIndex = (selectedButtonIndex == (buttons.size() - 1)) ? 0 : selectedButtonIndex + 1;
@@ -297,7 +297,7 @@ public class ButtonGroup extends UiComponent {
 	public void selectPrevious() {
 		assert !buttons.isEmpty();
 
-		if (selectedButtonIndex == -1) {
+		if (selectedButtonIndex == NoIndex) {
 			selectedButtonIndex = buttons.size() - 1;
 		} else {
 			selectedButtonIndex = (selectedButtonIndex == 0) ? buttons.size() - 1 : selectedButtonIndex - 1;
@@ -311,13 +311,13 @@ public class ButtonGroup extends UiComponent {
 	 */
 	public void selectButton(int buttonIndex) {
 		assert !buttons.isEmpty();
-		assert buttonIndex >= -1 && buttonIndex < buttons.size();
+		assert buttonIndex != NoIndex && buttonIndex < buttons.size();
 
 		selectedButtonIndex = buttonIndex;
 	}
 
 	/**
-	 * @return the index of the selected button, or -1 if no button is selected.
+	 * @return the index of the selected button, or UiComponent.NoIndex (-1) if no button is selected.
 	 */
 	public int selectedButtonIndex() {
 		return selectedButtonIndex;
@@ -327,7 +327,7 @@ public class ButtonGroup extends UiComponent {
 	 * @return the selected button's text, or null if no button is selected.
 	 */
 	public String selectedButtonText() {
-		if (selectedButtonIndex != -1) {
+		if (selectedButtonIndex != NoIndex) {
 			return buttons.get(selectedButtonIndex).text;
 		} else {
 			return null;
@@ -337,23 +337,25 @@ public class ButtonGroup extends UiComponent {
 	/**
 	 * Applies (activates) the button's action, if one is attached to it, and returns the selected button's index.
 	 *
-	 * @return the selected button's index, or -1 if no selected button
+	 * @return the selected button's index, or UiComponent.NoIndex (-1) if no selected button
 	 */
 	public int activateSelectedButton() {
-		if (selectedButtonIndex != -1) {
+		if (selectedButtonIndex != NoIndex) {
 			buttons.get(selectedButtonIndex).onAction();
 			return selectedButtonIndex;
 		} else {
-			return -1;
+			return NoIndex;
 		}
 	}
 
+	@Override
 	public int onMouseClicked(int screenX, int screenY) {
 		selectedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
 		activateSelectedButton();
 		return selectedButtonIndex;
 	}
 
+	@Override
 	public int onMouseMoved(int screenX, int screenY) {
 		hoveredButtonIndex = findButtonThatContainsPoint(screenX, screenY);
 		return hoveredButtonIndex;
@@ -365,6 +367,6 @@ public class ButtonGroup extends UiComponent {
 				return i;
 			}
 		}
-		return -1;
+		return NoIndex;
 	}
 }

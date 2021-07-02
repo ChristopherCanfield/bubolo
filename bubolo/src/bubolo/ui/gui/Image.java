@@ -54,4 +54,9 @@ public class Image extends UiComponent {
 	@Override
 	protected void onRecalculateLayout() {
 	}
+
+	@Override
+	public void dispose() {
+		texture.dispose();
+	}
 }

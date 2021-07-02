@@ -50,6 +50,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	private final GameApplication app;
 	private final boolean isClient;
 
+	// For server only.
 	private InetAddress ipAddress;
 
 	private final List<UiComponent> uiComponents = new ArrayList<>();
@@ -294,7 +295,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	private void startServer() {
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameTextBox.text());
-		app.setState(State.MultiplayerLobby);
+		app.setState(State.MultiplayerLobby, ipAddress);
 	}
 
 	private void connectToServer() {

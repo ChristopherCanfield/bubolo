@@ -78,6 +78,7 @@ public class TextBox extends UiComponent {
 		this.isSelected = selected;
 	}
 
+	@Override
 	public void onKeyTyped(char character) {
 		if (isSelected) {
 			System.out.println(character);
@@ -91,6 +92,7 @@ public class TextBox extends UiComponent {
 		}
 	}
 
+	@Override
 	public void onKeyDown(int keycode) {
 		if (isSelected && keycode == Keys.V) {
 			if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) {
@@ -102,11 +104,13 @@ public class TextBox extends UiComponent {
 		}
 	}
 
-	public boolean onMouseClicked(int screenX, int screenY) {
+	@Override
+	public int onMouseClicked(int screenX, int screenY) {
 		if (contains(screenX, screenY)) {
 			setSelected(true);
+			return 0;
 		}
-		return true;
+		return NoIndex;
 	}
 
 	private boolean contains(float screenX, float screenY) {

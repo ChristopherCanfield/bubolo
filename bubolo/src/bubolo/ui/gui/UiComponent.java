@@ -8,6 +8,8 @@ import bubolo.graphics.Graphics;
  * @author Christopher D. Canfield
  */
 public abstract class UiComponent {
+	public static final int NoIndex = -1;
+
 	public enum OffsetType {
 		Percent, ScreenUnits;
 	}
@@ -221,4 +223,21 @@ public abstract class UiComponent {
 	protected abstract void onRecalculateLayout();
 
 	public abstract void draw(Graphics graphics);
+
+	public void onKeyTyped(char character) {
+	}
+
+	public void onKeyDown(int keycode) {
+	}
+
+	public int onMouseClicked(int screenX, int screenY) {
+		return 0;
+	}
+
+	public int onMouseMoved(int screenX, int screenY) {
+		return 0;
+	}
+
+	public void dispose() {
+	}
 }
