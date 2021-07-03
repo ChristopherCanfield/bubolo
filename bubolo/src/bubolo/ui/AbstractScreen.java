@@ -95,11 +95,24 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 		postDraw(graphics);
 	}
 
-	protected abstract void preDraw(Graphics graphics);
-	protected abstract void postDraw(Graphics graphics);
+	/**
+	 * Called before the root group is drawn, but after the screen has been cleared.
+	 *
+	 * @param graphics the game's graphics system.
+	 */
+	protected void preDraw(Graphics graphics) {
+	}
+
+	/**
+	 * Called after the root group is drawn.
+	 *
+	 * @param graphics the game's graphics system.
+	 */
+	protected void postDraw(Graphics graphics) {
+	}
 
 	@Override
-	public void viewportResized(int newWidth, int newHeight) {
+	public final void viewportResized(int newWidth, int newHeight) {
 		root.recalculateLayout(newWidth, newHeight);
 	}
 

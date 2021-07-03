@@ -2,31 +2,27 @@ package bubolo.ui;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
-import bubolo.graphics.Graphics;
 import bubolo.map.InvalidMapException;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
 import bubolo.ui.gui.ButtonGroup;
+import bubolo.ui.gui.GuiGroup.ClickedObjectInfo;
+import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Image;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
-import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
@@ -34,19 +30,15 @@ import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
 import bubolo.util.GameRuntimeException;
 
-public class MapSelectionScreen implements Screen, InputProcessor {
+public class MapSelectionScreen extends AbstractScreen {
 	private final Color clearColor = Color.WHITE;
 
 	private final BuboloApplication app;
 	private final State nextState;
 
-	private final Color backgroundDistortionColor = new Color(1, 1, 1, 0f);
-
 	private final MapImporter mapImporter = new MapImporter();
 
 	private Map<String, MapInfo> mapInfo = new HashMap<>();
-
-	private final List<UiComponent> uiComponents = new ArrayList<>();
 
 	private ButtonGroup mapPathsGroup;
 	private Image mapPreviewImage;
@@ -105,8 +97,6 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 			mapPathsGroup.selectButton(0);
 			onSelectedMapChanged();
 		}
-
-		Gdx.input.setInputProcessor(this);
 	}
 
 	private void addTitle() {
@@ -114,7 +104,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		screenTitleLabel = new Label(layoutArgs, "Map Selection", Fonts.UiTitleFont, Color.BLACK);
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		uiComponents.add(screenTitleLabel);
+		root.add(screenTitleLabel);
 	}
 
 	private void importMapInfo(List<Path> mapPaths) {
@@ -150,7 +140,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 
 		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString().replace(mapFileExtension, "")));
 
-		uiComponents.add(mapPathsGroup);
+		root.add(mapPathsGroup);
 	}
 
 	private void addMapInfoUiComponents() {
@@ -161,37 +151,37 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		mapPreviewImage = new Image(mapPreviewArgs, null, (int) (targetPreviewImageWidthPct * windowWidth), (int) (targetPreviewImageHeightPct * windowHeight));
 		mapPreviewImage.setHorizontalOffset(0.55f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPreviewImage.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		uiComponents.add(mapPreviewImage);
+		root.add(mapPreviewImage);
 
 		LayoutArgs mapNameArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapNameLabel = new Label(mapNameArgs, mapNameText);
 		mapNameLabel.setVerticalOffset(mapPreviewImage, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		mapNameLabel.setHorizontalOffset(mapPreviewImage, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		uiComponents.add(mapNameLabel);
+		root.add(mapNameLabel);
 
 		LayoutArgs mapAuthorArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapAuthorLabel = new Label(mapAuthorArgs, authorNameText);
 		mapAuthorLabel.setVerticalOffset(mapNameLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		mapAuthorLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		uiComponents.add(mapAuthorLabel);
+		root.add(mapAuthorLabel);
 
 		LayoutArgs lastUpdatedArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapLastUpdatedLabel = new Label(lastUpdatedArgs, lastUpdatedText);
 		mapLastUpdatedLabel.setVerticalOffset(mapAuthorLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		mapLastUpdatedLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		uiComponents.add(mapLastUpdatedLabel);
+		root.add(mapLastUpdatedLabel);
 
 		LayoutArgs mapSizeArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapSizeLabel = new Label(mapSizeArgs, mapSizeText);
 		mapSizeLabel.setVerticalOffset(mapLastUpdatedLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		mapSizeLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		uiComponents.add(mapSizeLabel);
+		root.add(mapSizeLabel);
 
 		LayoutArgs mapDescriptionArgs = new LayoutArgs(windowWidth, windowHeight, mapInfoLabelPadding);
 		mapDescriptionLabel = new Label(mapDescriptionArgs, mapDescriptionText, Fonts.UiGeneralTextFont, Color.BLACK, true, calculateDescriptionRowSize());
 		mapDescriptionLabel.setVerticalOffset(mapSizeLabel, VOffsetFromObjectSide.Bottom, 0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		mapDescriptionLabel.setHorizontalOffset(mapNameLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		uiComponents.add(mapDescriptionLabel);
+		root.add(mapDescriptionLabel);
 	}
 
 	private static int calculateDescriptionRowSize() {
@@ -205,27 +195,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-
-		var shapeRenderer = graphics.shapeRenderer();
-		shapeRenderer.setColor(backgroundDistortionColor);
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.rect(0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
-		shapeRenderer.end();
-
-		for (var uiComponent : uiComponents) {
-			uiComponent.draw(graphics);
-		}
-
-		Gdx.gl.glDisable(GL20.GL_BLEND);
-	}
-
-	@Override
-	public void viewportResized(int newWidth, int newHeight) {
-		screenTitleLabel.recalculateLayout(newWidth, newHeight);
-		mapPathsGroup.recalculateLayout(newWidth, newHeight);
-
+	protected void onViewportResized(int newWidth, int newHeight) {
 		mapPreviewImage.setSize((int) (targetPreviewImageWidthPct * newWidth), (int) (targetPreviewImageHeightPct * newHeight));
 		mapPreviewImage.recalculateLayout(newWidth, newHeight);
 
@@ -288,58 +258,24 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		int buttonIndex = mapPathsGroup.onMouseClicked(screenX, screenY);
-		if (buttonIndex != -1) {
-			mapPathsGroup.selectButton(buttonIndex);
+	protected void onMouseClickedObject(ClickedObjectInfo clickedObjectInfo) {
+		if (clickedObjectInfo.component() == mapPathsGroup) {
+			mapPathsGroup.selectButton(clickedObjectInfo.clickedItemIndex());
 			onSelectedMapChanged();
 			onMapActivated();
 		}
-
-		return false;
 	}
 
 	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		int buttonIndex = mapPathsGroup.onMouseMoved(screenX, screenY);
-		if (buttonIndex != -1) {
-			mapPathsGroup.selectButton(buttonIndex);
+	protected void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {
+		if (hoveredObjectInfo.component() == mapPathsGroup) {
+			mapPathsGroup.selectButton(hoveredObjectInfo.hoveredItemIndex());
 			onSelectedMapChanged();
 		}
-		return false;
 	}
 
 	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(float amountX, float amountY) {
-		return false;
-	}
-
-	@Override
-	public void dispose() {
-		if (Gdx.input.getInputProcessor() == this) {
-			Gdx.input.setInputProcessor(null);
-		}
-
+	public void onDispose() {
 		for (var info : mapInfo.values()) {
 			info.dispose();
 		}

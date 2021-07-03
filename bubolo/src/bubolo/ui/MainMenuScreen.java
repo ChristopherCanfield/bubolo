@@ -39,8 +39,6 @@ public class MainMenuScreen extends AbstractScreen {
 
 		addButtonGroup();
 		addVersionText();
-
-		Gdx.input.setInputProcessor(this);
 	}
 
 	private void addButtonGroup() {
