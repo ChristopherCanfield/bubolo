@@ -8,12 +8,9 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 
 import bubolo.GameApplication;
@@ -23,11 +20,11 @@ import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.ui.gui.ButtonGroup;
+import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.Line;
 import bubolo.ui.gui.TextBox;
-import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
@@ -39,7 +36,7 @@ import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
  *
  * @author Christopher D. Canfield
  */
-public class MultiplayerSetupScreen implements Screen, InputProcessor {
+public class MultiplayerSetupScreen extends AbstractScreen {
 	public enum PlayerType {
 		Server,
 		Client
@@ -52,10 +49,6 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 
 	// For server only.
 	private InetAddress ipAddress;
-
-	private final List<UiComponent> uiComponents = new ArrayList<>();
-	private final List<TextBox> textBoxes = new ArrayList<>();
-	private final List<ButtonGroup> buttonGroups = new ArrayList<>();
 
 	private Label screenTitleLabel;
 
@@ -95,8 +88,6 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 		addButtonRow();
 //		addStatusLabels();
 
-		recalculateLayout(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 		Gdx.input.setInputProcessor(this);
 	}
 
@@ -107,38 +98,13 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 		return textBoxArgs;
 	}
 
-	private void addComponent(UiComponent component) {
-		uiComponents.add(component);
-		if (component instanceof TextBox textBox) {
-			textBoxes.add(textBox);
-		} else if (component instanceof ButtonGroup buttonGroup) {
-			buttonGroups.add(buttonGroup);
-		}
-	}
-
-	private void recalculateLayout(int screenWidth, int screenHeight) {
-		screenTitleLabel.recalculateLayout(screenWidth, screenHeight);
-		playerNameTextBox.recalculateLayout(screenWidth, screenHeight);
-
-		if (isClient) {
-			sectionDivider.recalculateLayout(screenWidth, screenHeight);
-			serverIpAddressTextBox.recalculateLayout(screenWidth, screenHeight);
-			orSelectServerLabel.recalculateLayout(screenWidth, screenHeight);
-			availableGamesList.recalculateLayout(screenWidth, screenHeight);
-			okCancelButtons.recalculateLayout(screenWidth, screenHeight);
-		} else {
-			ipAddressLabel.recalculateLayout(screenWidth, screenHeight);
-			okCancelButtons.recalculateLayout(screenWidth, screenHeight);
-		}
-	}
-
 	private void addScreenTitleRow() {
 		String title = (isClient) ? "Join Multiplayer Game" : "Multiplayer Game Server Setup";
 		LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		screenTitleLabel = new Label(args, title, Fonts.UiTitleFont, Color.BLACK);
 		screenTitleLabel.setVerticalOffset(20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		screenTitleLabel.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		addComponent(screenTitleLabel);
+		root.add(screenTitleLabel);
 	}
 
 	private void addPlayerNameRow() {
@@ -148,7 +114,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 		playerNameTextBox = new TextBox(args, textBoxArgs);
 		playerNameTextBox.setVerticalOffset(135, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		playerNameTextBox.setHorizontalOffset(0, OffsetType.Percent, HOffsetFrom.Center);
-		addComponent(playerNameTextBox);
+		root.add(playerNameTextBox);
 	}
 
 	private void addIpAddressRow() {
@@ -161,7 +127,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 				ipAddressLabel = new Label(args, "IP Address:            " + ipAddressInfo.ipAddresses());
 				ipAddressLabel.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
 				ipAddressLabel.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-				addComponent(ipAddressLabel);
+				root.add(ipAddressLabel);
 			} catch (SocketException e) {
 				e.printStackTrace();
 			}
@@ -217,7 +183,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 			sectionDivider = new Line(layoutArgs, Color.GRAY, (int) playerNameTextBox.width(), 3);
 			sectionDivider.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			sectionDivider.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-			addComponent(sectionDivider);
+			root.add(sectionDivider);
 
 			LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 			var textBoxArgs = defaultTextBoxArgs();
@@ -225,19 +191,19 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 			serverIpAddressTextBox = new TextBox(args, textBoxArgs);
 			serverIpAddressTextBox.setVerticalOffset(sectionDivider, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			serverIpAddressTextBox.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-			addComponent(serverIpAddressTextBox);
+			root.add(serverIpAddressTextBox);
 
 			orSelectServerLabel = new Label(layoutArgs, "Or, select server:");
 			orSelectServerLabel.setVerticalOffset(serverIpAddressTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			orSelectServerLabel.setHorizontalOffset(serverIpAddressTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-			addComponent(orSelectServerLabel);
+			root.add(orSelectServerLabel);
 
 			availableGamesList = new ButtonGroup(layoutArgs, availableGamesListArgs);
 			availableGamesList.addButton("Game 1 (Canfield Island)");
 			availableGamesList.addButton("Plenty Fun (Old Bolo Island)");
 			availableGamesList.setVerticalOffset(orSelectServerLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			availableGamesList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-			addComponent(availableGamesList);
+			root.add(availableGamesList);
 		}
 	}
 
@@ -270,7 +236,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		}
 
-		addComponent(okCancelButtons);
+		root.add(okCancelButtons);
 	}
 
 //	private void addStatusLabels() {
@@ -314,11 +280,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
-		for (var component : uiComponents) {
-			component.draw(graphics);
-		}
-
+	public void postDraw(Graphics graphics) {
 		if (connectToServer) {
 			if (ticksUntilConnect == 0) {
 				connectToServer = false;
@@ -343,13 +305,6 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean keyDown(int keycode) {
-		textBoxes.forEach(box -> box.onKeyDown(keycode));
-
-		return false;
-	}
-
-	@Override
 	public boolean keyUp(int keycode) {
 		if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
 //			if (textFieldsPopulated()) {
@@ -367,45 +322,10 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean keyTyped(char character) {
-		textBoxes.forEach(box -> box.onKeyTyped(character));
-
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		for (TextBox textBox : textBoxes) {
-			textBox.setSelected(false);
-			textBox.onMouseClicked(screenX, screenY);
+	protected void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {
+		if (hoveredObjectInfo.component() == okCancelButtons) {
+			okCancelButtons.selectButton(hoveredObjectInfo.hoveredItemIndex());
 		}
-		for (ButtonGroup buttonGroup : buttonGroups) {
-			buttonGroup.onMouseClicked(screenX, screenY);
-		}
-
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		for (ButtonGroup buttonGroup : buttonGroups) {
-			int buttonIndex = buttonGroup.onMouseMoved(screenX, screenY);
-			if (buttonIndex != -1 && buttonGroup == okCancelButtons) {
-				buttonGroup.selectButton(buttonIndex);
-			}
-		}
-
-		return false;
 	}
 
 	@Override
@@ -416,17 +336,5 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	@Override
 	public Color clearColor() {
 		return clearColor;
-	}
-
-	@Override
-	public void viewportResized(int newWidth, int newHeight) {
-		recalculateLayout(newWidth, newHeight);
-	}
-
-	@Override
-	public void dispose() {
-		if (Gdx.input.getInputProcessor() == this) {
-			Gdx.input.setInputProcessor(null);
-		}
 	}
 }

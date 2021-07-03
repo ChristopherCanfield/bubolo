@@ -58,6 +58,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	protected void onMouseClickedObject(ClickedObjectInfo clickedObjectInfo) {}
 
 	@Override
+	public final boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
 	public final boolean mouseMoved(int screenX, int screenY) {
 		var info = root.onMouseMoved(screenX, screenY);
 		if (info != null) {
@@ -70,11 +75,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
 

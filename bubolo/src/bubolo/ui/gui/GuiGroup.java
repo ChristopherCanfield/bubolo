@@ -60,6 +60,8 @@ public class GuiGroup {
 			if (itemIndex != UiComponent.NoIndex) {
 				clickedItemIndex = itemIndex;
 				clickedComponent = component;
+			} else if (component instanceof TextBox textBox) {
+				textBox.setSelected(false);
 			}
 		}
 
