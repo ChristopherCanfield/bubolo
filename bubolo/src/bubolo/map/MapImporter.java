@@ -228,6 +228,14 @@ public class MapImporter {
 	}
 
 	public static record MapInfo(Path fullPath, String mapName, String author, String description, int tileColumns, int tileRows, String lastUpdated, @Nullable Texture previewTexture) {
+		/**
+		 * Disposes the texture, if one exists.
+		 */
+		public void dispose() {
+			if (previewTexture() != null) {
+				previewTexture().dispose();
+			}
+		}
 	}
 
 	private static final Path noMapPreviewImageTexture = Config.TextureFilePath.resolve("no-map-preview.png");

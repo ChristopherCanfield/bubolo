@@ -339,5 +339,9 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 		if (Gdx.input.getInputProcessor() == this) {
 			Gdx.input.setInputProcessor(null);
 		}
+
+		for (var info : mapInfo.values()) {
+			info.dispose();
+		}
 	}
 }

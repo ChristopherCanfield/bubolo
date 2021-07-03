@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Align;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.util.Nullable;
+import bubolo.util.Timer;
 import bubolo.util.Units;
 
 public class TextBox extends UiComponent {
@@ -18,6 +19,11 @@ public class TextBox extends UiComponent {
 
 	private String text = "";
 	private boolean isSelected;
+
+	private final Timer<Void> timer = new Timer<>(2);
+	private final float cursorBlinkTimeSeconds = 0.5f;
+	private final int cursorBlinkTimerId;
+	private boolean cursorVisible = true;
 
 	private GlyphLayout layout;
 
@@ -61,8 +67,15 @@ public class TextBox extends UiComponent {
 		args.validate();
 		this.args = args.clone();
 
+		cursorBlinkTimerId = timer.scheduleSeconds(cursorBlinkTimeSeconds, this::onTimerExpired);
+
 		this.layout = new GlyphLayout(args.font, text, 0, text.length(), args.textColor, args.textWidth, Align.left, false, null);
 		recalculateLayout(parentWidth, parentHeight);
+	}
+
+	private void onTimerExpired(Void unused) {
+		cursorVisible = !cursorVisible;
+		timer.rescheduleSeconds(cursorBlinkTimerId, cursorBlinkTimeSeconds);
 	}
 
 	public void setText(String text) {
@@ -120,6 +133,7 @@ public class TextBox extends UiComponent {
 
 	@Override
 	public void draw(Graphics graphics) {
+		timer.update(null);
 		var screenTop = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
 
 		drawBackground(graphics, screenTop);
@@ -150,10 +164,12 @@ public class TextBox extends UiComponent {
 	}
 
 	private void drawText(Graphics graphics, float screenTop) {
+		var textWithCursor = (cursorVisible && isSelected) ? text + "|" : text;
+
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
 		args.font.setColor(args.textColor);
-		this.layout = args.font.draw(batch, text, boxLeft() + 2, screenTop - 2, 0, text.length(), args.textWidth, Align.left, false, null);
+		this.layout = args.font.draw(batch, textWithCursor, boxLeft() + 2, screenTop - 2, 0, textWithCursor.length(), args.textWidth, Align.left, false, null);
 		batch.end();
 	}
 

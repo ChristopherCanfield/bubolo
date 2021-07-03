@@ -311,7 +311,7 @@ public class ButtonGroup extends UiComponent {
 	 */
 	public void selectButton(int buttonIndex) {
 		assert !buttons.isEmpty();
-		assert buttonIndex != NoIndex && buttonIndex < buttons.size();
+		assert buttonIndex >= NoIndex && buttonIndex < buttons.size();
 
 		selectedButtonIndex = buttonIndex;
 	}

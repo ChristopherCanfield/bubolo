@@ -116,7 +116,7 @@ public class Timer<T> {
 		return previousSize;
 	}
 
-	public void update(T world) {
+	public void update(T timerTaskArg) {
 		// Decrement all scheduled alarms.
 		for (int i = 0; i < size; i++) {
 			alarms[i]--;
@@ -125,8 +125,11 @@ public class Timer<T> {
 		// If an alarm has reached zero, execute the action, then destroy it.
 		for (int i = 0; i < size; i++) {
 			if (alarms[i] == 0 && actions[i] != null) {
-				actions[i].accept(world);
-				actions[i] = null;
+				actions[i].accept(timerTaskArg);
+				// Allow an alarm to reschedule itself.
+				if (alarms[i] == 0) {
+					actions[i] = null;
+				}
 			} else if (alarms[i] < 0) {
 				alarms[i] = -1;
 			}
