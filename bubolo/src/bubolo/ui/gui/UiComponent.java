@@ -231,11 +231,11 @@ public abstract class UiComponent {
 	}
 
 	public int onMouseClicked(int screenX, int screenY) {
-		return 0;
+		return NoIndex;
 	}
 
 	public int onMouseMoved(int screenX, int screenY) {
-		return 0;
+		return NoIndex;
 	}
 
 	public void dispose() {

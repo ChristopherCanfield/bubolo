@@ -254,7 +254,7 @@ public class BuboloApplication extends AbstractGameApplication {
 	public void resize(int width, int height) {
 		graphics.resize(width, height);
 		if (screen != null) {
-			screen.onViewportResized(width, height);
+			screen.viewportResized(width, height);
 		}
 	}
 

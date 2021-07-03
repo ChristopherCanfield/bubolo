@@ -50,12 +50,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	public final boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		var info = root.onMouseClicked(screenX, screenY);
 		if (info != null) {
-			onMouseClickedOnObject(info);
+			onMouseClickedObject(info);
 		}
 		return false;
 	}
 
-	protected void onMouseClickedOnObject(ClickedObjectInfo clickedObjectInfo) {}
+	protected void onMouseClickedObject(ClickedObjectInfo clickedObjectInfo) {}
 
 	@Override
 	public final boolean mouseMoved(int screenX, int screenY) {
@@ -90,14 +90,20 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 
 	@Override
 	public final void draw(Graphics graphics) {
+		preDraw(graphics);
 		root.draw(graphics);
-		onDraw(graphics);
+		postDraw(graphics);
 	}
 
-	protected abstract void onDraw(Graphics graphics);
+	protected abstract void preDraw(Graphics graphics);
+	protected abstract void postDraw(Graphics graphics);
 
 	@Override
-	public void onViewportResized(int newWidth, int newHeight) {
+	public void viewportResized(int newWidth, int newHeight) {
+		root.recalculateLayout(newWidth, newHeight);
+	}
+
+	protected void onViewportResized(int newWidth, int newHeight) {
 	}
 
 	@Override
@@ -110,5 +116,6 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 		onDispose();
 	}
 
-	protected abstract void onDispose();
+	protected void onDispose() {
+	}
 }

@@ -75,7 +75,7 @@ public abstract class Stage2dScreen<T extends WidgetGroup> implements Screen {
 	}
 
 	@Override
-	public void onViewportResized(int width, int height) {
+	public void viewportResized(int width, int height) {
 		stage.getViewport().update(width, height, true);
 	}
 

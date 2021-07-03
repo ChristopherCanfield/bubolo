@@ -2,7 +2,6 @@ package bubolo.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,13 +15,14 @@ import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.Button;
 import bubolo.ui.gui.ButtonGroup;
+import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
 
-public class MainMenuScreen implements Screen, InputProcessor {
+public class MainMenuScreen extends AbstractScreen {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
 
 	private ButtonGroup buttonGroup;
@@ -58,6 +58,8 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		buttonGroup.addButton("Host Multiplayer Game", this::onHostMultiplayerButtonActivated);
 		buttonGroup.addButton("Settings", this::onSettingsButtonActivated);
 		buttonGroup.addButton("Exit", button -> { Gdx.app.exit(); });
+
+		root.add(buttonGroup);
 	}
 
 	private void addVersionText() {
@@ -66,6 +68,8 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		versionText.setVerticalOffset(0.975f, OffsetType.Percent, VOffsetFrom.Top);
 		versionText.setHorizontalOffset(5, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		versionText.recalculateLayout(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+		root.add(versionText);
 	}
 
 	private void onSinglePlayerButtonActivated(Button button) {
@@ -90,7 +94,7 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
+	protected void preDraw(Graphics graphics) {
 		graphics.batch().begin();
 		graphics.batch().draw(backgroundTexture, 0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
 		graphics.batch().end();
@@ -101,17 +105,10 @@ public class MainMenuScreen implements Screen, InputProcessor {
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.rect(0, 0, graphics.camera().viewportWidth, graphics.camera().viewportHeight);
 		shapeRenderer.end();
-
-		buttonGroup.draw(graphics);
-		versionText.draw(graphics);
-
-		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	@Override
-	public void onViewportResized(int newWidth, int newHeight) {
-		buttonGroup.recalculateLayout(newWidth, newHeight);
-		versionText.recalculateLayout(newWidth, newHeight);
+	protected void postDraw(Graphics graphics) {
 	}
 
 	@Override
@@ -130,47 +127,13 @@ public class MainMenuScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		buttonGroup.onMouseClicked(screenX, screenY);
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		int buttonIndex = buttonGroup.onMouseMoved(screenX, screenY);
-		buttonGroup.selectButton(buttonIndex);
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(float amountX, float amountY) {
-		return false;
-	}
-
-	@Override
-	public void dispose() {
-		if (Gdx.input.getInputProcessor() == this) {
-			Gdx.input.setInputProcessor(null);
+	public void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {
+		if (hoveredObjectInfo.component() instanceof ButtonGroup group) {
+			buttonGroup.selectButton(hoveredObjectInfo.hoveredItemIndex());
 		}
+	}
+
+	@Override
+	protected void onDispose() {
 	}
 }

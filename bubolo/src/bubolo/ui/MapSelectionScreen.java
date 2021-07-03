@@ -222,7 +222,7 @@ public class MapSelectionScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void onViewportResized(int newWidth, int newHeight) {
+	public void viewportResized(int newWidth, int newHeight) {
 		screenTitleLabel.recalculateLayout(newWidth, newHeight);
 		mapPathsGroup.recalculateLayout(newWidth, newHeight);
 

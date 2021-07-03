@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Align;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 
-public class LoadingScreen implements Screen {
+public class LoadingScreen extends AbstractScreen {
 	private final Color clearColor =  new Color(0.15f, 0.15f, 0.15f, 1);
 	private final BitmapFont font = Fonts.Arial20;
 	private final String text;
@@ -23,7 +23,11 @@ public class LoadingScreen implements Screen {
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
+	protected void preDraw(Graphics graphics) {
+	}
+
+	@Override
+	protected void postDraw(Graphics graphics) {
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
 		font.setColor(Color.WHITE);
@@ -39,9 +43,5 @@ public class LoadingScreen implements Screen {
 
 	@Override
 	public void onViewportResized(int newWidth, int newHeight) {
-	}
-
-	@Override
-	public void dispose() {
 	}
 }

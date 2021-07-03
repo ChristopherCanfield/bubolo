@@ -419,7 +419,7 @@ public class MultiplayerSetupScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void onViewportResized(int newWidth, int newHeight) {
+	public void viewportResized(int newWidth, int newHeight) {
 		recalculateLayout(newWidth, newHeight);
 	}
 

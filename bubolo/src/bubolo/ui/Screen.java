@@ -23,7 +23,7 @@ public interface Screen {
 	 * @param newWidth the new window width.
 	 * @param newHeight the new window height.
 	 */
-	void onViewportResized(int newWidth, int newHeight);
+	void viewportResized(int newWidth, int newHeight);
 
 	/**
 	 * Releases all heavy-weight resources.

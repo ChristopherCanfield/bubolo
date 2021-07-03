@@ -75,7 +75,7 @@ public class GuiGroup {
 
 	public HoveredObjectInfo onMouseMoved(int screenX, int screenY) {
 		UiComponent hoveredComponent = null;
-		int hoveredItemIndex = -1;
+		int hoveredItemIndex = UiComponent.NoIndex;
 		for (UiComponent component : components) {
 			var itemIndex = component.onMouseMoved(screenX, screenY);
 			if (itemIndex != UiComponent.NoIndex) {
