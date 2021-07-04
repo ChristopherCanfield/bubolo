@@ -22,6 +22,8 @@ import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
 import bubolo.net.NetworkSystem;
+import bubolo.net.ServerAddressMessage;
+import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;
 import bubolo.net.command.SendMessage;
 import bubolo.net.command.SendMessage.MessageType;
@@ -55,10 +57,13 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 
 	private boolean messageHistoryReceivedFromServer;
 
+	private ServerAddressMulticaster serverAddressMulticaster;
+
 	/**
 	 * Constructs the network game lobby.
 	 *
 	 * @param app reference to the Game Application.
+	 * @param graphics reference to the graphics system.
 	 * @param world reference to the game world.
 	 */
 	public LobbyScreen(BuboloApplication app, Graphics graphics, World world) {
@@ -79,6 +84,13 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 		net.addObserver(this);
 		// If this is the server, the message history was already received.
 		messageHistoryReceivedFromServer = net.isServer();
+
+		if (net.isServer()) {
+			var ipAddresses = Network.getIpAddresses();
+			ServerAddressMessage message = new ServerAddressMessage(ipAddresses.firstIpAddress(), net.getPlayerName(), app.mapName());
+			serverAddressMulticaster = new ServerAddressMulticaster(message);
+			serverAddressMulticaster.start();
+		}
 	}
 
 	private void createMessageHistoryBox(Skin skin) {
@@ -233,6 +245,9 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 
 	@Override
 	protected void onDispose() {
+		if (serverAddressMulticaster != null) {
+			serverAddressMulticaster.shutDown();
+		}
 		Network net = NetworkSystem.getInstance();
 		net.removeObserver(this);
 	}

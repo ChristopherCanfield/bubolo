@@ -6,7 +6,12 @@
 
 package bubolo.net;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The interface for the Network system.
@@ -115,4 +120,64 @@ public interface Network
 	 * Shuts down the network system.
 	 */
 	void dispose();
+
+	record IpAddressInfo(InetAddress firstIpAddress, String ipAddresses) {
+	}
+
+	public static IpAddressInfo getIpAddresses() {
+		InetAddress firstIpAddress = null;
+		StringBuilder ipAddresses = new StringBuilder();
+		var networkInterfaces = getNetworkInterfaces();
+		for (NetworkInterface networkInterface : networkInterfaces) {
+			var addresses = networkInterface.getInetAddresses();
+			while (addresses.hasMoreElements()) {
+				var address = addresses.nextElement();
+				if (address instanceof Inet4Address) {
+					if (!ipAddresses.isEmpty()) {
+						ipAddresses.append(", ");
+					} else {
+						firstIpAddress = address;
+					}
+					ipAddresses.append(address.getHostAddress());
+				}
+			}
+		}
+		return new IpAddressInfo(firstIpAddress, ipAddresses.toString());
+	}
+
+	/**
+	 * Returns a list of network interfaces. Included interfaces have at least one IPv4 address associated with them,
+	 * are not loopback or VirtualBox interfaces, and are up and running.
+	 *
+	 * @return a filtered list of network interfaces.
+	 */
+	public static List<NetworkInterface> getNetworkInterfaces() {
+		List<NetworkInterface> validNetworkInterfaces = new ArrayList<>();
+
+		try {
+			var networkInterfaces = NetworkInterface.getNetworkInterfaces();
+			while (networkInterfaces.hasMoreElements()) {
+				var networkInterface = networkInterfaces.nextElement();
+				// Filter out loopback and VirtualBox addresses.
+				if (!networkInterface.isLoopback()
+						&& networkInterface.isUp()
+						&& !networkInterface.getDisplayName().contains("VirtualBox")) {
+					var addresses = networkInterface.getInetAddresses();
+					boolean hasIPv4Address = false;
+					while (addresses.hasMoreElements() && !hasIPv4Address) {
+						var address = addresses.nextElement();
+						if (address instanceof Inet4Address) {
+							// Only add network interfaces that have associated IPv4 addresses.
+							validNetworkInterfaces.add(networkInterface);
+						}
+					}
+				}
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+			throw new NetworkException(e);
+		}
+
+		return validNetworkInterfaces;
+	}
 }

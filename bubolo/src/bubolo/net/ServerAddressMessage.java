@@ -1,6 +1,10 @@
 package bubolo.net;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.regex.Pattern;
+
+import com.google.common.base.Charsets;
 
 /**
  * A UDP multicast message from a game server that includes the server's local address, its name, and the map name
@@ -9,23 +13,34 @@ import java.net.InetAddress;
  * @author Christopher D. Canfield
  */
 public class ServerAddressMessage {
+	public static final int MaxSizeBytes = 256;
+
 	private final InetAddress serverAddress;
 	private final String serverName;
 	private final String mapName;
 
+	private static final String separator = "¦~¦";
+
 	/**
 	 * Constructs a ServerAddressMulticastMessage from a server address multicast message string, which has the following format:
-	 * {@code serverAddress||serverName||mapName}
+	 * {@code serverAddress¦~¦serverName¦~¦mapName}
 	 *
 	 * @param message a server address multicast message string.
 	 */
 	ServerAddressMessage(String message) {
 		// @TODO (cdc 2021-07-03): convert string in format serverAddress||serverName||mapName
 
-		String[] messageComponents = message.split("||");
-		assert messageComponents.length == 2;
+		String[] messageComponents = message.split(Pattern.quote(separator));
+		System.out.println(messageComponents.length);
+		assert messageComponents.length == 3;
 
-		InetAddress address = InetAddress.getByName(messageComponents[0]);
+		try {
+			serverAddress = InetAddress.getByName(messageComponents[0]);
+			serverName = messageComponents[1];
+			mapName = messageComponents[2];
+		} catch (UnknownHostException e) {
+			throw new NetworkException(e);
+		}
 	}
 
 	public ServerAddressMessage(InetAddress serverAddress, String serverName, String mapName) {
@@ -44,5 +59,9 @@ public class ServerAddressMessage {
 
 	public String mapName() {
 		return mapName;
+	}
+
+	public byte[] toBytes() {
+		return new String(serverAddress.getHostAddress() + separator + serverName + separator + mapName).getBytes(Charsets.UTF_8);
 	}
 }

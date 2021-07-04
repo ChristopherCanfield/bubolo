@@ -4,10 +4,7 @@
 
 package bubolo.ui;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -19,6 +16,7 @@ import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
+import bubolo.net.ServerAddressListener;
 import bubolo.ui.gui.ButtonGroup;
 import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
@@ -36,7 +34,7 @@ import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
  *
  * @author Christopher D. Canfield
  */
-public class MultiplayerSetupScreen extends AbstractScreen {
+public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddressListener.Observer {
 	public enum PlayerType {
 		Server,
 		Client
@@ -63,13 +61,14 @@ public class MultiplayerSetupScreen extends AbstractScreen {
 
 	private ButtonGroup okCancelButtons;
 
+	// For client only.
+	private ServerAddressListener serverAddressListener;
+
 	// These variables enable the screen to be updated with a message before the connection attempt
 	// is made. This is useful because the connection attempt may take a few seconds, and the screen
 	// will appear frozen during that time otherwise.
 	private boolean connectToServer;
 	private int ticksUntilConnect;
-
-//	private float horizontalOffsetFromLeftPct = 0.385f;
 
 	/**
 	 * Constructs the network game lobby.
@@ -87,6 +86,14 @@ public class MultiplayerSetupScreen extends AbstractScreen {
 		addAvailableGames();
 		addButtonRow();
 //		addStatusLabels();
+
+		if (isClient) {
+			serverAddressListener = new ServerAddressListener(this);
+			var networkInterfaces = Network.getNetworkInterfaces();
+			// @TODO (cdc 2021-07-04): This must be very rare, but handle it properly regardless.
+			assert !networkInterfaces.isEmpty();
+			serverAddressListener.start(networkInterfaces.get(0));
+		}
 
 		Gdx.input.setInputProcessor(this);
 	}
@@ -119,48 +126,15 @@ public class MultiplayerSetupScreen extends AbstractScreen {
 
 	private void addIpAddressRow() {
 		if (!isClient) {
-			try {
-				var ipAddressInfo = getIpAddresses();
-				ipAddress = ipAddressInfo.firstIpAddress();
+			var ipAddressInfo = Network.getIpAddresses();
+			ipAddress = ipAddressInfo.firstIpAddress();
 
-				LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-				ipAddressLabel = new Label(args, "IP Address:            " + ipAddressInfo.ipAddresses());
-				ipAddressLabel.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
-				ipAddressLabel.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-				root.add(ipAddressLabel);
-			} catch (SocketException e) {
-				e.printStackTrace();
-			}
+			LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+			ipAddressLabel = new Label(args, "IP Address:            " + ipAddressInfo.ipAddresses());
+			ipAddressLabel.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			ipAddressLabel.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
+			root.add(ipAddressLabel);
 		}
-	}
-
-	record IpAddressInfo(InetAddress firstIpAddress, String ipAddresses) {
-	}
-
-	private static IpAddressInfo getIpAddresses() throws SocketException {
-		InetAddress firstIpAddress = null;
-		StringBuilder ipAddresses = new StringBuilder();
-		var networkInterfaces = NetworkInterface.getNetworkInterfaces();
-		while (networkInterfaces.hasMoreElements()) {
-			var networkInterface = networkInterfaces.nextElement();
-			// Filter out loopback and VirtualBox addresses.
-			if (!networkInterface.isLoopback()
-					&& !networkInterface.getDisplayName().contains("VirtualBox")) {
-				var addresses = networkInterface.getInetAddresses();
-				while (addresses.hasMoreElements()) {
-					var address = addresses.nextElement();
-					if (address instanceof Inet4Address) {
-						if (!ipAddresses.isEmpty()) {
-							ipAddresses.append(", ");
-						} else {
-							firstIpAddress = address;
-						}
-						ipAddresses.append(address.getHostAddress());
-					}
-				}
-			}
-		}
-		return new IpAddressInfo(firstIpAddress, ipAddresses.toString());
 	}
 
 	private void addAvailableGames() {
@@ -329,12 +303,19 @@ public class MultiplayerSetupScreen extends AbstractScreen {
 	}
 
 	@Override
-	public boolean scrolled(float amountX, float amountY) {
-		return false;
+	public Color clearColor() {
+		return clearColor;
 	}
 
 	@Override
-	public Color clearColor() {
-		return clearColor;
+	public void onServerAddressFound(InetAddress address, String serverName, String mapName) {
+		System.out.println("Message received: " + address.toString() + ", " + serverName + ", " + mapName);
+	}
+
+	@Override
+	protected void onDispose() {
+		if (serverAddressListener != null) {
+			serverAddressListener.shutDown();
+		}
 	}
 }
