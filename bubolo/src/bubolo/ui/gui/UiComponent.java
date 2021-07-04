@@ -206,7 +206,14 @@ public abstract class UiComponent {
 		}
 	}
 
-	public void recalculateLayout(int parentWidth, int parentHeight) {
+	/**
+	 * Recalculates the layout without updating the stored parent width or height.
+	 */
+	public final void recalculateLayout() {
+		recalculateLayout(parentWidth, parentHeight);
+	}
+
+	public final void recalculateLayout(int parentWidth, int parentHeight) {
 		this.parentWidth = parentWidth;
 		this.parentHeight = parentHeight;
 
@@ -223,6 +230,11 @@ public abstract class UiComponent {
 	protected abstract void onRecalculateLayout();
 
 	public abstract void draw(Graphics graphics);
+
+	public boolean containsPoint(float screenX, float screenY) {
+		return screenX >= left && screenX <= right()
+				&& screenY >= top && screenY <= bottom();
+	}
 
 	public void onKeyTyped(char character) {
 	}

@@ -33,6 +33,10 @@ public class GuiGroup {
 		return Collections.unmodifiableList(textBoxes);
 	}
 
+	public void recalculateLayout() {
+		components.forEach(c -> c.recalculateLayout());
+	}
+
 	public void recalculateLayout(int parentWidth, int parentHeight) {
 		components.forEach(c -> c.recalculateLayout(parentWidth, parentHeight));
 	}

@@ -28,10 +28,7 @@ public class ServerAddressMessage {
 	 * @param message a server address multicast message string.
 	 */
 	ServerAddressMessage(String message) {
-		// @TODO (cdc 2021-07-03): convert string in format serverAddress||serverName||mapName
-
 		String[] messageComponents = message.split(Pattern.quote(separator));
-		System.out.println(messageComponents.length);
 		assert messageComponents.length == 3;
 
 		try {
@@ -63,5 +60,19 @@ public class ServerAddressMessage {
 
 	public byte[] toBytes() {
 		return new String(serverAddress.getHostAddress() + separator + serverName + separator + mapName).getBytes(Charsets.UTF_8);
+	}
+
+	@Override
+	public int hashCode() {
+		return serverAddress.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof ServerAddressMessage message) {
+			return serverAddress.equals(message.serverAddress);
+		} else {
+			return false;
+		}
 	}
 }

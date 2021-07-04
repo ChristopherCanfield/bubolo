@@ -350,9 +350,13 @@ public class ButtonGroup extends UiComponent {
 
 	@Override
 	public int onMouseClicked(int screenX, int screenY) {
-		selectedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
-		activateSelectedButton();
-		return selectedButtonIndex;
+		if (containsPoint(screenX, screenY)) {
+			selectedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+			activateSelectedButton();
+			return selectedButtonIndex;
+		} else {
+			return selectedButtonIndex;
+		}
 	}
 
 	@Override

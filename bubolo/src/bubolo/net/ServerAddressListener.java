@@ -22,7 +22,7 @@ import com.google.common.base.Charsets;
  */
 public class ServerAddressListener {
 	public static interface Observer {
-		void onServerAddressFound(InetAddress address, String serverName, String mapName);
+		void onServerAddressFound(ServerAddressMessage message);
 	}
 
 	private final ServerAddressListener.Observer observer;
@@ -60,11 +60,10 @@ public class ServerAddressListener {
 					socket.receive(packet);
 
 					String messageText = new String(packet.getData(), 0, packet.getLength(), Charsets.UTF_8);
-					System.out.println(messageText);
 					var message = new ServerAddressMessage(messageText);
 					// Call the observer on the main thread.
 					Gdx.app.postRunnable(() -> {
-						observer.onServerAddressFound(message.serverAddress(), message.serverName(), message.mapName());
+						observer.onServerAddressFound(message);
 					});
 				}
 			} catch (SocketTimeoutException e) {

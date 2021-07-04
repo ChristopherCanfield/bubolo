@@ -87,6 +87,10 @@ public class TextBox extends UiComponent {
 		return text;
 	}
 
+	public boolean isEmpty() {
+		return text.isEmpty();
+	}
+
 	public void setSelected(boolean selected) {
 		this.isSelected = selected;
 	}
@@ -94,7 +98,6 @@ public class TextBox extends UiComponent {
 	@Override
 	public void onKeyTyped(char character) {
 		if (isSelected) {
-			System.out.println(character);
 			if (character == '') {
 				if (!text.isEmpty()) {
 					this.text = text.substring(0, text.length() - 1);

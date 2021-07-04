@@ -5,6 +5,9 @@
 package bubolo.ui;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -15,14 +18,17 @@ import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.net.Network;
+import bubolo.net.NetworkException;
 import bubolo.net.NetworkSystem;
 import bubolo.net.ServerAddressListener;
+import bubolo.net.ServerAddressMessage;
 import bubolo.ui.gui.ButtonGroup;
 import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.Line;
 import bubolo.ui.gui.TextBox;
+import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
@@ -58,6 +64,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 
 	private Label orSelectServerLabel;
 	private ButtonGroup availableGamesList;
+	private final List<ServerAddressMessage> availableServers = new ArrayList<>();
 
 	private ButtonGroup okCancelButtons;
 
@@ -68,6 +75,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	// is made. This is useful because the connection attempt may take a few seconds, and the screen
 	// will appear frozen during that time otherwise.
 	private boolean connectToServer;
+	private InetAddress serverIpAddress;
 	private int ticksUntilConnect;
 
 	/**
@@ -173,8 +181,6 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 			root.add(orSelectServerLabel);
 
 			availableGamesList = new ButtonGroup(layoutArgs, availableGamesListArgs);
-			availableGamesList.addButton("Game 1 (Canfield Island)");
-			availableGamesList.addButton("Plenty Fun (Old Bolo Island)");
 			availableGamesList.setVerticalOffset(orSelectServerLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			availableGamesList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 			root.add(availableGamesList);
@@ -239,10 +245,23 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	}
 
 	private void connectToServer() {
-//		statusLabel1.setText("Connecting...");
-//		statusLabel2.setText("");
-//		connectToServer = true;
-//		ticksUntilConnect = 1;
+		if (!playerNameTextBox.isEmpty()) {
+			int selectedServerIndex = availableGamesList.selectedButtonIndex();
+			if (selectedServerIndex != UiComponent.NoIndex) {
+				serverIpAddress = availableServers.get(selectedServerIndex).serverAddress();
+			} else if (!serverIpAddressTextBox.isEmpty()) {
+				try {
+					serverIpAddress = InetAddress.getByName(serverIpAddressTextBox.text());
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (serverIpAddress != null) {
+				connectToServer = true;
+				ticksUntilConnect = 1;
+			}
+		}
 	}
 
 	private void goBackOneScreen() {
@@ -259,17 +278,14 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 			if (ticksUntilConnect == 0) {
 				connectToServer = false;
 
-				InetAddress ipAddress;
-//				try {
-////					ipAddress = InetAddress.getByName(ipAddressField.getText());
-//
-//					final Network network = NetworkSystem.getInstance();
-////					network.connect(ipAddress, playerNameField.getText());
-//				} catch (UnknownHostException | NetworkException e) {
-////					statusLabel1.setText("");
-////					statusLabel2.setText("Unable to connect: " + e.getMessage());
-//					return;
-//				}
+				try {
+					final Network network = NetworkSystem.getInstance();
+					network.connect(serverIpAddress, playerNameTextBox.text());
+				} catch (NetworkException e) {
+//					statusLabel1.setText("");
+//					statusLabel2.setText("Unable to connect: " + e.getMessage());
+					return;
+				}
 
 				app.setState(State.MultiplayerLobby);
 			} else {
@@ -308,8 +324,12 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	}
 
 	@Override
-	public void onServerAddressFound(InetAddress address, String serverName, String mapName) {
-		System.out.println("Message received: " + address.toString() + ", " + serverName + ", " + mapName);
+	public void onServerAddressFound(ServerAddressMessage message) {
+		if (!availableServers.contains(message)) {
+			availableServers.add(message);
+			availableGamesList.addButton(message.serverName() + " (" + message.mapName() + ")");
+			root.recalculateLayout();
+		}
 	}
 
 	@Override
