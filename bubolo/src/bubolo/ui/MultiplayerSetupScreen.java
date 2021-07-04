@@ -63,7 +63,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	private Label ipAddressLabel;
 
 	private Label orSelectServerLabel;
-	private ButtonGroup availableGamesList;
+	private ButtonGroup availableServersList;
 	private final List<ServerAddressMessage> availableServers = new ArrayList<>();
 
 	private ButtonGroup okCancelButtons;
@@ -180,10 +180,10 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 			orSelectServerLabel.setHorizontalOffset(serverIpAddressTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 			root.add(orSelectServerLabel);
 
-			availableGamesList = new ButtonGroup(layoutArgs, availableGamesListArgs);
-			availableGamesList.setVerticalOffset(orSelectServerLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			availableGamesList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-			root.add(availableGamesList);
+			availableServersList = new ButtonGroup(layoutArgs, availableGamesListArgs);
+			availableServersList.setVerticalOffset(orSelectServerLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			availableServersList.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+			root.add(availableServersList);
 		}
 	}
 
@@ -209,7 +209,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		});
 
 		if (isClient) {
-			okCancelButtons.setVerticalOffset(availableGamesList, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			okCancelButtons.setVerticalOffset(availableServersList, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		} else {
 			okCancelButtons.setVerticalOffset(ipAddressLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
@@ -246,7 +246,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 
 	private void connectToServer() {
 		if (!playerNameTextBox.isEmpty()) {
-			int selectedServerIndex = availableGamesList.selectedButtonIndex();
+			int selectedServerIndex = availableServersList.selectedButtonIndex();
 			if (selectedServerIndex != UiComponent.NoIndex) {
 				serverIpAddress = availableServers.get(selectedServerIndex).serverAddress();
 			} else if (!serverIpAddressTextBox.isEmpty()) {
@@ -327,7 +327,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	public void onServerAddressFound(ServerAddressMessage message) {
 		if (!availableServers.contains(message)) {
 			availableServers.add(message);
-			availableGamesList.addButton(message.serverName() + " (" + message.mapName() + ")");
+			availableServersList.addButton(message.serverName() + " (" + message.mapName() + ")");
 			root.recalculateLayout();
 		}
 	}
