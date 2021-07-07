@@ -70,18 +70,30 @@ public class MainMenuScreen extends AbstractScreen {
 		root.add(versionText);
 	}
 
+	/**
+	 * @param button unused.
+	 */
 	private void onSinglePlayerButtonActivated(Button button) {
 		app.setState(State.SinglePlayerSetup);
 	}
 
+	/**
+	 * @param button unused.
+	 */
 	private void onJoinMultiplayerButtonActivated(Button button) {
 		app.setState(State.MultiplayerSetupClient);
 	}
 
+	/**
+	 * @param button unused.
+	 */
 	private void onHostMultiplayerButtonActivated(Button button) {
 		app.setState(State.MultiplayerMapSelection);
 	}
 
+	/**
+	 * @param button unused.
+	 */
 	private void onSettingsButtonActivated(Button button) {
 
 	}

@@ -67,13 +67,18 @@ public class TextBox extends UiComponent {
 		args.validate();
 		this.args = args.clone();
 
-		cursorBlinkTimerId = timer.scheduleSeconds(cursorBlinkTimeSeconds, this::onTimerExpired);
+		cursorBlinkTimerId = timer.scheduleSeconds(cursorBlinkTimeSeconds, this::onCursorBlinkTimerExpired);
 
 		this.layout = new GlyphLayout(args.font, text, 0, text.length(), args.textColor, args.textWidth, Align.left, false, null);
 		recalculateLayout(parentWidth, parentHeight);
 	}
 
-	private void onTimerExpired(Void unused) {
+	/**
+	 * Controls cursor blinking.
+	 *
+	 * @param unused not used. Required because the Timer calls a Consumer<T>.
+	 */
+	private void onCursorBlinkTimerExpired(Void unused) {
 		cursorVisible = !cursorVisible;
 		timer.rescheduleSeconds(cursorBlinkTimerId, cursorBlinkTimeSeconds);
 	}

@@ -236,20 +236,57 @@ public abstract class UiComponent {
 				&& screenY >= top && screenY <= bottom();
 	}
 
+	/**
+	 * Override to receive key typed events.
+	 *
+	 * @param character the character that was typed.
+	 */
 	public void onKeyTyped(char character) {
 	}
 
+	/**
+	 * Override to receive key down events.
+	 *
+	 * @param keycode the keycode that was typed.
+	 */
 	public void onKeyDown(int keycode) {
 	}
 
+	/**
+	 * Override to receive mouse clicked events.
+	 *
+	 * @param screenX the click's screen x position.
+	 * @param screenY the click's screen y position.
+	 * @return One of:
+	 * <ul>
+	 * 	<li>The selected item's index, if applicable.</li>
+	 * 	<li>Zero, if the entire object was selected.</li>
+	 * 	<li>NoIndex (-1) if the object was not selected.</li>
+	 * </ul>
+	 */
 	public int onMouseClicked(int screenX, int screenY) {
 		return NoIndex;
 	}
 
+	/**
+	 * Override to receive mouse moved events.
+	 *
+	 * @param screenX the mouse's screen x position.
+	 * @param screenY the mouse's screen y position.
+	 * @return One of:
+	 * <ul>
+	 * 	<li>The hovered item's index, if applicable.</li>
+	 * 	<li>Zero, if the entire object was hovered.</li>
+	 * 	<li>NoIndex (-1) if the object was not hovered.</li>
+	 * </ul>
+	 */
 	public int onMouseMoved(int screenX, int screenY) {
 		return NoIndex;
 	}
 
+	/**
+	 * Override to receive dispose events.
+	 */
 	public void dispose() {
 	}
 }

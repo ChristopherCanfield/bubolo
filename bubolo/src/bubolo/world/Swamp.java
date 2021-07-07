@@ -11,6 +11,10 @@ public class Swamp extends Terrain {
 	private static final int width = 32;
 	private static final int height = 32;
 
+	/**
+	 * @param args the Swamp's construction arguments.
+	 * @param world reference to the game world.
+	 */
 	protected Swamp(ConstructionArgs args, World world) {
 		super(args, width, height, terrainTravelSpeed);
 	}
