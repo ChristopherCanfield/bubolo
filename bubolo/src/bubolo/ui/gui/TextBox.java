@@ -103,7 +103,11 @@ public class TextBox extends UiComponent {
 	@Override
 	public void onKeyTyped(char character) {
 		if (isSelected) {
-			if (character == '') {
+			// Don't capture tabs.
+			if (character == '\t') {
+
+			// Handle backspace.
+			} else if (character == '\b') {
 				if (!text.isEmpty()) {
 					this.text = text.substring(0, text.length() - 1);
 				}

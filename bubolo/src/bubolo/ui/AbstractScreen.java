@@ -114,6 +114,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	@Override
 	public final void viewportResized(int newWidth, int newHeight) {
 		root.recalculateLayout(newWidth, newHeight);
+		onViewportResized(newWidth, newHeight);
 	}
 
 	protected void onViewportResized(int newWidth, int newHeight) {

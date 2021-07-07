@@ -127,7 +127,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		var textBoxArgs = defaultTextBoxArgs();
 		textBoxArgs.labelText = "Name:";
 		playerNameTextBox = new TextBox(args, textBoxArgs);
-		playerNameTextBox.setVerticalOffset(135, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		playerNameTextBox.setVerticalOffset(screenTitleLabel, VOffsetFromObjectSide.Bottom, 100, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		playerNameTextBox.setHorizontalOffset(0, OffsetType.Percent, HOffsetFrom.Center);
 		root.add(playerNameTextBox);
 	}
@@ -204,17 +204,16 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 			}
 		});
 		okCancelButtons.addButton("Back", button -> {
-			System.out.println("Back clicked");
 			goBackOneScreen();
 		});
 
-		if (isClient) {
-			okCancelButtons.setVerticalOffset(availableServersList, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		} else {
-			okCancelButtons.setVerticalOffset(ipAddressLabel, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
-			okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		}
+		okCancelButtons.setVerticalOffset(0.9f, OffsetType.Percent, VOffsetFrom.Top);
+//		if (isClient) {
+//			okCancelButtons.setVerticalOffset(availableServersList, VOffsetFromObjectSide.Bottom, 100, OffsetType.ScreenUnits, VOffsetFrom.Top);
+//		} else {
+//			okCancelButtons.setVerticalOffset(ipAddressLabel, VOffsetFromObjectSide.Bottom, 100, OffsetType.ScreenUnits, VOffsetFrom.Top);
+//		}
+		okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 
 		root.add(okCancelButtons);
 	}

@@ -23,6 +23,7 @@ import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Image;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
+import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
 import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
@@ -49,13 +50,15 @@ public class MapSelectionScreen extends AbstractScreen {
 	private Label mapSizeLabel;
 	private Label mapDescriptionLabel;
 
+	private ButtonGroup okCancelButtons;
+
 	private final String mapNameText = "Name: ";
 	private final String authorNameText = "Author: ";
 	private final String mapDescriptionText = "Description: ";
 	private final String mapSizeText = "Size: ";
 	private final String lastUpdatedText = "Last Updated: ";
 
-	private static final String mapFileExtension = ".json";
+	private static final String mapFileExtension = Config.MapFileExtension;
 
 	private static final int secondRowTopOffset = 135;
 	private static final int mapInfoLabelPadding = 10;
@@ -92,6 +95,7 @@ public class MapSelectionScreen extends AbstractScreen {
 
 		importMapInfo(paths);
 		addMapInfoUiComponents();
+		addButtonRow();
 
 		if (!paths.isEmpty()) {
 			mapPathsGroup.selectButton(0);
@@ -187,6 +191,30 @@ public class MapSelectionScreen extends AbstractScreen {
 	private static int calculateDescriptionRowSize() {
 		float sizeFromPct = Gdx.graphics.getWidth() * targetDescriptionRowSizePct;
 		return (sizeFromPct > minDescriptionRowSize) ? (int) sizeFromPct : minDescriptionRowSize;
+	}
+
+	private void addButtonRow() {
+		var layoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
+		var buttonArgs = new ButtonGroup.Args(140, 35);
+		buttonArgs.buttonListLayout = ButtonGroup.Layout.Horizontal;
+		buttonArgs.paddingBetweenButtons = 10;
+		buttonArgs.borderColor = ButtonGroup.Args.Transparent;
+
+		okCancelButtons = new ButtonGroup(layoutArgs, buttonArgs);
+		String okText = "OK";
+		okCancelButtons.addButton(okText, button -> {
+			if (mapPathsGroup.selectedButtonIndex() != UiComponent.NoIndex) {
+				onMapActivated();
+			}
+		});
+		okCancelButtons.addButton("Back", button -> {
+			app.setState(State.MainMenu);
+		});
+
+		okCancelButtons.setVerticalOffset(0.9f, OffsetType.Percent, VOffsetFrom.Top);
+		okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+
+		root.add(okCancelButtons);
 	}
 
 	@Override
