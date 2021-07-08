@@ -69,13 +69,6 @@ public class MapSelectionScreen extends AbstractScreen {
 	private static final float targetPreviewImageWidthPct = 0.4f;
 	private static final float targetPreviewImageHeightPct = targetPreviewImageWidthPct * 0.57f;
 
-	private enum TabGroup {
-		MapNames,
-		OkCancel
-	}
-
-	private TabGroup activeGroup = TabGroup.MapNames;
-
 	/**
 	 * @param app reference to the game application.
 	 * @param nextState the next app state. Used to enable this screen to be used with both single and multiplayer games.
@@ -142,7 +135,9 @@ public class MapSelectionScreen extends AbstractScreen {
 		mapPathsGroup.setHorizontalOffset(0.1f, OffsetType.Percent, HOffsetFrom.Left);
 		mapPathsGroup.setVerticalOffset(secondRowTopOffset, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
-		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString().replace(mapFileExtension, "")));
+		mapPaths.forEach(path -> mapPathsGroup.addButton(path.getFileName().toString().replace(mapFileExtension, ""),
+				button -> { onMapActivated(); }
+		));
 
 		root.add(mapPathsGroup);
 	}
@@ -199,6 +194,7 @@ public class MapSelectionScreen extends AbstractScreen {
 		buttonArgs.buttonListLayout = ButtonGroup.Layout.Horizontal;
 		buttonArgs.paddingBetweenButtons = 10;
 		buttonArgs.borderColor = ButtonGroup.Args.Transparent;
+		buttonArgs.selectOnHover = true;
 
 		okCancelButtons = new ButtonGroup(layoutArgs, buttonArgs);
 		String okText = "OK";
@@ -263,21 +259,25 @@ public class MapSelectionScreen extends AbstractScreen {
 		}
 	}
 
-	private void switchTabGroup() {
-		activeGroup = (activeGroup == TabGroup.MapNames) ? TabGroup.OkCancel : TabGroup.MapNames;
-	}
+//	private void switchTabGroup() {
+//		activeGroup = (activeGroup == TabGroup.MapNames) ? TabGroup.OkCancel : TabGroup.MapNames;
+//	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		switch (keycode) {
-			case Keys.UP, Keys.W, Keys.NUMPAD_8 -> mapPathsGroup.selectPrevious();
-			case Keys.DOWN, Keys.S, Keys.NUMPAD_5, Keys.NUMPAD_2 -> mapPathsGroup.selectNext();
-			case Keys.SPACE, Keys.ENTER, Keys.NUMPAD_ENTER -> {
-				mapPathsGroup.activateSelectedButton();
-				onMapActivated();
-			}
-			case Keys.TAB -> switchTabGroup();
-			case Keys.ESCAPE -> app.setState(State.MainMenu);
+//		switch (keycode) {
+//			case Keys.UP, Keys.W, Keys.NUMPAD_8 -> mapPathsGroup.selectPrevious();
+//			case Keys.DOWN, Keys.S, Keys.NUMPAD_5, Keys.NUMPAD_2 -> mapPathsGroup.selectNext();
+//			case Keys.SPACE, Keys.ENTER, Keys.NUMPAD_ENTER -> {
+//				mapPathsGroup.activateSelectedButton();
+//				onMapActivated();
+//			}
+//			case Keys.TAB -> switchTabGroup();
+//			case Keys.ESCAPE -> app.setState(State.MainMenu);
+//		}
+
+		if (keycode == Keys.ESCAPE) {
+			app.setState(State.MainMenu);
 		}
 
 		onSelectedMapChanged();

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
 import bubolo.graphics.Graphics;
@@ -48,20 +49,43 @@ public class GuiGroup {
 
 	public void onKeyDown(int keycode) {
 		if (keycode == Keys.TAB) {
-			focusOnNextFocusable();
+			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+				focusOnPreviousFocusable();
+			} else {
+				focusOnNextFocusable();
+			}
 		} else {
 			components.forEach(c -> c.onKeyDown(keycode));
 		}
 	}
 
 	private void focusOnNextFocusable() {
+		focusOnFocusable(1);
+	}
+
+	private void focusOnPreviousFocusable() {
+		focusOnFocusable(-1);
+	}
+
+	private void focusOnFocusable(int direction) {
+		assert direction == -1 || direction == 1;
+
 		if (!focusables.isEmpty()) {
-			focusedComponentIndex++;
-			if (focusedComponentIndex >= focusables.size()) {
-				focusedComponentIndex = 0;
+			focusables.forEach(f -> f.lostFocus());
+
+			for (int i = 0; i < focusables.size(); i++) {
+				focusedComponentIndex += direction;
+				if (focusedComponentIndex < 0) {
+					focusedComponentIndex = focusables.size() - 1;
+				} else if (focusedComponentIndex >= focusables.size()) {
+					focusedComponentIndex = 0;
+				}
+				var focusable = focusables.get(focusedComponentIndex);
+				if (focusable.isValidFocusTarget()) {
+					focusable.gainFocus();
+					break;
+				}
 			}
-			focusables.get(focusedComponentIndex).gainFocus();
-			System.out.println("Focusable at index " + focusedComponentIndex + " selected.");
 		}
 	}
 

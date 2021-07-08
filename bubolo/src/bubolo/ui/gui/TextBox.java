@@ -220,12 +220,10 @@ public class TextBox extends UiComponent implements Focusable {
 	@Override
 	public void gainFocus() {
 		hasFocus = true;
-		System.out.println("TextBox gained focus.");
 	}
 
 	@Override
 	public void lostFocus() {
 		hasFocus = false;
-		System.out.println("TextBox lost focus.");
 	}
 }

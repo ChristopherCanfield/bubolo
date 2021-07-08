@@ -43,6 +43,7 @@ public class MainMenuScreen extends AbstractScreen {
 
 	private void addButtonGroup() {
 		var buttonGroupArgs = new ButtonGroup.Args(300, 50);
+		buttonGroupArgs.selectOnHover = true;
 		buttonGroupArgs.paddingBetweenButtons = 10;
 		buttonGroupArgs.backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
 		buttonGroupArgs.buttonBackgroundColor = new Color(1, 1, 1, 0.75f);
@@ -122,28 +123,18 @@ public class MainMenuScreen extends AbstractScreen {
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {
-		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
-			buttonGroup.selectPrevious();
-		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
-			buttonGroup.selectNext();
-		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-			buttonGroup.activateSelectedButton();
-		} else if (keycode == Keys.ESCAPE) {
+	public void onKeyDown(int keycode) {
+		if (keycode == Keys.ESCAPE) {
 			Gdx.app.exit();
 		}
-
-		return false;
 	}
 
 	@Override
-	public void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {
-		if (hoveredObjectInfo.component() instanceof ButtonGroup group) {
-			buttonGroup.selectButton(hoveredObjectInfo.hoveredItemIndex());
-		}
+	protected void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {
 	}
 
 	@Override
 	protected void onDispose() {
+		backgroundTexture.dispose();
 	}
 }

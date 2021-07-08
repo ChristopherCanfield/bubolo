@@ -42,7 +42,6 @@ public class ServerAddressListener {
 	public void start(NetworkInterface networkInterface) {
 		assert !isStarted;
 		isStarted = true;
-		System.out.println("NetworkInterface: " + networkInterface.getDisplayName() + " | " + networkInterface.toString());
 
 		Thread thread = new Thread(() -> {
 			MulticastSocket socket;

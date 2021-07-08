@@ -193,6 +193,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		buttonArgs.buttonListLayout = ButtonGroup.Layout.Horizontal;
 		buttonArgs.paddingBetweenButtons = 10;
 		buttonArgs.borderColor = ButtonGroup.Args.Transparent;
+		buttonArgs.selectOnHover = true;
 
 		okCancelButtons = new ButtonGroup(layoutArgs, buttonArgs);
 		String okText = isClient ? "Join" : "Create Game";

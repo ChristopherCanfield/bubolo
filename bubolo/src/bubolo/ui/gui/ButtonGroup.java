@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -48,21 +49,6 @@ public class ButtonGroup extends UiComponent implements Focusable {
 	public static class Args implements Cloneable {
 		public static final Color Transparent = new Color(0, 0, 0, 0);
 
-		/**
-		 * The left offset, which is either from 0 (if centeredHorizontally is false) or the
-		 * viewport's horizontal center - width()/2.
-		 */
-//		public float leftOffset;
-		/** The top offset, which is either from 0 (if centeredVertically is false) or the
-		 * viewport's vertical center - width()/2.
-		 */
-//		public float topOffset;
-
-		/** If true, the object is centered horizontally, and is then offset by {@code -width()/2 + left}. */
-//		public boolean centeredHorizontally = false;
-		/** If true, the object is centered vertically, and is then offset by the {@code -width()/2 + top}. */
-//		public boolean centeredVertically = false;
-
 		public Layout buttonListLayout = Layout.Vertical;
 
 		public int paddingBetweenButtons;
@@ -79,9 +65,15 @@ public class ButtonGroup extends UiComponent implements Focusable {
 		public Color buttonSelectedBorderColor = Color.BLACK;
 		public Color buttonSelectedBackgroundColor = Color.DARK_GRAY;
 		public Color buttonSelectedTextColor = Color.YELLOW;
-		public Color buttonHoverBorderColor = Color.BLACK;
+		public Color buttonHoverBorderColor = Color.DARK_GRAY;
 		public Color buttonHoverBackgroundColor = Color.LIGHT_GRAY;
 		public Color buttonHoverTextColor = Color.BLACK;
+
+		/**
+		 * Whether to select the hovered button when the mouse hovers over it. If false, the button will receive hover
+		 * effects when the mouse hovers over it, but won't be selected.
+		 */
+		public boolean selectOnHover = false;
 
 		public Args(int buttonWidth, int buttonHeight) {
 			this.buttonWidth = buttonWidth;
@@ -131,7 +123,6 @@ public class ButtonGroup extends UiComponent implements Focusable {
 
 	@Override
 	public float width() {
-//		return padding * 2 + args.buttonWidth;
 		return width;
 	}
 
@@ -370,6 +361,10 @@ public class ButtonGroup extends UiComponent implements Focusable {
 	@Override
 	public int onMouseMoved(int screenX, int screenY) {
 		hoveredButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+		if (args.selectOnHover) {
+			selectedButtonIndex = hoveredButtonIndex;
+			gainFocus();
+		}
 		return hoveredButtonIndex;
 	}
 
@@ -383,17 +378,41 @@ public class ButtonGroup extends UiComponent implements Focusable {
 	}
 
 	@Override
+	public void onKeyDown(int keycode) {
+		if (hasFocus && !buttons.isEmpty()) {
+			if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+				activateSelectedButton();
+			} else if (args.buttonListLayout == Layout.Vertical) {
+				if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
+					selectPrevious();
+				} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
+					selectNext();
+				}
+			} else {
+				if (keycode == Keys.LEFT || keycode == Keys.A || keycode == Keys.NUMPAD_4) {
+					selectPrevious();
+				} else if (keycode == Keys.RIGHT || keycode == Keys.D || keycode == Keys.NUMPAD_6) {
+					selectNext();
+				}
+			}
+		}
+	}
+
+	@Override
 	public void gainFocus() {
 		hasFocus = true;
 		if (!buttons.isEmpty() && selectedButtonIndex == NoIndex) {
 			selectedButtonIndex = 0;
 		}
-		System.out.println("ButtonGroup gained focus");
 	}
 
 	@Override
 	public void lostFocus() {
 		hasFocus = false;
-		System.out.println("ButtonGroup lost focus");
+	}
+
+	@Override
+	public boolean isValidFocusTarget() {
+		return !buttons.isEmpty();
 	}
 }
