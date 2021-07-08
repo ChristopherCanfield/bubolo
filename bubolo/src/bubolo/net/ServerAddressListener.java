@@ -54,19 +54,21 @@ public class ServerAddressListener {
 				socket.joinGroup(group, networkInterface);
 
 				while (!shutDown.get()) {
-					byte[] buffer = new byte[ServerAddressMessage.MaxSizeBytes];
-					DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-					socket.receive(packet);
+					try {
+						byte[] buffer = new byte[ServerAddressMessage.MaxSizeBytes];
+						DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+						socket.receive(packet);
 
-					String messageText = new String(packet.getData(), 0, packet.getLength(), Charsets.UTF_8);
-					var message = new ServerAddressMessage(messageText);
-					// Call the observer on the main thread.
-					Gdx.app.postRunnable(() -> {
-						observer.onServerAddressFound(message);
-					});
+						String messageText = new String(packet.getData(), 0, packet.getLength(), Charsets.UTF_8);
+						var message = new ServerAddressMessage(messageText);
+						// Call the observer on the main thread.
+						Gdx.app.postRunnable(() -> {
+							observer.onServerAddressFound(message);
+						});
+					} catch (SocketTimeoutException e) {
+						// Timeouts are fine. They're enabled to allow the thread to be shut down.
+					}
 				}
-			} catch (SocketTimeoutException e) {
-				// Timeouts are fine. They're enabled to allow the thread to be shut down.
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -361,7 +361,7 @@ public class ButtonGroup extends UiComponent implements Focusable {
 	@Override
 	public int onMouseMoved(int screenX, int screenY) {
 		hoveredButtonIndex = findButtonThatContainsPoint(screenX, screenY);
-		if (args.selectOnHover) {
+		if (hoveredButtonIndex != NoIndex && args.selectOnHover) {
 			selectedButtonIndex = hoveredButtonIndex;
 			gainFocus();
 		}
