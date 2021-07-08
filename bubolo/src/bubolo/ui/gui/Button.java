@@ -29,10 +29,13 @@ public class Button {
 	enum ButtonStatus {
 		Unselected,
 		Selected,
+		SelectedFocused,
 		Hovered;
 
-		static ButtonStatus getButtonStatus(int buttonIndexToCheck, int selectedButtonIndex, int hoveredButtonIndex) {
-			if (buttonIndexToCheck == selectedButtonIndex) {
+		static ButtonStatus getButtonStatus(int buttonIndexToCheck, int selectedButtonIndex, int hoveredButtonIndex, boolean hasFocus) {
+			if (buttonIndexToCheck == selectedButtonIndex && hasFocus) {
+				return SelectedFocused;
+			} else if (buttonIndexToCheck == selectedButtonIndex) {
 				return Selected;
 			} else if (buttonIndexToCheck == hoveredButtonIndex) {
 				return Hovered;
@@ -81,7 +84,8 @@ public class Button {
 	public void drawBorder(ShapeRenderer renderer, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
 		renderer.setColor(getColorForState(defaultColor, hoveredColor, selectedColor, status));
 		renderer.rect(left, cameraY(camera), width, height);
-		if (status == ButtonStatus.Selected) {
+		// If selected && focused, draw a thicker border.
+		if (status == ButtonStatus.SelectedFocused) {
 			renderer.rect(left + 1, cameraY(camera) + 1, width - 2, height - 2);
 		}
 	}
@@ -92,16 +96,13 @@ public class Button {
 	}
 
 	private static Color getColorForState(Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {
-		switch (status) {
-		case Unselected:
-			return defaultColor;
-		case Selected:
-			return selectedColor;
-		case Hovered:
-			return hoveredColor;
-		default:
-			return defaultColor;
-		}
+		var color = switch (status) {
+			case Unselected -> defaultColor;
+			case Selected, SelectedFocused -> selectedColor;
+			case Hovered -> hoveredColor;
+			default -> defaultColor;
+		};
+		return color;
 	}
 
 	public void drawText(Batch batch, Camera camera, Color defaultColor, Color hoveredColor, Color selectedColor, ButtonStatus status) {

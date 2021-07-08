@@ -14,11 +14,11 @@ import bubolo.util.Nullable;
 import bubolo.util.Timer;
 import bubolo.util.Units;
 
-public class TextBox extends UiComponent {
+public class TextBox extends UiComponent implements Focusable {
 	private final Args args;
 
 	private String text = "";
-	private boolean isSelected;
+	private boolean hasFocus;
 
 	private final Timer<Void> timer = new Timer<>(2);
 	private final float cursorBlinkTimeSeconds = 0.5f;
@@ -96,13 +96,9 @@ public class TextBox extends UiComponent {
 		return text.isEmpty();
 	}
 
-	public void setSelected(boolean selected) {
-		this.isSelected = selected;
-	}
-
 	@Override
 	public void onKeyTyped(char character) {
-		if (isSelected) {
+		if (hasFocus) {
 			// Don't capture tabs.
 			if (character == '\t') {
 
@@ -119,7 +115,7 @@ public class TextBox extends UiComponent {
 
 	@Override
 	public void onKeyDown(int keycode) {
-		if (isSelected && keycode == Keys.V) {
+		if (hasFocus && keycode == Keys.V) {
 			if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) {
 				String clipboardText = Gdx.app.getClipboard().getContents();
 				if (clipboardText.length() > 0) {
@@ -132,7 +128,7 @@ public class TextBox extends UiComponent {
 	@Override
 	public int onMouseClicked(int screenX, int screenY) {
 		if (contains(screenX, screenY)) {
-			setSelected(true);
+			gainFocus();
 			return 0;
 		}
 		return NoIndex;
@@ -165,7 +161,7 @@ public class TextBox extends UiComponent {
 
 	private void drawBorder(Graphics graphics, float screenTop) {
 		var shapeRenderer = graphics.nonScalingShapeRenderer();
-		if (isSelected) {
+		if (hasFocus) {
 			shapeRenderer.setColor(args.selectedBorderColor);
 		} else {
 			shapeRenderer.setColor(args.borderColor);
@@ -176,7 +172,7 @@ public class TextBox extends UiComponent {
 	}
 
 	private void drawText(Graphics graphics, float screenTop) {
-		var textWithCursor = (cursorVisible && isSelected) ? text + "|" : text;
+		var textWithCursor = (cursorVisible && hasFocus) ? text + "|" : text;
 
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
@@ -219,5 +215,17 @@ public class TextBox extends UiComponent {
 		} else {
 			this.layout = new GlyphLayout(args.font, text, 0, text.length(), args.textColor, args.textWidth, Align.left, false, null);
 		}
+	}
+
+	@Override
+	public void gainFocus() {
+		hasFocus = true;
+		System.out.println("TextBox gained focus.");
+	}
+
+	@Override
+	public void lostFocus() {
+		hasFocus = false;
+		System.out.println("TextBox lost focus.");
 	}
 }

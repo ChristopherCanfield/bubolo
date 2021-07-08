@@ -25,7 +25,7 @@ import bubolo.util.Units;
  *
  * @author Christopher D. Canfield
  */
-public class ButtonGroup extends UiComponent {
+public class ButtonGroup extends UiComponent implements Focusable {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
@@ -34,6 +34,8 @@ public class ButtonGroup extends UiComponent {
 
 	private int selectedButtonIndex = NoIndex;
 	private int hoveredButtonIndex = NoIndex;
+
+	private boolean hasFocus;
 
 	public enum Layout {
 		Vertical,
@@ -154,6 +156,11 @@ public class ButtonGroup extends UiComponent {
 			addButtonHorizontal(text, action);
 		}
 
+		// By default, the first button that is added is selected.
+		if (buttons.size() == 1) {
+			selectedButtonIndex = 0;
+		}
+
 		recalculateLayout(parentWidth, parentHeight);
 	}
 
@@ -224,7 +231,7 @@ public class ButtonGroup extends UiComponent {
 					args.buttonBackgroundColor,
 					args.buttonHoverBackgroundColor,
 					args.buttonSelectedBackgroundColor,
-					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
+					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex, hasFocus));
 		}
 		renderer.end();
 	}
@@ -237,7 +244,7 @@ public class ButtonGroup extends UiComponent {
 					args.buttonBorderColor,
 					args.buttonHoverBorderColor,
 					args.buttonSelectedBorderColor,
-					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
+					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex, hasFocus));
 		}
 		renderer.end();
 	}
@@ -250,7 +257,7 @@ public class ButtonGroup extends UiComponent {
 					args.buttonTextColor,
 					args.buttonHoverTextColor,
 					args.buttonSelectedTextColor,
-					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex));
+					ButtonStatus.getButtonStatus(i, selectedButtonIndex, hoveredButtonIndex, hasFocus));
 		}
 		batch.end();
 	}
@@ -352,6 +359,7 @@ public class ButtonGroup extends UiComponent {
 	public int onMouseClicked(int screenX, int screenY) {
 		if (containsPoint(screenX, screenY)) {
 			selectedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
+			gainFocus();
 			activateSelectedButton();
 			return selectedButtonIndex;
 		} else {
@@ -372,5 +380,20 @@ public class ButtonGroup extends UiComponent {
 			}
 		}
 		return NoIndex;
+	}
+
+	@Override
+	public void gainFocus() {
+		hasFocus = true;
+		if (!buttons.isEmpty() && selectedButtonIndex == NoIndex) {
+			selectedButtonIndex = 0;
+		}
+		System.out.println("ButtonGroup gained focus");
+	}
+
+	@Override
+	public void lostFocus() {
+		hasFocus = false;
+		System.out.println("ButtonGroup lost focus");
 	}
 }

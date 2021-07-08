@@ -4,33 +4,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.badlogic.gdx.Input.Keys;
+
 import bubolo.graphics.Graphics;
 
 public class GuiGroup {
-	private	List<UiComponent> components = new ArrayList<>();
-	private List<ButtonGroup> buttonGroups = new ArrayList<>();
-	private List<TextBox> textBoxes = new ArrayList<>();
+	private	final List<UiComponent> components = new ArrayList<>();
+
+	private final List<Focusable> focusables = new ArrayList<>();
+	private int focusedComponentIndex = UiComponent.NoIndex;
 
 	public void add(UiComponent component) {
 		components.add(component);
-		if (component instanceof ButtonGroup buttonGroup) {
-			buttonGroups.add(buttonGroup);
-		}
-		if (component instanceof TextBox textBox) {
-			textBoxes.add(textBox);
+
+		if (component instanceof Focusable focusable) {
+			focusables.add(focusable);
+			if (focusedComponentIndex == UiComponent.NoIndex) {
+				focusedComponentIndex = focusables.size() - 1;
+				focusable.gainFocus();
+			}
 		}
 	}
 
 	public List<UiComponent> components() {
 		return Collections.unmodifiableList(components);
-	}
-
-	public List<ButtonGroup> buttonGroups() {
-		return Collections.unmodifiableList(buttonGroups);
-	}
-
-	public List<TextBox> textBoxes() {
-		return Collections.unmodifiableList(textBoxes);
 	}
 
 	public void recalculateLayout() {
@@ -50,7 +47,22 @@ public class GuiGroup {
 	}
 
 	public void onKeyDown(int keycode) {
-		components.forEach(c -> c.onKeyDown(keycode));
+		if (keycode == Keys.TAB) {
+			focusOnNextFocusable();
+		} else {
+			components.forEach(c -> c.onKeyDown(keycode));
+		}
+	}
+
+	private void focusOnNextFocusable() {
+		if (!focusables.isEmpty()) {
+			focusedComponentIndex++;
+			if (focusedComponentIndex >= focusables.size()) {
+				focusedComponentIndex = 0;
+			}
+			focusables.get(focusedComponentIndex).gainFocus();
+			System.out.println("Focusable at index " + focusedComponentIndex + " selected.");
+		}
 	}
 
 	public record ClickedObjectInfo(UiComponent component, int clickedItemIndex) {
@@ -64,8 +76,11 @@ public class GuiGroup {
 			if (itemIndex != UiComponent.NoIndex) {
 				clickedItemIndex = itemIndex;
 				clickedComponent = component;
-			} else if (component instanceof TextBox textBox) {
-				textBox.setSelected(false);
+				if (component instanceof Focusable focusable) {
+					focusable.gainFocus();
+				}
+			} else if (component instanceof Focusable focusable) {
+				focusable.lostFocus();
 			}
 		}
 
