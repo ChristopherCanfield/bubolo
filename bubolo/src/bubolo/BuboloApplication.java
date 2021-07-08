@@ -47,8 +47,8 @@ public class BuboloApplication extends AbstractGameApplication {
 	private Network network;
 	private Screen screen;
 
-	private String mapName = "Canfield Island.json";
-	private Path mapPath = FileSystems.getDefault().getPath("res", "maps", mapName);
+	private String defaultMapName = "Canfield Island.json";
+	private Path mapPath = FileSystems.getDefault().getPath("res", "maps", defaultMapName);
 
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
@@ -64,8 +64,8 @@ public class BuboloApplication extends AbstractGameApplication {
 
 		// The first command line argument specifies the map to use. If there is no argument, use the default map.
 		if (commandLineArgs.length != 0) {
-			mapName = commandLineArgs[0];
-			Path argPath = FileSystems.getDefault().getPath("res", "maps", mapName);
+			defaultMapName = commandLineArgs[0];
+			Path argPath = FileSystems.getDefault().getPath("res", "maps", defaultMapName);
 			if (Files.exists(argPath)) {
 				mapPath = argPath;
 			}
@@ -187,8 +187,8 @@ public class BuboloApplication extends AbstractGameApplication {
 		case MultiplayerSetupServer:
 			assert previousState == State.MultiplayerMapSelection;
 			assert mapPath != null;
-			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
 			mapPath = (Path) arg;
+			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
 			break;
 		case MultiplayerSetupClient:
 			assert previousState == State.MainMenu;
