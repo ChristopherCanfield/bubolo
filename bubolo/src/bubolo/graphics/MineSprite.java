@@ -50,9 +50,9 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 
 	@Override
 	public void draw(Graphics graphics) {
-		if (!getEntity().isOwnedByLocalPlayer() && getEntity().isArmed()) {
-			// Hide other people's mines, but give other players a chance to see it while the mine
-			// is arming.
+		var mine = getEntity();
+		if (!mine.canBeSeenByLocalPlayer() && getEntity().isArmed()) {
+			// Hide other people's mines, unless they were seen when placed.
 			return;
 		} else {
 			colorId = getEntity().isOwnedByLocalPlayer() ? SpriteColorSet.Blue.row : SpriteColorSet.Red.row;

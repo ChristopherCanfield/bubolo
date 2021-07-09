@@ -1,5 +1,8 @@
 package bubolo.world;
 
+import com.badlogic.gdx.math.Rectangle;
+
+import bubolo.Config;
 import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.util.Time;
@@ -23,6 +26,9 @@ public class Mine extends ActorEntity implements Damageable {
 	private static final int width = 20;
 	private static final int height = 20;
 
+	/** Whether the local player can see this mine. */
+	private boolean canBeSeenByLocalPlayer;
+
 	/**
 	 * Constructs a new Mine.
 	 *
@@ -32,8 +38,32 @@ public class Mine extends ActorEntity implements Damageable {
 	protected Mine(ConstructionArgs args, World world) {
 		super(args, width, height);
 
-		world.timer().scheduleTicks(fuseTimeTicks, w -> armed = true);
+		world.timer().scheduleTicks(fuseTimeTicks, w -> {
+			setVisibility(w);
+			armed = true;
+		});
 		updateBounds();
+
+		setVisibility(world);
+	}
+
+	private void setVisibility(World world) {
+		if (!canBeSeenByLocalPlayer) {
+			float visibleLeft = centerX() - Config.CameraWorldUnitWidth / 2;
+			float visibleBottom = centerY() - Config.CameraWorldUnitHeight / 2;
+			Rectangle visibleRect = new Rectangle(visibleLeft, visibleBottom, Config.CameraWorldUnitWidth, Config.CameraWorldUnitHeight);
+
+			var tanks = world.getTanks();
+			for (Tank tank : tanks) {
+				if (tank.isOwnedByLocalPlayer() && visibleRect.overlaps(tank.bounds().getBoundingRectangle())) {
+					canBeSeenByLocalPlayer = true;
+				}
+			}
+		}
+	}
+
+	public boolean canBeSeenByLocalPlayer() {
+		return canBeSeenByLocalPlayer;
 	}
 
 	@Override

@@ -30,10 +30,16 @@ public class Config {
 	public static final double SecondsPerFrame = 1.0 / FPS;
 	public static final double MillisPerFrame = 1000.0 / FPS;
 
+	public static final float DefaultPixelsPerWorldUnit = 1;
+
 	public static final int TargetWindowHeight = 720;
 	public static final int TargetWindowWidth = 1280;
-
-	public static final float DefaultPixelsPerWorldUnit = 1;
+	public static final int CameraResolutionX = TargetWindowWidth;
+	public static final int CameraResolutionY = TargetWindowHeight;
+	public static final float CameraWorldUnitWidth = CameraResolutionX / DefaultPixelsPerWorldUnit;
+	public static final float CameraWorldUnitHeight = CameraResolutionY / DefaultPixelsPerWorldUnit;
+	public static final int CameraTileWidth = Units.worldUnitToTile(CameraWorldUnitWidth);
+	public static final int CameraTileHeight = Units.worldUnitToTile(CameraWorldUnitHeight);
 
 	public static final int MaxWorldColumns = (Short.MAX_VALUE * 2 + 2) / Units.TileToWorldScale;
 	public static final int MaxWorldRows = MaxWorldColumns;
