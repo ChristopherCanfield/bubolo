@@ -354,7 +354,7 @@ public class ButtonGroup extends UiComponent implements Focusable {
 			activateSelectedButton();
 			return selectedButtonIndex;
 		} else {
-			return selectedButtonIndex;
+			return NoIndex;
 		}
 	}
 

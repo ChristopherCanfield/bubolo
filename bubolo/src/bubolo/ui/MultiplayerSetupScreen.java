@@ -35,6 +35,8 @@ import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
+import bubolo.util.GameLogicException;
+import bubolo.util.Nullable;
 
 /**
  * The join game screen, which allows the user to enter a name and ip address.
@@ -140,8 +142,33 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		colorSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
 		colorSelectBox.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		colorSelectBox.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		colorSelectBox.addItem("Blue", colorText -> { System.out.println(colorText  + " selected."); });
+		colorSelectBox.addItem("Blue", selectBox -> selectBox.setTextColor(textToColor("Blue")));
+		colorSelectBox.addItem("Cyan", selectBox -> selectBox.setTextColor(textToColor("Cyan")));
+		colorSelectBox.addItem("Green", selectBox -> selectBox.setTextColor(textToColor("Green")));
+		colorSelectBox.addItem("Purple", selectBox -> selectBox.setTextColor(textToColor("Purple")));
+		colorSelectBox.addItem("Red", selectBox -> selectBox.setTextColor(textToColor("Red")));
+		colorSelectBox.addItem("Pink", selectBox -> selectBox.setTextColor(textToColor("Pink")));
+		colorSelectBox.addItem("Orange", selectBox -> selectBox.setTextColor(textToColor("Orange")));
+		colorSelectBox.addItem("Yellow", selectBox -> selectBox.setTextColor(textToColor("Yellow")));
+		colorSelectBox.addItem("Brown", selectBox -> selectBox.setTextColor(textToColor("Brown")));
+		colorSelectBox.addItem("Black", selectBox -> selectBox.setTextColor(textToColor("Black")));
 		root.add(colorSelectBox);
+	}
+
+	private static Color textToColor(String colorString) {
+		return switch (colorString) {
+			case "Blue" -> Color.BLUE;
+			case "Cyan" -> Color.valueOf("00CCCCFF");
+			case "Green" -> Color.valueOf("31A500FF");
+			case "Purple" -> Color.valueOf("8200BFFF");
+			case "Red" -> Color.RED;
+			case "Pink" -> Color.valueOf("FF8EA1FF");
+			case "Orange" -> Color.valueOf("FF7700FF");
+			case "Yellow" -> Color.valueOf("CCC833FF");
+			case "Brown" -> Color.BROWN;
+			case "Black" -> Color.valueOf("595959FF");
+			default -> throw new GameLogicException("Unknown color string: " + colorString);
+		};
 	}
 
 	private void addIpAddressRow() {
@@ -245,10 +272,20 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 //		return !playerNameField.getText().isEmpty() && !(isClient && ipAddressField.getText().isEmpty());
 //	}
 
+	/**
+	 * Player information that is passed to the application's setState method.
+	 *
+	 * @author Christopher D. Canfield
+	 */
+	public record PlayerInfo(String name, Color color, @Nullable InetAddress ipAddress) {
+	}
+
 	private void startServer() {
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameTextBox.text());
-		app.setState(State.MultiplayerLobby, ipAddress);
+
+		var playerInfo = new PlayerInfo(playerNameTextBox.text(), textToColor(colorSelectBox.selectedItem()), ipAddress);
+		app.setState(State.MultiplayerLobby, playerInfo);
 	}
 
 	private void connectToServer() {
@@ -294,7 +331,8 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 					return;
 				}
 
-				app.setState(State.MultiplayerLobby);
+				var playerInfo = new PlayerInfo(playerNameTextBox.text(), textToColor(colorSelectBox.selectedItem()), null);
+				app.setState(State.MultiplayerLobby, playerInfo);
 			} else {
 				--ticksUntilConnect;
 			}

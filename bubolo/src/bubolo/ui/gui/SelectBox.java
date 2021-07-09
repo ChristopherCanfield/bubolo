@@ -30,7 +30,10 @@ public class SelectBox extends UiComponent implements Focusable {
 	private GlyphLayout leftIconLayout;
 	private GlyphLayout rightIconLayout;
 
-	private record Item(String text, @Nullable Consumer<String> action) {
+	private boolean highlightLeftArrow;
+	private boolean highlightRightArrow;
+
+	private record Item(String text, @Nullable Consumer<SelectBox> action) {
 	}
 
 	private int itemIndex;
@@ -39,13 +42,16 @@ public class SelectBox extends UiComponent implements Focusable {
 	public static class Args implements Cloneable {
 		public BitmapFont font = Fonts.UiGeneralTextFont;
 		public Color textColor = Color.BLACK;
-		public Color focusedTextColor = Color.BLACK;
 		/** The select box's width. Does not include the label's width. */
 		public int textWidth;
+
+		public Color arrowColor = new Color(0.4f, 0.4f, 0.4f, 1);
+		public Color arrowHoverColor = Color.BLACK;
 
 		/** May be null. */
 		public @Nullable String labelText;
 		public int labelWidth;
+		public Color labelColor = Color.BLACK;
 
 		public Color backgroundColor = Color.WHITE;
 		public Color focusedBackgroundColor = new Color(0.95f, 0.95f, 0.95f, 1);
@@ -78,13 +84,32 @@ public class SelectBox extends UiComponent implements Focusable {
 		recalculateLayout(parentWidth, parentHeight);
 	}
 
+	/**
+	 * Adds the item to this select box, with no associated action.
+	 *
+	 * @param text the item's text.
+	 */
 	public void addItem(String text) {
 		addItem(text, null);
 	}
 
-	public void addItem(String text, @Nullable Consumer<String> action) {
+	/**
+	 * Adds the item to this select box, with an optional associated action. If this is the first item added to this select box,
+	 * the action will be immediately executed.
+	 *
+	 * @param text the item's text.
+	 * @param action [optional] an action that is called when this item is selected. May be null.
+	 */
+	public void addItem(String text, @Nullable Consumer<SelectBox> action) {
 		items.add(new Item(text, action));
-		recalculateLayout(parentWidth, parentHeight);
+
+		if (items.size() == 1 && action != null) {
+			action.accept(this);
+		}
+	}
+
+	public void setTextColor(Color color) {
+		args.textColor = color;
 	}
 
 	public String selectedItem() {
@@ -103,13 +128,28 @@ public class SelectBox extends UiComponent implements Focusable {
 	}
 
 	private void selectNext() {
-		assert !items.isEmpty();
-
+		selectNext(1);
 	}
 
 	private void selectPrevious() {
-		assert !items.isEmpty();
+		selectNext(-1);
+	}
 
+	private void selectNext(int direction) {
+		assert !items.isEmpty();
+		assert direction == -1 || direction == 1;
+
+		itemIndex += direction;
+		if (itemIndex >= items.size()) {
+			itemIndex = 0;
+		} else if (itemIndex < 0) {
+			itemIndex = items.size() - 1;
+		}
+
+		var action = items.get(itemIndex).action();
+		if (action != null) {
+			action.accept(this);
+		}
 	}
 
 	@Override
@@ -121,6 +161,20 @@ public class SelectBox extends UiComponent implements Focusable {
 			} else if (withinRightArrow(screenX)) {
 				selectNext();
 			}
+			return 0;
+		}
+		return NoIndex;
+	}
+
+	@Override
+	public int onMouseMoved(int screenX, int screenY) {
+		highlightLeftArrow = highlightRightArrow = false;
+
+		if (contains(screenX, screenY)) {
+			gainFocus();
+			highlightLeftArrow = withinLeftArrow(screenX);
+			highlightRightArrow = withinRightArrow(screenX);
+
 			return 0;
 		}
 		return NoIndex;
@@ -142,7 +196,7 @@ public class SelectBox extends UiComponent implements Focusable {
 	 * Assumes that the y position was already verified to be within the select box.
 	 */
 	private boolean withinRightArrow(int screenX) {
-		return leftIconLayout != null && screenX >= right() - leftIconLayout.width && screenX <= right();
+		return rightIconLayout != null && screenX >= right() - rightIconLayout.width && screenX <= right();
 	}
 
 	@Override
@@ -171,10 +225,16 @@ public class SelectBox extends UiComponent implements Focusable {
 
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
-		font.setColor(hasFocus ? args.focusedTextColor : args.textColor);
 
+		Color textColor = args.textColor;
+		Color leftArrowColor = highlightLeftArrow ? args.arrowHoverColor : args.arrowColor;
+		Color rightArrowColor = highlightRightArrow ? args.arrowHoverColor : args.arrowColor;
+
+		font.setColor(leftArrowColor);
 		this.leftIconLayout = font.draw(batch, "<", boxLeft() + 3, screenTop - 2, 0, 1, args.textWidth, Align.left, false, null);
+		font.setColor(textColor);
 		this.layout = font.draw(batch, text, boxLeft() + 2, screenTop - 2, 0, text.length(), args.textWidth - 2, Align.center, false, "");
+		font.setColor(rightArrowColor);
 		this.rightIconLayout = font.draw(batch, ">", left() + width() - 7, screenTop - 2, 0, 1, args.textWidth, Align.left, false, null);
 
 		batch.end();
@@ -184,7 +244,7 @@ public class SelectBox extends UiComponent implements Focusable {
 		if (args.labelText != null) {
 			var batch = graphics.nonScalingBatch();
 			batch.begin();
-			args.font.setColor(args.textColor);
+			args.font.setColor(args.labelColor);
 			GlyphLayout layout = args.font.draw(batch, args.labelText, left() + padding, screenTop - 1, 0, args.labelText.length(), args.labelWidth, Align.left, false, null);
 			if (layout.height > this.layout.height) {
 				this.layout = layout;
@@ -224,5 +284,6 @@ public class SelectBox extends UiComponent implements Focusable {
 	@Override
 	public void lostFocus() {
 		hasFocus = false;
+		highlightLeftArrow = highlightRightArrow = false;
 	}
 }
