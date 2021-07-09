@@ -284,6 +284,11 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 		}
 	}
 
+	/**
+	 * When the capture timer has expired, this method makes the base uncapturable.
+	 *
+	 * @param world reference to the game world.
+	 */
 	private void onCaptureTimeExpired(World world) {
 		captureTimerExpiredTimerId = -1;
 		capturable = false;

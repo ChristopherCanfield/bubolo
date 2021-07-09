@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
-import bubolo.ui.UiConstants;
 import bubolo.util.Units;
 import bubolo.world.Tank;
 
@@ -52,7 +51,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private boolean deathAnimationCreated;
 
 	// For player name drawing.
-	private static final BitmapFont font = new BitmapFont(Gdx.files.internal(UiConstants.UI_PATH + "arial-16.fnt"));
+	private static final BitmapFont font = Fonts.Arial16;
 
 	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
 

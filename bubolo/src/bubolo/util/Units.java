@@ -77,4 +77,15 @@ public abstract class Units {
 	public static Vector2 cameraToWorld(Camera camera, float cameraX, float cameraY, Vector2 worldCoordinatesOut) {
 		return worldCoordinatesOut.set(cameraX + camera.position.x, cameraY + camera.position.y);
 	}
+
+	/**
+	 * Converts screen y coordinates (0 is at top) to camera y coordinates (0 is at bottom).
+	 *
+	 * @param camera the game's camera.
+	 * @param screenY the screen y position to convert.
+	 * @return the converted y coordinate.
+	 */
+	public static float screenYToCameraY(Camera camera, float screenY) {
+		return camera.viewportHeight - screenY;
+	}
 }

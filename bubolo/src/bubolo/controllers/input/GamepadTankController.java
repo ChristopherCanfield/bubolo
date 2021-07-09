@@ -6,6 +6,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
 import static org.lwjgl.glfw.GLFW.glfwGetGamepadState;
@@ -15,6 +16,8 @@ import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.glfw.GLFWGamepadState;
+
+import com.badlogic.gdx.Gdx;
 
 import bubolo.controllers.ActorEntityController;
 import bubolo.world.Tank;
@@ -52,6 +55,7 @@ public class GamepadTankController extends ActorEntityController<Tank> {
 			processCannon(tank, axes, world);
 			processMineLaying(tank, axes, world);
 			processPillboxBuilding(tank, world);
+			processAppExit();
 		}
 	}
 
@@ -102,6 +106,12 @@ public class GamepadTankController extends ActorEntityController<Tank> {
 				pillboxBuildKeyPressed = false;
 				tank.cancelBuildingPillbox();
 			}
+		}
+	}
+
+	private void processAppExit() {
+		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_BACK) != 0) {
+			Gdx.app.exit();
 		}
 	}
 }

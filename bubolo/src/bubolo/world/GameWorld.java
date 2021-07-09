@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 import bubolo.Config;
 import bubolo.controllers.Controller;
@@ -92,6 +93,10 @@ public class GameWorld implements World {
 	private final int width;
 	// Height in world units.
 	private final int height;
+
+	// @HACK (cdc 2021-06-27): Hack to allow malformed maps to be used. Ideally, this will be removed in the future,
+	//			and the map importer will handle these issues on its side.
+	private boolean isFirstUpdate = true;
 
 	private final Random randomGenerator = new Random();
 
@@ -201,9 +206,15 @@ public class GameWorld implements World {
 		if (entity instanceof Terrain t) {
 			Terrain existingTerrain = terrain[t.tileColumn()][t.tileRow()];
 			if (existingTerrain != null) {
-				assert existingTerrain.isDisposed()
-						: String.format("Terrain %s added to tile (%d,%d), which already has a terrain: %s",
-								t.getClass().getName(), t.tileColumn(), t.tileRow(), existingTerrain.getClass().getName());
+				if (!isFirstUpdate) {
+					assert existingTerrain.isDisposed()
+							: String.format("Terrain %s added to tile (%d,%d), which already has a terrain: %s",
+									t.getClass().getName(), t.tileColumn(), t.tileRow(), existingTerrain.getClass().getName());
+				} else {
+					existingTerrain.dispose();
+					Logger.getLogger(Config.AppProgramaticTitle).warning(String.format("Terrain %s added to tile (%d,%d), which already has a terrain: %s",
+							t.getClass().getName(), t.tileColumn(), t.tileRow(), existingTerrain.getClass().getName()));
+				}
 			}
 
 			terrain[t.tileColumn()][t.tileRow()] = t;
@@ -431,6 +442,8 @@ public class GameWorld implements World {
 			adaptables.forEach(adaptable -> adaptable.updateTilingState(this));
 		}
 		adaptableTileModified = false;
+
+		isFirstUpdate = false;
 	}
 
 	/**

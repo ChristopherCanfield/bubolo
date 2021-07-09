@@ -93,7 +93,6 @@ abstract class Sprite implements Drawable {
 	 *
 	 * @param graphics The graphics system.
 	 * @param texture The texture to draw.
-	 * @param scale the scale that the texture will be drawn.
 	 */
 	protected final void drawTexture(Graphics graphics, Texture texture) {
 		drawTexture(graphics, texture, defaultScale);

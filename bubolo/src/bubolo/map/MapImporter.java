@@ -1,18 +1,29 @@
 package bubolo.map;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonKey;
@@ -20,14 +31,15 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
 import bubolo.Config;
+import bubolo.util.Nullable;
 import bubolo.util.Units;
 import bubolo.world.Base;
+import bubolo.world.Building;
 import bubolo.world.Crater;
 import bubolo.world.DeepWater;
 import bubolo.world.Entity;
 import bubolo.world.GameWorld;
 import bubolo.world.Grass;
-import bubolo.world.Building;
 import bubolo.world.Mine;
 import bubolo.world.Pillbox;
 import bubolo.world.Road;
@@ -170,6 +182,10 @@ public class MapImporter {
 	 * The Tiled map keys that are relevant to us.
 	 */
 	enum Key implements JsonKey {
+		CustomProperties("properties"),
+		CustomPropertyName("name"),
+		CustomPropertyValue("value"),
+
 		MapHeight("height"),
 		MapWidth("width"),
 		Tilesets("tilesets"),
@@ -177,7 +193,7 @@ public class MapImporter {
 
 		Data("data"),
 
-		Name("name"),
+		TilesetName("name"),
 		FirstGid("firstgid");
 
 		private String key;
@@ -194,6 +210,95 @@ public class MapImporter {
 		@Override
 		public Object getValue(){
 			return null;
+		}
+	}
+
+	/**
+	 * @return a list of paths to map files.
+	 * @throws IOException if the maps folder does not exist.
+	 */
+	public List<Path> loadMapFilePaths() throws IOException {
+		var maps = new ArrayList<Path>();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Config.MapsPath, "*.json")) {
+			for (Path entry: stream) {
+				maps.add(entry);
+			}
+			return maps;
+		}
+	}
+
+	public static record MapInfo(Path fullPath, String mapName, String author, String description, int tileColumns, int tileRows, String lastUpdated, @Nullable Texture previewTexture) {
+		/**
+		 * Disposes the texture, if one exists.
+		 */
+		public void dispose() {
+			if (previewTexture() != null) {
+				previewTexture().dispose();
+			}
+		}
+	}
+
+	private static final Path noMapPreviewImageTexture = Config.TextureFilePath.resolve("no-map-preview.png");
+
+	/**
+	 * Loads information about a map, including:
+	 * <ul>
+	 * 	<li>Name ("mapName" json field, or the file name)</li>
+	 * 	<li>Author ("author" json field, or "Unknown" if no author was provided)</li>
+	 * 	<li>Description ("description" json field, or an empty string if no description was provided)</li>
+	 * 	<li>Tile columns ("width" json field)</li>
+	 * 	<li>Tile rows ("height" json field)</li>
+	 * 	<li>Last updated (from the file's last modified date)
+	 * </ul>
+	 *
+	 * @param mapPath the full path and file name to the map.
+	 * @return a populated MapInfo object.
+	 * @throws IOException if the file doesn't exist or is corrupted.
+	 * @throws InvalidMapException if the file doesn't have width or height json fields.
+	 */
+	public MapInfo loadMapInfo(Path mapPath) throws IOException {
+		if (!Files.exists(mapPath)) {
+			throw new FileNotFoundException("Unable to find map " + mapPath.getFileName().toString());
+		}
+
+		var lastModifiedTime = Files.getLastModifiedTime(mapPath);
+		String lastUpdated = DateTimeFormatter.ofPattern("uuuu-MM-dd").format(LocalDateTime.ofInstant(lastModifiedTime.toInstant(), ZoneId.systemDefault()));
+
+		var previewTexturePath = Paths.get(mapPath.toString().replace(".json", ".png"));
+		Texture previewTexture;
+		if (Files.exists(previewTexturePath)) {
+			previewTexture = new Texture(new FileHandle(previewTexturePath.toFile()));
+		} else {
+			previewTexture = new Texture(new FileHandle(noMapPreviewImageTexture.toFile()));
+		}
+
+		try (BufferedReader mapReader = Files.newBufferedReader(mapPath)) {
+			JsonObject jsonTiledMap = (JsonObject) Jsoner.deserialize(mapReader);
+			jsonTiledMap.requireKeys(Key.MapHeight, Key.MapWidth);
+
+			int tileColumns = jsonTiledMap.getInteger(Key.MapWidth);
+			int tileRows = jsonTiledMap.getInteger(Key.MapHeight);
+
+			String mapName = mapPath.getFileName().toString();
+			String author = "Unknown";
+			String description = "";
+			// Maps may not have a custom properties collection.
+			if (jsonTiledMap.containsKey(Key.CustomProperties.getKey())) {
+				Collection<JsonObject> customProperties = jsonTiledMap.getCollection(Key.CustomProperties);
+				for (JsonObject property : customProperties) {
+					var propertyName = property.getString(Key.CustomPropertyName);
+					switch (propertyName) {
+						case "mapName" -> mapName = property.getString(Key.CustomPropertyValue);
+						case "author" -> author = property.getString(Key.CustomPropertyValue);
+						case "description" -> description = property.getString(Key.CustomPropertyValue);
+					}
+				}
+			}
+
+			return new MapInfo(mapPath, mapName, author, description, tileColumns, tileRows, lastUpdated, previewTexture);
+
+		} catch (JsonException e) {
+			throw new InvalidMapException(e);
 		}
 	}
 
@@ -286,9 +391,9 @@ public class MapImporter {
 
 		for (Object ts : jsonTilesets) {
 			JsonObject jsonTileset = (JsonObject) ts;
-			jsonTileset.requireKeys(Key.Name, Key.FirstGid);
+			jsonTileset.requireKeys(Key.TilesetName, Key.FirstGid);
 
-			String tilesetName = jsonTileset.getString(Key.Name);
+			String tilesetName = jsonTileset.getString(Key.TilesetName);
 			Tileset tileset = tilesets.get(tilesetName);
 			if (tileset != null) {
 				tileset.firstGid = jsonTileset.getInteger(Key.FirstGid);

@@ -11,6 +11,8 @@ public abstract class NetworkInformation {
 	 */
 	public static final int GAME_PORT = 19014;
 
+	public static final String MulticastAddress = "239.255.2.109";
+
 	/**
 	 * The number of network ticks per second.
 	 */

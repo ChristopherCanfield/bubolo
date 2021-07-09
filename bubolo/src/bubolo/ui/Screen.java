@@ -1,73 +1,32 @@
-/**
- *
- */
-
 package bubolo.ui;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.graphics.Color;
 
-/**
- * Base class for ui screens that are drawn in the LWJGL window.
- *
- * @author Christopher D. Canfield
- */
-public abstract class Screen {
-	/** The scene2d.ui stage. **/
-	protected final Stage stage;
+import bubolo.graphics.Graphics;
 
-	/** The base table for the screen. **/
-	protected final Table table;
-
+public interface Screen {
 	/**
-	 * Default constructor.
+	 * @return The screen clear color.
 	 */
-	protected Screen() {
-		stage = new Stage();
-		table = new Table();
-
-		table.setFillParent(true);
-		table.top();
-		stage.addActor(table);
-
-		Gdx.input.setInputProcessor(stage);
-	}
-
-	/**
-	 * Updates and draws the screen.
-	 */
-	public final void update() {
-		update(false);
-	}
+	Color clearColor();
 
 	/**
 	 * Updates and draws the screen.
 	 *
-	 * @param debug true if the screen should be drawn in debug mode.
+	 * @param graphics reference to the graphics system.
 	 */
-	public final void update(boolean debug) {
-		if (debug) {
-			table.debug();
-		}
-
-		stage.act();
-		onUpdate();
-		stage.draw();
-	}
+	void draw(Graphics graphics);
 
 	/**
-	 * Called once per tick. Child classes can override this if necessary.
+	 * Called when the window is resized.
+	 *
+	 * @param newWidth the new window width.
+	 * @param newHeight the new window height.
 	 */
-	protected void onUpdate() {
-	}
-
-	public void resize(int width, int height) {
-		stage.getViewport().update(width, height, true);
-	}
+	void viewportResized(int newWidth, int newHeight);
 
 	/**
 	 * Releases all heavy-weight resources.
 	 */
-	public abstract void dispose();
+	void dispose();
 }

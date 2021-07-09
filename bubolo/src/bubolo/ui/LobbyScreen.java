@@ -9,16 +9,21 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import bubolo.GameApplication;
+import bubolo.BuboloApplication;
+import bubolo.Config;
 import bubolo.GameApplication.State;
+import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
 import bubolo.net.NetworkSystem;
+import bubolo.net.ServerAddressMessage;
+import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;
 import bubolo.net.command.SendMessage;
 import bubolo.net.command.SendMessage.MessageType;
@@ -29,13 +34,13 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class LobbyScreen extends Screen implements NetworkObserver {
+public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver {
 	private Label messageHistory;
 	private TextButton sendMessageButton;
 	private TextField sendMessageField;
 	private TextButton startGameButton;
 
-	private final GameApplication app;
+	private final BuboloApplication app;
 	private final World world;
 
 	private long startTime;
@@ -52,18 +57,25 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 
 	private boolean messageHistoryReceivedFromServer;
 
+	private ServerAddressMulticaster serverAddressMulticaster;
+
 	/**
 	 * Constructs the network game lobby.
 	 *
 	 * @param app reference to the Game Application.
+	 * @param graphics reference to the graphics system.
 	 * @param world reference to the game world.
 	 */
-	public LobbyScreen(GameApplication app, World world) {
+	public LobbyScreen(BuboloApplication app, Graphics graphics, World world) {
+		super(graphics, new Table());
+		root.setFillParent(true);
+		root.top();
+
 		this.app = app;
 		this.world = world;
 
-		TextureAtlas atlas = new TextureAtlas(new FileHandle(UiConstants.UI_PATH + "skin.atlas"));
-		Skin skin = new Skin(new FileHandle(UiConstants.UI_PATH + "skin.json"), atlas);
+		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath.resolve("skin.atlas").toString()));
+		Skin skin = new Skin(new FileHandle(Config.UiPath.resolve("skin.json").toString()), atlas);
 
 		createMessageHistoryBox(skin);
 		createSendMessageRow(skin);
@@ -72,21 +84,29 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 		net.addObserver(this);
 		// If this is the server, the message history was already received.
 		messageHistoryReceivedFromServer = net.isServer();
+
+		if (net.isServer()) {
+			var ipAddresses = Network.getIpAddresses();
+			ServerAddressMessage message = new ServerAddressMessage(ipAddresses.firstIpAddress(), net.getPlayerName(), app.mapName());
+			serverAddressMulticaster = new ServerAddressMulticaster(message);
+			serverAddressMulticaster.start();
+		}
 	}
 
 	private void createMessageHistoryBox(Skin skin) {
-		table.row().colspan(3).width(Gdx.graphics.getWidth() - 20.f).height(Gdx.graphics.getHeight() - 100.f);
+		root.row().colspan(3).width(Gdx.graphics.getWidth() - 20.f).height(Gdx.graphics.getHeight() - 100.f);
 
 		messageHistory = new Label("", skin);
 		messageHistory.setWrap(true);
 		messageHistory.setAlignment(Align.top + Align.left);
 
 		ScrollPane scrollpane = new ScrollPane(messageHistory, skin);
-		table.add(scrollpane).expand();
+		scrollpane.setFadeScrollBars(false);
+		root.add(scrollpane).expand();
 	}
 
 	private void createSendMessageRow(Skin skin) {
-		table.row().padBottom(15.f);
+		root.row().padBottom(15.f);
 
 		final Network net = NetworkSystem.getInstance();
 
@@ -99,11 +119,11 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 			}
 		});
 
-		table.add(sendMessageButton).expandX().width(100.f);
+		root.add(sendMessageButton).expandX().width(100.f);
 
 		sendMessageField = new TextField("", skin);
 		final float width = net.isServer() ? Gdx.graphics.getWidth() - 250.f : Gdx.graphics.getWidth() - 150.f;
-		table.add(sendMessageField).expandX().width(width);
+		root.add(sendMessageField).expandX().width(width);
 
 		stage.addListener(new InputListener() {
 			@Override
@@ -117,16 +137,16 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 
 		if (net.isServer()) {
 			startGameButton = new TextButton("Start", skin);
-			table.add(startGameButton).expandX().width(100.f);
+			root.add(startGameButton).expandX().width(100.f);
 
 			startGameButton.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					if (clientCount > 0) {
 						if (!startingGame) {
+							startingGame = true;
 							appendToMessageHistory(messageHistory, "Sending map data...\n");
 							net.send(new SendMessage("Sending map data...\n"));
-							startingGame = true;
 							net.send(new SendMap(world));
 						}
 					} else {
@@ -139,7 +159,7 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 
 	@Override
 	protected void onUpdate() {
-		if (app.getState() == State.NET_GAME_STARTING) {
+		if (app.getState() == State.MultiplayerStarting) {
 			final long currentTime = System.currentTimeMillis();
 			final long secondsRemaining = (startTime - currentTime) / 1000L;
 
@@ -149,7 +169,7 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 					lastSecondsRemaining = secondsRemaining;
 				}
 			} else {
-				app.setState(State.NET_GAME);
+				app.setState(State.MultiplayerGame);
 			}
 		}
 	}
@@ -165,7 +185,7 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 
 	@Override
 	public void onConnect(String clientName, String serverName) {
-		appendToMessageHistory(messageHistory, "Welcome " + clientName + ". The host is " + serverName + ".");
+		appendToMessageHistory(messageHistory, "Welcome " + clientName + ". The host is " + serverName + ". We're playing map " + app.mapName() + ".");
 	}
 
 	@Override
@@ -204,7 +224,7 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 		startTime = currentTime + (secondsUntilStart * 1000);
 		lastSecondsRemaining = secondsUntilStart;
 
-		app.setState(State.NET_GAME_STARTING);
+		app.setState(State.MultiplayerStarting);
 	}
 
 	@Override
@@ -224,9 +244,11 @@ public class LobbyScreen extends Screen implements NetworkObserver {
 	}
 
 	@Override
-	public void dispose() {
+	protected void onDispose() {
+		if (serverAddressMulticaster != null) {
+			serverAddressMulticaster.shutDown();
+		}
 		Network net = NetworkSystem.getInstance();
 		net.removeObserver(this);
-		Gdx.input.setInputProcessor(null);
 	}
 }

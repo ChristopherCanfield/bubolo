@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 
-import bubolo.world.World;
-
 /**
  * @author BU CS673 - Clone Productions
  */
@@ -60,11 +58,6 @@ public class MockNetwork implements Network
 	}
 
 	@Override
-	public void startGame(World world)
-	{
-	}
-
-	@Override
 	public void addObserver(NetworkObserver observer)
 	{
 	}
@@ -96,5 +89,9 @@ public class MockNetwork implements Network
 
 	@Override
 	public void update(WorldOwner worldOwner) {
+	}
+
+	@Override
+	public void startGame() {
 	}
 }

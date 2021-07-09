@@ -2,6 +2,7 @@ package bubolo.controllers.input;
 
 import static com.badlogic.gdx.Gdx.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
 import bubolo.audio.Audio;
@@ -37,6 +38,7 @@ public class KeyboardTankController implements Controller {
 		processCannon(tank, world);
 		processMineLaying(tank, world);
 		processPillboxBuilding(tank, world);
+		processAppExit();
 	}
 
 	private static void processMovement(Tank tank) {
@@ -81,6 +83,12 @@ public class KeyboardTankController implements Controller {
 				pillboxBuildKeyPressed = false;
 				tank.cancelBuildingPillbox();
 			}
+		}
+	}
+
+	private static void processAppExit() {
+		if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+			Gdx.app.exit();
 		}
 	}
 }
