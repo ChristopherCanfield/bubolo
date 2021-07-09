@@ -16,6 +16,7 @@ class TankSinkingSprite extends Sprite {
 	private int ticksRemaining = drownTimeTicks;
 
 	private static final String textureFile = "tank.png";
+	private final int colorSetRowIndex;
 	private final TextureRegion[] frames;
 
 	/**
@@ -30,6 +31,8 @@ class TankSinkingSprite extends Sprite {
 		this.y = tank.y();
 		this.rotation = tank.rotation();
 
+		colorSetRowIndex = TankSprite.getTankColorSetIndex(tank);
+		// Get the first frame from the texture file, which is the idle frame.
 		this.frames = Graphics.getTextureRegion2d(textureFile, 32, 32)[0];
 	}
 
@@ -69,6 +72,6 @@ class TankSinkingSprite extends Sprite {
 		float percentTimeRemaining = ticksRemaining / (float) drownTimeTicks;
 		float scale = Interpolation.pow2In.apply(0, 1, percentTimeRemaining);
 
-		drawTexture(graphics, frames[0], scale);
+		drawTexture(graphics, frames[colorSetRowIndex], scale);
 	}
 }

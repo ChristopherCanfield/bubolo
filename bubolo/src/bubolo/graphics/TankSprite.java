@@ -304,10 +304,10 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 			controller.setCamera(graphics.camera());
 		}
 
-		colorId = determineColorSet(getEntity());
+		colorId = getTankColorSetIndex(getEntity());
 	}
 
-	private static int determineColorSet(Tank tank) {
+	static int getTankColorSetIndex(Tank tank) {
 		return tank.isOwnedByLocalPlayer() ? SpriteColorSet.Blue.row : SpriteColorSet.Red.row;
 	}
 
