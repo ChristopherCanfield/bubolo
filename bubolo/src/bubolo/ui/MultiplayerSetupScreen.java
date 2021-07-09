@@ -27,6 +27,7 @@ import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.Line;
+import bubolo.ui.gui.SelectBox;
 import bubolo.ui.gui.TextBox;
 import bubolo.ui.gui.UiComponent;
 import bubolo.ui.gui.UiComponent.HOffsetFrom;
@@ -57,6 +58,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	private Label screenTitleLabel;
 
 	private TextBox playerNameTextBox;
+	private SelectBox colorSelectBox;
 
 	private Line sectionDivider;
 	private TextBox serverIpAddressTextBox;
@@ -89,7 +91,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		this.isClient = (playerType == PlayerType.Client);
 
 		addScreenTitleRow();
-		addPlayerNameRow();
+		addPlayerInfoRows();
 		addIpAddressRow();
 		addAvailableGames();
 		addButtonRow();
@@ -122,14 +124,24 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		root.add(screenTitleLabel);
 	}
 
-	private void addPlayerNameRow() {
-		LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+	private void addPlayerInfoRows() {
+		LayoutArgs layoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 		var textBoxArgs = defaultTextBoxArgs();
 		textBoxArgs.labelText = "Name:";
-		playerNameTextBox = new TextBox(args, textBoxArgs);
+		playerNameTextBox = new TextBox(layoutArgs, textBoxArgs);
 		playerNameTextBox.setVerticalOffset(screenTitleLabel, VOffsetFromObjectSide.Bottom, 100, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		playerNameTextBox.setHorizontalOffset(0, OffsetType.Percent, HOffsetFrom.Center);
 		root.add(playerNameTextBox);
+
+		var selectBoxArgs = new SelectBox.Args();
+		selectBoxArgs.textWidth = textBoxArgs.textWidth;
+		selectBoxArgs.labelText = "Color:";
+		selectBoxArgs.labelWidth = textBoxArgs.labelWidth;
+		colorSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
+		colorSelectBox.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 20, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		colorSelectBox.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
+		colorSelectBox.addItem("Blue", colorText -> { System.out.println(colorText  + " selected."); });
+		root.add(colorSelectBox);
 	}
 
 	private void addIpAddressRow() {
@@ -139,7 +151,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 
 			LayoutArgs args = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
 			ipAddressLabel = new Label(args, "IP Address:            " + ipAddressInfo.ipAddresses());
-			ipAddressLabel.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			ipAddressLabel.setVerticalOffset(colorSelectBox, VOffsetFromObjectSide.Bottom, 25, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			ipAddressLabel.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 			root.add(ipAddressLabel);
 		}
@@ -163,7 +175,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 			availableGamesListArgs.buttonHoverBorderColor = transparent;
 
 			sectionDivider = new Line(layoutArgs, Color.GRAY, (int) playerNameTextBox.width(), 3);
-			sectionDivider.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+			sectionDivider.setVerticalOffset(colorSelectBox, VOffsetFromObjectSide.Bottom, 50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			sectionDivider.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 			root.add(sectionDivider);
 
@@ -209,11 +221,6 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		});
 
 		okCancelButtons.setVerticalOffset(0.9f, OffsetType.Percent, VOffsetFrom.Top);
-//		if (isClient) {
-//			okCancelButtons.setVerticalOffset(availableServersList, VOffsetFromObjectSide.Bottom, 100, OffsetType.ScreenUnits, VOffsetFrom.Top);
-//		} else {
-//			okCancelButtons.setVerticalOffset(ipAddressLabel, VOffsetFromObjectSide.Bottom, 100, OffsetType.ScreenUnits, VOffsetFrom.Top);
-//		}
 		okCancelButtons.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 
 		root.add(okCancelButtons);

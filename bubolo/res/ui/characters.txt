@@ -2,4 +2,3 @@
 abcdefghijklmnopqrstuvwxyz
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
 `~!@#$%^&*()-_=+[]{}\|;:'",<.>/?¡¢£¤¥¦§©«®°±·»¿•‘’€←↑→↓↔↕√∞≈≠≡≤≥±÷☺☻☼♠♣♥♦♪♫♯▲►▼◄◊○◌●◘◙◦
-─│┌┐└┘├┤┬┴┼
