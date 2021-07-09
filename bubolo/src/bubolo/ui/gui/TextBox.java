@@ -27,6 +27,8 @@ public class TextBox extends UiComponent implements Focusable {
 
 	private GlyphLayout layout;
 
+	private final String filteredCharacters = "\t\r\n";
+
 	public static class Args implements Cloneable {
 		public BitmapFont font = Fonts.UiGeneralTextFont;
 		public Color textColor = Color.BLACK;
@@ -99,8 +101,8 @@ public class TextBox extends UiComponent implements Focusable {
 	@Override
 	public void onKeyTyped(char character) {
 		if (hasFocus) {
-			// Don't capture tabs.
-			if (character == '\t') {
+			// Don't capture filtered characters.
+			if (filteredCharacters.contains(String.valueOf(character))) {
 
 			// Handle backspace.
 			} else if (character == '\b') {
@@ -177,7 +179,7 @@ public class TextBox extends UiComponent implements Focusable {
 		var batch = graphics.nonScalingBatch();
 		batch.begin();
 		args.font.setColor(args.textColor);
-		this.layout = args.font.draw(batch, textWithCursor, boxLeft() + 2, screenTop - 2, 0, textWithCursor.length(), args.textWidth, Align.left, false, null);
+		this.layout = args.font.draw(batch, textWithCursor, boxLeft() + 2, screenTop - 2, 0, textWithCursor.length(), args.textWidth, Align.left, false, "");
 		batch.end();
 	}
 
