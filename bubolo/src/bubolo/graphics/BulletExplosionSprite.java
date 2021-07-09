@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * @author BU673 - Clone Industries
  */
 class BulletExplosionSprite extends Sprite {
-	private TextureRegion[][] frames;
+	private final TextureRegion[] frames;
 
 	// The number of milliseconds per frame.
 	private static final long millisPerFrame = 50;
@@ -26,11 +26,14 @@ class BulletExplosionSprite extends Sprite {
 	private final int x;
 	private final int y;
 
-	private static final int HEIGHT = 32;
-	private static final int WIDTH = 32;
+	private final int width;
+	private final int height;
 
-	/** The file name of the texture. */
-	private static final String TEXTURE_FILE = "explosion.png";
+	private static final int hitObjectWidthAndHeight = 32;
+	private static final int maxRangeWidthAndHeight = 16;
+
+	private static final String hitObjectTextureFileName = "bullet_explosion.png";
+	private static final String maxRangeTextureFileName = "bullet_explosion_smoke.png";
 
 	/**
 	 * Constructs a BulletExplosionSprite. This is Package-private because sprites should not be directly created
@@ -38,11 +41,18 @@ class BulletExplosionSprite extends Sprite {
 	 *
 	 * @param x the x position of the explosion.
 	 * @param y the y position of the explosion.
+	 * @param bulletHitObject true if the bullet hit an object, or false if the bullet reached its maximum range.
 	 */
-	BulletExplosionSprite(int x, int y) {
+	BulletExplosionSprite(int x, int y, boolean bulletHitObject) {
 		super(DrawLayer.Effects);
 
-		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, WIDTH, HEIGHT);
+		if (bulletHitObject) {
+			frames = Graphics.getTextureRegion1d(hitObjectTextureFileName, 3, hitObjectWidthAndHeight, 0);
+			width = height = hitObjectWidthAndHeight;
+		} else {
+			frames = Graphics.getTextureRegion1d(maxRangeTextureFileName, 3, maxRangeWidthAndHeight, 0);
+			width = height = maxRangeWidthAndHeight;
+		}
 
 		frameTimeRemaining = millisPerFrame;
 		lastFrameTime = System.currentTimeMillis();
@@ -53,7 +63,7 @@ class BulletExplosionSprite extends Sprite {
 
 	@Override
 	public void draw(Graphics graphics) {
-		drawTexture(graphics, frames[frameIndex][0]);
+		drawTexture(graphics, frames[frameIndex]);
 		animate();
 	}
 
@@ -88,12 +98,12 @@ class BulletExplosionSprite extends Sprite {
 
 	@Override
 	public int getWidth() {
-		return WIDTH;
+		return width;
 	}
 
 	@Override
 	public int getHeight() {
-		return HEIGHT;
+		return height;
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class BuildingSprite extends AbstractEntitySprite<Building> {
 	void draw(Graphics graphics) {
 		if (isDisposed()) {
 			SpriteSystem spriteSystem = graphics.sprites();
-			spriteSystem.addSprite(new BulletExplosionSprite(Math.round(getEntity().x()), Math.round(getEntity().y())));
+			spriteSystem.addSprite(new BulletExplosionSprite(Math.round(getEntity().x()), Math.round(getEntity().y()), false));
 			spriteSystem.removeSprite(this);
 		} else {
 			drawTexture(graphics, texture[appearanceIndex]);

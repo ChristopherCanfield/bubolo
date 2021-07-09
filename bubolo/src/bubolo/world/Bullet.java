@@ -31,6 +31,15 @@ public class Bullet extends ActorEntity {
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
 
+	public interface BulletHitObjectObserver {
+		/**
+		 * Called when the bullet hits an object. Will not be called if the bullet reaches the end of its range.
+		 */
+		void onBulletHitObject();
+	}
+
+	private BulletHitObjectObserver observer;
+
 	public static final int Width = 4;
 	public static final int Height = 8;
 
@@ -66,6 +75,11 @@ public class Bullet extends ActorEntity {
 		initialized = true;
 	}
 
+	public void setBulletHitObjectObserver(BulletHitObjectObserver observer) {
+		assert this.observer == null : "Only one BulletHitObjectObserver can be assigned to a bullet.";
+		this.observer = observer;
+	}
+
 	/**
 	 * Moves the bullet. Calls dispose() on this entity if the distance travelled has exceeded the MAX_DISTANCE value.
 	 */
@@ -91,6 +105,7 @@ public class Bullet extends ActorEntity {
 				// We know the collision object is Damageable, because we filtered for that in the getNearbyCollidables method.
 				Damageable collisionObject = (Damageable) e;
 				collisionObject.receiveDamage(damage, w);
+				observer.onBulletHitObject();
 				dispose();
 				break;
 			}
