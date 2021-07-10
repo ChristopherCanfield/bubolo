@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
@@ -33,7 +34,10 @@ import bubolo.world.Pillbox.BuildStatus;
  * @author Christopher D. Canfield
  */
 public class Tank extends ActorEntity implements Damageable {
+	private boolean initialized;
+
 	private String playerName;
+	private Color color;
 
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 2.77779f; // 2.77779 WU per tick is about 90 Kph.
@@ -144,6 +148,19 @@ public class Tank extends ActorEntity implements Damageable {
 		updateBounds();
 	}
 
+	/**
+	 * Initializes the tank. This method must be called before calling the tank's update method.
+	 *
+	 * @param playerName the name of the player who controls the tank.
+	 * @param color the tank's color.
+	 * @param controlledByLocalPlayer whether this tank is controlled by the local player.
+	 */
+	public void initialize(String playerName, Color color, boolean controlledByLocalPlayer) {
+		this.playerName = playerName;
+		this.color = color;
+		this.controlledByLocalPlayer = controlledByLocalPlayer;
+	}
+
 	private void respawn(World world) {
 		// Don't allow the tank to respawn until its respawn timer has expired.
 		if (nextRespawnTime < System.currentTimeMillis() && isOwnedByLocalPlayer()) {
@@ -180,14 +197,6 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
-	/**
-	 * For the network.
-	 * @param drowning true if the tank is drowning.
-	 */
-	public void setDrowning(boolean drowning) {
-		this.drowned = drowning;
-	}
-
 	@Override
 	public void updateBounds() {
 		super.updateBounds();
@@ -196,6 +205,8 @@ public class Tank extends ActorEntity implements Damageable {
 
 	@Override
 	public void onUpdate(World world) {
+		assert initialized;
+
 		if (!isAlive() || checkForDrowned(world)) {
 			respawn(world);
 			return;
@@ -223,8 +234,13 @@ public class Tank extends ActorEntity implements Damageable {
 		return playerName;
 	}
 
-	public void setPlayerName(String name) {
-		this.playerName = name;
+	public Color color() {
+		return color;
+	}
+
+	@Override
+	public boolean isOwnedByLocalPlayer() {
+		return controlledByLocalPlayer;
 	}
 
 	/**
@@ -944,6 +960,15 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
+	 * For the network.
+	 *
+	 * @param drowning true if the tank is drowning.
+	 */
+	public void setDrowning(boolean drowning) {
+		this.drowned = drowning;
+	}
+
+	/**
 	 * Attaches a controller to this tank. Tanks can have multiple attached controllers.
 	 *
 	 * @param c the controller to add.
@@ -956,14 +981,5 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	protected void updateControllers(World world) {
 		controllers.forEach(controller -> controller.update(world));
-	}
-
-	public void setControlledByLocalPlayer(boolean controlledByLocal) {
-		this.controlledByLocalPlayer = controlledByLocal;
-	}
-
-	@Override
-	public boolean isOwnedByLocalPlayer() {
-		return controlledByLocalPlayer;
 	}
 }

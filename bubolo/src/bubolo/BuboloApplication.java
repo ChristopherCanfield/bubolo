@@ -12,6 +12,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.badlogic.gdx.graphics.Color;
+
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
 import bubolo.map.MapImporter;
@@ -154,7 +156,7 @@ public class BuboloApplication extends AbstractGameApplication {
 					Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 					Tank tank = world().addEntity(Tank.class, args);
-					tank.setControlledByLocalPlayer(true);
+					tank.initialize("Player 1", Color.BLUE, true);
 
 					network.startDebug();
 					setReady(true);
@@ -211,8 +213,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 			Tank tank = world().addEntity(Tank.class, args);
-			tank.setPlayerName(network.getPlayerName());
-			tank.setControlledByLocalPlayer(true);
+			tank.initialize(network.getPlayerName(), Color.BLUE, true);
 
 			network.send(new CreateTank(tank));
 
