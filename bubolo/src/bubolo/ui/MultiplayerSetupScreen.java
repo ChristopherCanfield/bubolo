@@ -17,6 +17,7 @@ import bubolo.GameApplication;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.graphics.PlayerColor;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
 import bubolo.net.NetworkSystem;
@@ -35,7 +36,6 @@ import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
-import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
 
 /**
@@ -142,33 +142,10 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		colorSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
 		colorSelectBox.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		colorSelectBox.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		colorSelectBox.addItem("Blue", selectBox -> selectBox.setTextColor(textToColor("Blue")));
-		colorSelectBox.addItem("Cyan", selectBox -> selectBox.setTextColor(textToColor("Cyan")));
-		colorSelectBox.addItem("Green", selectBox -> selectBox.setTextColor(textToColor("Green")));
-		colorSelectBox.addItem("Purple", selectBox -> selectBox.setTextColor(textToColor("Purple")));
-		colorSelectBox.addItem("Red", selectBox -> selectBox.setTextColor(textToColor("Red")));
-		colorSelectBox.addItem("Pink", selectBox -> selectBox.setTextColor(textToColor("Pink")));
-		colorSelectBox.addItem("Orange", selectBox -> selectBox.setTextColor(textToColor("Orange")));
-		colorSelectBox.addItem("Yellow", selectBox -> selectBox.setTextColor(textToColor("Yellow")));
-		colorSelectBox.addItem("Brown", selectBox -> selectBox.setTextColor(textToColor("Brown")));
-		colorSelectBox.addItem("Black", selectBox -> selectBox.setTextColor(textToColor("Black")));
+		for (var playerColor : PlayerColor.values()) {
+			colorSelectBox.addItem(playerColor.toString(), selectBox -> selectBox.setTextColor(playerColor.color));
+		}
 		root.add(colorSelectBox);
-	}
-
-	private static Color textToColor(String colorString) {
-		return switch (colorString) {
-			case "Blue" -> Color.BLUE;
-			case "Cyan" -> Color.valueOf("00CCCCFF");
-			case "Green" -> Color.valueOf("31A500FF");
-			case "Purple" -> Color.valueOf("8200BFFF");
-			case "Red" -> Color.RED;
-			case "Pink" -> Color.valueOf("FF8EA1FF");
-			case "Orange" -> Color.valueOf("FF7700FF");
-			case "Yellow" -> Color.valueOf("CCC833FF");
-			case "Brown" -> Color.BROWN;
-			case "Black" -> Color.valueOf("595959FF");
-			default -> throw new GameLogicException("Unknown color string: " + colorString);
-		};
 	}
 
 	private void addIpAddressRow() {
@@ -284,7 +261,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameTextBox.text());
 
-		var playerInfo = new PlayerInfo(playerNameTextBox.text(), textToColor(colorSelectBox.selectedItem()), ipAddress);
+		var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()).color, ipAddress);
 		app.setState(State.MultiplayerLobby, playerInfo);
 	}
 
@@ -331,7 +308,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 					return;
 				}
 
-				var playerInfo = new PlayerInfo(playerNameTextBox.text(), textToColor(colorSelectBox.selectedItem()), null);
+				var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()).color, null);
 				app.setState(State.MultiplayerLobby, playerInfo);
 			} else {
 				--ticksUntilConnect;

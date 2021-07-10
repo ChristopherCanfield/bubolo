@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
@@ -18,6 +17,7 @@ import bubolo.audio.Audio;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
 import bubolo.controllers.Controller;
+import bubolo.graphics.PlayerColor;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateActor;
@@ -37,7 +37,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private boolean initialized;
 
 	private String playerName;
-	private Color color;
+	private PlayerColor playerColor;
 
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 2.77779f; // 2.77779 WU per tick is about 90 Kph.
@@ -155,9 +155,9 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param color the tank's color.
 	 * @param controlledByLocalPlayer whether this tank is controlled by the local player.
 	 */
-	public void initialize(String playerName, Color color, boolean controlledByLocalPlayer) {
+	public void initialize(String playerName, PlayerColor color, boolean controlledByLocalPlayer) {
 		this.playerName = playerName;
-		this.color = color;
+		this.playerColor = color;
 		this.controlledByLocalPlayer = controlledByLocalPlayer;
 		this.initialized = true;
 	}
@@ -235,8 +235,8 @@ public class Tank extends ActorEntity implements Damageable {
 		return playerName;
 	}
 
-	public Color color() {
-		return color;
+	public PlayerColor playerColor() {
+		return playerColor;
 	}
 
 	@Override

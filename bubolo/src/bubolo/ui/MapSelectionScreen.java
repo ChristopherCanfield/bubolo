@@ -58,6 +58,9 @@ public class MapSelectionScreen extends AbstractScreen {
 	private final String mapSizeText = "Size: ";
 	private final String lastUpdatedText = "Last Updated: ";
 
+	// Used to prevent buggy touchpads that send multiple clicks in rapid succession from causing a crash.
+	private boolean switchingScreens;
+
 	private static final String mapFileExtension = Config.MapFileExtension;
 
 	private static final int secondRowTopOffset = 135;
@@ -255,6 +258,7 @@ public class MapSelectionScreen extends AbstractScreen {
 	private void onMapActivated() {
 		var selectedMapFileName = mapPathsGroup.selectedButtonText();
 		if (selectedMapFileName != null) {
+			switchingScreens = true;
 			app.setState(nextState, Config.MapsPath.resolve(selectedMapFileName + mapFileExtension));
 		}
 	}
@@ -287,10 +291,12 @@ public class MapSelectionScreen extends AbstractScreen {
 
 	@Override
 	protected void onMouseClickedObject(ClickedObjectInfo clickedObjectInfo) {
-		if (clickedObjectInfo.component() == mapPathsGroup) {
-			mapPathsGroup.selectButton(clickedObjectInfo.clickedItemIndex());
-			onSelectedMapChanged();
-			onMapActivated();
+		if (!switchingScreens) {
+			if (clickedObjectInfo.component() == mapPathsGroup) {
+				mapPathsGroup.selectButton(clickedObjectInfo.clickedItemIndex());
+				onSelectedMapChanged();
+				onMapActivated();
+			}
 		}
 	}
 

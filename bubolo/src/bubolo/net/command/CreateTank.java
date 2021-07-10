@@ -8,11 +8,10 @@ package bubolo.net.command;
 
 import java.util.logging.Logger;
 
-import com.badlogic.gdx.graphics.Color;
-
 import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.net.NetworkTankController;
+import bubolo.graphics.PlayerColor;
 import bubolo.world.ActorEntity;
 import bubolo.world.Tank;
 import bubolo.world.World;
@@ -27,7 +26,7 @@ public class CreateTank extends CreateActor {
 	private static final long serialVersionUID = 1L;
 
 	private final String playerName;
-	private final Color color;
+	private final PlayerColor color;
 
 	/**
 	 * @param tank reference to the tank that should be created on network players' computers.
@@ -43,10 +42,10 @@ public class CreateTank extends CreateActor {
 		});
 
 		assert tank.playerName() != null;
-		assert tank.color() != null;
+		assert tank.playerColor() != null;
 
 		this.playerName = tank.playerName();
-		this.color = tank.color();
+		this.color = tank.playerColor();
 	}
 
 	@Override

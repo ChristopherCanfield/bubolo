@@ -24,7 +24,8 @@ import bubolo.world.Tank;
  */
 class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private Color color;
-	private Color hiddenColor;
+	private Color bodyHiddenColor;
+	private static final Color treadHiddenColor = new Color(Color.WHITE).mul(1, 1, 1, 0.6f);
 
 	// The index representing which animation frame will be drawn.
 	private int frameIndex;
@@ -213,9 +214,22 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	}
 
 	private void drawTank(Graphics graphics) {
-		setColor(Color.WHITE);
+		Color treadColor;
+		Color bodyColor;
+		if (visibility() == Visibility.VISIBLE) {
+			treadColor = Color.WHITE;
+			bodyColor = color;
+		} else {
+			treadColor = treadHiddenColor;
+			bodyColor = bodyHiddenColor;
+		}
+
+		// Draw treads.
+		setColor(treadColor);
 		drawTexture(graphics, frames[frameIndex][0]);
-		setColor(visibility() == Visibility.VISIBLE ? color : hiddenColor);
+
+		// Draw body.
+		setColor(bodyColor);
 		drawTexture(graphics, frames[frameIndex][1]);
 	}
 
@@ -296,8 +310,8 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 			controller.setCamera(graphics.camera());
 		}
 
-		color = tank.color();
-		hiddenColor = new Color(color).mul(1.f, 1.f, 1.f, 0.6f);
+		color = tank.playerColor().color;
+		bodyHiddenColor = new Color(color).mul(1.f, 1.f, 1.f, 0.6f);
 	}
 
 	private enum Visibility {
