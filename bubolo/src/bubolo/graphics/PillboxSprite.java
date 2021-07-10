@@ -30,7 +30,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	private static final Color defaultColor = new Color(Color.WHITE);
 	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
-	private static final Color hiddenColor = TankSprite.HiddenByTreeColor;
+	private static final Color hiddenColor = Color.WHITE; // TankSprite.HiddenByTreeColor;
 
 	private static final DrawLayer defaultDrawLayer = DrawLayer.TerrainImprovements;
 	private static final DrawLayer carriedOrBuildingDrawLayer = DrawLayer.Effects;

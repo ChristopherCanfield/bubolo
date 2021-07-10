@@ -31,7 +31,7 @@ class TankSinkingSprite extends Sprite {
 		this.y = tank.y();
 		this.rotation = tank.rotation();
 
-		colorSetRowIndex = TankSprite.getTankColorSetIndex(tank);
+		colorSetRowIndex = 0; // TankSprite.getTankColorSetIndex(tank);
 		// Get the first frame from the texture file, which is the idle frame.
 		this.frames = Graphics.getTextureRegion2d(textureFile, 32, 32)[0];
 	}

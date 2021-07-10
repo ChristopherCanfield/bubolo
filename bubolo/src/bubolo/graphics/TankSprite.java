@@ -23,22 +23,16 @@ import bubolo.world.Tank;
  * @author Christopher D. Canfield
  */
 class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
+	private Color color;
+	private Color hiddenColor;
+
 	// The index representing which animation frame will be drawn.
 	private int frameIndex;
-
-	// An index representing which row of the sprite sheet to use, based on color set.
-	private int colorId = SpriteColorSet.Red.row;
 
 	// An array of all frames held in the texture sheet, by row and then column. Row = color set.
 	private TextureRegion[][] frames;
 
-	// An array of the frames to be used for the driving forward animation.
-	private TextureRegion[][] forwardFrames;
-
-	// Frame to be used for the standing (idle) animation
-	private TextureRegion[] idleFrames;
-
-	// The number of milliseconds per frame.
+	// The number of milliseconds per animation frame.
 	private static final long millisPerFrame = 100;
 
 	// The amount of time remaining for the current frame.
@@ -212,20 +206,23 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 			}
 		} else if (visibility() != Visibility.NETWORK_TANK_HIDDEN) {
 			deathAnimationCreated = false;
-			animateAndDraw(graphics);
+			drawTank(graphics);
 			drawSmoke(graphics);
+			animate();
 		}
 	}
 
-	private void animateAndDraw(Graphics graphics) {
-		// Tank is moving.
-		if (getEntity().speed() > 0) {
-			drawTexture(graphics, forwardFrames[frameIndex][colorId]);
-			animate(forwardFrames);
+	private void drawTank(Graphics graphics) {
+		setColor(Color.WHITE);
+		drawTexture(graphics, frames[frameIndex][0]);
+		setColor(visibility() == Visibility.VISIBLE ? color : hiddenColor);
+		drawTexture(graphics, frames[frameIndex][1]);
+	}
 
-		// Tank is idle.
-		} else {
-			drawTexture(graphics, idleFrames[colorId]);
+	private void animate() {
+		// Animate the tank if it is moving.
+		if (getEntity().speed() > 0) {
+			animate(frames);
 		}
 	}
 
@@ -260,18 +257,14 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		}
 	}
 
-	static final Color HiddenByTreeColor = new Color(Color.WHITE).mul(1.f, 1.f, 1.f, 0.6f);
-
 	private Visibility visibility() {
 		if (getEntity().isHidden()) {
 			if (getEntity().isOwnedByLocalPlayer()) {
-				setColor(HiddenByTreeColor);
 				return Visibility.HIDDEN;
 			} else {
 				return Visibility.NETWORK_TANK_HIDDEN;
 			}
 		} else {
-			setColor(Color.WHITE);
 			return Visibility.VISIBLE;
 		}
 	}
@@ -293,22 +286,18 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private void initialize(Graphics graphics) {
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
 
-		forwardFrames = new TextureRegion[][] { frames[0], frames[1], frames[2] };
-		idleFrames = frames[0];
 		frameIndex = 0;
 		frameTimeRemaining = millisPerFrame;
 
-		if (getEntity().isOwnedByLocalPlayer()) {
-			CameraController controller = new TankCameraController(getEntity());
+		var tank = getEntity();
+		if (tank.isOwnedByLocalPlayer()) {
+			CameraController controller = new TankCameraController(tank);
 			graphics.setCameraController(controller);
 			controller.setCamera(graphics.camera());
 		}
 
-		colorId = getTankColorSetIndex(getEntity());
-	}
-
-	static int getTankColorSetIndex(Tank tank) {
-		return tank.isOwnedByLocalPlayer() ? SpriteColorSet.Blue.row : SpriteColorSet.Red.row;
+		color = tank.color();
+		hiddenColor = new Color(color).mul(1.f, 1.f, 1.f, 0.6f);
 	}
 
 	private enum Visibility {
