@@ -159,6 +159,7 @@ public class Tank extends ActorEntity implements Damageable {
 		this.playerName = playerName;
 		this.color = color;
 		this.controlledByLocalPlayer = controlledByLocalPlayer;
+		this.initialized = true;
 	}
 
 	private void respawn(World world) {
