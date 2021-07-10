@@ -21,6 +21,7 @@ import bubolo.graphics.PlayerColor;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
 import bubolo.net.NetworkSystem;
+import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressListener;
 import bubolo.net.ServerAddressMessage;
 import bubolo.ui.gui.ButtonGroup;
@@ -36,7 +37,6 @@ import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
-import bubolo.util.Nullable;
 
 /**
  * The join game screen, which allows the user to enter a name and ip address.
@@ -249,19 +249,11 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 //		return !playerNameField.getText().isEmpty() && !(isClient && ipAddressField.getText().isEmpty());
 //	}
 
-	/**
-	 * Player information that is passed to the application's setState method.
-	 *
-	 * @author Christopher D. Canfield
-	 */
-	public record PlayerInfo(String name, Color color, @Nullable InetAddress ipAddress) {
-	}
-
 	private void startServer() {
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameTextBox.text());
 
-		var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()).color, ipAddress);
+		var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()), ipAddress);
 		app.setState(State.MultiplayerLobby, playerInfo);
 	}
 
@@ -308,7 +300,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 					return;
 				}
 
-				var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()).color, null);
+				var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()), null);
 				app.setState(State.MultiplayerLobby, playerInfo);
 			} else {
 				--ticksUntilConnect;

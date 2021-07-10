@@ -11,7 +11,8 @@ public enum PlayerColor {
 	Pink(Color.valueOf("FF8EA1FF")),
 	Orange(Color.valueOf("FF7700FF")),
 	Yellow(Color.valueOf("CCC833FF")),
-	Tan(Color.valueOf("d2b48cFF")),
+	Gold(Color.valueOf("B49B57FF")),
+	Tan(Color.valueOf("D8BA93FF")),
 	Brown(Color.valueOf("A55E08FF")),
 	Black(Color.valueOf("7F7F7FFF"));
 
