@@ -93,7 +93,6 @@ abstract class TextureUtil {
 	 */
 	private static TextureRegion[] adaptiveSplit_16(Texture tex)
 	{
-
 		if (tex.getHeight() != Units.TileToWorldScale * 4
 				&& tex.getWidth() != Units.TileToWorldScale * 4)
 		{
@@ -103,7 +102,6 @@ abstract class TextureUtil {
 		TextureRegion[] adapt = new TextureRegion[16];
 
 		// Grab the 16 texture frames for a standard 4x4 layout
-
 		TextureRegion[][] allFrames = splitFrames(tex, Units.TileToWorldScale, Units.TileToWorldScale, 0, 0);
 
 		// Assign each texture frame to the correct index

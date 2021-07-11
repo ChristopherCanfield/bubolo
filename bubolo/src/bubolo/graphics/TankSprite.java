@@ -147,8 +147,6 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		shapeRenderer.rect(screenHalfWidth - 110, screenHeight - 25, 220, 30);
 
 		shapeRenderer.end();
-
-		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 
 	private static final DecimalFormat speedFormatter = new DecimalFormat("0.0 Kph");

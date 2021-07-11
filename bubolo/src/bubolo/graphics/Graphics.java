@@ -328,6 +328,7 @@ public class Graphics implements EntityLifetimeObserver {
 		// then by sprite type, to facilitate batching.
 		Collections.sort(spritesInView, sortSpritesByLayerThenName);
 
+		Gdx.gl.glEnable(GL20.GL_BLEND);
 		batch.begin();
 		for (Sprite sprite : sprites) {
 			sprite.draw(this);
