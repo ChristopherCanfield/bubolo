@@ -86,5 +86,6 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 		} else {
 			color = Color.WHITE;
 		}
+		initialized = true;
 	}
 }
