@@ -176,8 +176,9 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		float mineWidth = mineTexture[0][0].getRegionWidth();
 		// Mine texture divided by number of frames per column.
 		float mineHeight = mineTexture[0][0].getRegionHeight();
-		// Draw the mine texture.
+		// Draw the mine.
 		spriteBatch.draw(mineTexture[0][1], screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight);
+		// Draw the darkest light on top of the mine.
 		spriteBatch.draw(mineTexture[0][0], screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight);
 
 		// Render the mine count text.
