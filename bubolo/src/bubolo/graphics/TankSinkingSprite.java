@@ -1,5 +1,6 @@
 package bubolo.graphics;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 
@@ -8,16 +9,17 @@ import bubolo.world.Tank;
 
 class TankSinkingSprite extends Sprite {
 
-	private float x;
-	private float y;
-	private float rotation;
+	private final float x;
+	private final float y;
+	private final float rotation;
 
 	private static final int drownTimeTicks = Time.secondsToTicks(1.25f);
 	private int ticksRemaining = drownTimeTicks;
 
 	private static final String textureFile = "tank.png";
-	private final int colorSetRowIndex;
-	private final TextureRegion[] frames;
+	private final Color tankColor;
+	private final TextureRegion bodyFrame;
+	private final TextureRegion treadsFrame;
 
 	/**
 	 * Constructs a tank sinking animation, which has the tank scale down until it disappears.
@@ -31,9 +33,10 @@ class TankSinkingSprite extends Sprite {
 		this.y = tank.y();
 		this.rotation = tank.rotation();
 
-		colorSetRowIndex = 0; // TankSprite.getTankColorSetIndex(tank);
-		// Get the first frame from the texture file, which is the idle frame.
-		this.frames = Graphics.getTextureRegion2d(textureFile, 32, 32)[0];
+		this.tankColor = tank.playerColor().color;
+		TextureRegion[][] texture = Graphics.getTextureRegion2d(textureFile, 32, 32);
+		this.bodyFrame = texture[0][1];
+		this.treadsFrame = texture[0][0];
 	}
 
 	@Override
@@ -72,6 +75,9 @@ class TankSinkingSprite extends Sprite {
 		float percentTimeRemaining = ticksRemaining / (float) drownTimeTicks;
 		float scale = Interpolation.pow2In.apply(0, 1, percentTimeRemaining);
 
-		drawTexture(graphics, frames[colorSetRowIndex], scale);
+		setColor(tankColor);
+		drawTexture(graphics, bodyFrame, scale);
+		setColor(Color.WHITE);
+		drawTexture(graphics, treadsFrame, scale);
 	}
 }
