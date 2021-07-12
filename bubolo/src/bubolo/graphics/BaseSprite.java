@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Base;
+import bubolo.world.Tank;
 
 /**
  * The graphical representation of a Base Entity.
@@ -36,7 +37,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 	private final TextureRegion[][] frames;
 
 	private final Texture bulletTexture;
-	private final Texture mineTexture;
+	private final TextureRegion mineTexture;
 	private final Texture repairPointsIconTexture;
 
 	/** The file name of the texture. */
@@ -57,7 +58,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32, 1, 1);
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
-		mineTexture = Graphics.getTexture(mineTextureFile);
+		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20)[1][1];
 		repairPointsIconTexture = Graphics.getTexture(repairPointsIconFile);
 	}
 
@@ -90,12 +91,10 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 	}
 
 	private static Color getTintColor(Base base) {
-		if (!base.hasOwner()) {
-			return SpriteColorSet.Neutral.color;
-		} else if (base.isOwnedByLocalPlayer()) {
-			return SpriteColorSet.Blue.color;
+		if (base.hasOwner() && base.owner() instanceof Tank tank) {
+			return tank.teamColor().color;
 		} else {
-			return SpriteColorSet.Red.color;
+			return TeamColor.Neutral.color;
 		}
 	}
 
@@ -155,6 +154,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 				var mineBarPos = StatusBarRenderer.drawVerticalStatusBar(repairBay, pctMines, statusBarColor, graphics.shapeRenderer(), graphics.camera(), 20);
 
 				var spriteBatch = graphics.batch();
+				spriteBatch.setColor(Color.WHITE);
 				spriteBatch.begin();
 
 				float repairPointsIconWidth = repairPointsIconTexture.getWidth() * 0.35f;
@@ -167,12 +167,12 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 				// Draw the bullet texture.
 				spriteBatch.draw(bulletTexture, ammoBarPos.x + 1, ammoBarPos.y - 8, bulletWidth, bulletHeight);
 
-				// Mine texture divided by number of frames per row.
-				float mineWidth = mineTexture.getWidth() / 6 * 0.65f;
+				float mineWidth = mineTexture.getRegionWidth() * 0.7f;
 				// Mine texture divided by number of frames per column.
-				float mineHeight = mineTexture.getHeight() / 3 * 0.65f;
+				float mineHeight = mineTexture.getRegionHeight() * 0.7f;
 				// Draw the mine texture.
-				spriteBatch.draw(mineTexture, mineBarPos.x - 3, mineBarPos.y - 10, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
+				spriteBatch.setColor(TeamColor.Neutral.color);
+				spriteBatch.draw(mineTexture, mineBarPos.x - 3, mineBarPos.y - 10, mineWidth, mineHeight);
 
 				spriteBatch.end();
 			}

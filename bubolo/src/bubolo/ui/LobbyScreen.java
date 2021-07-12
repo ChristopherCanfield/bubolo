@@ -1,5 +1,7 @@
 package bubolo.ui;
 
+import java.net.InetAddress;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
@@ -22,6 +24,7 @@ import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
 import bubolo.net.NetworkSystem;
+import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressMessage;
 import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;
@@ -42,6 +45,8 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 
 	private final BuboloApplication app;
 	private final World world;
+
+	private final PlayerInfo playerInfo;
 
 	private long startTime;
 	private long lastSecondsRemaining;
@@ -66,13 +71,14 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 	 * @param graphics reference to the graphics system.
 	 * @param world reference to the game world.
 	 */
-	public LobbyScreen(BuboloApplication app, Graphics graphics, World world) {
+	public LobbyScreen(BuboloApplication app, Graphics graphics, World world, PlayerInfo playerInfo) {
 		super(graphics, new Table());
 		root.setFillParent(true);
 		root.top();
 
 		this.app = app;
 		this.world = world;
+		this.playerInfo = playerInfo;
 
 		TextureAtlas atlas = new TextureAtlas(new FileHandle(Config.UiPath.resolve("skin.atlas").toString()));
 		Skin skin = new Skin(new FileHandle(Config.UiPath.resolve("skin.json").toString()), atlas);
@@ -86,8 +92,15 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 		messageHistoryReceivedFromServer = net.isServer();
 
 		if (net.isServer()) {
-			var ipAddresses = Network.getIpAddresses();
-			ServerAddressMessage message = new ServerAddressMessage(ipAddresses.firstIpAddress(), net.getPlayerName(), app.mapName());
+			InetAddress ipAddress;
+			if (playerInfo.ipAddress() != null) {
+				ipAddress = playerInfo.ipAddress();
+			} else {
+				var ipAddresses = Network.getIpAddresses();
+				ipAddress = ipAddresses.firstIpAddress();
+			}
+
+			ServerAddressMessage message = new ServerAddressMessage(ipAddress, playerInfo.name(), app.mapName());
 			serverAddressMulticaster = new ServerAddressMulticaster(message);
 			serverAddressMulticaster.start();
 		}
@@ -178,7 +191,7 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 		if (!sendMessageField.getText().isEmpty()) {
 			Network net = NetworkSystem.getInstance();
 			net.send(new SendMessage(sendMessageField.getText()));
-			appendToMessageHistory(messageHistory, net.getPlayerName() + ": " + sendMessageField.getText());
+			appendToMessageHistory(messageHistory, playerInfo.name() + ": " + sendMessageField.getText());
 			sendMessageField.setText("");
 		}
 	}

@@ -13,7 +13,7 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion> {
 	private int frameIndex;
 	private final TextureRegion[] frames;
 
-	private static final String textureFileName = "mineExplosion.png";
+	private static final String textureFileName = "mine_explosion.png";
 	private static final int frameCount = 12;
 	private static final int frameWidth = 60;
 

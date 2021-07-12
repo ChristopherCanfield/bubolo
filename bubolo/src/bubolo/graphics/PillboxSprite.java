@@ -16,7 +16,8 @@ import bubolo.world.Tank;
 class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable {
 	private TextureRegion[][] frames;
 
-	private int colorIndex;
+	private Color lightColor;
+	private boolean initialized;
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
@@ -28,9 +29,8 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	private static final int disabledColorColumn = 1;
 	private static final int damageColumn = 2;
 
-	private static final Color defaultColor = new Color(Color.WHITE);
 	private static final Color buildingColor = new Color(1, 1, 1, 0.5f);
-	private static final Color hiddenColor = TankSprite.HiddenByTreeColor;
+	private static final Color hiddenColor = Color.WHITE; // TankSprite.HiddenByTreeColor;
 
 	private static final DrawLayer defaultDrawLayer = DrawLayer.TerrainImprovements;
 	private static final DrawLayer carriedOrBuildingDrawLayer = DrawLayer.Effects;
@@ -47,34 +47,38 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 		frames = Graphics.getTextureRegion2d(textureFileName, 32, 32, 1, 0);
 	}
 
-	private void updateColorSet() {
-		if (!getEntity().hasOwner()) {
-			colorIndex = SpriteColorSet.Neutral.row + 1;
-		} else if (getEntity().isOwnedByLocalPlayer()) {
-			colorIndex = SpriteColorSet.Blue.row + 1;
+	private void updateColor() {
+		var pillbox = getEntity();
+		var owner = pillbox.owner();
+		if (pillbox.hasOwner() && owner instanceof Tank tank) {
+			lightColor = tank.teamColor().color;
 		} else {
-			colorIndex = SpriteColorSet.Red.row + 1;
+			lightColor = Color.LIGHT_GRAY;
 		}
 	}
 
 	@Override
 	public void draw(Graphics graphics) {
+		if (!initialized) {
+			initialized = true;
+		}
+
 		if (!isDisposed()) {
-			updateColorSet();
+			updateColor();
 
 			var pillbox = getEntity();
 			setDrawLayerFromBuildStatus(pillbox.buildStatus());
+
 			if (pillbox.buildStatus() != BuildStatus.Carried) {
-				if (pillbox.buildStatus() == BuildStatus.Built) {
-					setColor(defaultColor);
-				} else {
+				boolean isBuilt = pillbox.buildStatus() == BuildStatus.Built;
+				if (!isBuilt) {
 					buildingColor.a = Math.min(0.9f, pillbox.builtPct() + 0.1f);
-					setColor(buildingColor);
 				}
 
 				DamageState damageState = DamageState.getDamageState(getEntity());
 
 				// Draw the pillbox.
+				setColor(isBuilt ? Color.WHITE : buildingColor);
 				if (pillbox.hasTarget() && damageState != DamageState.OutOfService) {
 					drawTexture(graphics, frames[pillboxHasTargetColumn][0]);
 				} else {
@@ -82,13 +86,15 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				}
 
 				// Draw the lights if the pillbox isn't out of service.
+				setColor(isBuilt ? lightColor : buildingColor);
 				if (damageState != DamageState.OutOfService) {
-					drawTexture(graphics, frames[colorColumn][colorIndex]);
+					drawTexture(graphics, frames[colorColumn][3]);
 				} else {
-					drawTexture(graphics, frames[disabledColorColumn][colorIndex]);
+					drawTexture(graphics, frames[disabledColorColumn][3]);
 				}
 
 				// Draw damage, if any.
+				setColor(Color.WHITE);
 				if (damageState != DamageState.Undamaged) {
 					drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
 				}
@@ -97,7 +103,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				var tank = (Tank) getEntity().owner();
 				if (!tank.isHidden() || tank.isOwnedByLocalPlayer()) {
 					if (!tank.isHidden()) {
-						setColor(defaultColor);
+						setColor(lightColor);
 					} else {
 						setColor(hiddenColor);
 					}

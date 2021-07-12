@@ -14,9 +14,11 @@ import java.util.logging.Logger;
 
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
+import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
+import bubolo.net.PlayerInfo;
 import bubolo.net.command.CreateTank;
 import bubolo.ui.LoadingScreen;
 import bubolo.ui.LobbyScreen;
@@ -49,6 +51,9 @@ public class BuboloApplication extends AbstractGameApplication {
 
 	private String defaultMapName = "Canfield Island.json";
 	private Path mapPath = FileSystems.getDefault().getPath("res", "maps", defaultMapName);
+
+	// Player information for network games.
+	private PlayerInfo playerInfo;
 
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
@@ -154,7 +159,7 @@ public class BuboloApplication extends AbstractGameApplication {
 					Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 					Tank tank = world().addEntity(Tank.class, args);
-					tank.setControlledByLocalPlayer(true);
+					tank.initialize("Player 1", TeamColor.Blue, true);
 
 					network.startDebug();
 					setReady(true);
@@ -178,28 +183,38 @@ public class BuboloApplication extends AbstractGameApplication {
 			screen = new MainMenuScreen(this);
 			graphics.camera().position.set(0, 0, 0);
 			break;
+
 		case MultiplayerMapSelection:
 		case SinglePlayerSetup:
 			assert previousState == State.MainMenu || previousState == State.MultiplayerSetupServer;
 			State nextState = (newState == State.SinglePlayerSetup) ? State.SinglePlayerLoading : State.MultiplayerSetupServer;
 			screen = new MapSelectionScreen(this, nextState);
 			break;
+
 		case MultiplayerSetupServer:
 			assert previousState == State.MultiplayerMapSelection;
 			assert mapPath != null;
 			mapPath = (Path) arg;
 			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
 			break;
+
 		case MultiplayerSetupClient:
 			assert previousState == State.MainMenu;
 			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
+
 		case MultiplayerLobby:
+			assert previousState == State.MultiplayerSetupServer || previousState == State.MultiplayerSetupClient;
+			assert arg != null;
+
 			if (previousState == State.MultiplayerSetupServer) {
 				setWorld(importWorld());
 			}
-			screen = new LobbyScreen(this, graphics, world());
+
+			this.playerInfo = (PlayerInfo) arg;
+			screen = new LobbyScreen(this, graphics, world(), (PlayerInfo) arg);
 			break;
+
 		case MultiplayerStarting:
 			assert previousState == State.MultiplayerLobby;
 			assert screen != null;
@@ -211,13 +226,13 @@ public class BuboloApplication extends AbstractGameApplication {
 			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 			Tank tank = world().addEntity(Tank.class, args);
-			tank.setPlayerName(network.getPlayerName());
-			tank.setControlledByLocalPlayer(true);
+			tank.initialize(playerInfo.name(), playerInfo.color(), true);
 
 			network.send(new CreateTank(tank));
 
 			setReady(true);
 			break;
+
 		case MultiplayerGame: {
 			if (screen != null) {
 				screen.dispose();
@@ -231,6 +246,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			mapPath = (Path) arg;
 			screen = new LoadingScreen(mapName());
 			break;
+
 		case SinglePlayerGame: {
 			assert previousState == State.SinglePlayerLoading;
 			break;

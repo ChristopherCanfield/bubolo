@@ -127,7 +127,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	}
 
 	private boolean refuelTank(Tank tank) {
-		if (tank == owner() && !isTankRefueled(tank)) {
+		if (tank == owner() && tank.isAlive() && !isTankRefueled(tank)) {
 			if (readyToResupplyTank) {
 				float refuelRepairPoints;
 				if (tank.hitPoints() < tank.maxHitPoints()) {
