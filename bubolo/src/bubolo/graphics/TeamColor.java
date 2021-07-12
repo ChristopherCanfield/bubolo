@@ -3,7 +3,7 @@ package bubolo.graphics;
 import com.badlogic.gdx.graphics.Color;
 
 public enum TeamColor {
-	Blue(Color.valueOf("5394EFFF")),
+	Blue(Color.valueOf("45A0E7FF")),
 	Cyan(Color.valueOf("00CCCCFF")),
 	Green(Color.valueOf("31A500FF")),
 	Purple(Color.valueOf("B677D8FF")),
