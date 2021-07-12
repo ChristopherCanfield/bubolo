@@ -51,13 +51,13 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
 
 	/** The file name of the texture. */
-	private static final String TEXTURE_FILE = "tank.png";
+	private static final String textureFileName = "tank.png";
 
 	private static final String BULLET_TEXTURE_FILE = "bullet.png";
 	private static final String MINE_TEXTURE_FILE = "mine.png";
 
 	private final Texture bulletTexture;
-	private final Texture mineTexture;
+	private final TextureRegion[][] mineTexture;
 
 	private static final Color TANK_UI_BOX_COLOR = new Color(50 / 255f, 50 / 255f, 50 / 255f, 110 / 255f);
 	private static final Color TANK_UI_FONT_COLOR = new Color(240 / 255f, 240 / 255f, 240 / 255f, 1f);
@@ -77,7 +77,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		super(DrawLayer.Tanks, tank);
 
 		bulletTexture = Graphics.getTexture(BULLET_TEXTURE_FILE);
-		mineTexture = Graphics.getTexture(MINE_TEXTURE_FILE);
+		mineTexture = Graphics.getTextureRegion2d(MINE_TEXTURE_FILE, 21, 20);
 
 		smokeEmitter[0] = new ParticleEffect();
 		smokeEmitter[0].load(Gdx.files.internal(smokeParticleEffectLowDamageFile), Gdx.files.internal("res/particles"));
@@ -99,7 +99,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	void drawTankPlayerName(Graphics graphics) {
 		var tank = getEntity();
 		// Render names for visible network tanks.
-		if (!tank.isOwnedByLocalPlayer() && visibility() != Visibility.NETWORK_TANK_HIDDEN) {
+		if (!tank.isOwnedByLocalPlayer() && visibility() != Visibility.NetworkTankHidden) {
 			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
 			font.setColor(ENEMY_TANK_NAME_COLOR);
 			font.draw(graphics.batch(), tank.playerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
@@ -173,11 +173,12 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		font.draw(spriteBatch, speedFormatter.format(tank.speedKph()), tankSpeedTextLocation, textVerticalPosition);
 
 		// Mine texture divided by number of frames per row.
-		float mineWidth = mineTexture.getWidth() / 6;
+		float mineWidth = mineTexture[0][0].getRegionWidth();
 		// Mine texture divided by number of frames per column.
-		float mineHeight = mineTexture.getHeight() / 3;
+		float mineHeight = mineTexture[0][0].getRegionHeight();
 		// Draw the mine texture.
-		spriteBatch.draw(mineTexture, screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight, 0, 0, 0.167f, 0.33f);
+		spriteBatch.draw(mineTexture[0][1], screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight);
+		spriteBatch.draw(mineTexture[0][0], screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight);
 
 		// Render the mine count text.
 		font.draw(spriteBatch, "x " + tank.mines(), screenHalfWidth + 53 + 22, textVerticalPosition);
@@ -203,7 +204,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 					graphics.sprites().addSprite(new TankExplosionSprite((int) getEntity().x(), (int) getEntity().y()));
 				}
 			}
-		} else if (visibility() != Visibility.NETWORK_TANK_HIDDEN) {
+		} else if (visibility() != Visibility.NetworkTankHidden) {
 			deathAnimationCreated = false;
 			drawTank(graphics);
 			drawSmoke(graphics);
@@ -214,7 +215,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private void drawTank(Graphics graphics) {
 		Color treadColor;
 		Color bodyColor;
-		if (visibility() == Visibility.VISIBLE) {
+		if (visibility() == Visibility.Visible) {
 			treadColor = Color.WHITE;
 			bodyColor = color;
 		} else {
@@ -238,12 +239,12 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		}
 	}
 
-	private Vector2 tankCameraPos = new Vector2();
+	private final Vector2 tankCameraPos = new Vector2();
 
 	private void drawSmoke(Graphics graphics) {
 		var smokeEffectIndex = getSmokeEffectIndex(getEntity());
 		if (smokeEffectIndex != -1) {
-			tankCameraPos = Units.worldToCamera(graphics.camera(), getEntity().x(), getEntity().y());
+			Units.worldToCamera(graphics.camera(), getEntity().x(), getEntity().y(), tankCameraPos);
 			smokeEmitter[smokeEffectIndex].setPosition(tankCameraPos.x, tankCameraPos.y);
 			smokeEmitter[smokeEffectIndex].draw(graphics.batch(), Gdx.graphics.getDeltaTime());
 		} else {
@@ -272,12 +273,12 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	private Visibility visibility() {
 		if (getEntity().isHidden()) {
 			if (getEntity().isOwnedByLocalPlayer()) {
-				return Visibility.HIDDEN;
+				return Visibility.Hidden;
 			} else {
-				return Visibility.NETWORK_TANK_HIDDEN;
+				return Visibility.NetworkTankHidden;
 			}
 		} else {
-			return Visibility.VISIBLE;
+			return Visibility.Visible;
 		}
 	}
 
@@ -296,7 +297,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	 * @param graphics reference to the graphics system.
 	 */
 	private void initialize(Graphics graphics) {
-		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, 32, 32);
+		frames = Graphics.getTextureRegion2d(textureFileName, 32, 32);
 
 		frameIndex = 0;
 		frameTimeRemaining = millisPerFrame;
@@ -308,11 +309,11 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 			controller.setCamera(graphics.camera());
 		}
 
-		color = tank.playerColor().color;
+		color = tank.teamColor().color;
 		bodyHiddenColor = new Color(color).mul(1.f, 1.f, 1.f, 0.6f);
 	}
 
 	private enum Visibility {
-		VISIBLE, NETWORK_TANK_HIDDEN, HIDDEN
+		Visible, NetworkTankHidden, Hidden
 	}
 }

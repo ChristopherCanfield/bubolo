@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.net.NetworkTankController;
-import bubolo.graphics.PlayerColor;
+import bubolo.graphics.TeamColor;
 import bubolo.world.ActorEntity;
 import bubolo.world.Tank;
 import bubolo.world.World;
@@ -26,7 +26,7 @@ public class CreateTank extends CreateActor {
 	private static final long serialVersionUID = 1L;
 
 	private final String playerName;
-	private final PlayerColor color;
+	private final TeamColor color;
 
 	/**
 	 * @param tank reference to the tank that should be created on network players' computers.
@@ -42,10 +42,10 @@ public class CreateTank extends CreateActor {
 		});
 
 		assert tank.playerName() != null;
-		assert tank.playerColor() != null;
+		assert tank.teamColor() != null;
 
 		this.playerName = tank.playerName();
-		this.color = tank.playerColor();
+		this.color = tank.teamColor();
 	}
 
 	@Override

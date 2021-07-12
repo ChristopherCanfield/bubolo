@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
-import bubolo.graphics.PlayerColor;
+import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
@@ -159,7 +159,7 @@ public class BuboloApplication extends AbstractGameApplication {
 					Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
 
 					Tank tank = world().addEntity(Tank.class, args);
-					tank.initialize("Player 1", PlayerColor.Blue, true);
+					tank.initialize("Player 1", TeamColor.Blue, true);
 
 					network.startDebug();
 					setReady(true);

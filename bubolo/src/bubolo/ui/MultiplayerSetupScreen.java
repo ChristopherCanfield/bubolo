@@ -17,7 +17,7 @@ import bubolo.GameApplication;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
-import bubolo.graphics.PlayerColor;
+import bubolo.graphics.TeamColor;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
 import bubolo.net.NetworkSystem;
@@ -142,8 +142,10 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		colorSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
 		colorSelectBox.setVerticalOffset(playerNameTextBox, VOffsetFromObjectSide.Bottom, 20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		colorSelectBox.setHorizontalOffset(playerNameTextBox, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Left);
-		for (var playerColor : PlayerColor.values()) {
-			colorSelectBox.addItem(playerColor.toString(), selectBox -> selectBox.setTextColor(playerColor.color));
+		for (var playerColor : TeamColor.values()) {
+			if (playerColor.selectableByPlayers) {
+				colorSelectBox.addItem(playerColor.toString(), selectBox -> selectBox.setTextColor(playerColor.color));
+			}
 		}
 		root.add(colorSelectBox);
 	}
@@ -253,7 +255,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		final Network network = NetworkSystem.getInstance();
 		network.startServer(playerNameTextBox.text());
 
-		var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()), ipAddress);
+		var playerInfo = new PlayerInfo(playerNameTextBox.text(), TeamColor.valueOf(colorSelectBox.selectedItem()), ipAddress);
 		app.setState(State.MultiplayerLobby, playerInfo);
 	}
 
@@ -300,7 +302,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 					return;
 				}
 
-				var playerInfo = new PlayerInfo(playerNameTextBox.text(), PlayerColor.valueOf(colorSelectBox.selectedItem()), null);
+				var playerInfo = new PlayerInfo(playerNameTextBox.text(), TeamColor.valueOf(colorSelectBox.selectedItem()), null);
 				app.setState(State.MultiplayerLobby, playerInfo);
 			} else {
 				--ticksUntilConnect;

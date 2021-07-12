@@ -33,7 +33,7 @@ class TankSinkingSprite extends Sprite {
 		this.y = tank.y();
 		this.rotation = tank.rotation();
 
-		this.tankColor = tank.playerColor().color;
+		this.tankColor = tank.teamColor().color;
 		TextureRegion[][] texture = Graphics.getTextureRegion2d(textureFile, 32, 32);
 		this.bodyFrame = texture[0][1];
 		this.treadsFrame = texture[0][0];

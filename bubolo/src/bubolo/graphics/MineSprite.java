@@ -15,7 +15,9 @@ import bubolo.world.Tank;
 class MineSprite extends AbstractEntitySprite<Mine> {
 	// The index representing which animation frame will be drawn.
 	private int frameIndex;
-	private final TextureRegion[] frames;
+	private final TextureRegion[][] frames;
+	private static final int lightsFramesRow = 0;
+	private static final int mineFramesRow = 1;
 
 	private Color color;
 
@@ -42,7 +44,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	MineSprite(Mine mine) {
 		super(DrawLayer.Mines, mine);
 
-		frames = Graphics.getTextureRegion1d(textureFileName, 6, 21, 0);
+		frames = Graphics.getTextureRegion2d(textureFileName, 21, 20);
 	}
 
 	@Override
@@ -57,8 +59,12 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 			return;
 
 		} else {
+			setColor(Color.WHITE);
+			drawTexture(graphics, frames[frameIndex][mineFramesRow]);
+
 			setColor(color);
-			drawTexture(graphics, frames[frameIndex]);
+			drawTexture(graphics, frames[frameIndex][lightsFramesRow]);
+
 			animate();
 		}
 	}
@@ -82,9 +88,9 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	private void initialize() {
 		var mineOwner = getEntity().owner();
 		if (mineOwner instanceof Tank tank) {
-			color = tank.playerColor().color;
+			color = tank.teamColor().color;
 		} else {
-			color = Color.WHITE;
+			color = TeamColor.Neutral.color;
 		}
 		initialized = true;
 	}

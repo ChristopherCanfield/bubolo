@@ -2,7 +2,7 @@ package bubolo.net;
 
 import java.net.InetAddress;
 
-import bubolo.graphics.PlayerColor;
+import bubolo.graphics.TeamColor;
 import bubolo.util.Nullable;
 
 /**
@@ -14,7 +14,7 @@ import bubolo.util.Nullable;
  *
  * @author Christopher D. Canfield
  */
-public record PlayerInfo(String name, PlayerColor color, @Nullable InetAddress ipAddress) {
+public record PlayerInfo(String name, TeamColor color, @Nullable InetAddress ipAddress) {
 	public PlayerInfo {
 		assert name != null;
 		assert color != null;
