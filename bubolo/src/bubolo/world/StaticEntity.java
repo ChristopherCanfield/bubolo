@@ -17,6 +17,7 @@ import bubolo.util.Units;
 public abstract class StaticEntity extends Entity {
 	private final short x;
 	private final short y;
+	private EntityRemovedObserver observer;
 
 	/**
 	 * @param args id != null; x >= 0 && <= Config.MaxWorldX; y >= 0 && <= Config.MaxWorldY.
@@ -30,7 +31,6 @@ public abstract class StaticEntity extends Entity {
 		assert args.x() <= Config.MaxWorldX;
 		assert args.y() >= 0;
 		assert args.y() <= Config.MaxWorldY;
-
 
 		this.x = (short) args.x();
 		this.y = (short) args.y();
@@ -67,5 +67,21 @@ public abstract class StaticEntity extends Entity {
 	@Override
 	public int tileRow() {
 		return (int) y() / Units.TileToWorldScale;
+	}
+
+	public void addEntityRemovedObserver(EntityRemovedObserver observer) {
+		assert this.observer == null;
+		this.observer = observer;
+	}
+
+	/**
+	 * If a child class overrides this method, it must call this implementation as well to ensure that the
+	 * observer is notified.
+	 */
+	@Override
+	protected void onDispose() {
+		if (observer != null) {
+			observer.onEntityRemoved(this);
+		}
 	}
 }

@@ -17,7 +17,6 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	private TextureRegion[][] frames;
 
 	private Color lightColor;
-	private boolean initialized;
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
@@ -59,10 +58,6 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	@Override
 	public void draw(Graphics graphics) {
-		if (!initialized) {
-			initialized = true;
-		}
-
 		if (!isDisposed()) {
 			updateColor();
 

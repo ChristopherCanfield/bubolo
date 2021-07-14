@@ -1,51 +1,36 @@
 package bubolo.graphics;
 
-import java.util.Random;
-
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 
 import bubolo.world.Swamp;
 
 /**
- * The graphical representation of a Swamp.
+ * Renders a swamp.
  *
  * @author BU673 - Clone Industries
+ * @author Christopher D. Canfield
  */
-class SwampSprite extends AbstractEntitySprite<Swamp>
-{
-	private final Texture image;
+class SwampSprite extends AbstractStaticEntitySprite {
+	private final Texture texture;
 
 	/** The file name of the texture. */
-	private static final String TEXTURE_FILE = "swamp.png";
-
-	private float rotation;
+	private static final String textureFileName = "swamp.png";
 
 	/**
-	 * Constructor for the SwampSprite. This is Package-private because sprites should not
-	 * be directly created outside of the graphics system.
+	 * Constructor for the SwampSprite. This is Package-private because sprites should not be directly created outside of the graphics
+	 * system.
 	 *
-	 * @param swamp
-	 *            Reference to the Swamp that this SwampSprite represents.
+	 * @param swamp Reference to the Swamp that this SwampSprite represents.
 	 */
-	SwampSprite(Swamp swamp)
-	{
-		super(DrawLayer.TerrainLevel1, swamp);
+	SwampSprite(Swamp swamp) {
+		super(DrawLayer.TerrainLevel1, swamp, (float) (MathUtils.random.nextInt(4) * (Math.PI / 2)));
 
-		image = Graphics.getTexture(TEXTURE_FILE);
-
-		Random rand = new Random();
-		rotation = (float) (rand.nextInt(4) * (Math.PI/2));
+		texture = Graphics.getTexture(textureFileName);
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
-		drawTexture(graphics, image);
-	}
-
-	@Override
-	public float getRotation()
-	{
-		return rotation;
+	public void draw(Graphics graphics) {
+		drawTexture(graphics, texture);
 	}
 }
