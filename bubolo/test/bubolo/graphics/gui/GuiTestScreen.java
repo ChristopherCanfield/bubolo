@@ -22,7 +22,7 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	public GuiTestScreen() {
 		var buttonGroupArgs = new ButtonGroup.Args(300, 50);
 		buttonGroupArgs.paddingBetweenButtons = 10;
-		var layoutArgs = new LayoutArgs((int) (Config.TargetWindowWidth * 0.5f - 100), 200, Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
+		var layoutArgs = new LayoutArgs(Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
 
 		buttonGroup = new ButtonGroup(layoutArgs, buttonGroupArgs);
 		buttonGroup.addButton("Single Player Game", button -> { System.out.println("I'm an action attached to Single Player Game!"); });
@@ -44,7 +44,7 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public void onViewportResized(int newWidth, int newHeight) {
+	public void viewportResized(int newWidth, int newHeight) {
 		scaleX = (float) Config.TargetWindowWidth / newWidth;
 		scaleY = (float) Config.TargetWindowHeight / newHeight;
 	}

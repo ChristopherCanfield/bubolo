@@ -5,7 +5,6 @@
 package bubolo.net;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +17,13 @@ import bubolo.net.command.SendMessage.MessageType;
 public class NetworkObserverNotifierTest
 {
 	private NetworkObserverNotifier notifier;
-	private NetObserver o;
+	private MockNetworkObserver o;
 
 	@Before
 	public void setup()
 	{
 		this.notifier = new NetworkObserverNotifier();
-		this.o = new NetObserver();
+		this.o = new MockNetworkObserver();
 	}
 
 	/**
@@ -33,7 +32,7 @@ public class NetworkObserverNotifierTest
 	@Test
 	public void testAddObserver()
 	{
-		notifier.addObserver(mock(NetworkObserver.class));
+		notifier.addObserver(new MockNetworkObserver());
 		assertEquals(1, notifier.getObserverCount());
 	}
 
@@ -106,6 +105,14 @@ public class NetworkObserverNotifierTest
 		assertEquals(TIME, o.getTimeUntilStart());
 	}
 
+	@Test
+	public void testNotifyClientReady() {
+		notifier.addObserver(o);
+
+		notifier.notifyClientReady("CLIENT");
+		assertEquals("CLIENT", o.getClientName());
+	}
+
 	/**
 	 * Test method for {@link bubolo.net.NetworkObserverNotifier#notifyMessageReceived(MessageType, java.lang.String)}.
 	 */
@@ -118,69 +125,5 @@ public class NetworkObserverNotifierTest
 		notifier.notifyMessageReceived(MessageType.Message, MESSAGE);
 
 		assertEquals(MESSAGE, o.getMessage());
-	}
-
-	private static class NetObserver implements NetworkObserver
-	{
-		private String clientName;
-		private String serverName;
-		private String message;
-		private int timeUntilStart;
-
-		private String getClientName()
-		{
-			return clientName;
-		}
-
-		private String getServerName()
-		{
-			return serverName;
-		}
-
-		private String getMessage()
-		{
-			return message;
-		}
-
-		private int getTimeUntilStart()
-		{
-			return timeUntilStart;
-		}
-
-
-		@Override
-		public void onConnect(String clientName, String serverName)
-		{
-			this.clientName = clientName;
-			this.serverName = serverName;
-		}
-
-		@Override
-		public void onClientConnected(String clientName)
-		{
-			this.clientName = clientName;
-		}
-
-		@Override
-		public void onClientDisconnected(String clientName)
-		{
-			this.clientName = clientName;
-		}
-
-		@Override
-		public void onGameStart(int timeUntilStart)
-		{
-			this.timeUntilStart = timeUntilStart;
-		}
-
-		@Override
-		public void onMessageReceived(MessageType messageType, String message)
-		{
-			this.message = message;
-		}
-
-		@Override
-		public void onClientReady(String clientName) {
-		}
 	}
 }

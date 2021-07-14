@@ -6,14 +6,11 @@
 
 package bubolo.net;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import bubolo.mock.MockWorld;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -21,13 +18,13 @@ import bubolo.mock.MockWorld;
 public class ServerTest
 {
 	private Server server;
-	
+
 	@Before
 	public void setup()
 	{
 		server = new Server(new MockNetwork());
 	}
-	
+
 	@After
 	public void teardown()
 	{
@@ -40,20 +37,22 @@ public class ServerTest
 	@Test
 	public void testSend()
 	{
-		server.send(mock(NetworkCommand.class));
+		server.send(new NetworkCommand() {
+			private static final long serialVersionUID = 1L;
+		});
 	}
-	
+
 	@Test
 	public void startServer()
 	{
 		server.startServer("Server player");
 	}
-	
+
 	@Test
 	public void startGameNoClients()
 	{
 		try {
-			server.startGame(new MockWorld());
+			server.startGame();
 			fail("Exception expected, but none encountered.");
 		} catch (IllegalStateException e) { }
 	}

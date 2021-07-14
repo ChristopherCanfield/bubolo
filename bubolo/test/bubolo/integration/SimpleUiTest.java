@@ -34,7 +34,7 @@ public class SimpleUiTest extends AbstractGameApplication {
 	@Override
 	public void resize(int width, int height) {
 		if (screen != null) {
-			screen.onViewportResized(width, height);
+			screen.viewportResized(width, height);
 		}
 	}
 

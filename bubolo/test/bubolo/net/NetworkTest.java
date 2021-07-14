@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -19,8 +18,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import bubolo.mock.MockWorld;
 import bubolo.mock.MockWorldOwner;
+import bubolo.net.command.SendMessage;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -93,7 +92,7 @@ public class NetworkTest
 	@Test
 	public void testSend()
 	{
-		net.send(mock(NetworkCommand.class));
+		net.send(new SendMessage("Hello"));
 	}
 
 	/**
@@ -111,13 +110,15 @@ public class NetworkTest
 	@Test
 	public void testPostToGameThread()
 	{
-		net.postToGameThread(mock(NetworkCommand.class));
+		net.postToGameThread(new NetworkCommand() {
+			private static final long serialVersionUID = 1L;
+		});
 	}
 
 	@Test
 	public void startGame()
 	{
-		net.startGame(new MockWorld());
+		net.startGame();
 	}
 
 	@Test
@@ -133,9 +134,7 @@ public class NetworkTest
 	@Test
 	public void addRemoveObserver()
 	{
-
-
-		NetworkObserver o = mock(NetworkObserver.class);
+		NetworkObserver o = new MockNetworkObserver();
 		net.addObserver(o);
 		assertEquals(1, net.getNotifier().getObserverCount());
 

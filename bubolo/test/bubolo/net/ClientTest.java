@@ -7,7 +7,6 @@
 package bubolo.net;
 
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
 
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -16,6 +15,8 @@ import java.net.UnknownHostException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import bubolo.net.command.ClientConnected;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -42,7 +43,7 @@ public class ClientTest
 	@Test
 	public void testSend()
 	{
-		client.send(mock(NetworkCommand.class));
+		client.send(new ClientConnected("Test"));
 	}
 
 	@Test
