@@ -28,6 +28,10 @@ public class Bullet extends ActorEntity {
 	// The amount of damage the bullet causes.
 	private static final float damage = 10;
 
+	static float Damage() {
+		return damage;
+	}
+
 	// Specifies whether the bullet is initialized.
 	private boolean initialized;
 

@@ -14,7 +14,7 @@ import bubolo.util.TileUtil;
 public class Wall extends StaticEntity implements TerrainImprovement, Collidable, EdgeMatchable, Damageable {
 	private byte tilingState = 0;
 
-	private static final int maxHitPoints = 100;
+	private static final float maxHitPoints = Bullet.Damage() * 10;
 
 	/**
 	 * The wall's health.
@@ -67,7 +67,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 */
 	@Override
 	public int maxHitPoints() {
-		return maxHitPoints;
+		return (int) maxHitPoints;
 	}
 
 	/**
