@@ -62,7 +62,6 @@ public class GameWorld implements World {
 	private final List<ActorEntity> actorsUnmodifiableView = Collections.unmodifiableList(actors);
 
 	private final List<Spawn> spawns = new ArrayList<>();
-	private final List<Spawn> spawnsUnmodifiableView = Collections.unmodifiableList(spawns);
 
 	// first: column; second: row.
 	private final Terrain[][] terrain;
@@ -142,22 +141,6 @@ public class GameWorld implements World {
 		zones[8] = new Rect(zones[1].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northeast");
 
 		return zones;
-	}
-
-	/**
-	 * Returns the zone name from a tile position.
-	 *
-	 * @param column the tile's column.
-	 * @param row the tile's row.
-	 * @return the name of the zone that the specified tile resides in.
-	 */
-	private String getZoneFromTile(int column, int row) {
-		for (Rect zone : zones) {
-			if (zone.contains(column, row)) {
-				return zone.name();
-			}
-		}
-		throw new GameLogicException("Unable to locate zone for object in " + column + ", row " + row + ".");
 	}
 
 	@Override
@@ -561,14 +544,104 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public List<Spawn> getSpawns() {
-		return spawnsUnmodifiableView;
+	public List<Spawn> getRandomSpawns(int count) {
+		List<Spawn> spawnList = new ArrayList<>();
+		Set<Spawn> spawnsFound = new HashSet<>();
+		for (int i = 0; i < count; i++) {
+			var spawn = getRandomSpawn(spawnsFound);
+			spawnList.add(spawn);
+		}
+		return spawnList;
 	}
 
 	@Override
 	public Spawn getRandomSpawn() {
+		return getRandomSpawn(null);
+	}
+
+	private Spawn getRandomSpawn(@Nullable Set<Spawn> spawnsToExclude) {
 		assert !spawns.isEmpty();
-		return spawns.get(randomGenerator.nextInt(spawns.size()));
+
+		List<Integer> zoneIndexes = new ArrayList<>(zones.length);
+		for (int i = 0; i < zones.length; i++) {
+			zoneIndexes.add(i);
+		}
+		Collections.shuffle(zoneIndexes);
+
+		Spawn spawn = null;
+		for (int zoneIndex : zoneIndexes) {
+			if (!zoneContainsTank(zoneIndex)) {
+				spawn = getSpawnFromZone(zones[zoneIndex], spawnsToExclude);
+			}
+		}
+
+		if (spawn != null) {
+			return spawn;
+		} else {
+			if (spawnsToExclude != null) {
+				for (int attempts = 0; attempts < spawnsToExclude.size(); attempts++) {
+					spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+					// Return the spawn if it is not in the exclusion list.
+					if (!spawnsToExclude.contains(spawn)) {
+						return spawn;
+					}
+				}
+			}
+
+			// If there is no exclusion list, or if there is, but no valid spawn was found, return a random spawn.
+			return spawns.get(randomGenerator.nextInt(spawns.size()));
+		}
+	}
+
+	private boolean zoneContainsTank(int zoneIndex) {
+		Rect zone = zones[zoneIndex];
+		for (Tank tank : tanks) {
+			if (tank.isAlive() && zone.contains(tank.tileColumn(), tank.tileRow())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a spawn from the specified zone, or null if there are no spawns in the zone.
+	 *
+	 * @param zone the zone that the spawn must be located in.
+	 * @return a spawn from the specified zone, or null if there are no spawns in the zone.
+	 */
+	private Spawn getSpawnFromZone(Rect zone, Set<Spawn> spawnsToExclude) {
+		Collections.shuffle(spawns);
+		for (Spawn spawn : spawns) {
+			if (zone.contains(spawn.tileColumn(), spawn.tileRow())) {
+				if (spawnsToExclude != null) {
+					// Return the spawn if it is not in the exclusion list.
+					if (!spawnsToExclude.contains(spawn)) {
+						return spawn;
+					}
+				// Return the spawn, because it is in the zone and there is no exclusion list.
+				} else {
+					return spawn;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the zone name from a tile position.
+	 *
+	 * @param column the tile's column.
+	 * @param row the tile's row.
+	 * @return the name of the zone that the specified tile resides in.
+	 */
+	@Override
+	public String getZoneFromTile(int column, int row) {
+		for (Rect zone : zones) {
+			if (zone.contains(column, row)) {
+				return zone.name();
+			}
+		}
+		throw new GameLogicException("Unable to locate zone for object in " + column + ", row " + row + ".");
 	}
 
 	@Override
