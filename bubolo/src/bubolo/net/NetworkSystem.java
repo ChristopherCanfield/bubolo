@@ -3,8 +3,11 @@ package bubolo.net;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.net.InetAddress;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import bubolo.world.Spawn;
 
 /**
  * The network system implementation.
@@ -100,27 +103,41 @@ public class NetworkSystem implements Network {
 		debug = true;
 	}
 
+	/**
+	 * Notifies clients that the game is ready to start. This should not be called until the map data has been sent.
+	 *
+	 * @param initialSpawnPositions the list of initial spawn positions. Must be the same size as the player count.
+	 */
 	@Override
-	public void startGame() {
+	public void startGame(List<Spawn> initialSpawnPositions) {
 		if (subsystem instanceof Server server) {
-			server.startGame();
+			server.startGame(initialSpawnPositions);
 		}
 	}
 
 	@Override
 	public void send(NetworkCommand command) {
-		// Returns without sending the command if the system is running in debug mode.
+		// Return without sending the command if the system is running in debug mode.
 		if (debug) {
 			return;
 		}
 
-		// Explicit check rather than a call to checkState, because FindBugs
-		// was unable to identify checkState as a valid defense against null pointer dereferencing.
-		if (subsystem == null) {
-			throw new NetworkException("Unable to send command: the network is not initialized.");
+		checkState(subsystem != null);
+		subsystem.send(command);
+	}
+
+	@Override
+	public void sendToClient(int playerIndex, NetworkCommand command) {
+		// Return without sending the command if the system is running in debug mode.
+		if (debug) {
+			return;
 		}
 
-		subsystem.send(command);
+		checkState(subsystem != null);
+		checkState(subsystem instanceof Server);
+
+		Server server = (Server) subsystem;
+		server.sendToClient(playerIndex, command);
 	}
 
 	@Override

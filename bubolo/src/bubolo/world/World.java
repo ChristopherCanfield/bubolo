@@ -227,12 +227,12 @@ public interface World {
 	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row);
 
 	/**
-	 * Returns the mine located in specified (column, row) tile position, or null if none is, or the mine is null.
+	 * Returns the mine located in specified (column, row) tile position, or null if none is, or the mine is disposed.
 	 *
 	 * @param column >= 0 and < getTileColumns().
 	 * @param row >= 0 and < getTileRows().
 	 *
-	 * @return the non-disposed mine in the specified tile position, or false otherwise.
+	 * @return the non-disposed mine in the specified tile position, or null if there is no mine or it is disposed.
 	 */
 	public Mine getMine(int column, int row);
 

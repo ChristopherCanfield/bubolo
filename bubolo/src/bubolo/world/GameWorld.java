@@ -36,19 +36,6 @@ import bubolo.util.Units;
  * @author Christopher D. Canfield
  */
 public class GameWorld implements World {
-	/**
-	 * A tile address on the game map.
-	 *
-	 * @author Christopher D. Canfield
-	 * @since 0.4.0
-	 */
-	private static record Tile(int column, int row) {
-		Tile {
-			assert column >= 0;
-			assert row >= 0;
-		}
-	}
-
 	private final List<EntityLifetimeObserver> entityLifetimeObservers = new ArrayList<>();
 
 	private final List<Entity> entities = new ArrayList<>();

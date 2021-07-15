@@ -30,6 +30,7 @@ import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;
 import bubolo.net.command.SendMessage;
 import bubolo.net.command.SendMessage.MessageType;
+import bubolo.world.Tile;
 import bubolo.world.World;
 
 /**
@@ -224,12 +225,15 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 		++clientsReadyToStart;
 		if (clientsReadyToStart == clientCount) {
 			Network net = NetworkSystem.getInstance();
-			net.startGame();
+
+			// Send initial spawn positions to the players. The size is the client count + 1, to include the server.
+			var spawnPoints = world.getRandomSpawns(clientCount + 1);
+			net.startGame(spawnPoints);
 		}
 	}
 
 	@Override
-	public void onGameStart(int secondsUntilStart) {
+	public void onGameStart(int secondsUntilStart, int initialSpawnColumn, int initialSpawnRow) {
 		startingGame = true;
 		appendToMessageHistory(messageHistory, "Get ready: The game is starting!");
 
@@ -237,7 +241,7 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 		startTime = currentTime + (secondsUntilStart * 1000);
 		lastSecondsRemaining = secondsUntilStart;
 
-		app.setState(State.MultiplayerStarting);
+		app.setState(State.MultiplayerStarting, new Tile(initialSpawnColumn, initialSpawnRow));
 	}
 
 	@Override

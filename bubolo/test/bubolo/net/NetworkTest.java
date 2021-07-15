@@ -115,11 +115,11 @@ public class NetworkTest
 		});
 	}
 
-	@Test
-	public void startGame()
-	{
-		net.startGame();
-	}
+//	@Test
+//	public void startGame()
+//	{
+//		net.startGame();
+//	}
 
 	@Test
 	public void setGetPlayerName()

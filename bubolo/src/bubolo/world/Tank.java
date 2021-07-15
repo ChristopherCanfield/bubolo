@@ -171,7 +171,7 @@ public class Tank extends ActorEntity implements Damageable {
 				Spawn spawn = world.getRandomSpawn();
 				setPosition(spawn.x(), spawn.y());
 				// Ensure there are no tanks on top of, or adjacent to, the selected spawn location.
-				spawnFound = world.getCollidablesWithinTileDistance(this, 4, true, Tank.class).isEmpty();
+				spawnFound = world.getCollidablesWithinTileDistance(this, 5, true, Tank.class).isEmpty();
 			} while (!spawnFound);
 
 			hitPoints = maxHitPoints;

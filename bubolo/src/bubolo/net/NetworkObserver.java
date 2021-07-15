@@ -49,8 +49,10 @@ public interface NetworkObserver {
 	 * Called when a networked game starts.
 	 *
 	 * @param secondsUntilStart the number of seconds until the game starts.
+	 * @param initialSpawnColumn this player's initial spawn point column.
+	 * @param initialSpawnRow this player's initial spawn point row.
 	 */
-	void onGameStart(int secondsUntilStart);
+	void onGameStart(int secondsUntilStart, int initialSpawnColumn, int initialSpawnRow);
 
 	/**
 	 * Called when a message is received through the network.

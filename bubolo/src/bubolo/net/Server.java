@@ -19,6 +19,7 @@ import bubolo.net.command.ClientConnected;
 import bubolo.net.command.ConnectedToServer;
 import bubolo.net.command.StartGame;
 import bubolo.util.Nullable;
+import bubolo.world.Spawn;
 
 /**
  * The game server.
@@ -85,23 +86,34 @@ class Server implements NetworkSubsystem {
 
 	/**
 	 * Notifies clients that the game is ready to start. This should not be called until the map data has been sent.
+	 *
+	 * @param initialSpawnPositions the list of initial spawn positions. Must be the same size as the player count.
 	 */
-	void startGame() {
+	void startGame(List<Spawn> initialSpawnPositions) {
 		checkState(!clients.isEmpty(), "No clients are connected.");
+		checkState(initialSpawnPositions.size() == (clients.size() + 1), "The spawn positions list size must equal the player count.");
 
 		gameStarted.set(true);
 		clientAcceptor.interrupt();
 
 		final int secondsUntilStart = 5;
-		StartGame startGameCommand = new StartGame(secondsUntilStart);
-		send(startGameCommand);
+		for (int clientIndex = 0; clientIndex < clients.size(); clientIndex++) {
+			StartGame startGameCommand = new StartGame(secondsUntilStart, initialSpawnPositions.get(clientIndex));
+			sendToClient(clientIndex, startGameCommand);
+		}
 
-		network.getNotifier().notifyGameStart(secondsUntilStart);
+		var spawn = initialSpawnPositions.get(initialSpawnPositions.size() - 1);
+		network.getNotifier().notifyGameStart(secondsUntilStart, spawn.tileColumn(), spawn.tileRow());
 	}
 
 	@Override
 	public void send(NetworkCommand command) {
 		send(command, null);
+	}
+
+	public void sendToClient(int playerIndex, NetworkCommand command) {
+		var client = clients.get(playerIndex);
+		sender.execute(new NetworkSender(client.getOutputStream(), command));
 	}
 
 	@Override

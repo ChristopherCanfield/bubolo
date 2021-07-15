@@ -29,8 +29,10 @@ import bubolo.ui.MultiplayerSetupScreen.PlayerType;
 import bubolo.ui.Screen;
 import bubolo.util.GameRuntimeException;
 import bubolo.util.Nullable;
+import bubolo.util.Units;
 import bubolo.world.Entity;
 import bubolo.world.Tank;
+import bubolo.world.Tile;
 import bubolo.world.World;
 
 /**
@@ -218,12 +220,16 @@ public class BuboloApplication extends AbstractGameApplication {
 		case MultiplayerStarting:
 			assert previousState == State.MultiplayerLobby;
 			assert screen != null;
+			assert arg != null;
 
 			Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
 					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
-			var spawn = world().getRandomSpawn();
-			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
+			Tile spawnTile = (Tile) arg;
+			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(),
+					spawnTile.column() * Units.TileToWorldScale,
+					spawnTile.row() * Units.TileToWorldScale,
+					0);
 
 			Tank tank = world().addEntity(Tank.class, args);
 			tank.initialize(playerInfo.name(), playerInfo.color(), true);

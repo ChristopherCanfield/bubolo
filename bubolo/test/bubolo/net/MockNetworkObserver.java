@@ -8,6 +8,9 @@ public class MockNetworkObserver implements NetworkObserver {
 	private String message;
 	private int timeUntilStart;
 
+	int initialSpawnColumn;
+	int initialSpawnRow;
+
 	String getClientName()
 	{
 		return clientName;
@@ -49,12 +52,6 @@ public class MockNetworkObserver implements NetworkObserver {
 	}
 
 	@Override
-	public void onGameStart(int timeUntilStart)
-	{
-		this.timeUntilStart = timeUntilStart;
-	}
-
-	@Override
 	public void onMessageReceived(MessageType messageType, String message)
 	{
 		this.message = message;
@@ -63,5 +60,12 @@ public class MockNetworkObserver implements NetworkObserver {
 	@Override
 	public void onClientReady(String clientName) {
 		this.clientName = clientName;
+	}
+
+	@Override
+	public void onGameStart(int secondsUntilStart, int initialSpawnColumn, int initialSpawnRow) {
+		this.timeUntilStart = secondsUntilStart;
+		this.initialSpawnColumn = initialSpawnColumn;
+		this.initialSpawnRow = initialSpawnRow;
 	}
 }

@@ -7,6 +7,9 @@ package bubolo.net;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.util.List;
+
+import bubolo.world.Spawn;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -92,6 +95,10 @@ public class MockNetwork implements Network
 	}
 
 	@Override
-	public void startGame() {
+	public void sendToClient(int playerIndex, NetworkCommand command) {
+	}
+
+	@Override
+	public void startGame(List<Spawn> initialSpawnPositions) {
 	}
 }
