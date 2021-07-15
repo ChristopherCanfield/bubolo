@@ -7,15 +7,20 @@ package bubolo.util;
  * @param bottom the rectangle's bottom position. The rectangle grows from the bottom up.
  * @param width the rectangle's width.
  * @param height the rectangle's height.
+ * @param name [optional] the name of this rectangle. May be null.
  *
  * @author Christopher D. Canfield
  */
-public record Rect(int left, int bottom, int width, int height) {
+public record Rect(int left, int bottom, int width, int height, @Nullable String name) {
 	public Rect {
 		assert left >= 0;
 		assert bottom >= 0;
 		assert width > 0;
 		assert height > 0;
+	}
+
+	public Rect(int left, int bottom, int width, int height) {
+		this(left, bottom, width, height, null);
 	}
 
 	public int right() {

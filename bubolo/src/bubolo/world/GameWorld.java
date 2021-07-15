@@ -25,6 +25,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.DestroyEntity;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
+import bubolo.util.Rect;
 import bubolo.util.Timer;
 import bubolo.util.Units;
 
@@ -100,6 +101,9 @@ public class GameWorld implements World {
 
 	private final Random randomGenerator = new Random();
 
+	// The world is divided into six zones for the purpose of notifications and player spawning.
+	private final Rect[] zones;
+
 	/**
 	 * Constructs a GameWorld object.
 	 *
@@ -117,6 +121,43 @@ public class GameWorld implements World {
 
 		width = worldTileColumns * Units.TileToWorldScale;
 		height = worldTileRows * Units.TileToWorldScale;
+
+		zones = constructZones(worldTileColumns, worldTileRows);
+	}
+
+	private static Rect[] constructZones(int worldTileColumns, int worldTileRows) {
+		final int zoneCount = 9;
+		int tileColumnsPerZone = worldTileColumns / zoneCount;
+		int tileRowsPerZone = worldTileRows / zoneCount;
+
+		Rect[] zones = new Rect[zoneCount];
+		zones[0] = new Rect(0, 0, tileColumnsPerZone, tileRowsPerZone, "Southwest");
+		zones[1] = new Rect(0, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "West");
+		zones[2] = new Rect(0, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northwest");
+		zones[3] = new Rect(zones[0].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "South Central");
+		zones[4] = new Rect(zones[0].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Central");
+		zones[5] = new Rect(zones[0].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "North Central");
+		zones[6] = new Rect(zones[1].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "Southeast");
+		zones[7] = new Rect(zones[1].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "East");
+		zones[8] = new Rect(zones[1].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northeast");
+
+		return zones;
+	}
+
+	/**
+	 * Returns the zone name from a tile position.
+	 *
+	 * @param column the tile's column.
+	 * @param row the tile's row.
+	 * @return the name of the zone that the specified tile resides in.
+	 */
+	private String getZoneFromTile(int column, int row) {
+		for (Rect zone : zones) {
+			if (zone.contains(column, row)) {
+				return zone.name();
+			}
+		}
+		throw new GameLogicException("Unable to locate zone for object in " + column + ", row " + row + ".");
 	}
 
 	@Override
