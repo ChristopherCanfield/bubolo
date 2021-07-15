@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import bubolo.world.Pillbox;
 import bubolo.world.Pillbox.BuildStatus;
+import bubolo.world.Pillbox.DamageState;
 import bubolo.world.Tank;
 
 /**
@@ -70,7 +71,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 					buildingColor.a = Math.min(0.9f, pillbox.builtPct() + 0.1f);
 				}
 
-				DamageState damageState = DamageState.getDamageState(getEntity());
+				DamageState damageState = pillbox.damageState();
 
 				// Draw the pillbox.
 				setColor(isBuilt ? Color.WHITE : buildingColor);
@@ -91,7 +92,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 				// Draw damage, if any.
 				setColor(Color.WHITE);
 				if (damageState != DamageState.Undamaged) {
-					drawTexture(graphics, frames[damageColumn][damageState.damageFrameIndex]);
+					drawTexture(graphics, frames[damageColumn][damageState.ordinal() - 1]);
 				}
 			// If Tank is being carried.
 			} else {
@@ -126,31 +127,6 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 			break;
 		}
 		return false;
-	}
-
-	private enum DamageState {
-		Undamaged(-1), LightlyDamaged(0), ModeratelyDamaged(1), SeverelyDamaged(2), OutOfService(3);
-
-		final int damageFrameIndex;
-
-		DamageState(int damageFrameIndex) {
-			this.damageFrameIndex = damageFrameIndex;
-		}
-
-		static DamageState getDamageState(Pillbox pillbox) {
-			var damagePercent = pillbox.hitPoints() / pillbox.maxHitPoints();
-			if (damagePercent >= 0.9F) {
-				return Undamaged;
-			} else if (damagePercent > 0.60f && damagePercent < 0.85f) {
-				return LightlyDamaged;
-			} else if (damagePercent > 0.30f && damagePercent <= 0.60f) {
-				return ModeratelyDamaged;
-			} else if (damagePercent > 0 && damagePercent <= 0.30f) {
-				return SeverelyDamaged;
-			} else {
-				return OutOfService;
-			}
-		}
 	}
 
 	@Override

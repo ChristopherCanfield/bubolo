@@ -27,7 +27,7 @@ import bubolo.util.Units;
  */
 public class Pillbox extends ActorEntity implements Damageable, TerrainImprovement {
 	/** Time required to reload cannon. */
-	private static final int cannonReloadSpeedTicks = Time.secondsToTicks(0.5f);
+	private static final float cannonReloadSpeedSeconds = 0.5f;
 	private boolean cannonReloaded = true;
 
 	/** Whether the pillbox has a target. */
@@ -44,6 +44,10 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 	/** The pillbox's health. */
 	private float hitPoints = maxHitPoints;
+
+	// 0.5f / FPS = heals ~0.5 health per second.
+	private static final float maxHealthPerTick = 0.5f / Config.FPS;
+	private float healthPerTick = maxHealthPerTick;
 
 	/** The amount of time that the pillbox is capturable after its health has been reduced to zero. */
 	private static final int captureTimeTicks = Time.secondsToTicks(10);
@@ -70,9 +74,6 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	private BuildStatus buildStatus = BuildStatus.Built;
 
 	private boolean solid = true;
-
-	// 0.5f / FPS = heals ~0.5 health per second.
-	private static final float hpPerTick = 0.5f / Config.FPS;
 
 	private static final int width = 29;
 	private static final int height = 29;
@@ -122,7 +123,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			assert isSolid();
 
 			if (!capturable) {
-				heal(hpPerTick);
+				heal(healthPerTick);
 			}
 		} else {
 			if (buildStatus == BuildStatus.Carried) {
@@ -350,7 +351,11 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	public void fireCannon(World world) {
 		cannonReloaded = false;
-		world.timer().scheduleTicks(cannonReloadSpeedTicks, w -> cannonReloaded = true);
+		healthPerTick = damageState().healthPerTickWhileFiring;
+		world.timer().scheduleSeconds(damageState().reloadSeconds, w -> {
+			cannonReloaded = true;
+			healthPerTick = maxHealthPerTick;
+		});
 
 		var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), cannonRotation);
 		Bullet bullet = world.addEntity(Bullet.class, args);
@@ -392,6 +397,39 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	@Override
 	public int maxHitPoints() {
 		return maxHitPoints;
+	}
+
+	public enum DamageState {
+		Undamaged(cannonReloadSpeedSeconds, maxHealthPerTick),
+		LightlyDamaged(cannonReloadSpeedSeconds * 0.75f, maxHealthPerTick * 0.66f),
+		ModeratelyDamaged(cannonReloadSpeedSeconds * 0.5f, maxHealthPerTick * 0.33f),
+		SeverelyDamaged(cannonReloadSpeedSeconds * 0.25f, 0),
+		OutOfService(0, maxHealthPerTick);
+
+		/** The pillbox's bullet reload time, in seconds. */
+		final float reloadSeconds;
+		/** The amount of health the pillbox recovers while firing. When not firing, the pillbox recovers health at full speed. */
+		final float healthPerTickWhileFiring;
+
+		private DamageState(float reloadSeconds, float healthPerTick) {
+			this.reloadSeconds = reloadSeconds;
+			this.healthPerTickWhileFiring = healthPerTick;
+		}
+	}
+
+	public DamageState damageState() {
+		var damagePercent = hitPoints() / maxHitPoints();
+		if (damagePercent >= 0.9F) {
+			return DamageState.Undamaged;
+		} else if (damagePercent > 0.60f && damagePercent < 0.85f) {
+			return DamageState.LightlyDamaged;
+		} else if (damagePercent > 0.30f && damagePercent <= 0.60f) {
+			return DamageState.ModeratelyDamaged;
+		} else if (damagePercent > 0 && damagePercent <= 0.30f) {
+			return DamageState.SeverelyDamaged;
+		} else {
+			return DamageState.OutOfService;
+		}
 	}
 
 	@Override
