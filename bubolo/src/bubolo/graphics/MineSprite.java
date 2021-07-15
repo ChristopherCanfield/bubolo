@@ -55,7 +55,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 
 		var mine = getEntity();
 		// Hide other people's mines, unless they were seen when placed.
-		if (!mine.canBeSeenByLocalPlayer() && mine.isArmed()) {
+		if (!mine.isVisibleToLocalPlayer() && mine.isArmed()) {
 			return;
 
 		} else {
