@@ -43,11 +43,6 @@ public class MockWorld implements World {
 	}
 
 	@Override
-	public List<Spawn> getSpawns() {
-		return null;
-	}
-
-	@Override
 	public Spawn getRandomSpawn() {
 		return null;
 	}
@@ -170,6 +165,16 @@ public class MockWorld implements World {
 
 	@Override
 	public Terrain getNearestBuildableTerrain(float x, float y) {
+		return null;
+	}
+
+	@Override
+	public List<Spawn> getRandomSpawns(int count) {
+		return null;
+	}
+
+	@Override
+	public String getZoneFromTile(int column, int row) {
 		return null;
 	}
 

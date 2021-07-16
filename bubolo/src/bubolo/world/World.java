@@ -48,16 +48,20 @@ public interface World {
 	public List<Tank> getTanks();
 
 	/**
-	 * Returns an unmodifiable view of all Spawn Locations in the world.
+	 * Returns a randomly selected spawn location. This method attempts to select an empty spawn point that is in a world
+	 * zone that is unoccupied by other tanks.
 	 *
-	 * @return the list of spawns.
-	 */
-	public List<Spawn> getSpawns();
-
-	/**
 	 * @return a randomly selected spawn location.
 	 */
 	public Spawn getRandomSpawn();
+
+	/**
+	 * Gets a list of spawn points. If possible, the spawn points will be located in different world zones.
+	 *
+	 * @param count the number of spawn points to find.
+	 * @return a list of spawn points.
+	 */
+	public List<Spawn> getRandomSpawns(int count);
 
 	/**
 	 * Returns an unmodifiable view of all actors in the world.
@@ -223,14 +227,23 @@ public interface World {
 	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row);
 
 	/**
-	 * Returns the mine located in specified (column, row) tile position, or null if none is, or the mine is null.
+	 * Returns the mine located in specified (column, row) tile position, or null if none is, or the mine is disposed.
 	 *
 	 * @param column >= 0 and < getTileColumns().
 	 * @param row >= 0 and < getTileRows().
 	 *
-	 * @return the non-disposed mine in the specified tile position, or false otherwise.
+	 * @return the non-disposed mine in the specified tile position, or null if there is no mine or it is disposed.
 	 */
 	public Mine getMine(int column, int row);
+
+	/**
+	 * Returns the zone name from a tile position.
+	 *
+	 * @param column the tile's column.
+	 * @param row the tile's row.
+	 * @return the name of the zone in the specified tile position.
+	 */
+	public String getZoneFromTile(int column, int row);
 
 	/**
 	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by

@@ -108,12 +108,28 @@ public class SelectBox extends UiComponent implements Focusable {
 		}
 	}
 
+	public void setSelectedIndex(int index) {
+		assert !items.isEmpty();
+		assert index >= 0 && index < items.size();
+
+		itemIndex = index;
+
+		var action = items.get(itemIndex).action();
+		if (action != null) {
+			action.accept(this);
+		}
+	}
+
 	public void setTextColor(Color color) {
 		args.textColor = color;
 	}
 
 	public String selectedItem() {
 		return items.get(itemIndex).text();
+	}
+
+	public int itemCount() {
+		return items.size();
 	}
 
 	@Override

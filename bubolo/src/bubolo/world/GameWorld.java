@@ -25,6 +25,7 @@ import bubolo.net.NetworkSystem;
 import bubolo.net.command.DestroyEntity;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
+import bubolo.util.Rect;
 import bubolo.util.Timer;
 import bubolo.util.Units;
 
@@ -35,19 +36,6 @@ import bubolo.util.Units;
  * @author Christopher D. Canfield
  */
 public class GameWorld implements World {
-	/**
-	 * A tile address on the game map.
-	 *
-	 * @author Christopher D. Canfield
-	 * @since 0.4.0
-	 */
-	private static record Tile(int column, int row) {
-		Tile {
-			assert column >= 0;
-			assert row >= 0;
-		}
-	}
-
 	private final List<EntityLifetimeObserver> entityLifetimeObservers = new ArrayList<>();
 
 	private final List<Entity> entities = new ArrayList<>();
@@ -61,7 +49,6 @@ public class GameWorld implements World {
 	private final List<ActorEntity> actorsUnmodifiableView = Collections.unmodifiableList(actors);
 
 	private final List<Spawn> spawns = new ArrayList<>();
-	private final List<Spawn> spawnsUnmodifiableView = Collections.unmodifiableList(spawns);
 
 	// first: column; second: row.
 	private final Terrain[][] terrain;
@@ -100,6 +87,9 @@ public class GameWorld implements World {
 
 	private final Random randomGenerator = new Random();
 
+	// The world is divided into six zones for the purpose of notifications and player spawning.
+	private final Rect[] zones;
+
 	/**
 	 * Constructs a GameWorld object.
 	 *
@@ -117,6 +107,27 @@ public class GameWorld implements World {
 
 		width = worldTileColumns * Units.TileToWorldScale;
 		height = worldTileRows * Units.TileToWorldScale;
+
+		zones = constructZones(worldTileColumns, worldTileRows);
+	}
+
+	private static Rect[] constructZones(int worldTileColumns, int worldTileRows) {
+		final int zoneCount = 9;
+		int tileColumnsPerZone = worldTileColumns / zoneCount;
+		int tileRowsPerZone = worldTileRows / zoneCount;
+
+		Rect[] zones = new Rect[zoneCount];
+		zones[0] = new Rect(0, 0, tileColumnsPerZone, tileRowsPerZone, "Southwest");
+		zones[1] = new Rect(0, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "West");
+		zones[2] = new Rect(0, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northwest");
+		zones[3] = new Rect(zones[0].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "South Central");
+		zones[4] = new Rect(zones[0].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Central");
+		zones[5] = new Rect(zones[0].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "North Central");
+		zones[6] = new Rect(zones[1].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "Southeast");
+		zones[7] = new Rect(zones[1].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "East");
+		zones[8] = new Rect(zones[1].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northeast");
+
+		return zones;
 	}
 
 	@Override
@@ -520,14 +531,104 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public List<Spawn> getSpawns() {
-		return spawnsUnmodifiableView;
+	public List<Spawn> getRandomSpawns(int count) {
+		List<Spawn> spawnList = new ArrayList<>();
+		Set<Spawn> spawnsFound = new HashSet<>();
+		for (int i = 0; i < count; i++) {
+			var spawn = getRandomSpawn(spawnsFound);
+			spawnList.add(spawn);
+		}
+		return spawnList;
 	}
 
 	@Override
 	public Spawn getRandomSpawn() {
+		return getRandomSpawn(null);
+	}
+
+	private Spawn getRandomSpawn(@Nullable Set<Spawn> spawnsToExclude) {
 		assert !spawns.isEmpty();
-		return spawns.get(randomGenerator.nextInt(spawns.size()));
+
+		List<Integer> zoneIndexes = new ArrayList<>(zones.length);
+		for (int i = 0; i < zones.length; i++) {
+			zoneIndexes.add(i);
+		}
+		Collections.shuffle(zoneIndexes);
+
+		Spawn spawn = null;
+		for (int zoneIndex : zoneIndexes) {
+			if (!zoneContainsTank(zoneIndex)) {
+				spawn = getSpawnFromZone(zones[zoneIndex], spawnsToExclude);
+			}
+		}
+
+		if (spawn != null) {
+			return spawn;
+		} else {
+			if (spawnsToExclude != null) {
+				for (int attempts = 0; attempts < spawnsToExclude.size(); attempts++) {
+					spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+					// Return the spawn if it is not in the exclusion list.
+					if (!spawnsToExclude.contains(spawn)) {
+						return spawn;
+					}
+				}
+			}
+
+			// If there is no exclusion list, or if there is, but no valid spawn was found, return a random spawn.
+			return spawns.get(randomGenerator.nextInt(spawns.size()));
+		}
+	}
+
+	private boolean zoneContainsTank(int zoneIndex) {
+		Rect zone = zones[zoneIndex];
+		for (Tank tank : tanks) {
+			if (tank.isAlive() && zone.contains(tank.tileColumn(), tank.tileRow())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a spawn from the specified zone, or null if there are no spawns in the zone.
+	 *
+	 * @param zone the zone that the spawn must be located in.
+	 * @return a spawn from the specified zone, or null if there are no spawns in the zone.
+	 */
+	private Spawn getSpawnFromZone(Rect zone, Set<Spawn> spawnsToExclude) {
+		Collections.shuffle(spawns);
+		for (Spawn spawn : spawns) {
+			if (zone.contains(spawn.tileColumn(), spawn.tileRow())) {
+				if (spawnsToExclude != null) {
+					// Return the spawn if it is not in the exclusion list.
+					if (!spawnsToExclude.contains(spawn)) {
+						return spawn;
+					}
+				// Return the spawn, because it is in the zone and there is no exclusion list.
+				} else {
+					return spawn;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the zone name from a tile position.
+	 *
+	 * @param column the tile's column.
+	 * @param row the tile's row.
+	 * @return the name of the zone that the specified tile resides in.
+	 */
+	@Override
+	public String getZoneFromTile(int column, int row) {
+		for (Rect zone : zones) {
+			if (zone.contains(column, row)) {
+				return zone.name();
+			}
+		}
+		throw new GameLogicException("Unable to locate zone for object in " + column + ", row " + row + ".");
 	}
 
 	@Override

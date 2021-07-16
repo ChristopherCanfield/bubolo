@@ -12,6 +12,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 
 import bubolo.GameApplication;
 import bubolo.GameApplication.State;
@@ -147,6 +148,8 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 				colorSelectBox.addItem(playerColor.toString(), selectBox -> selectBox.setTextColor(playerColor.color));
 			}
 		}
+		// Default to a random color, to encourage players to not all select the same color.
+		colorSelectBox.setSelectedIndex(MathUtils.random.nextInt(colorSelectBox.itemCount()));
 		root.add(colorSelectBox);
 	}
 

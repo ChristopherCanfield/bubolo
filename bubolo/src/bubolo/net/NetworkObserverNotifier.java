@@ -92,10 +92,12 @@ public class NetworkObserverNotifier {
 	 * Notifies observers that the game is starting.
 	 *
 	 * @param secondsUntilStart the number of seconds until the game begins.
+	 * @param initialSpawnColumn this player's initial spawn point column.
+	 * @param initialSpawnRow this player's initial spawn point row.
 	 */
-	public void notifyGameStart(final int secondsUntilStart) {
+	public void notifyGameStart(int secondsUntilStart, int initialSpawnColumn, int initialSpawnRow) {
 		for (final NetworkObserver o : observers) {
-			o.onGameStart(secondsUntilStart);
+			o.onGameStart(secondsUntilStart, initialSpawnColumn, initialSpawnRow);
 		}
 	}
 

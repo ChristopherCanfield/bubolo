@@ -6,8 +6,6 @@
 
 package bubolo.net;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,14 +44,5 @@ public class ServerTest
 	public void startServer()
 	{
 		server.startServer("Server player");
-	}
-
-	@Test
-	public void startGameNoClients()
-	{
-		try {
-			server.startGame();
-			fail("Exception expected, but none encountered.");
-		} catch (IllegalStateException e) { }
 	}
 }

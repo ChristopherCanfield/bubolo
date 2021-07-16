@@ -81,6 +81,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 
 	@Override
 	protected void onDispose() {
+		super.onDispose();
 		Audio.play(Sfx.TreeHit, x(), y());
 	}
 

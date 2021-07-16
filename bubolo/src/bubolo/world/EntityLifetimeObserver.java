@@ -7,14 +7,14 @@ package bubolo.world;
  * @author Christopher D. Canfield
  * @since 0.4.0
  */
-public interface EntityLifetimeObserver {
+public interface EntityLifetimeObserver extends EntityRemovedObserver {
 	/**
 	 * Called once, when the observer is added to the world.
-	 * 
+	 *
 	 * @param world reference to the game world.
 	 */
 	void onObserverAddedToWorld(World world);
-	
+
 	/**
 	 * Called when an entity is added to the world.
 	 *
@@ -27,5 +27,6 @@ public interface EntityLifetimeObserver {
 	 *
 	 * @param entity the entity that was removed.
 	 */
+	@Override
 	void onEntityRemoved(Entity entity);
 }

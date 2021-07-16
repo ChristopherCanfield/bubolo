@@ -86,10 +86,12 @@ public class Tank extends ActorEntity implements Damageable {
 	private long cannonReadyTime = 0;
 
 	// Minimum amount of time between laying mines.
-	private static final long mineLayingSpeedMillis = 1_000;
+	private static final long mineLayingFrequencyMillis = 1_000;
 
 	// The next time a mine will be ready to be laid.
 	private long mineReadyTime = 0;
+
+	private static final float maxSpeedToSeeHiddenMinesKph = 20;
 
 	// Used for movement collision detection.
 	private final Circle boundingCircle;
@@ -171,7 +173,7 @@ public class Tank extends ActorEntity implements Damageable {
 				Spawn spawn = world.getRandomSpawn();
 				setPosition(spawn.x(), spawn.y());
 				// Ensure there are no tanks on top of, or adjacent to, the selected spawn location.
-				spawnFound = world.getCollidablesWithinTileDistance(this, 4, true, Tank.class).isEmpty();
+				spawnFound = world.getCollidablesWithinTileDistance(this, 5, true, Tank.class).isEmpty();
 			} while (!spawnFound);
 
 			hitPoints = maxHitPoints;
@@ -218,6 +220,7 @@ public class Tank extends ActorEntity implements Damageable {
 		moveTank(world);
 		performCollisionDetection(world);
 		processPillboxBuilding(world);
+		uncoverHiddenMines(world);
 		hidden = checkIfHidden(world);
 
 		decelerated = false;
@@ -756,6 +759,16 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	private void uncoverHiddenMines(World world) {
+		if (speedKph() <= maxSpeedToSeeHiddenMinesKph) {
+			var adjacentMines = world.getCollidablesWithinTileDistance(this, 2, false, Mine.class);
+			for (Collidable adjacentMine : adjacentMines) {
+				Mine mine = (Mine) adjacentMine;
+				mine.makeVisibleToLocalPlayer();
+			}
+		}
+	}
+
 	/**
 	 * Sends tank attribute information to the network.
 	 */
@@ -904,7 +917,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	public Mine placeMine(World world) {
 		if (canPlaceMineHere(world)) {
-			mineReadyTime = System.currentTimeMillis() + mineLayingSpeedMillis;
+			mineReadyTime = System.currentTimeMillis() + mineLayingFrequencyMillis;
 
 			int tileX = Math.round(x() / Units.TileToWorldScale);
 			int tileY = Math.round(y() / Units.TileToWorldScale);

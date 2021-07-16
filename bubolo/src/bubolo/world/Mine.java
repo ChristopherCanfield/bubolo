@@ -62,8 +62,15 @@ public class Mine extends ActorEntity implements Damageable {
 		}
 	}
 
-	public boolean canBeSeenByLocalPlayer() {
+	public boolean isVisibleToLocalPlayer() {
 		return canBeSeenByLocalPlayer;
+	}
+
+	/**
+	 * Makes this mine visible to the local player.
+	 */
+	public void makeVisibleToLocalPlayer() {
+		canBeSeenByLocalPlayer = true;
 	}
 
 	@Override
