@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import bubolo.Config;
 import bubolo.ui.Screen;
+import bubolo.util.Nullable;
 import bubolo.util.Timer;
 import bubolo.world.Entity;
 import bubolo.world.EntityLifetimeObserver;
@@ -258,17 +259,12 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
-	 * Draws the specified screen.
+	 * Updates and draws the specified screen.
 	 *
 	 * @param screen the ui screen to update.
 	 */
 	public void draw(Screen screen) {
-		var clearColor = screen.clearColor();
-		Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-		screen.draw(this);
-		batch.totalRenderCalls = 0;
+		draw(null, screen);
 	}
 
 	/**
@@ -277,10 +273,48 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param world reference to the game world.
 	 */
 	public void draw(World world) {
-		Gdx.gl20.glClearColor(0, 0, 0, 1);
+		draw(world, null);
+	}
+
+	/**
+	 * Draws the game world, followed by the specified screen. Must be called once per game tick.
+	 *
+	 * @param world reference to the game world.
+	 * @param screen the ui screen to update and draw.
+	 */
+	public void draw(World world, Screen screen) {
+		if (screen != null) {
+			var clearColor = screen.clearColor();
+			Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		} else {
+			Gdx.gl20.glClearColor(0, 0, 0, 1);
+		}
+
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		timer.update(this);
+
+		drawWorld(world);
+		drawScreen(screen);
+
+		batch.totalRenderCalls = 0;
+	}
+
+	private void drawScreen(@Nullable Screen screen) {
+		if (screen != null) {
+			screen.draw(this);
+		}
+	}
+
+	/**
+	 * Draws the entities that are within the camera's clipping boundary. Must be called once per game tick.
+	 *
+	 * @param world reference to the game world.
+	 */
+	private void drawWorld(@Nullable World world) {
+		if (world == null) {
+			return;
+		}
 
 		// Get list of sprites, and clip sprites that are outside of the camera's view.
 		spritesInView.clear();
