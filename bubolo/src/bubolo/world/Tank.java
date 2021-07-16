@@ -137,6 +137,8 @@ public class Tank extends ActorEntity implements Damageable {
 	private float pillboxBuildLocationX = -1;
 	private float pillboxBuildLocationY = -1;
 
+	private TankObserver observer;
+
 	/**
 	 * Constructs a Tank.
 	 *
@@ -222,6 +224,10 @@ public class Tank extends ActorEntity implements Damageable {
 		processPillboxBuilding(world);
 		uncoverHiddenMines(world);
 		hidden = checkIfHidden(world);
+
+		if (observer != null && (decelerated || accelerated)) {
+			observer.onTankSpeedChanged(speed, speedKph());
+		}
 
 		decelerated = false;
 		accelerated = false;
@@ -863,9 +869,9 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param healPoints the amount of health the tank will receive.
 	 */
 	private void heal(float healPoints) {
-		if (hitPoints + Math.abs(healPoints) < maxHitPoints) {
-			hitPoints += Math.abs(healPoints);
-		} else {
+		assert healPoints >= 0;
+		hitPoints += healPoints;
+		if (hitPoints > maxHitPoints) {
 			hitPoints = maxHitPoints;
 		}
 	}
@@ -894,6 +900,8 @@ public class Tank extends ActorEntity implements Damageable {
 		if (ammoCount > maxAmmo) {
 			ammoCount = maxAmmo;
 		}
+
+		if (observer != null) { observer.onTankAmmoCountChanged(ammoCount); }
 	}
 
 	/**
@@ -907,6 +915,8 @@ public class Tank extends ActorEntity implements Damageable {
 		if (mineCount > maxMines) {
 			mineCount = maxMines;
 		}
+
+		if (observer != null) { observer.onTankMineCountChanged(mineCount); }
 	}
 
 	/**
@@ -929,6 +939,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mine.setOwner(this);
 
 			mineCount--;
+			if (observer != null) { observer.onTankAmmoCountChanged(mineCount); }
 
 			Network net = NetworkSystem.getInstance();
 			net.send(new CreateActor(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation(), id()));
@@ -995,5 +1006,14 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	protected void updateControllers(World world) {
 		controllers.forEach(controller -> controller.update(world));
+	}
+
+	/**
+	 * Sets the tank observer. Only one observer can be associated with a tank.
+	 *
+	 * @param observer the tank observer.
+	 */
+	public void setTankObserver(TankObserver observer) {
+		this.observer = observer;
 	}
 }
