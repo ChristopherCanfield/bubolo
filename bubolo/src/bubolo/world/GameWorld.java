@@ -526,6 +526,16 @@ public class GameWorld implements World {
 	}
 
 	@Override
+	public Tank getLocalTank() {
+		for (Tank tank : tanks) {
+			if (tank.isOwnedByLocalPlayer()) {
+				return tank;
+			}
+		}
+		throw new GameLogicException("No local tank exists in the world.");
+	}
+
+	@Override
 	public List<ActorEntity> getActors() {
 		return actorsUnmodifiableView;
 	}

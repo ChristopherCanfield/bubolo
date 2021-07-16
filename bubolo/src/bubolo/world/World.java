@@ -48,6 +48,14 @@ public interface World {
 	public List<Tank> getTanks();
 
 	/**
+	 * Returns the local tank.
+	 *
+	 * @return the local player's tank.
+	 * @throws GameLogicException if there is no local tank.
+	 */
+	public Tank getLocalTank();
+
+	/**
 	 * Returns a randomly selected spawn location. This method attempts to select an empty spawn point that is in a world
 	 * zone that is unoccupied by other tanks.
 	 *

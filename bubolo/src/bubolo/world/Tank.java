@@ -407,6 +407,7 @@ public class Tank extends ActorEntity implements Damageable {
 			bullet.setOwner(this);
 
 			ammoCount--;
+			if (observer != null) { observer.onTankAmmoCountChanged(ammoCount); }
 
 			Network net = NetworkSystem.getInstance();
 			net.send(new CreateActor(Bullet.class, bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
@@ -939,7 +940,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mine.setOwner(this);
 
 			mineCount--;
-			if (observer != null) { observer.onTankAmmoCountChanged(mineCount); }
+			if (observer != null) { observer.onTankMineCountChanged(mineCount); }
 
 			Network net = NetworkSystem.getInstance();
 			net.send(new CreateActor(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation(), id()));
@@ -1010,10 +1011,16 @@ public class Tank extends ActorEntity implements Damageable {
 
 	/**
 	 * Sets the tank observer. Only one observer can be associated with a tank.
+	 * <p>
+	 * When the observer is first added, each of the observation functions is called with the tank's current status.
+	 * </p>
 	 *
 	 * @param observer the tank observer.
 	 */
-	public void setTankObserver(TankObserver observer) {
+	public void setObserver(TankObserver observer) {
 		this.observer = observer;
+		observer.onTankAmmoCountChanged(ammoCount);
+		observer.onTankMineCountChanged(mineCount);
+		observer.onTankSpeedChanged(speed, speedKph());
 	}
 }

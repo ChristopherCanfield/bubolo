@@ -178,4 +178,9 @@ public class MockWorld implements World {
 		return null;
 	}
 
+	@Override
+	public Tank getLocalTank() {
+		return null;
+	}
+
 }

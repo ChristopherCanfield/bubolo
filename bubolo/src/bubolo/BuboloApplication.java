@@ -20,6 +20,7 @@ import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.PlayerInfo;
 import bubolo.net.command.CreateTank;
+import bubolo.ui.GameScreen;
 import bubolo.ui.LoadingScreen;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.MainMenuScreen;
@@ -145,9 +146,9 @@ public class BuboloApplication extends AbstractGameApplication {
 				break;
 			case MultiplayerGame:
 			case SinglePlayerGame:
-				graphics.draw(world);
 				world.update();
 				network.update(this);
+				graphics.draw(world, screen);
 				break;
 			case SinglePlayerLoading:
 				LoadingScreen loadingScreen = (LoadingScreen) screen;
@@ -165,7 +166,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 					network.startDebug();
 					setReady(true);
-					setState(State.SinglePlayerGame);
+					setState(State.SinglePlayerGame, tank);
 				}
 			}
 		} catch (Exception e) {
@@ -236,16 +237,17 @@ public class BuboloApplication extends AbstractGameApplication {
 
 			network.send(new CreateTank(tank));
 
+			screen.dispose();
+			screen = new GameScreen(world());
+			tank.setObserver((GameScreen) screen);
+
 			setReady(true);
 			break;
 
-		case MultiplayerGame: {
-			if (screen != null) {
-				screen.dispose();
-				screen = null;
-			}
+		case MultiplayerGame:
+			assert previousState == State.MultiplayerLobby;
 			break;
-		}
+
 		case SinglePlayerLoading:
 			assert previousState == State.SinglePlayerSetup;
 			assert mapPath != null;
@@ -255,6 +257,12 @@ public class BuboloApplication extends AbstractGameApplication {
 
 		case SinglePlayerGame: {
 			assert previousState == State.SinglePlayerLoading;
+			assert arg != null;
+
+			Tank localTank = (Tank) arg;
+			screen = new GameScreen(world());
+			localTank.setObserver((GameScreen) screen);
+
 			break;
 		}
 		case Settings:

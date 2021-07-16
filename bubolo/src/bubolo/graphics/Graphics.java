@@ -67,7 +67,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param fileName the name of the texture file. Do not include the full path.
 	 * @return the requested texture.
 	 */
-	static Texture getTexture(String fileName) {
+	public static Texture getTexture(String fileName) {
 		Texture texture = textures.get(fileName);
 		if (texture == null) {
 			texture = new Texture(new FileHandle(Config.TextureFilePath.resolve(fileName).toFile()));
@@ -85,7 +85,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param spriteType the class type of the sprite requesting the texture.
 	 * @return the requested texture region.
 	 */
-	static TextureRegion[] getTextureRegion1d(String path, Class<? extends Sprite> spriteType) {
+	public static TextureRegion[] getTextureRegion1d(String path, Class<? extends Sprite> spriteType) {
 		TextureRegion[] textureRegion = textureRegions1d.get(path);
 		if (textureRegion == null) {
 			Texture texture = getTexture(path);
@@ -105,7 +105,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param paddingWidth the horizontal padding between frames.
 	 * @return reference to the texture region array.
 	 */
-	static TextureRegion[] getTextureRegion1d(String path, int frames, int frameWidth, int paddingWidth) {
+	public static TextureRegion[] getTextureRegion1d(String path, int frames, int frameWidth, int paddingWidth) {
 		TextureRegion[] textureRegion = textureRegions1d.get(path);
 		if (textureRegion == null) {
 			Texture texture = getTexture(path);
@@ -125,7 +125,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param frameHeight each frame's height.
 	 * @return the requested texture region.
 	 */
-	static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight) {
+	public static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight) {
 		return getTextureRegion2d(path, frameWidth, frameHeight, 0, 0);
 	}
 
@@ -141,7 +141,7 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param framePaddingHeight the amount of padding between each row.
 	 * @return the requested texture region.
 	 */
-	static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight, int framePaddingWidth, int framePaddingHeight) {
+	public static TextureRegion[][] getTextureRegion2d(String path, int frameWidth, int frameHeight, int framePaddingWidth, int framePaddingHeight) {
 		TextureRegion[][] textureRegion = textureRegions2d.get(path);
 		if (textureRegion == null) {
 			Texture texture = getTexture(path);
