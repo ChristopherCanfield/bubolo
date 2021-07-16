@@ -11,7 +11,7 @@ import bubolo.util.Units;
 
 public class Label extends UiComponent {
 	private final BitmapFont font;
-	private final Color color;
+	private Color color;
 	private String text;
 	private final boolean canWrap;
 	private int maxWidth;
@@ -45,6 +45,10 @@ public class Label extends UiComponent {
 
 	public void setMaxRowSize(int maxRowSize) {
 		this.maxWidth = maxRowSize;
+	}
+
+	public void setTextColor(Color color) {
+		this.color = color;
 	}
 
 	@Override
