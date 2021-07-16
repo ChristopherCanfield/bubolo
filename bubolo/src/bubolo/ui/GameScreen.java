@@ -132,7 +132,7 @@ public class GameScreen extends AbstractScreen implements TankObserver {
 		spriteBatch.draw(mineTexture[0][0], screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight);
 
 		// Render the mine count text.
-		font.draw(spriteBatch, "x " + mineCount, screenHalfWidth + 53 + 22, textVerticalPosition);
+		font.draw(spriteBatch, mineCountText, screenHalfWidth + 53 + 22, textVerticalPosition);
 
 		spriteBatch.end();
 	}
@@ -145,12 +145,13 @@ public class GameScreen extends AbstractScreen implements TankObserver {
 	@Override
 	public void onTankAmmoCountChanged(int ammo) {
 		this.ammoCount = ammo;
-		this.ammoCountText = "x " + ammo;
+		this.ammoCountText = "x " + ammoCount;
 	}
 
 	@Override
 	public void onTankMineCountChanged(int mines) {
 		this.mineCount = mines;
+		this.mineCountText = "x " + mineCount;
 	}
 
 	@Override
