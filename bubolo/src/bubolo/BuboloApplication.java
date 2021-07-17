@@ -169,6 +169,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			}
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, e.toString(), e);
+			throw e;
 		}
 	}
 
