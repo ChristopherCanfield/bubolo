@@ -538,8 +538,15 @@ public class GameWorld implements World {
 
 	@Override
 	public Tank getLocalTank() {
+		// Check the tanks list.
 		for (Tank tank : tanks) {
 			if (tank.isOwnedByLocalPlayer()) {
+				return tank;
+			}
+		}
+		// If there was no local player in the tanks list, check the pending entities list.
+		for (Entity e : entitiesToAdd) {
+			if (e instanceof Tank tank && tank.isOwnedByLocalPlayer()) {
 				return tank;
 			}
 		}

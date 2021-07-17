@@ -91,6 +91,8 @@ public interface World {
 	 * <li>One or more Controllers are created and added to the Controllers list.</li>
 	 * </ol>
 	 *
+	 * Entities are added at the end of the current game tick.
+	 *
 	 * @param c the entity's class object. For example, to create a new Tank, call this method using the following form:
 	 *     <code>World.addEntity(Tank.class, args).</code>
 	 * @param args the entity's construction arguments.
