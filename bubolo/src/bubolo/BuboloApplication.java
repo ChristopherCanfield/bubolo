@@ -16,7 +16,6 @@ import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
-import bubolo.net.Network;
 import bubolo.net.PlayerInfo;
 import bubolo.net.command.CreateTank;
 import bubolo.ui.GameScreen;
@@ -48,7 +47,6 @@ public class BuboloApplication extends AbstractGameApplication {
 	private final int windowHeight;
 
 	private Graphics graphics;
-	private Network network;
 	private Screen screen;
 
 	private String defaultMapName = "Canfield Island.json";
@@ -132,7 +130,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			switch (state) {
 			case MultiplayerStarting:
 			case MultiplayerLobby:
-				network.update(this);
+				Systems.network().update(this);
 				//$FALL-THROUGH$
 			case MainMenu:
 			case MultiplayerMapSelection:
@@ -145,7 +143,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			case MultiplayerGame:
 			case SinglePlayerGame:
 				world.update();
-				network.update(this);
+				Systems.network().update(this);
 				graphics.draw(world, screen);
 				break;
 			case SinglePlayerLoading:
@@ -238,17 +236,19 @@ public class BuboloApplication extends AbstractGameApplication {
 			Tank tank = world().addEntity(Tank.class, args);
 			tank.initialize(playerInfo.name(), playerInfo.color(), true);
 
-			network.send(new CreateTank(tank));
-
-			screen.dispose();
-			screen = new GameScreen(world());
-			tank.setObserver((GameScreen) screen);
+			Systems.network().send(new CreateTank(tank));
 
 			setReady(true);
 			break;
 
 		case MultiplayerGame:
-			assert previousState == State.MultiplayerLobby;
+			assert previousState == State.MultiplayerStarting;
+			assert screen instanceof LobbyScreen;
+
+			screen.dispose();
+			screen = new GameScreen(world());
+			world().getLocalTank().setObserver((GameScreen) screen);
+
 			break;
 
 		case SinglePlayerLoading:

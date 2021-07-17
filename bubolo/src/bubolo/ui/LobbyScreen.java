@@ -183,7 +183,9 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 					lastSecondsRemaining = secondsRemaining;
 				}
 			} else {
-				app.setState(State.MultiplayerGame);
+				if (app.isReady()) {
+					app.setState(State.MultiplayerGame);
+				}
 			}
 		}
 	}
