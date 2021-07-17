@@ -28,6 +28,10 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	// An array of all frames held in the texture sheet, by row and then column. Row = color set.
 	private TextureRegion[][] frames;
 
+	private static final int treadRow = 0;
+	private static final int bodyRow = 1;
+	private static final int highlightRow = 2;
+
 	// The number of milliseconds per animation frame.
 	private static final long millisPerFrame = 100;
 
@@ -143,11 +147,17 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 		// Draw treads.
 		setColor(treadColor);
-		drawTexture(graphics, frames[frameIndex][0]);
+		drawTexture(graphics, frames[frameIndex][treadRow]);
 
 		// Draw body.
 		setColor(bodyColor);
-		drawTexture(graphics, frames[frameIndex][1]);
+		drawTexture(graphics, frames[frameIndex][bodyRow]);
+
+		// Draw highlight, if this is the local player.
+		if (getEntity().isOwnedByLocalPlayer()) {
+			setColor(Color.WHITE);
+			drawTexture(graphics, frames[frameIndex][highlightRow]);
+		}
 	}
 
 	private void animate() {
