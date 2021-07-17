@@ -6,9 +6,8 @@
 
 package bubolo.net.command;
 
-import bubolo.net.Network;
+import bubolo.Systems;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 
 /**
  * Notifies a client that it has connected to the server.
@@ -39,8 +38,7 @@ public class ConnectedToServer extends NetworkCommand
 	@Override
 	protected void execute()
 	{
-		Network net = NetworkSystem.getInstance();
-		net.getNotifier().notifyConnect(clientName, serverName);
+		Systems.network().getNotifier().notifyConnect(clientName, serverName);
 	}
 
 	/**

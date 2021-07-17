@@ -17,11 +17,11 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import bubolo.Config;
+import bubolo.Systems;
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
 import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
 import bubolo.net.command.DestroyEntity;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
@@ -113,19 +113,30 @@ public class GameWorld implements World {
 
 	private static Rect[] constructZones(int worldTileColumns, int worldTileRows) {
 		final int zoneCount = 9;
+		// If there are fewer columns or rows than zones, just create a single zone for the world.
+		if (worldTileColumns / zoneCount == 0 || worldTileRows / zoneCount == 0) {
+			Rect[] zones = new Rect[1];
+			zones[0] = new Rect(0, 0, worldTileColumns, worldTileRows, "Central");
+			return zones;
+		}
+
 		int tileColumnsPerZone = worldTileColumns / zoneCount;
+		// Count tile columns that couldn't be evenly distributed to the other zones.
+		int extraTileColumns = worldTileColumns % zoneCount;
 		int tileRowsPerZone = worldTileRows / zoneCount;
+		// Count tile rows that couldn't be evenly distributed to the other zones.
+		int extraTileRows = worldTileRows % zoneCount;
 
 		Rect[] zones = new Rect[zoneCount];
 		zones[0] = new Rect(0, 0, tileColumnsPerZone, tileRowsPerZone, "Southwest");
 		zones[1] = new Rect(0, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "West");
-		zones[2] = new Rect(0, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northwest");
+		zones[2] = new Rect(0, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone + extraTileRows, "Northwest");
 		zones[3] = new Rect(zones[0].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "South Central");
 		zones[4] = new Rect(zones[0].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Central");
-		zones[5] = new Rect(zones[0].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "North Central");
-		zones[6] = new Rect(zones[1].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "Southeast");
-		zones[7] = new Rect(zones[1].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "East");
-		zones[8] = new Rect(zones[1].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northeast");
+		zones[5] = new Rect(zones[0].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone + extraTileRows, "North Central");
+		zones[6] = new Rect(zones[1].right() + 1, 0, tileColumnsPerZone + extraTileColumns, tileRowsPerZone, "Southeast");
+		zones[7] = new Rect(zones[1].right() + 1, zones[0].top() + 1, tileColumnsPerZone + extraTileColumns, tileRowsPerZone, "East");
+		zones[8] = new Rect(zones[1].right() + 1, zones[1].top() + 1, tileColumnsPerZone + extraTileColumns, tileRowsPerZone + extraTileRows, "Northeast");
 
 		return zones;
 	}
@@ -490,7 +501,7 @@ public class GameWorld implements World {
 			}
 
 			// Notify the network players.
-			Network network = NetworkSystem.getInstance();
+			Network network = Systems.network();
 			markedForRemoval.stream().filter(e -> !(e instanceof Bullet && !(e instanceof Mine))).forEach(e -> {
 				network.send(new DestroyEntity(e.id()));
 			});

@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
+import bubolo.Systems;
+import bubolo.Systems.NetworkType;
 import bubolo.util.Units;
 import bubolo.world.Entity.ConstructionArgs;
 
@@ -22,8 +22,7 @@ public class GameWorldTest
 	@BeforeEach
 	public void beforeEach() {
 		world = new GameWorld(2, 2);
-		Network net = NetworkSystem.getInstance();
-		net.startDebug();
+		Systems.initializeNetwork(NetworkType.Null);
 	}
 
 	@Test

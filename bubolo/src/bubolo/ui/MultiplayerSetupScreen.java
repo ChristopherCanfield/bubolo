@@ -16,12 +16,12 @@ import com.badlogic.gdx.math.MathUtils;
 
 import bubolo.GameApplication;
 import bubolo.GameApplication.State;
+import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
-import bubolo.net.NetworkSystem;
 import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressListener;
 import bubolo.net.ServerAddressMessage;
@@ -255,7 +255,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 //	}
 
 	private void startServer() {
-		final Network network = NetworkSystem.getInstance();
+		final Network network = Systems.network();
 		network.startServer(playerNameTextBox.text());
 
 		var playerInfo = new PlayerInfo(playerNameTextBox.text(), TeamColor.valueOf(colorSelectBox.selectedItem()), ipAddress);
@@ -297,7 +297,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 				connectToServer = false;
 
 				try {
-					final Network network = NetworkSystem.getInstance();
+					final Network network = Systems.network();
 					network.connect(serverIpAddress, playerNameTextBox.text());
 				} catch (NetworkException e) {
 //					statusLabel1.setText("");

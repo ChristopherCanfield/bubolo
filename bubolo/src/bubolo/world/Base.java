@@ -1,8 +1,7 @@
 package bubolo.world;
 
 import bubolo.Config;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
+import bubolo.Systems;
 import bubolo.net.command.ChangeOwner;
 import bubolo.util.Time;
 
@@ -175,8 +174,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 		if (owner() == null || (hitPoints <= 0 && tank != owner() && tank.isOwnedByLocalPlayer())) {
 			setOwner(tank);
 
-			Network net = NetworkSystem.getInstance();
-			net.send(new ChangeOwner(this));
+			Systems.network().send(new ChangeOwner(this));
 		}
 	}
 

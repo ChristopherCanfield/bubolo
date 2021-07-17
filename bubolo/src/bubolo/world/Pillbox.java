@@ -9,9 +9,7 @@ import bubolo.Config;
 import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
-import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 import bubolo.net.command.MovePillboxOffTileMap;
 import bubolo.net.command.MovePillboxOntoTileMap;
 import bubolo.net.command.UpdatePillboxAttributes;
@@ -494,8 +492,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			assert !(additionalNetworkCommand instanceof UpdatePillboxAttributes) :
 					"Use notifyNetwork(), rather than notifyNetwork(additionalNetworkCommand), to send UpdatePillboxAttributes commands.";
 
-			Network net = NetworkSystem.getInstance();
-			net.send(additionalNetworkCommand);
+			Systems.network().send(additionalNetworkCommand);
 
 			notifyNetwork();
 		}
@@ -516,8 +513,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	private void notifyNetwork(boolean overrideOwnedByLocalPlayerCheck) {
 		if (isOwnedByLocalPlayer() || overrideOwnedByLocalPlayerCheck) {
-			Network net = NetworkSystem.getInstance();
-			net.send(new UpdatePillboxAttributes(this));
+			Systems.network().send(new UpdatePillboxAttributes(this));
 		}
 	}
 

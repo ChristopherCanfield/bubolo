@@ -18,8 +18,6 @@ import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
 import bubolo.controllers.Controller;
 import bubolo.graphics.TeamColor;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateActor;
 import bubolo.net.command.NetTankAttributes;
 import bubolo.net.command.UpdateTankAttributes;
@@ -409,8 +407,7 @@ public class Tank extends ActorEntity implements Damageable {
 			ammoCount--;
 			if (observer != null) { observer.onTankAmmoCountChanged(ammoCount); }
 
-			Network net = NetworkSystem.getInstance();
-			net.send(new CreateActor(Bullet.class, bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
+			Systems.network().send(new CreateActor(Bullet.class, bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
 
 			return bullet;
 		} else {
@@ -781,8 +778,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private void notifyNetwork() {
 		if (isOwnedByLocalPlayer()) {
-			Network net = NetworkSystem.getInstance();
-			net.send(new UpdateTankAttributes(this));
+			Systems.network().send(new UpdateTankAttributes(this));
 		}
 	}
 
@@ -942,8 +938,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mineCount--;
 			if (observer != null) { observer.onTankMineCountChanged(mineCount); }
 
-			Network net = NetworkSystem.getInstance();
-			net.send(new CreateActor(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation(), id()));
+			Systems.network().send(new CreateActor(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation(), id()));
 
 			return mine;
 		}

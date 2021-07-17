@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Intersector;
 import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.controllers.ActorEntityController;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
 import bubolo.net.command.ChangeOwner;
 import bubolo.util.Units;
 import bubolo.world.Pillbox;
@@ -195,7 +193,6 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 	}
 
 	private static void sendNetUpdate(Pillbox pillbox) {
-		Network net = NetworkSystem.getInstance();
-		net.send(new ChangeOwner(pillbox));
+		Systems.network().send(new ChangeOwner(pillbox));
 	}
 }

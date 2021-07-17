@@ -1,8 +1,7 @@
 package bubolo.net.command;
 
-import bubolo.net.Network;
+import bubolo.Systems;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 
 /**
  * Notifies the server that a client has completed downloaded the map.
@@ -20,7 +19,6 @@ public class MapDownloadComplete extends NetworkCommand {
 
 	@Override
 	protected void execute() {
-		Network network = NetworkSystem.getInstance();
-		network.getNotifier().notifyClientReady(playerName);
+		Systems.network().getNotifier().notifyClientReady(playerName);
 	}
 }

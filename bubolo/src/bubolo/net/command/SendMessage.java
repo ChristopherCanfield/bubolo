@@ -4,9 +4,9 @@
 
 package bubolo.net.command;
 
+import bubolo.Systems;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 
 /**
  * Used to send a message across the network.
@@ -33,10 +33,9 @@ public class SendMessage extends NetworkCommand
 	 */
 	public SendMessage(MessageType messageType, String message)
 	{
-		Network net = NetworkSystem.getInstance();
 		this.messageType = messageType;
 		if (messageType == MessageType.Message) {
-			this.message = net.getPlayerName() + ": " + message;
+			this.message = Systems.network().getPlayerName() + ": " + message;
 		} else {
 			this.message = message;
 		}
@@ -54,7 +53,7 @@ public class SendMessage extends NetworkCommand
 	@Override
 	protected void execute()
 	{
-		Network net = NetworkSystem.getInstance();
+		Network net = Systems.network();
 		net.getNotifier().notifyMessageReceived(messageType, message);
 	}
 

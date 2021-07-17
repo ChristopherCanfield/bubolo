@@ -6,9 +6,8 @@
 
 package bubolo.net.command;
 
-import bubolo.net.Network;
+import bubolo.Systems;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 
 /**
  * Notifies players that a new client has connected.
@@ -45,7 +44,6 @@ public class ClientConnected extends NetworkCommand
 	@Override
 	protected void execute()
 	{
-		Network net = NetworkSystem.getInstance();
-		net.getNotifier().notifyClientConnected(playerName);
+		Systems.network().getNotifier().notifyClientConnected(playerName);
 	}
 }

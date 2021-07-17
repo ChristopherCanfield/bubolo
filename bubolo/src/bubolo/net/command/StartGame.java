@@ -1,8 +1,8 @@
 package bubolo.net.command;
 
+import bubolo.Systems;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 import bubolo.net.WorldOwner;
 import bubolo.world.Spawn;
 
@@ -38,7 +38,7 @@ public class StartGame extends NetworkCommand {
 	@Override
 	public void execute(WorldOwner worldOwner) {
 		// Notify NetworkObservers about the game start time.
-		Network net = NetworkSystem.getInstance();
+		Network net = Systems.network();
 		net.getNotifier().notifyGameStart(Byte.toUnsignedInt(secondsUntilStart),
 				Short.toUnsignedInt(initialSpawnColumn),
 				Short.toUnsignedInt(initialSpawnRow));

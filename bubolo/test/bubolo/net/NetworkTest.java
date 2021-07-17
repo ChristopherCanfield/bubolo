@@ -6,7 +6,6 @@ package bubolo.net;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -18,6 +17,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import bubolo.Systems;
+import bubolo.Systems.NetworkType;
 import bubolo.mock.MockWorldOwner;
 import bubolo.net.command.SendMessage;
 
@@ -31,11 +32,8 @@ public class NetworkTest
 	@Before
 	public void setup()
 	{
-		net = NetworkSystem.getInstance();
-		net.dispose();
-		// Non-debug tests are performed in the integration tests, since these can only
-		// be fully tested by connecting to the network.
-		net.startDebug();
+		Systems.initializeNetwork(NetworkType.Null);
+		net = Systems.network();
 	}
 
 	@After
@@ -44,15 +42,6 @@ public class NetworkTest
 		net.dispose();
 		assertFalse(net.isServer());
 		assertNull(net.getPlayerName());
-	}
-
-	/**
-	 * Test method for {@link bubolo.net.NetworkSystem#getInstance()}.
-	 */
-	@Test
-	public void testGetInstance()
-	{
-		assertNotNull(NetworkSystem.getInstance());
 	}
 
 	/**
@@ -115,16 +104,9 @@ public class NetworkTest
 		});
 	}
 
-//	@Test
-//	public void startGame()
-//	{
-//		net.startGame();
-//	}
-
 	@Test
 	public void setGetPlayerName()
 	{
-		net.startDebug();
 		final String name = "Test";
 		net.startServer(name);
 

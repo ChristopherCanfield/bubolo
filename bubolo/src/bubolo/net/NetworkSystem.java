@@ -22,30 +22,13 @@ public class NetworkSystem implements Network {
 
 	private final NetworkObserverNotifier observerNotifier;
 
-	// Specifies whether the network system is running in debug mode.
-	private boolean debug = false;
-
 	// The name of the player, which is used when sending messages.
 	private String name;
 
 	// Specifies whether this is a server player.
 	private boolean isServer;
 
-	private static volatile Network instance;
-
-	/**
-	 * Returns the network system instance.
-	 *
-	 * @return the network system instance.
-	 */
-	public static synchronized Network getInstance() {
-		if (instance == null) {
-			instance = new NetworkSystem();
-		}
-		return instance;
-	}
-
-	private NetworkSystem() {
+	public NetworkSystem() {
 		this.postedCommands = new ConcurrentLinkedQueue<NetworkCommand>();
 		this.observerNotifier = new NetworkObserverNotifier();
 	}
@@ -68,12 +51,6 @@ public class NetworkSystem implements Network {
 		name = serverName;
 		isServer = true;
 
-		// Don't allow the server to run in debug mode, since it requires external resources.
-		// Instead, test this properly in an integration test.
-		if (debug) {
-			return;
-		}
-
 		Server server = new Server(this);
 		subsystem = server;
 		server.startServer(serverName);
@@ -87,20 +64,9 @@ public class NetworkSystem implements Network {
 		name = clientName;
 		isServer = false;
 
-		// Don't allow the client to run in debug mode, since it requires external resources.
-		// Instead, test this properly in an integration test.
-		if (debug) {
-			return;
-		}
-
 		Client client = new Client(this);
 		subsystem = client;
 		client.connect(serverIpAddress, clientName);
-	}
-
-	@Override
-	public void startDebug() {
-		debug = true;
 	}
 
 	/**
@@ -117,22 +83,12 @@ public class NetworkSystem implements Network {
 
 	@Override
 	public void send(NetworkCommand command) {
-		// Return without sending the command if the system is running in debug mode.
-		if (debug) {
-			return;
-		}
-
 		checkState(subsystem != null);
 		subsystem.send(command);
 	}
 
 	@Override
 	public void sendToClient(int playerIndex, NetworkCommand command) {
-		// Return without sending the command if the system is running in debug mode.
-		if (debug) {
-			return;
-		}
-
 		checkState(subsystem != null);
 		checkState(subsystem instanceof Server);
 
@@ -175,7 +131,6 @@ public class NetworkSystem implements Network {
 			subsystem.dispose();
 		}
 		subsystem = null;
-		debug = false;
 		isServer = false;
 		name = null;
 		postedCommands.clear();

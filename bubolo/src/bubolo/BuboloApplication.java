@@ -12,11 +12,11 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
 import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
 import bubolo.net.PlayerInfo;
 import bubolo.net.command.CreateTank;
 import bubolo.ui.GameScreen;
@@ -100,7 +100,6 @@ public class BuboloApplication extends AbstractGameApplication {
 		initializeLogger();
 
 		graphics = new Graphics(windowWidth, windowHeight);
-		network = NetworkSystem.getInstance();
 
 		setState(State.MainMenu);
 	}
@@ -164,7 +163,8 @@ public class BuboloApplication extends AbstractGameApplication {
 					Tank tank = world().addEntity(Tank.class, args);
 					tank.initialize("Player 1", TeamColor.Blue, true);
 
-					network.startDebug();
+					Systems.initializeNetwork(NetworkType.Null);
+
 					setReady(true);
 					setState(State.SinglePlayerGame, tank);
 				}
@@ -198,11 +198,13 @@ public class BuboloApplication extends AbstractGameApplication {
 			assert previousState == State.MultiplayerMapSelection;
 			assert mapPath != null;
 			mapPath = (Path) arg;
+			Systems.initializeNetwork();
 			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
 			break;
 
 		case MultiplayerSetupClient:
 			assert previousState == State.MainMenu;
+			Systems.initializeNetwork();
 			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
 
@@ -298,9 +300,8 @@ public class BuboloApplication extends AbstractGameApplication {
 	@Override
 	public void dispose() {
 		Systems.dispose();
-
-		NetworkSystem.getInstance().dispose();
 		graphics.dispose();
+
 		/*
 		 * TODO (2021-04-13): After updating to lwjgl3, the process remains in the background even after the window is
 		 * closed and this dispose method is called. I'm not sure why that is. System.exit is a temporary hack until I

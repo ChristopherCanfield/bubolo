@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import bubolo.Systems;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 import bubolo.net.WorldOwner;
 import bubolo.world.Entity;
 import bubolo.world.GameWorld;
@@ -65,7 +65,7 @@ public class SendMap extends NetworkCommand {
 		world.update();
 
 		// Notify the server that the map has been received.
-		Network net = NetworkSystem.getInstance();
+		Network net = Systems.network();
 		net.send(new MapDownloadComplete(net.getPlayerName()));
 		net.getNotifier().notifyClientReady(net.getPlayerName());
 	}

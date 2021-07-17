@@ -23,7 +23,7 @@ import org.lwjgl.openal.AL10;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class AudioImpl implements Audio {
+public class AudioSystem implements Audio {
 	/** The path to the sound effect files. */
 	private static final String sfxPath = "res/sfx/";
 
@@ -58,7 +58,7 @@ public class AudioImpl implements Audio {
 	 * @param viewportWidth the viewport's width, in world units.
 	 * @param viewportHeight the viewport's height, in world units.
 	 */
-	public AudioImpl(float worldWidth, float worldHeight, float viewportWidth, float viewportHeight) {
+	public AudioSystem(float worldWidth, float worldHeight, float viewportWidth, float viewportHeight) {
 		sources = new AudioSources(125);
 		buffers = new AudioBuffers();
 		loadSoundEffects();

@@ -56,11 +56,6 @@ public interface Network {
 	void connect(InetAddress serverIpAddress, String clientName) throws NetworkException, IllegalStateException;
 
 	/**
-	 * Starts the network system in debug mode. Use this to run unit tests and integration tests that don't rely on the network.
-	 */
-	void startDebug();
-
-	/**
 	 * Queues a network command to be sent to the other players.
 	 *
 	 * @param command the network command to send.
