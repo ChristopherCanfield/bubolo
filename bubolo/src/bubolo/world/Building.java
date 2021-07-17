@@ -2,8 +2,9 @@ package bubolo.world;
 
 import com.badlogic.gdx.math.Polygon;
 
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
+import bubolo.audio.SfxRateLimiter;
 
 public class Building extends StaticEntity implements TerrainImprovement, Collidable, Damageable {
 	private static final int width = 30;
@@ -13,6 +14,8 @@ public class Building extends StaticEntity implements TerrainImprovement, Collid
 
 	private final int maxHitPoints = 40;
 	private float hitPoints = maxHitPoints;
+
+	private final SfxRateLimiter sfxPlayer = new SfxRateLimiter(150);
 
 	protected Building(ConstructionArgs args, World world) {
 		super(args, width, height);
@@ -60,16 +63,16 @@ public class Building extends StaticEntity implements TerrainImprovement, Collid
 			if (hitPoints <= 0) {
 				onDeath(world);
 			} else if (healthPct < 0.4f) {
-				Audio.play(Sfx.BuildingHit2, x(), y());
+				sfxPlayer.play(Sfx.BuildingHit2, x(), y());
 			} else {
-				Audio.play(Sfx.BuildingHit1, x(), y());
+				sfxPlayer.play(Sfx.BuildingHit1, x(), y());
 			}
 		}
 	}
 
 	private void onDeath(World world) {
 		dispose();
-		Audio.play(Sfx.BuildingDestroyed, x(), y());
+		Systems.audio().play(Sfx.BuildingDestroyed, x(), y());
 
 		// When the building is destroyed, replace it with rubble.
 		var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), 0);

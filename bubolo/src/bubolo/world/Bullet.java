@@ -1,6 +1,6 @@
 package bubolo.world;
 
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 
 /**
@@ -57,7 +57,7 @@ public class Bullet extends ActorEntity {
 		super(args, Width, Height);
 		updateBounds();
 
-		Audio.play(Sfx.CannonFired, args.x(), args.y());
+		Systems.audio().play(Sfx.CannonFired, args.x(), args.y());
 	}
 
 	@Override

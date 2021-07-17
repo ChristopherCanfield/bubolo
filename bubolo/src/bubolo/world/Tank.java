@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.Config;
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
 import bubolo.controllers.Controller;
@@ -234,9 +234,9 @@ public class Tank extends ActorEntity implements Damageable {
 		rotated = false;
 
 		if (isOwnedByLocalPlayer()) {
-			Audio.setListenerPosition(x(), y());
+			Systems.audio().setListenerPosition(x(), y());
 			int distanceToDeepWater = world.getTileDistanceToDeepWater(tileColumn(), tileRow(), 15) * Units.TileToWorldScale;
-			Audio.setListenerDistanceToDeepWater(distanceToDeepWater);
+			Systems.audio().setListenerDistanceToDeepWater(distanceToDeepWater);
 		}
 	}
 
@@ -617,7 +617,7 @@ public class Tank extends ActorEntity implements Damageable {
 		var terrain = world.getTerrain(tileColumn(), tileRow());
 		if (terrain instanceof DeepWater) {
 			drowned = true;
-			Audio.play(Sfx.TankDrowned, x(), y());
+			Systems.audio().play(Sfx.TankDrowned, x(), y());
 			onDeath(world);
 			return true;
 		}
@@ -844,7 +844,7 @@ public class Tank extends ActorEntity implements Damageable {
 			sfxPlayer.play(Sfx.TankHit, x(), y());
 
 			if (hitPoints <= 0) {
-				Audio.play(Sfx.TankExplosion, x(), y());
+				Systems.audio().play(Sfx.TankExplosion, x(), y());
 				onDeath(world);
 			}
 		}

@@ -2,7 +2,7 @@ package bubolo.controllers.ai;
 
 import com.badlogic.gdx.math.Intersector;
 
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.controllers.ActorEntityController;
 import bubolo.net.Network;
@@ -47,7 +47,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 				Tank target = getTarget(world);
 				if (target != null) {
 					if (!pillbox.hasTarget()) {
-						Audio.play(Sfx.PillboxTargetFound, pillbox.x(), pillbox.y());
+						Systems.audio().play(Sfx.PillboxTargetFound, pillbox.x(), pillbox.y());
 						pillbox.setHasTarget(true);
 						firingDelayExpired = false;
 						targetLost = false;
@@ -65,7 +65,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 					world.timer().scheduleSeconds(1.5f, w -> {
 						if (pillbox.hasTarget()) {
 							if (pillbox.hitPoints() > 0) {
-								Audio.play(Sfx.PillboxTargetLost, pillbox.x(), pillbox.y());
+								Systems.audio().play(Sfx.PillboxTargetLost, pillbox.x(), pillbox.y());
 							}
 							pillbox.setHasTarget(false);
 						}

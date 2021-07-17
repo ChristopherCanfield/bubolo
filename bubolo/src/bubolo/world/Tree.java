@@ -2,7 +2,7 @@ package bubolo.world;
 
 import com.badlogic.gdx.math.Polygon;
 
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 
 /**
@@ -82,7 +82,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	@Override
 	protected void onDispose() {
 		super.onDispose();
-		Audio.play(Sfx.TreeHit, x(), y());
+		Systems.audio().play(Sfx.TreeHit, x(), y());
 	}
 
 	@Override

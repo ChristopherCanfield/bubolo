@@ -3,7 +3,7 @@ package bubolo.world;
 import com.badlogic.gdx.math.Rectangle;
 
 import bubolo.Config;
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.util.Time;
 
@@ -98,7 +98,7 @@ public class Mine extends ActorEntity implements Damageable {
 
 	@Override
 	protected void onDispose() {
-		Audio.play(Sfx.MineExplosion, x(), y());
+		Systems.audio().play(Sfx.MineExplosion, x(), y());
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import bubolo.audio.Audio;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
@@ -155,7 +154,8 @@ public class BuboloApplication extends AbstractGameApplication {
 				graphics.draw(loadingScreen);
 				if (loadingScreen.drawCount() > 1 && !isReady()) {
 					setWorld(importWorld());
-					Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
+					Systems.initializeAudio(world().getWidth(), world().getHeight(),
+							TargetWindowWidth * DefaultPixelsPerWorldUnit,
 							TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 					var spawn = world().getRandomSpawn();
@@ -223,7 +223,8 @@ public class BuboloApplication extends AbstractGameApplication {
 			assert screen != null;
 			assert arg != null;
 
-			Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
+			Systems.initializeAudio(world().getWidth(), world().getHeight(),
+					TargetWindowWidth * DefaultPixelsPerWorldUnit,
 					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			Tile spawnTile = (Tile) arg;
@@ -296,7 +297,8 @@ public class BuboloApplication extends AbstractGameApplication {
 	 */
 	@Override
 	public void dispose() {
-		Audio.dispose();
+		Systems.dispose();
+
 		NetworkSystem.getInstance().dispose();
 		graphics.dispose();
 		/*
