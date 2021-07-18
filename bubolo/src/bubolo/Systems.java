@@ -15,6 +15,7 @@ public class Systems {
 
 	private static Audio audio = new NullAudio();
 	private static Network network = new NullNetwork();
+	private static final Messenger messenger = new Messenger();
 
 	/**
 	 * Initializes the sound system.
@@ -49,6 +50,10 @@ public class Systems {
 
 	public static Network network() {
 		return network;
+	}
+
+	public static Messenger messenger() {
+		return messenger;
 	}
 
 	/**

@@ -11,7 +11,7 @@ import bubolo.net.NetworkCommand;
 /**
  * Used to send a message across the network.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 public class SendMessage extends NetworkCommand
 {
