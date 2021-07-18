@@ -6,7 +6,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
 import bubolo.world.ActorEntity;
+import bubolo.world.DeepWater;
 import bubolo.world.Entity;
+import bubolo.world.Tank;
 
 /**
  * Forwards in-game messages to observers.
@@ -29,7 +31,7 @@ public class Messenger {
 		 * @param objectType the type of object that is under attack.
 		 * @param zone the world zone that the object is located in.
 		 */
-		void messageReceivedObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone);
+		void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone);
 
 		/**
 		 * Indicates that an object was captured.
@@ -41,7 +43,7 @@ public class Messenger {
 		 * @param originalOwnerName the original owner's name.
 		 * @param newOwnerName the new owner's name.
 		 */
-		void messageReceivedObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone, boolean originalOwnerIsLocalPlayer, String originalOwnerName, String newOwnerName);
+		void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone, boolean originalOwnerIsLocalPlayer, String originalOwnerName, String newOwnerName);
 
 		/**
 		 * Indicates that a player died.
@@ -52,7 +54,7 @@ public class Messenger {
 		 * @param killerType the type of the object that killed the player.
 		 * @param killerPlayerName the name of the player who killed the player. May be null.
 		 */
-		void messageReceivedPlayerDied(String message, String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName);
+		void messagePlayerDied(String message, String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName);
 	}
 
 	private List<MessageObserver> observers = new CopyOnWriteArrayList<>();
@@ -107,6 +109,45 @@ public class Messenger {
 	 * @param killerPlayerName the name of the player who killed the player. May be null.
 	 */
 	public void notifyPlayerDied(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
-		// @TODO (cdc 2021-07-18): Implement this.
+		var message = buildDeathMessage(deadPlayerName, localPlayerDied, killerType, killerPlayerName);
+		for (var observer : observers) {
+			observer.messagePlayerDied(message, deadPlayerName, localPlayerDied, killerType, killerPlayerName);
+		}
+	}
+
+	private static String buildDeathMessage(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
+		var message = new StringBuilder();
+
+		// Add the subject's name.
+		if (localPlayerDied) {
+			message.append("You");
+		} else {
+			message.append(deadPlayerName);
+		}
+
+		//
+		if (killerType.equals(DeepWater.class)) {
+			message.append(" drowned.");
+			return message.toString();
+		}
+
+		if (localPlayerDied) {
+			message.append(" were killed by ");
+		} else {
+			message.append(" was killed by ");
+		}
+
+		if (killerType.equals(Tank.class)) {
+			message.append(killerPlayerName);
+		} else if (killerPlayerName != null) {
+			message.append(killerPlayerName);
+			message.append("'s ");
+		} else {
+			message.append(" a neutral ");
+		}
+
+		message.append(killerType.getTypeName());
+		message.append(".");
+		return message.toString();
 	}
 }

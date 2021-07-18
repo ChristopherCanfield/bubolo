@@ -66,19 +66,19 @@ class MessengerTest {
 		boolean capturedMessageReceived;
 		boolean playerDiedMessageReceived;
 		@Override
-		public void messageReceivedObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone) {
+		public void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone) {
 			attackMessageReceived = true;
 		}
 
 		@Override
-		public void messageReceivedObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
+		public void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
 				boolean originalOwnerIsLocalPlayer, String originalOwnerName, String newOwnerName) {
 
 			capturedMessageReceived = true;
 		}
 
 		@Override
-		public void messageReceivedPlayerDied(String message, String deadPlayerName, boolean localPlayerDied,
+		public void messagePlayerDied(String message, String deadPlayerName, boolean localPlayerDied,
 				Class<? extends Entity> killerType, String killerPlayerName) {
 
 			playerDiedMessageReceived = true;
