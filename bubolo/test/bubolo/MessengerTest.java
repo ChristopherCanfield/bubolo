@@ -47,7 +47,7 @@ class MessengerTest {
 		messenger.addObserver(observer);
 		assertFalse(observer.capturedMessageReceived);
 
-		messenger.notifyObjectCaptured(Pillbox.class, "Northwest", true, "Player", "Player 2");
+		messenger.notifyObjectCaptured(Pillbox.class, "Northwest", false, "Player", false, "Player 2");
 		assertTrue(observer.capturedMessageReceived);
 	}
 
@@ -56,7 +56,7 @@ class MessengerTest {
 		messenger.addObserver(observer);
 		assertFalse(observer.playerDiedMessageReceived);
 
-		messenger.notifyPlayerDied("Player", true, Tank.class, "Player 2");
+		messenger.notifyPlayerDied("Player", false, Tank.class, "Player 2");
 		assertTrue(observer.playerDiedMessageReceived);
 	}
 
@@ -65,22 +65,22 @@ class MessengerTest {
 		boolean attackMessageReceived;
 		boolean capturedMessageReceived;
 		boolean playerDiedMessageReceived;
+
 		@Override
-		public void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone) {
+		public void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone, String attackerName) {
 			attackMessageReceived = true;
 		}
 
 		@Override
 		public void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
-				boolean originalOwnerIsLocalPlayer, String originalOwnerName, String newOwnerName) {
-
+				boolean originalOwnerIsLocalPlayer, String originalOwnerName,
+				boolean newOwnerIsLocalPlayer, String newOwnerName) {
 			capturedMessageReceived = true;
 		}
 
 		@Override
 		public void messagePlayerDied(String message, String deadPlayerName, boolean localPlayerDied,
 				Class<? extends Entity> killerType, String killerPlayerName) {
-
 			playerDiedMessageReceived = true;
 		}
 	}

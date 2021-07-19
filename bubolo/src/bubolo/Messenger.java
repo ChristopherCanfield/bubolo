@@ -30,8 +30,9 @@ public class Messenger {
 		 * @param message a message that can be displayed to the human player.
 		 * @param objectType the type of object that is under attack.
 		 * @param zone the world zone that the object is located in.
+		 * @param attackerName the attacker's name.
 		 */
-		void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone);
+		void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone, String attackerName);
 
 		/**
 		 * Indicates that an object was captured.
@@ -40,10 +41,13 @@ public class Messenger {
 		 * @param objectType the type of object that was captured.
 		 * @param zone the world zone that the object is located in.
 		 * @param originalOwnerIsLocalPlayer whether the original owner is the local player.
-		 * @param originalOwnerName the original owner's name.
-		 * @param newOwnerName the new owner's name.
+		 * @param originalOwnerName the original owner's name. Will be null if the object was neutral.
+		 * @param newOwnerIsLocalPlayer whether the new owner is the local player.
+		 * @param newOwnerName the new owner's name. Will be null if the object became neutral.
 		 */
-		void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone, boolean originalOwnerIsLocalPlayer, String originalOwnerName, String newOwnerName);
+		void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
+				boolean originalOwnerIsLocalPlayer, @Nullable String originalOwnerName,
+				boolean newOwnerIsLocalPlayer, @Nullable String newOwnerName);
 
 		/**
 		 * Indicates that a player died.
@@ -85,6 +89,23 @@ public class Messenger {
 	 */
 	public void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
 		// @TODO (cdc 2021-07-18): Implement this.
+
+		var message = buildUnderAttackMessage(objectType, zone, attackerName);
+		for (var observer : observers) {
+			observer.messageObjectUnderAttack(message, objectType, zone, attackerName);
+		}
+	}
+
+	private static String buildUnderAttackMessage(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
+		var message = new StringBuilder("Your ");
+		message.append(objectType.getSimpleName());
+		message.append(" in the ");
+		message.append(zone);
+		message.append(" zone is under attack by ");
+		message.append(attackerName);
+		message.append('.');
+
+		return message.toString();
 	}
 
 	/**
@@ -93,11 +114,55 @@ public class Messenger {
 	 * @param objectType the type of object that was captured.
 	 * @param zone the world zone that the object is located in.
 	 * @param originalOwnerIsLocalPlayer whether the original owner is the local player.
-	 * @param originalOwnerName the original owner's name.
-	 * @param newOwnerName the new owner's name.
+	 * @param originalOwnerName the original owner's name. May be null, if the object was neutral.
+	 * @param newOwnerIsLocalPlayer whether the new owner is the local player.
+	 * @param newOwnerName the new owner's name. May be null, if the object returned to being neutral.
 	 */
-	public void notifyObjectCaptured(Class<? extends ActorEntity> objectType, String zone, boolean originalOwnerIsLocalPlayer, String originalOwnerName, String newOwnerName) {
-		// @TODO (cdc 2021-07-18): Implement this.
+	public void notifyObjectCaptured(Class<? extends ActorEntity> objectType, String zone,
+			boolean originalOwnerIsLocalPlayer, @Nullable String originalOwnerName,
+			boolean newOwnerIsLocalPlayer, @Nullable String newOwnerName) {
+
+		var message = buildObjectCapturedMessage(objectType, zone, originalOwnerIsLocalPlayer, originalOwnerName, newOwnerIsLocalPlayer, newOwnerName);
+		for (var observers : observers) {
+			observers.messageObjectCaptured(message, objectType, zone, originalOwnerIsLocalPlayer, originalOwnerName, newOwnerIsLocalPlayer, newOwnerName);
+		}
+	}
+
+	private static String buildObjectCapturedMessage(Class<? extends ActorEntity> objectType, String zone,
+			boolean originalOwnerIsLocalPlayer, @Nullable String originalOwnerName,
+			boolean newOwnerIsLocalPlayer, @Nullable String newOwnerName) {
+		var message = new StringBuilder();
+
+		if (originalOwnerIsLocalPlayer) {
+			message.append("Your");
+		} else if (originalOwnerName != null) {
+			message.append(originalOwnerName);
+			message.append("'s");
+		} else {
+			message.append("A neutral");
+		}
+
+		message.append(' ');
+		message.append(objectType.getSimpleName());
+		message.append(" located in the ");
+		message.append(zone);
+		message.append(" zone ");
+
+		if (newOwnerName != null) {
+			message.append("was captured by ");
+
+			if (newOwnerIsLocalPlayer) {
+				message.append("you.");
+			} else {
+				message.append(newOwnerName);
+				message.append('.');
+			}
+		// If there is no owner name, the object became neutral.
+		} else {
+			message.append("became neutral.");
+		}
+
+		return message.toString();
 	}
 
 	/**
@@ -109,13 +174,13 @@ public class Messenger {
 	 * @param killerPlayerName the name of the player who killed the player. May be null.
 	 */
 	public void notifyPlayerDied(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
-		var message = buildDeathMessage(deadPlayerName, localPlayerDied, killerType, killerPlayerName);
+		var message = buildPlayerDiedMessage(deadPlayerName, localPlayerDied, killerType, killerPlayerName);
 		for (var observer : observers) {
 			observer.messagePlayerDied(message, deadPlayerName, localPlayerDied, killerType, killerPlayerName);
 		}
 	}
 
-	private static String buildDeathMessage(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
+	private static String buildPlayerDiedMessage(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
 		var message = new StringBuilder();
 
 		// Add the subject's name.
@@ -139,14 +204,16 @@ public class Messenger {
 
 		if (killerType.equals(Tank.class)) {
 			message.append(killerPlayerName);
-		} else if (killerPlayerName != null) {
-			message.append(killerPlayerName);
-			message.append("'s ");
 		} else {
-			message.append(" a neutral ");
+			if (killerPlayerName != null) {
+				message.append(killerPlayerName);
+				message.append("'s ");
+			} else {
+				message.append(" a neutral ");
+			}
+			message.append(killerType.getSimpleName());
 		}
 
-		message.append(killerType.getTypeName());
 		message.append(".");
 		return message.toString();
 	}
