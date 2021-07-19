@@ -10,8 +10,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
+import bubolo.Messenger.MessageObserver;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.ui.gui.LayoutArgs;
+import bubolo.ui.gui.MessageBar;
+import bubolo.ui.gui.UiComponent.OffsetType;
+import bubolo.ui.gui.UiComponent.VOffsetFrom;
+import bubolo.world.ActorEntity;
+import bubolo.world.Entity;
 import bubolo.world.TankObserver;
 import bubolo.world.World;
 
@@ -20,12 +27,16 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class GameScreen extends AbstractScreen implements TankObserver {
+public class GameScreen extends AbstractScreen implements TankObserver, MessageObserver {
 	private static final Color clearColor =  new Color(0.15f, 0.15f, 0.15f, 1);
 
 	private final World world;
 
 	private final BitmapFont font = Fonts.Arial16;
+
+	private MessageBar messageBar;
+
+	/* For tank hud. */
 
 	private static final String bulletTextureFile = "bullet.png";
 	private static final String mineTextureFile = "mine.png";
@@ -47,11 +58,23 @@ public class GameScreen extends AbstractScreen implements TankObserver {
 	private float speedKph;
 	private String speedText;
 
+	/* End tank hud variables. */
+
 	public GameScreen(World world) {
 		this.world = world;
 
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
+
+		addMessageBar();
+	}
+
+	private void addMessageBar() {
+		LayoutArgs messageBarLayoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
+		messageBar = new MessageBar(messageBarLayoutArgs, 5);
+		messageBar.setVerticalOffset(50, OffsetType.ScreenUnits, VOffsetFrom.Top);
+
+		root.add(messageBar);
 	}
 
 	@Override
@@ -142,6 +165,9 @@ public class GameScreen extends AbstractScreen implements TankObserver {
 	public void onViewportResized(int newWidth, int newHeight) {
 	}
 
+
+	/* Messages from the tank. */
+
 	@Override
 	public void onTankAmmoCountChanged(int ammo) {
 		this.ammoCount = ammo;
@@ -158,5 +184,24 @@ public class GameScreen extends AbstractScreen implements TankObserver {
 	public void onTankSpeedChanged(float speedWorldUnits, float speedKph) {
 		this.speedKph = speedKph;
 		this.speedText = speedFormatter.format(speedKph);
+	}
+
+	/* Messages from the messenger subsystem. */
+
+	@Override
+	public void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone,
+			String attackerName) {
+
+	}
+
+	@Override
+	public void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
+			boolean originalOwnerIsLocalPlayer, String originalOwnerName, boolean newOwnerIsLocalPlayer,
+			String newOwnerName) {
+	}
+
+	@Override
+	public void messagePlayerDied(String message, String deadPlayerName, boolean localPlayerDied,
+			Class<? extends Entity> killerType, String killerPlayerName) {
 	}
 }

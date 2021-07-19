@@ -88,8 +88,6 @@ public class Messenger {
 	 * @param attackerName the name of the attacker.
 	 */
 	public void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
-		// @TODO (cdc 2021-07-18): Implement this.
-
 		var message = buildUnderAttackMessage(objectType, zone, attackerName);
 		for (var observer : observers) {
 			observer.messageObjectUnderAttack(message, objectType, zone, attackerName);
