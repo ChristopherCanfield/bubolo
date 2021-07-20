@@ -246,7 +246,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			assert screen instanceof LobbyScreen;
 
 			screen.dispose();
-			screen = new GameScreen(world());
+			screen = new GameScreen();
 			world().getLocalTank().setObserver((GameScreen) screen);
 
 			break;
@@ -263,7 +263,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			assert arg != null;
 
 			Tank localTank = (Tank) arg;
-			screen = new GameScreen(world());
+			screen = new GameScreen();
 			localTank.setObserver((GameScreen) screen);
 
 			break;

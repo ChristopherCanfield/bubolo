@@ -18,7 +18,6 @@ import bubolo.ui.gui.MessageBar;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
 import bubolo.world.TankObserver;
-import bubolo.world.World;
 
 /**
  * The game user interface elements.
@@ -28,13 +27,12 @@ import bubolo.world.World;
 public class GameScreen extends AbstractScreen implements TankObserver, MessageObserver {
 	private static final Color clearColor =  new Color(0.15f, 0.15f, 0.15f, 1);
 
-	private final World world;
-
 	private final BitmapFont font = Fonts.Arial16;
 
+	// The message bar displays events reported by the game.
 	private MessageBar messageBar;
 
-	/* For tank hud. */
+	/* For tank hud/status bar. */
 
 	private static final String bulletTextureFile = "bullet.png";
 	private static final String mineTextureFile = "mine.png";
@@ -58,9 +56,7 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 
 	/* End tank hud variables. */
 
-	public GameScreen(World world) {
-		this.world = world;
-
+	public GameScreen() {
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
 
@@ -86,12 +82,6 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 
 	@Override
 	protected void postDraw(Graphics graphics) {
-//		var batch = graphics.nonScalingBatch();
-//		batch.begin();
-//		font.setColor(Color.WHITE);
-//		font.draw(batch, text, 0, graphics.uiCamera().viewportHeight - 100, 0, text.length(), graphics.uiCamera().viewportWidth, Align.center, false, null);
-//		batch.end();
-
 		drawStatusBar(graphics);
 	}
 
