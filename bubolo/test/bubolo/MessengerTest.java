@@ -70,12 +70,12 @@ class MessengerTest {
 		}
 
 		@Override
-		public void messageObjectCaptured(String message) {
+		public void messageObjectCaptured(String message, boolean thisPlayerLostObject, boolean thisPlayerCapturedObject) {
 			capturedMessageReceived = true;
 		}
 
 		@Override
-		public void messagePlayerDied(String message) {
+		public void messagePlayerDied(String message, boolean thisPlayerDied) {
 			playerDiedMessageReceived = true;
 		}
 	}

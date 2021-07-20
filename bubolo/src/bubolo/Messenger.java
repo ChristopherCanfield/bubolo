@@ -35,15 +35,18 @@ public class Messenger {
 		 * Indicates that an object was captured.
 		 *
 		 * @param message a message that can be displayed to the human player.
+		 * @param thisPlayerLostObject true if the local player lost an object.
+		 * @param thisPlayerCapturedObject true if the local player captured an object.
 		 */
-		void messageObjectCaptured(String message);
+		void messageObjectCaptured(String message, boolean thisPlayerLostObject, boolean thisPlayerCapturedObject);
 
 		/**
 		 * Indicates that a player died.
 		 *
 		 * @param message a message that can be displayed to the human player.
+		 * @param thisPlayerDied true if the local player died.
 		 */
-		void messagePlayerDied(String message);
+		void messagePlayerDied(String message, boolean thisPlayerDied);
 	}
 
 	private List<MessageObserver> observers = new CopyOnWriteArrayList<>();
@@ -109,9 +112,11 @@ public class Messenger {
 			boolean originalOwnerIsLocalPlayer, @Nullable String originalOwnerName,
 			boolean newOwnerIsLocalPlayer, @Nullable String newOwnerName) {
 
+		assert !(originalOwnerIsLocalPlayer && newOwnerIsLocalPlayer);
+
 		var message = buildObjectCapturedMessage(objectType, zone, originalOwnerIsLocalPlayer, originalOwnerName, newOwnerIsLocalPlayer, newOwnerName);
 		for (var observers : observers) {
-			observers.messageObjectCaptured(message);
+			observers.messageObjectCaptured(message, originalOwnerIsLocalPlayer, newOwnerIsLocalPlayer);
 		}
 	}
 
@@ -163,7 +168,7 @@ public class Messenger {
 	void notifyPlayerDied(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
 		var message = buildPlayerDiedMessage(deadPlayerName, localPlayerDied, killerType, killerPlayerName);
 		for (var observer : observers) {
-			observer.messagePlayerDied(message);
+			observer.messagePlayerDied(message, localPlayerDied);
 		}
 	}
 
