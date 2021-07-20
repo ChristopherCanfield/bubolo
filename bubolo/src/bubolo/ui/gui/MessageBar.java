@@ -5,20 +5,36 @@ import java.util.Queue;
 
 import com.badlogic.gdx.graphics.Color;
 
+import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.util.Time;
 
+/**
+ * Displays messages in a column. The messages fade out after a few seconds.
+ *
+ * @author Christopher D. Canfield
+ */
 public class MessageBar extends UiComponent {
+
 	private static class Message {
 		final String text;
 		final Color color;
 
-		private static final int maxTicks = Time.secondsToTicks(30);
-		int ticksRemaining;
+		/** Whether this message is visible. */
+		boolean isVisible;
 
-		Message(String text, Color color) {
+		private static final int timeVisibleTicks = Time.secondsToTicks(12);
+		private static final int startTimeFadeTicks = Time.secondsToTicks(4);
+		int ticksRemaining = timeVisibleTicks;
+
+		Message(String text, Color color, boolean isVisible) {
 			this.text = text;
 			this.color = color;
+			this.isVisible = isVisible;
+		}
+
+		float alpha() {
+			return Math.min(1.0f, 0.5f + ticksRemaining / (float) startTimeFadeTicks);
 		}
 	}
 
@@ -26,15 +42,16 @@ public class MessageBar extends UiComponent {
 
 	private final Queue<Message> messages = new ArrayDeque<Message>();
 
-	public MessageBar(LayoutArgs layoutArgs, int maxMessages) {
+	public MessageBar(LayoutArgs layoutArgs, int maxMessagesDisplayed) {
 		super(layoutArgs);
 
-		messageLabels = new Label[maxMessages];
-		for (int i = 0; i < maxMessages; i++) {
-			var label = new Label(layoutArgs, "");
+		messageLabels = new Label[maxMessagesDisplayed];
+		for (int i = 0; i < maxMessagesDisplayed; i++) {
+			var label = new Label(layoutArgs, "", Fonts.Arial16, Color.BLACK, true, 250);
 			messageLabels[i] = label;
+			label.setHorizontalOffset(20, OffsetType.ScreenUnits, HOffsetFrom.Left);
 			if (i == 0) {
-				label.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
+				label.setVerticalOffset(40, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			} else if (i > 0) {
 				label.setVerticalOffset(messageLabels[i-1], VOffsetFromObjectSide.Bottom, 20, OffsetType.ScreenUnits, VOffsetFrom.Top);
 			}
@@ -43,55 +60,74 @@ public class MessageBar extends UiComponent {
 	}
 
 	public void addMessage(String message, Color textColor) {
+		boolean isVisible = false;
 		if (messages.size() < messageLabels.length) {
 			messageLabels[messages.size()].setText(message);
 			messageLabels[messages.size()].setTextColor(textColor);
 			recalculateLayout();
+			isVisible = true;
 		}
 
-		messages.add(new Message(message, textColor));
+		messages.add(new Message(message, textColor, isVisible));
 	}
 
 	@Override
 	public float width() {
-		return 300;
+		return parentWidth;
 	}
 
 	@Override
 	public float height() {
-		return parentHeight - 50;
+		return parentHeight;
 	}
 
 	@Override
 	protected void onRecalculateLayout() {
-//		for (int i = 0; i < messageLabels.length; i++) {
-//			int height = (i == 0) ? parentHeight : (int) (parentHeight - messageLabels[i-1].height() - 10);
-//			messageLabels[i].recalculateLayout((int) width(), height);
-//		}
+		for (int i = 0; i < messageLabels.length; i++) {
+			messageLabels[i].recalculateLayout(parentWidth, parentHeight);
+		}
 	}
 
 	@Override
 	public void draw(Graphics graphics) {
-		for (int i = 0; i < messages.size(); i++) {
+		int i = 0;
+		for (Message message : messages) {
+			messageLabels[i].setTextAlpha(message.alpha());
 			messageLabels[i].draw(graphics);
+
+			i++;
+			if (i == messageLabels.length) {
+				break;
+			}
 		}
 
 		moveMessagesUpIfTopIsExpired();
 	}
 
 	private void moveMessagesUpIfTopIsExpired() {
+		for (var message : messages) {
+			if (message.isVisible) {
+				message.ticksRemaining--;
+			}
+		}
+
 		var topMessage = messages.peek();
 		if (topMessage != null && topMessage.ticksRemaining < 0) {
 			messages.poll();
 
 			int labelIndex = 0;
 			for (Message message : messages) {
+				// Stop processing if there are no remaining labels.
+				if (labelIndex == messageLabels.length) {
+					break;
+				}
 				messageLabels[labelIndex].setText(message.text);
 				messageLabels[labelIndex].setTextColor(message.color);
+				message.isVisible = true;
 
 				labelIndex++;
 				if (labelIndex >= messages.size()) {
-					return;
+					break;
 				}
 			}
 

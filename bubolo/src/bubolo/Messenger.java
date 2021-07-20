@@ -28,37 +28,22 @@ public class Messenger {
 		 * Indicates that an object owned by the local player is under attack.
 		 *
 		 * @param message a message that can be displayed to the human player.
-		 * @param objectType the type of object that is under attack.
-		 * @param zone the world zone that the object is located in.
-		 * @param attackerName the attacker's name.
 		 */
-		void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone, String attackerName);
+		void messageObjectUnderAttack(String message);
 
 		/**
 		 * Indicates that an object was captured.
 		 *
 		 * @param message a message that can be displayed to the human player.
-		 * @param objectType the type of object that was captured.
-		 * @param zone the world zone that the object is located in.
-		 * @param originalOwnerIsLocalPlayer whether the original owner is the local player.
-		 * @param originalOwnerName the original owner's name. Will be null if the object was neutral.
-		 * @param newOwnerIsLocalPlayer whether the new owner is the local player.
-		 * @param newOwnerName the new owner's name. Will be null if the object became neutral.
 		 */
-		void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
-				boolean originalOwnerIsLocalPlayer, @Nullable String originalOwnerName,
-				boolean newOwnerIsLocalPlayer, @Nullable String newOwnerName);
+		void messageObjectCaptured(String message);
 
 		/**
 		 * Indicates that a player died.
 		 *
 		 * @param message a message that can be displayed to the human player.
-		 * @param deadPlayerName the name of the dead player.
-		 * @param localPlayerDied whether the player who died is the local player.
-		 * @param killerType the type of the object that killed the player.
-		 * @param killerPlayerName the name of the player who killed the player. May be null.
 		 */
-		void messagePlayerDied(String message, String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName);
+		void messagePlayerDied(String message);
 	}
 
 	private List<MessageObserver> observers = new CopyOnWriteArrayList<>();
@@ -87,10 +72,10 @@ public class Messenger {
 	 * @param zone the world zone that the object is located in.
 	 * @param attackerName the name of the attacker.
 	 */
-	public void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
+	void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
 		var message = buildUnderAttackMessage(objectType, zone, attackerName);
 		for (var observer : observers) {
-			observer.messageObjectUnderAttack(message, objectType, zone, attackerName);
+			observer.messageObjectUnderAttack(message);
 		}
 	}
 
@@ -105,6 +90,10 @@ public class Messenger {
 
 		return message.toString();
 	}
+
+//	public void notifyObjectCaptured(World world, UUID capturedObject, @Nullable UUID originalOwnerId, @Nullable UUID newOwnerId) {
+//
+//	}
 
 	/**
 	 * Notifies observers that an object was captured.
@@ -122,7 +111,7 @@ public class Messenger {
 
 		var message = buildObjectCapturedMessage(objectType, zone, originalOwnerIsLocalPlayer, originalOwnerName, newOwnerIsLocalPlayer, newOwnerName);
 		for (var observers : observers) {
-			observers.messageObjectCaptured(message, objectType, zone, originalOwnerIsLocalPlayer, originalOwnerName, newOwnerIsLocalPlayer, newOwnerName);
+			observers.messageObjectCaptured(message);
 		}
 	}
 
@@ -171,10 +160,10 @@ public class Messenger {
 	 * @param killerType the type of the object that killed the player.
 	 * @param killerPlayerName the name of the player who killed the player. May be null.
 	 */
-	public void notifyPlayerDied(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
+	void notifyPlayerDied(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
 		var message = buildPlayerDiedMessage(deadPlayerName, localPlayerDied, killerType, killerPlayerName);
 		for (var observer : observers) {
-			observer.messagePlayerDied(message, deadPlayerName, localPlayerDied, killerType, killerPlayerName);
+			observer.messagePlayerDied(message);
 		}
 	}
 

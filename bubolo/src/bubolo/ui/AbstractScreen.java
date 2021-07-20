@@ -41,6 +41,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	@Override
 	public final boolean keyTyped(char character) {
 		root.onKeyTyped(character);
+		onKeyTyped(character);
 		return false;
 	}
 

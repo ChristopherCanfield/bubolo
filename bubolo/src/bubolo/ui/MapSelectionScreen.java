@@ -233,7 +233,7 @@ public class MapSelectionScreen extends AbstractScreen {
 		mapSizeLabel.recalculateLayout(newWidth, newHeight);
 
 		mapDescriptionLabel.recalculateLayout(newWidth, newHeight);
-		mapDescriptionLabel.setMaxRowSize(calculateDescriptionRowSize());
+		mapDescriptionLabel.setMaxLineWidth(calculateDescriptionRowSize());
 	}
 
 	/**

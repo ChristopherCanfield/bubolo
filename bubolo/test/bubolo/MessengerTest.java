@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import bubolo.world.ActorEntity;
-import bubolo.world.Entity;
 import bubolo.world.Pillbox;
 import bubolo.world.Tank;
 
@@ -67,20 +65,17 @@ class MessengerTest {
 		boolean playerDiedMessageReceived;
 
 		@Override
-		public void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone, String attackerName) {
+		public void messageObjectUnderAttack(String message) {
 			attackMessageReceived = true;
 		}
 
 		@Override
-		public void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
-				boolean originalOwnerIsLocalPlayer, String originalOwnerName,
-				boolean newOwnerIsLocalPlayer, String newOwnerName) {
+		public void messageObjectCaptured(String message) {
 			capturedMessageReceived = true;
 		}
 
 		@Override
-		public void messagePlayerDied(String message, String deadPlayerName, boolean localPlayerDied,
-				Class<? extends Entity> killerType, String killerPlayerName) {
+		public void messagePlayerDied(String message) {
 			playerDiedMessageReceived = true;
 		}
 	}

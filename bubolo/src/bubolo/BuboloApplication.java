@@ -183,7 +183,6 @@ public class BuboloApplication extends AbstractGameApplication {
 		switch (newState) {
 		case MainMenu:
 			screen = new MainMenuScreen(this);
-			graphics.camera().position.set(0, 0, 0);
 			break;
 
 		case MultiplayerMapSelection:

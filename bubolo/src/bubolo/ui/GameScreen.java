@@ -17,8 +17,6 @@ import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.MessageBar;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.world.ActorEntity;
-import bubolo.world.Entity;
 import bubolo.world.TankObserver;
 import bubolo.world.World;
 
@@ -71,7 +69,7 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 
 	private void addMessageBar() {
 		LayoutArgs messageBarLayoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-		messageBar = new MessageBar(messageBarLayoutArgs, 5);
+		messageBar = new MessageBar(messageBarLayoutArgs, 10);
 		messageBar.setVerticalOffset(50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
 		root.add(messageBar);
@@ -186,22 +184,36 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 		this.speedText = speedFormatter.format(speedKph);
 	}
 
+
 	/* Messages from the messenger subsystem. */
 
-	@Override
-	public void messageObjectUnderAttack(String message, Class<? extends ActorEntity> objectType, String zone,
-			String attackerName) {
+	private static final Color objectUnderAttackColor = Color.valueOf("E57D06FF");
+	private static final Color thisPlayerLostObjectColor = Color.valueOf("CA0F06FF");
+	private static final Color thisPlayerCapturedObjectColor = Color.valueOf("00D318FF");
+	private static final Color otherPlayerLostObjectColor = Color.valueOf("C0C0C0FF");
+	private static final Color thisPlayerDiedColor = thisPlayerLostObjectColor;
+	private static final Color otherPlayerDiedColor = Color.CYAN;
 
+	@Override
+	public void messageObjectUnderAttack(String message) {
+		messageBar.addMessage(message, objectUnderAttackColor);
 	}
 
 	@Override
-	public void messageObjectCaptured(String message, Class<? extends ActorEntity> objectType, String zone,
-			boolean originalOwnerIsLocalPlayer, String originalOwnerName, boolean newOwnerIsLocalPlayer,
-			String newOwnerName) {
+	public void messageObjectCaptured(String message, boolean thisPlayerLostObject, boolean thisPlayerCapturedObject) {
+		Color color;
+		if (thisPlayerLostObject) {
+			color = thisPlayerLostObjectColor;
+		} else if (thisPlayerCapturedObject) {
+			color = thisPlayerCapturedObjectColor;
+		} else {
+			color = otherPlayerLostObjectColor;
+		}
+		messageBar.addMessage(message, color);
 	}
 
 	@Override
-	public void messagePlayerDied(String message, String deadPlayerName, boolean localPlayerDied,
-			Class<? extends Entity> killerType, String killerPlayerName) {
+	public void messagePlayerDied(String message, boolean thisPlayerDied) {
+		messageBar.addMessage(message, thisPlayerDied ? thisPlayerDiedColor : otherPlayerDiedColor);
 	}
 }

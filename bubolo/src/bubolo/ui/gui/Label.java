@@ -1,5 +1,6 @@
 package bubolo.ui.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -14,27 +15,27 @@ public class Label extends UiComponent {
 	private Color color;
 	private String text;
 	private final boolean canWrap;
-	private int maxWidth;
+	private int maxLineWidth;
 	private GlyphLayout layout;
 
 	public Label(LayoutArgs layoutArgs, String text) {
-		this(layoutArgs, text, Fonts.UiGeneralTextFont, Color.BLACK, false, 0);
+		this(layoutArgs, text, Fonts.UiGeneralTextFont, Color.BLACK, false, Gdx.graphics.getWidth());
 	}
 
 	public Label(LayoutArgs layoutArgs, String text, BitmapFont font, Color color) {
 		this(layoutArgs, text, font, color, false, 0);
 	}
 
-	public Label(LayoutArgs layoutArgs, String text, BitmapFont font, Color color, boolean canWrap, int maxWidth) {
+	public Label(LayoutArgs layoutArgs, String text, BitmapFont font, Color color, boolean canWrap, int maxLineWidth) {
 		super(layoutArgs);
 
 		this.font = font;
-		this.color = color;
+		this.color = new Color(color);
 		this.text = text;
 		this.canWrap = canWrap;
-		this.maxWidth = maxWidth;
+		this.maxLineWidth = maxLineWidth;
 
-		this.layout = new GlyphLayout(font, text, 0, text.length(), color, maxWidth, Align.left, canWrap, null);
+		this.layout = new GlyphLayout(font, text, 0, text.length(), color, maxLineWidth, Align.left, canWrap, null);
 		recalculateLayout(parentWidth, parentHeight);
 	}
 
@@ -43,24 +44,30 @@ public class Label extends UiComponent {
 		recalculateLayout(parentWidth, parentHeight);
 	}
 
-	public void setMaxRowSize(int maxRowSize) {
-		this.maxWidth = maxRowSize;
+	public void setMaxLineWidth(int maxLineWidth) {
+		this.maxLineWidth = maxLineWidth;
 	}
 
 	public void setTextColor(Color color) {
-		this.color = color;
+		this.color.set(color);
+	}
+
+	public void setTextAlpha(float alpha) {
+		this.color.a = alpha;
 	}
 
 	@Override
 	public void draw(Graphics graphics) {
-		Color previousFontColor = font.getColor();
-		var batch = graphics.nonScalingBatch();
-		batch.begin();
-		font.setColor(color);
-		var cameraY = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
-		layout = font.draw(batch, text, left + padding, cameraY, 0, text.length(), maxWidth, Align.left, canWrap, null);
-		batch.end();
-		font.setColor(previousFontColor);
+		if (!text.isEmpty()) {
+			Color previousFontColor = font.getColor();
+			var batch = graphics.nonScalingBatch();
+			batch.begin();
+			font.setColor(color);
+			var cameraY = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
+			layout = font.draw(batch, text, left + padding, cameraY, 0, text.length(), maxLineWidth, Align.left, canWrap, null);
+			batch.end();
+			font.setColor(previousFontColor);
+		}
 	}
 
 	@Override
@@ -75,6 +82,6 @@ public class Label extends UiComponent {
 
 	@Override
 	protected void onRecalculateLayout() {
-		this.layout = new GlyphLayout(font, text, 0, text.length(), color, maxWidth, Align.left, canWrap, null);
+		this.layout = new GlyphLayout(font, text, 0, text.length(), color, maxLineWidth, Align.left, canWrap, null);
 	}
 }
