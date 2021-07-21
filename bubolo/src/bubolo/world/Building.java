@@ -54,7 +54,7 @@ public class Building extends StaticEntity implements TerrainImprovement, Collid
 	}
 
 	@Override
-	public void receiveDamage(float damage, World world) {
+	public void receiveDamage(float damage, ActorEntity damageProvider, World world) {
 		assert damage >= 0;
 		hitPoints -= damage;
 
@@ -75,7 +75,7 @@ public class Building extends StaticEntity implements TerrainImprovement, Collid
 		Systems.audio().play(Sfx.BuildingDestroyed, x(), y());
 
 		// When the building is destroyed, replace it with rubble.
-		var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), 0);
+		var args = new Entity.ConstructionArgs(x(), y(), 0);
 		world.addEntity(Rubble.class, args);
 	}
 }

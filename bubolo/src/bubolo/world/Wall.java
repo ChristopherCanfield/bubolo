@@ -76,7 +76,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 * @param damagePoints how much damage the wall has taken
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
 		assert (damagePoints >= 0);
 
 		if (!isDisposed()) {
@@ -85,7 +85,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 
 			if (hitPoints <= 0) {
 				// When the wall is destroyed, replace it with rubble.
-				var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), 0);
+				var args = new Entity.ConstructionArgs(x(), y(), 0);
 				world.addEntity(Rubble.class, args);
 
 				dispose();

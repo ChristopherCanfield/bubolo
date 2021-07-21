@@ -251,7 +251,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	 * @param damagePoints how much damage the base has taken
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
 		assert (damagePoints >= 0);
 
 		hitPoints -= damagePoints;

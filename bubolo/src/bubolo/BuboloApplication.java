@@ -156,9 +156,9 @@ public class BuboloApplication extends AbstractGameApplication {
 							TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 					var spawn = world().getRandomSpawn();
-					Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
+					Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(spawn.x(), spawn.y(), 0);
 
-					Tank tank = world().addEntity(Tank.class, args);
+					Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
 					tank.initialize("Player 1", TeamColor.Blue, true);
 
 					Systems.initializeNetwork(NetworkType.Null);
@@ -228,12 +228,12 @@ public class BuboloApplication extends AbstractGameApplication {
 					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			Tile spawnTile = (Tile) arg;
-			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(),
+			Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(
 					spawnTile.column() * Units.TileToWorldScale,
 					spawnTile.row() * Units.TileToWorldScale,
 					0);
 
-			Tank tank = world().addEntity(Tank.class, args);
+			Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
 			tank.initialize(playerInfo.name(), playerInfo.color(), true);
 
 			Systems.network().send(new CreateTank(tank));

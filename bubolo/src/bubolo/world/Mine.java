@@ -117,7 +117,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	@Override
-	public void receiveDamage(float damage, World world) {
+	public void receiveDamage(float damage, ActorEntity damageProvider, World world) {
 		hitPoints -= damage;
 
 		if (!isDisposed() && hitPoints <= 0) {
@@ -136,7 +136,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	private static void addExplosion(World world, float x, float y) {
-		var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
+		var args = new Entity.ConstructionArgs(x, y, 0);
 		world.addEntity(MineExplosion.class, args);
 	}
 
@@ -148,7 +148,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	private static Crater addCrater(World world, float x, float y) {
-		var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
+		var args = new Entity.ConstructionArgs(x, y, 0);
 		return world.addEntity(Crater.class, args);
 	}
 }

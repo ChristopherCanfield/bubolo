@@ -355,7 +355,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			healthPerTick = maxHealthPerTick;
 		});
 
-		var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), cannonRotation);
+		var args = new Entity.ConstructionArgs(x(), y(), cannonRotation);
 		Bullet bullet = world.addEntity(Bullet.class, args);
 		bullet.setOwner(this);
 	}
@@ -441,7 +441,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param damagePoints how much damage the pillbox has taken. Must be >= 0.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
 		assert damagePoints >= 0;
 
 		sfxPlayer.play(Sfx.PillboxHit, x(), y());

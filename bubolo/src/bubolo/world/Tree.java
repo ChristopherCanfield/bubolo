@@ -65,12 +65,10 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	}
 
 	/**
-	 * Changes the hit point count after taking damage
-	 *
-	 * @param damagePoints how much damage the tree has taken
+	 * @param damagePoints the amount of damage the tree will receive.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
 		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
 

@@ -1,5 +1,7 @@
 package bubolo.world;
 
+import bubolo.util.Nullable;
+
 /**
  * Interface for Entities that can take damage.
  *
@@ -31,9 +33,11 @@ public interface Damageable
 	 * Gives damage to the entity.
 	 *
 	 * @param damage the amount of damage done. Must be <= 0.
+	 * @param damageProvider the object that is providing damage to this entity. May be null if this was called by the network
+	 * to ensure world synchronization.
 	 * @param world reference to the game world.
 	 */
-	public void receiveDamage(float damage, World world);
+	public void receiveDamage(float damage, @Nullable ActorEntity damageProvider, World world);
 
 	/**
 	 * Whether the entity is alive or not.

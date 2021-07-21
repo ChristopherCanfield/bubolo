@@ -157,7 +157,7 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 			findHighestScores(world);
 		} else {
 			if (world.getTerrainImprovement(nextLocation.column, nextLocation.row) == null) {
-				var args = new Entity.ConstructionArgs(Entity.nextId(),
+				var args = new Entity.ConstructionArgs(
 						nextLocation.column * Units.TileToWorldScale,
 						nextLocation.row * Units.TileToWorldScale,
 						0);

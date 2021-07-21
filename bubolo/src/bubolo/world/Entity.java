@@ -2,6 +2,7 @@ package bubolo.world;
 
 import java.util.UUID;
 
+import bubolo.util.Nullable;
 import bubolo.util.Units;
 
 /**
@@ -32,7 +33,30 @@ public abstract class Entity {
 		return UUID.randomUUID();
 	}
 
-	public static record ConstructionArgs(UUID id, float x, float y, float rotationRadians) {
+	/**
+	 * Entity construction arguments.
+	 *
+	 * @param id the entity's unique ID.
+	 * @param x the entity's x position. >= 0 and < Config.MaxWorldX.
+	 * @param y the entity's y position. >= 0 and < Config.MaxWorldY.
+	 * @param rotationRadians the entity's rotation, in radians.
+	 * @param extraArg [optional] an optional type-specific extra argument. May be null.
+	 *
+	 * @author Christopher D. Canfield
+	 */
+	public static record ConstructionArgs(UUID id, float x, float y, float rotationRadians, @Nullable Object extraArg) {
+
+		public ConstructionArgs(UUID id, float x, float y, float rotationRadians) {
+			this(id, x, y, rotationRadians, null);
+		}
+
+		public ConstructionArgs(float x, float y, float rotationRadians) {
+			this(Entity.nextId(), x, y, rotationRadians, null);
+		}
+
+		public ConstructionArgs(float x, float y, float rotationRadians, @Nullable Object extraArg) {
+			this(Entity.nextId(), x, y, rotationRadians, extraArg);
+		}
 	}
 
 	private final UUID id;

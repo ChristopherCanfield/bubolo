@@ -419,7 +419,7 @@ public class MapImporter {
 					float rotation = 0;
 
 					// The x and y coords are flipped in the map.
-					var args = new Entity.ConstructionArgs(Entity.nextId(), posX, posY, rotation);
+					var args = new Entity.ConstructionArgs(posX, posY, rotation);
 					Entity entity = ts.tiles.get(tileGid - ts.firstGid).apply(world, args);
 
 					diagnostics.typesImported.add(entity.getClass().getSimpleName());

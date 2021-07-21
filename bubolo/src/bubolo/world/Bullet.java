@@ -28,6 +28,8 @@ public class Bullet extends ActorEntity {
 	// The amount of damage the bullet causes.
 	private static final float damage = 10;
 
+	private ActorEntity firedBy;
+
 	static float Damage() {
 		return damage;
 	}
@@ -58,6 +60,10 @@ public class Bullet extends ActorEntity {
 		updateBounds();
 
 		Systems.audio().play(Sfx.CannonFired, args.x(), args.y());
+	}
+
+	void setFiredBy(ActorEntity firedBy) {
+		this.firedBy = firedBy;
 	}
 
 	@Override
@@ -108,7 +114,7 @@ public class Bullet extends ActorEntity {
 			if (e != owner() && overlapsEntity(collidable) && !isBaseAlliedOrBroken(e)) {
 				// We know the collision object is Damageable, because we filtered for that in the getNearbyCollidables method.
 				Damageable collisionObject = (Damageable) e;
-				collisionObject.receiveDamage(damage, w);
+				collisionObject.receiveDamage(damage, firedBy, w);
 				observer.onBulletHitObject();
 				dispose();
 				break;

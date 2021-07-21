@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.Messenger.MessageObserver;
+import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.LayoutArgs;
@@ -61,6 +62,8 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
 
 		addMessageBar();
+
+		Systems.messenger().addObserver(this);
 	}
 
 	private void addMessageBar() {

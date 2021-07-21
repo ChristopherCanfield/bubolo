@@ -400,7 +400,7 @@ public class Tank extends ActorEntity implements Damageable {
 			float bulletX = x() + tankHalfWidth * (float) Math.cos(rotation());
 			float bulletY = y() + tankHalfHeight * (float) Math.sin(rotation());
 
-			var args = new Entity.ConstructionArgs(Entity.nextId(), bulletX, bulletY, rotation());
+			var args = new Entity.ConstructionArgs(bulletX, bulletY, rotation());
 			Bullet bullet = world.addEntity(Bullet.class, args);
 			bullet.setOwner(this);
 
@@ -830,7 +830,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param damagePoints the amount of damage to give to the tank. >= 0.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
 		assert (damagePoints >= 0);
 
 		if (!isDisposed() && hitPoints > 0) {
@@ -931,7 +931,7 @@ public class Tank extends ActorEntity implements Damageable {
 			int mineX = tileX * Units.TileToWorldScale;
 			int mineY = tileY * Units.TileToWorldScale;
 
-			var args = new Entity.ConstructionArgs(Entity.nextId(), mineX, mineY, 0);
+			var args = new Entity.ConstructionArgs(mineX, mineY, 0);
 			Mine mine = world.addEntity(Mine.class, args);
 			mine.setOwner(this);
 
