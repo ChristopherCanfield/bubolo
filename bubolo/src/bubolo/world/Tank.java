@@ -615,7 +615,7 @@ public class Tank extends ActorEntity implements Damageable {
 		if (terrain instanceof DeepWater) {
 			drowned = true;
 			Systems.audio().play(Sfx.TankDrowned, x(), y());
-			onDeath(world);
+			onDeath(world, DeepWater.class, null);
 			return true;
 		}
 		return false;
@@ -841,7 +841,11 @@ public class Tank extends ActorEntity implements Damageable {
 
 			if (hitPoints <= 0) {
 				Systems.audio().play(Sfx.TankExplosion, x(), y());
-				onDeath(world);
+
+				Tank killer = world.getTankThatOwnsObject(damageProvider.id());
+				String killerName = (killer != null) ? killer.playerName : null;
+
+				onDeath(world, damageProvider.getClass(), killerName);
 			}
 		}
 	}
@@ -849,7 +853,7 @@ public class Tank extends ActorEntity implements Damageable {
 	/**
 	 * Called when the tank dies.
 	 */
-	private void onDeath(World world) {
+	private void onDeath(World world, Class<? extends Entity> killerType, @Nullable String killerName) {
 		hitPoints = 0;
 		solid = false;
 		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
@@ -857,6 +861,10 @@ public class Tank extends ActorEntity implements Damageable {
 			carriedPillbox.dropFromTank(world);
 			carriedPillbox = null;
 		}
+
+		System.out.println("Tank died; notifying plalyer.");
+		Systems.messenger().notifyPlayerDied(playerName, isOwnedByLocalPlayer(), killerType, killerName);
+
 		notifyNetwork();
 	}
 
@@ -986,7 +994,11 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param drowning true if the tank is drowning.
 	 */
 	public void setDrowning(boolean drowning) {
+		var originalDrowningState = this.drowned;
 		this.drowned = drowning;
+		if (!originalDrowningState && drowning) {
+			Systems.messenger().notifyPlayerDied(playerName, isOwnedByLocalPlayer(), DeepWater.class, null);
+		}
 	}
 
 	/**

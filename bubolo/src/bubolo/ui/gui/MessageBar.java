@@ -49,8 +49,9 @@ public class MessageBar extends UiComponent {
 		}
 	}
 
-	private final Label[] messageLabels;
+	private static final Color backgroundColor = new Color(25/255f, 25/255f, 25/255f, 125/255f);
 
+	private final Label[] messageLabels;
 	private final Queue<Message> messages = new ArrayDeque<Message>();
 
 	public MessageBar(LayoutArgs layoutArgs, int maxMessagesDisplayed) {
@@ -60,6 +61,7 @@ public class MessageBar extends UiComponent {
 		for (int i = 0; i < maxMessagesDisplayed; i++) {
 			var label = new Label(layoutArgs, "", Fonts.Arial16, Color.BLACK, true, 250);
 			messageLabels[i] = label;
+			label.setBackgroundColor(backgroundColor);
 			label.setHorizontalOffset(20, OffsetType.ScreenUnits, HOffsetFrom.Left);
 			if (i == 0) {
 				label.setVerticalOffset(40, OffsetType.ScreenUnits, VOffsetFrom.Top);

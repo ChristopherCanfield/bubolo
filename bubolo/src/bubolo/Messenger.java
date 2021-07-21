@@ -8,6 +8,8 @@ import bubolo.util.Nullable;
 import bubolo.world.ActorEntity;
 import bubolo.world.DeepWater;
 import bubolo.world.Entity;
+import bubolo.world.Mine;
+import bubolo.world.MineExplosion;
 import bubolo.world.Tank;
 
 /**
@@ -75,7 +77,7 @@ public class Messenger {
 	 * @param zone the world zone that the object is located in.
 	 * @param attackerName the name of the attacker.
 	 */
-	void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
+	public void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
 		var message = buildUnderAttackMessage(objectType, zone, attackerName);
 		for (var observer : observers) {
 			observer.messageObjectUnderAttack(message);
@@ -165,7 +167,7 @@ public class Messenger {
 	 * @param killerType the type of the object that killed the player.
 	 * @param killerPlayerName the name of the player who killed the player. May be null.
 	 */
-	void notifyPlayerDied(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
+	public void notifyPlayerDied(String deadPlayerName, boolean localPlayerDied, Class<? extends Entity> killerType, @Nullable String killerPlayerName) {
 		var message = buildPlayerDiedMessage(deadPlayerName, localPlayerDied, killerType, killerPlayerName);
 		for (var observer : observers) {
 			observer.messagePlayerDied(message, localPlayerDied);
@@ -182,7 +184,7 @@ public class Messenger {
 			message.append(deadPlayerName);
 		}
 
-		//
+		// Special case for deep water.
 		if (killerType.equals(DeepWater.class)) {
 			message.append(" drowned.");
 			return message.toString();
@@ -197,13 +199,20 @@ public class Messenger {
 		if (killerType.equals(Tank.class)) {
 			message.append(killerPlayerName);
 		} else {
-			if (killerPlayerName != null) {
+			if (localPlayerDied && deadPlayerName.equals(killerPlayerName)) {
+				message.append(" your own ");
+			} else if (killerPlayerName != null) {
 				message.append(killerPlayerName);
 				message.append("'s ");
 			} else {
 				message.append(" a neutral ");
 			}
-			message.append(killerType.getSimpleName());
+
+			if (killerType.equals(MineExplosion.class)) {
+				message.append(Mine.class.getSimpleName().toLowerCase());
+			} else {
+				message.append(killerType.getSimpleName().toLowerCase());
+			}
 		}
 
 		message.append(".");

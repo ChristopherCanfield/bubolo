@@ -183,4 +183,9 @@ public class MockWorld implements World {
 		return null;
 	}
 
+	@Override
+	public Tank getTankThatOwnsObject(UUID ownedObjectId) {
+		return null;
+	}
+
 }

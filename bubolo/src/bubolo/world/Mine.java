@@ -130,14 +130,15 @@ public class Mine extends ActorEntity implements Damageable {
 
 		dispose();
 
-		addExplosion(world, x(), y());
+		addExplosion(world, x(), y(), owner());
 		removeTerrainImprovement(world, tileColumn(), tileRow());
 		addCrater(world, x(), y());
 	}
 
-	private static void addExplosion(World world, float x, float y) {
+	private static void addExplosion(World world, float x, float y, ActorEntity owner) {
 		var args = new Entity.ConstructionArgs(x, y, 0);
-		world.addEntity(MineExplosion.class, args);
+		var explosion = world.addEntity(MineExplosion.class, args);
+		explosion.setOwner(owner);
 	}
 
 	private static void removeTerrainImprovement(World world, int tileColumn, int tileRow) {
