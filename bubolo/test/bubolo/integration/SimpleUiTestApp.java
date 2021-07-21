@@ -7,26 +7,27 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import bubolo.AbstractGameApplication;
 import bubolo.Config;
 import bubolo.graphics.Graphics;
-import bubolo.ui.gui.MessageBarTestScreen;
+import bubolo.ui.gui.GuiTestScreen;
 
-public class MesageBarTest extends AbstractGameApplication {
+public class SimpleUiTestApp extends AbstractGameApplication {
 	public static void main(String[] args) {
 		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
 		cfg.setTitle(Config.AppTitle);
 		cfg.setWindowedMode(Config.TargetWindowWidth, Config.TargetWindowHeight);
 		cfg.setForegroundFPS(Config.FPS);
 		cfg.useVsync(false);
-		new Lwjgl3Application(new MesageBarTest(), cfg);
+		new Lwjgl3Application(new SimpleUiTestApp(), cfg);
 	}
 
 	private Graphics graphics;
-	private MessageBarTestScreen screen;
+	private GuiTestScreen screen;
 
 
 	@Override
 	public void create() {
 		graphics = new Graphics(Config.TargetWindowWidth, Config.TargetWindowHeight);
-		screen = new MessageBarTestScreen();
+		screen = new GuiTestScreen();
+		graphics.camera().position.set(0, 0, 0);
 		Gdx.input.setInputProcessor(screen);
 	}
 

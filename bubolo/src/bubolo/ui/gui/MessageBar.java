@@ -24,13 +24,24 @@ public class MessageBar extends UiComponent {
 		/** Whether this message is visible. */
 		boolean isVisible;
 
-		private static final int timeVisibleTicks = Time.secondsToTicks(10);
-		int ticksRemaining = timeVisibleTicks;
+		private static final int defaultTimeVisibleTicks = Time.secondsToTicks(10);
+		static final int extraTicksPerEntry = Time.secondsToTicks(2);
 
-		Message(String text, Color color, boolean isVisible) {
+		private int timeVisibleTicks;
+		int ticksRemaining;
+
+		/**
+		 * @param text the message's text.
+		 * @param color the message's color.
+		 * @param isVisible whether the message is initially visible. This determines if the ticksRemaining starts counting down.
+		 * @param extraTicksVisible extra ticks that this message will remain visible for. This is added to the defaultTimeVisibleTicks.
+		 */
+		Message(String text, Color color, boolean isVisible, int extraTicksVisible) {
 			this.text = text;
 			this.color = color;
 			this.isVisible = isVisible;
+			this.timeVisibleTicks = defaultTimeVisibleTicks + extraTicksVisible;
+			this.ticksRemaining = timeVisibleTicks;
 		}
 
 		float alpha() {
@@ -68,7 +79,7 @@ public class MessageBar extends UiComponent {
 			isVisible = true;
 		}
 
-		messages.add(new Message(message, textColor, isVisible));
+		messages.add(new Message(message, textColor, isVisible, (messages.size() - 1) * Message.extraTicksPerEntry));
 	}
 
 	@Override

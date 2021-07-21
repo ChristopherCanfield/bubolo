@@ -15,7 +15,7 @@ public class MessageBarTestScreen extends AbstractScreen {
 
 	public MessageBarTestScreen() {
 		LayoutArgs messageBarLayoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
-		messageBar = new MessageBar(messageBarLayoutArgs, 10);
+		messageBar = new MessageBar(messageBarLayoutArgs, 15);
 		messageBar.setVerticalOffset(0, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		messageBar.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Left);
 		messageBar.recalculateLayout();
