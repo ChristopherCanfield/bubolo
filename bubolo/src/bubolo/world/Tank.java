@@ -842,10 +842,7 @@ public class Tank extends ActorEntity implements Damageable {
 			if (hitPoints <= 0) {
 				Systems.audio().play(Sfx.TankExplosion, x(), y());
 
-				Tank killer = world.getTankThatOwnsObject(damageProvider.id());
-				String killerName = (killer != null) ? killer.playerName : null;
-
-				onDeath(world, damageProvider.getClass(), killerName);
+				onDeath(world, damageProvider.getClass(), world.getOwningPlayerName(damageProvider.id()));
 			}
 		}
 	}

@@ -556,18 +556,24 @@ public class GameWorld implements World {
 	}
 
 	@Override
-	public @Nullable Tank getTankThatOwnsObject(UUID ownedObjectId) {
+	public @Nullable Tank getOwningTank(UUID ownedObjectId) {
 		var entity = getEntityOrNull(ownedObjectId);
 		// If the entity is a tank, return it.
 		if (entity instanceof Tank tank) {
 			return tank;
 		// If the entity is a non-tank actor and has an owner, call this method again with the owner's ID.
 		} else if (entity instanceof ActorEntity actor && actor.hasOwner()) {
-			return getTankThatOwnsObject(actor.owner().id());
+			return getOwningTank(actor.owner().id());
 		// If the entity is null, return null, because it means that nothing owns it.
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public @Nullable String getOwningPlayerName(UUID ownedObjectId) {
+		var tank = getOwningTank(ownedObjectId);
+		return (tank != null) ? tank.playerName() : null;
 	}
 
 	@Override

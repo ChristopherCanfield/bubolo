@@ -11,6 +11,7 @@ import bubolo.world.Entity;
 import bubolo.world.Mine;
 import bubolo.world.MineExplosion;
 import bubolo.world.Tank;
+import bubolo.world.World;
 
 /**
  * Forwards in-game messages to observers.
@@ -86,7 +87,7 @@ public class Messenger {
 
 	private static String buildUnderAttackMessage(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
 		var message = new StringBuilder("Your ");
-		message.append(objectType.getSimpleName());
+		message.append(objectType.getSimpleName().toLowerCase());
 		message.append(" in the ");
 		message.append(zone);
 		message.append(" zone is under attack by ");
@@ -96,9 +97,17 @@ public class Messenger {
 		return message.toString();
 	}
 
-//	public void notifyObjectCaptured(World world, UUID capturedObject, @Nullable UUID originalOwnerId, @Nullable UUID newOwnerId) {
-//
-//	}
+	public void notifyObjectCaptured(World world, ActorEntity capturedObject, @Nullable ActorEntity previousOwner, @Nullable ActorEntity newOwner) {
+		String zone = world.getZoneFromTile(capturedObject.tileColumn(), capturedObject.tileRow());
+
+		boolean originalOwnerIsLocalPlayer = (previousOwner != null) ? previousOwner.isOwnedByLocalPlayer() : false;
+		String originalOwnerName = (previousOwner != null) ? world.getOwningPlayerName(previousOwner.id()) : null;
+
+		boolean newOwnerIsLocalPlayer = (newOwner != null) ? newOwner.isOwnedByLocalPlayer() : false;
+		String newOwnerName = (newOwner != null) ? world.getOwningPlayerName(newOwner.id()) : null;
+
+		notifyObjectCaptured(capturedObject.getClass(), zone, originalOwnerIsLocalPlayer, originalOwnerName, newOwnerIsLocalPlayer, newOwnerName);
+	}
 
 	/**
 	 * Notifies observers that an object was captured.
@@ -137,7 +146,7 @@ public class Messenger {
 		}
 
 		message.append(' ');
-		message.append(objectType.getSimpleName());
+		message.append(objectType.getSimpleName().toLowerCase());
 		message.append(" located in the ");
 		message.append(zone);
 		message.append(" zone ");

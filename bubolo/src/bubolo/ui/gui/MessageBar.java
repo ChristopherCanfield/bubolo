@@ -59,7 +59,7 @@ public class MessageBar extends UiComponent {
 
 		messageLabels = new Label[maxMessagesDisplayed];
 		for (int i = 0; i < maxMessagesDisplayed; i++) {
-			var label = new Label(layoutArgs, "", Fonts.Arial16, Color.BLACK, true, 250);
+			var label = new Label(layoutArgs, "", Fonts.Arial16, Color.BLACK, true, 500);
 			messageLabels[i] = label;
 			label.setBackgroundColor(backgroundColor);
 			label.setHorizontalOffset(20, OffsetType.ScreenUnits, HOffsetFrom.Left);

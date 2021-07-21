@@ -61,7 +61,15 @@ public interface World {
 	 * @param ownedObjectId the owned object's ID.
 	 * @return the tank that owns the specified object, or null if the object isn't owned by a player.
 	 */
-	@Nullable Tank getTankThatOwnsObject(UUID ownedObjectId);
+	@Nullable Tank getOwningTank(UUID ownedObjectId);
+
+	/**
+	 * Returns the name of the player that owns the object, or null if the object isn't owned by a player.
+	 *
+	 * @param ownedObjectId the owned object's ID.
+	 * @return the name of the player that owns the object, or null if the object isn't owned by a player.
+	 */
+	@Nullable String getOwningPlayerName(UUID ownedObjectId);
 
 	/**
 	 * Returns a randomly selected spawn location. This method attempts to select an empty spawn point that is in a world
