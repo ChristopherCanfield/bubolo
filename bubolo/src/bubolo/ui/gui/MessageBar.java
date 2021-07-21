@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
@@ -23,8 +24,7 @@ public class MessageBar extends UiComponent {
 		/** Whether this message is visible. */
 		boolean isVisible;
 
-		private static final int timeVisibleTicks = Time.secondsToTicks(12);
-		private static final int startTimeFadeTicks = Time.secondsToTicks(4);
+		private static final int timeVisibleTicks = Time.secondsToTicks(10);
 		int ticksRemaining = timeVisibleTicks;
 
 		Message(String text, Color color, boolean isVisible) {
@@ -34,7 +34,7 @@ public class MessageBar extends UiComponent {
 		}
 
 		float alpha() {
-			return Math.min(1.0f, 0.5f + ticksRemaining / (float) startTimeFadeTicks);
+			return Interpolation.exp10In.apply(1, 0.3f, (timeVisibleTicks - ticksRemaining) / (float) timeVisibleTicks);
 		}
 	}
 
@@ -101,16 +101,22 @@ public class MessageBar extends UiComponent {
 			}
 		}
 
+		reduceMessageTimeRemaining();
 		moveMessagesUpIfTopIsExpired();
 	}
 
-	private void moveMessagesUpIfTopIsExpired() {
+	private void reduceMessageTimeRemaining() {
 		for (var message : messages) {
 			if (message.isVisible) {
 				message.ticksRemaining--;
 			}
 		}
+	}
 
+	/**
+	 * Removes the top message, if it has expired, and moves all other messages up a slot.
+	 */
+	private void moveMessagesUpIfTopIsExpired() {
 		var topMessage = messages.peek();
 		if (topMessage != null && topMessage.ticksRemaining < 0) {
 			messages.poll();
