@@ -1,6 +1,7 @@
 package bubolo.net;
 
 import bubolo.net.command.SendMessage.MessageType;
+import bubolo.util.Nullable;
 
 /**
  * Enables a subsystem to monitor network events. The subsystem must implement this interface and then register with the network
@@ -34,9 +35,9 @@ public interface NetworkObserver {
 	/**
 	 * Called when a client player has disconnected.
 	 *
-	 * @param clientName the name of the player who disconnected.
+	 * @param clientName the name of the player who disconnected. May be null.
 	 */
-	void onClientDisconnected(String clientName);
+	void onClientDisconnected(@Nullable String clientName);
 
 	/**
 	 * Called when a client has completed downloading the map and is ready to start the game.

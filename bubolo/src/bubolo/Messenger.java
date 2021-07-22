@@ -31,14 +31,14 @@ public class Messenger {
 		/**
 		 * Indicates that an object owned by the local player is under attack.
 		 *
-		 * @param message a message that can be displayed to the human player.
+		 * @param message a message that can be displayed to the player.
 		 */
 		void messageObjectUnderAttack(String message);
 
 		/**
 		 * Indicates that an object was captured.
 		 *
-		 * @param message a message that can be displayed to the human player.
+		 * @param message a message that can be displayed to the player.
 		 * @param thisPlayerLostObject true if the local player lost an object.
 		 * @param thisPlayerCapturedObject true if the local player captured an object.
 		 */
@@ -47,10 +47,17 @@ public class Messenger {
 		/**
 		 * Indicates that a player died.
 		 *
-		 * @param message a message that can be displayed to the human player.
+		 * @param message a message that can be displayed to the player.
 		 * @param thisPlayerDied true if the local player died.
 		 */
 		void messagePlayerDied(String message, boolean thisPlayerDied);
+
+		/**
+		 * Called when a player has disconnected.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messagePlayerDisconnected(String message);
 	}
 
 	private final List<MessageObserver> observers = new CopyOnWriteArrayList<>();
@@ -257,5 +264,17 @@ public class Messenger {
 
 		message.append(".");
 		return message.toString();
+	}
+
+	/**
+	 * Notifies observers that a player has disconnected from the game.
+	 *
+	 * @param playerName the name of the player who disconnected. May be null.
+	 */
+	public void notifyPlayerDisconnected(@Nullable String playerName) {
+		String message = ((playerName != null) ? playerName : "A player") + " has left the game.";
+		for (var observer : observers) {
+			observer.messagePlayerDisconnected(message);
+		}
 	}
 }

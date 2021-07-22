@@ -58,11 +58,21 @@ class MessengerTest {
 		assertTrue(observer.playerDiedMessageReceived);
 	}
 
+	@Test
+	void notifyPlayerDisconnected() {
+		messenger.addObserver(observer);
+		assertFalse(observer.playerDisconnectedMessageReceived);
+
+		messenger.notifyPlayerDisconnected("Player");
+		assertTrue(observer.playerDisconnectedMessageReceived);
+	}
+
 
 	private static class TestObserver implements Messenger.MessageObserver {
 		boolean attackMessageReceived;
 		boolean capturedMessageReceived;
 		boolean playerDiedMessageReceived;
+		boolean playerDisconnectedMessageReceived;
 
 		@Override
 		public void messageObjectUnderAttack(String message) {
@@ -77,6 +87,11 @@ class MessengerTest {
 		@Override
 		public void messagePlayerDied(String message, boolean thisPlayerDied) {
 			playerDiedMessageReceived = true;
+		}
+
+		@Override
+		public void messagePlayerDisconnected(String message) {
+			playerDisconnectedMessageReceived = true;
 		}
 	}
 }

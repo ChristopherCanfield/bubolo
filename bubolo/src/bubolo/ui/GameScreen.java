@@ -209,4 +209,9 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 	public void messagePlayerDied(String message, boolean thisPlayerDied) {
 		messageBar.addMessage(message, thisPlayerDied ? thisPlayerDiedColor : otherPlayerDiedColor);
 	}
+
+	@Override
+	public void messagePlayerDisconnected(String message) {
+		messageBar.addMessage(message, Color.GOLD);
+	}
 }

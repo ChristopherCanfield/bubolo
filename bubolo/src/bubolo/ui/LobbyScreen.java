@@ -30,6 +30,7 @@ import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;
 import bubolo.net.command.SendMessage;
 import bubolo.net.command.SendMessage.MessageType;
+import bubolo.util.Nullable;
 import bubolo.world.Tile;
 import bubolo.world.World;
 
@@ -214,9 +215,9 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 	}
 
 	@Override
-	public void onClientDisconnected(String clientName) {
+	public void onClientDisconnected(@Nullable String clientName) {
 		--clientCount;
-		appendToMessageHistory(messageHistory, clientName + " left the game.");
+		appendToMessageHistory(messageHistory, (clientName != null ? clientName : "A player") + " left the game.");
 	}
 
 	@Override
