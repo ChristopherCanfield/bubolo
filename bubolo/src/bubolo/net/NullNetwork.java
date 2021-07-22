@@ -8,6 +8,8 @@ import bubolo.world.Spawn;
 public class NullNetwork implements Network {
 	private final NetworkObserverNotifier notifier = new NetworkObserverNotifier();
 
+	private String playerName;
+
 	@Override
 	public boolean isServer() {
 		return true;
@@ -15,11 +17,12 @@ public class NullNetwork implements Network {
 
 	@Override
 	public String getPlayerName() {
-		return "Player";
+		return playerName;
 	}
 
 	@Override
 	public void startServer(String serverName) throws NetworkException, IllegalStateException {
+		this.playerName = serverName;
 	}
 
 	@Override
