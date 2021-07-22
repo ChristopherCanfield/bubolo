@@ -15,8 +15,8 @@ import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
  * 	<li>It comes with a base GuiGroup, named root.</li>
  * 	<li>It sets itself as the LibGdx input processor using Gdx.input.setInputProcessor.</li>
  * 	<li>It forwards keyDown, keyType, touchUp (click), mouseMoved, and viewportResized events.</li>
- * 	<li>It draws all components attached to the root gui group.</li>
- * 	<li>It removes iteself as the InputProcessor when it is disposed, and disposes all components attached to root.</li>
+ * 	<li>It draws all components attached to the root GUI group.</li>
+ * 	<li>It removes itself as the InputProcessor when it is disposed, and disposes all components attached to root.</li>
  * 	<li>It provides hooks into many events.</li>
  * </ul>
  *
@@ -32,8 +32,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	}
 
 	/**
-	 * When set to true, which is the default, input events are enabled. Disabling this is primarily useful for preventing
-	 * buggy touchpads from sending multiple clicks in rapid succession when the screen is transitioning to another screen.
+	 * When set to true, which is the default, input events are enabled.
 	 */
 	protected final void setInputEventsEnabled(boolean val) {
 		this.handleInputEvents = val;

@@ -583,8 +583,8 @@ public class GameWorld implements World {
 
 	@Override
 	public List<Spawn> getRandomSpawns(int count) {
-		List<Spawn> spawnList = new ArrayList<>();
-		Set<Spawn> spawnsFound = new HashSet<>();
+		List<Spawn> spawnList = new ArrayList<>(count);
+		List<Spawn> spawnsFound = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			var spawn = getRandomSpawn(spawnsFound);
 			spawnsFound.add(spawn);
@@ -598,7 +598,7 @@ public class GameWorld implements World {
 		return getRandomSpawn(null);
 	}
 
-	private Spawn getRandomSpawn(@Nullable Set<Spawn> spawnsToExclude) {
+	private Spawn getRandomSpawn(@Nullable List<Spawn> spawnsToExclude) {
 		assert !spawns.isEmpty();
 
 		List<Integer> zoneIndexes = new ArrayList<>(zones.length);
@@ -650,15 +650,25 @@ public class GameWorld implements World {
 	 * Returns a spawn from the specified zone, or null if there are no spawns in the zone.
 	 *
 	 * @param zone the zone that the spawn must be located in.
+	 * @param spawnsToExclude spawns that the found spawn must not overlap or be too close to.
 	 * @return a spawn from the specified zone, or null if there are no spawns in the zone.
 	 */
-	private Spawn getSpawnFromZone(Rect zone, Set<Spawn> spawnsToExclude) {
+	private Spawn getSpawnFromZone(Rect zone, List<Spawn> spawnsToExclude) {
+		final int minimumTileDistanceBetweenSpawns = 10;
 		Collections.shuffle(spawns);
 		for (Spawn spawn : spawns) {
 			if (zone.contains(spawn.tileColumn(), spawn.tileRow())) {
 				if (spawnsToExclude != null && !spawnsToExclude.isEmpty()) {
-					// Return the spawn if it is not in the exclusion list.
-					if (!spawnsToExclude.contains(spawn)) {
+					boolean validSpawnFound = true;
+					for (Spawn excludedSpawn : spawnsToExclude) {
+						if (!isMinimumTileDistanceFromExcludedSpawn(spawn, excludedSpawn, minimumTileDistanceBetweenSpawns)) {
+							validSpawnFound = false;
+							break;
+						}
+					}
+
+					// Return the spawn if it does not overlap with, or is too near to, a spawn in the exclusion list.
+					if (validSpawnFound) {
 						return spawn;
 					}
 				// Return the spawn, because it is in the zone and there is no exclusion list.
@@ -668,6 +678,11 @@ public class GameWorld implements World {
 			}
 		}
 		return null;
+	}
+
+	private static boolean isMinimumTileDistanceFromExcludedSpawn(Spawn spawn, Spawn excludedSpawn, int minimumTileDistance) {
+		return Math.abs(spawn.tileColumn() - excludedSpawn.tileColumn()) > minimumTileDistance
+				&& Math.abs(spawn.tileRow() - excludedSpawn.tileRow()) > minimumTileDistance;
 	}
 
 	/**
