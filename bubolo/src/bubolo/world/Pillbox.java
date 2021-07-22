@@ -13,6 +13,7 @@ import bubolo.net.NetworkCommand;
 import bubolo.net.command.MovePillboxOffTileMap;
 import bubolo.net.command.MovePillboxOntoTileMap;
 import bubolo.net.command.UpdatePillboxAttributes;
+import bubolo.util.Nullable;
 import bubolo.util.Time;
 import bubolo.util.Units;
 
@@ -441,7 +442,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param damagePoints how much damage the pillbox has taken. Must be >= 0.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
+	public void receiveDamage(World world, float damagePoints, @Nullable ActorEntity damageProvider) {
 		assert damagePoints >= 0;
 
 		sfxPlayer.play(Sfx.PillboxHit, x(), y());
@@ -458,9 +459,12 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 			capturable = true;
 			hitPoints = 0;
+		} else {
+			Systems.messenger().notifyObjectUnderAttack(world, this, damageProvider);
 		}
 	}
 
+	/** @param world unused */
 	private void onCapturableTimerExpired(World world) {
 		capturable = false;
 		capturableTimerId = -1;

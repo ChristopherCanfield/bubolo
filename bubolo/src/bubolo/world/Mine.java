@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 import bubolo.Config;
 import bubolo.Systems;
 import bubolo.audio.Sfx;
+import bubolo.util.Nullable;
 import bubolo.util.Time;
 
 /**
@@ -117,7 +118,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	@Override
-	public void receiveDamage(float damage, ActorEntity damageProvider, World world) {
+	public void receiveDamage(World world, float damage, @Nullable ActorEntity damageProvider) {
 		hitPoints -= damage;
 
 		if (!isDisposed() && hitPoints <= 0) {

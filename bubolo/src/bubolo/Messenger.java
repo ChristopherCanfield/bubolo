@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
+import bubolo.util.Timer;
 import bubolo.world.ActorEntity;
 import bubolo.world.DeepWater;
 import bubolo.world.Entity;
@@ -52,7 +53,16 @@ public class Messenger {
 		void messagePlayerDied(String message, boolean thisPlayerDied);
 	}
 
-	private List<MessageObserver> observers = new CopyOnWriteArrayList<>();
+	private final List<MessageObserver> observers = new CopyOnWriteArrayList<>();
+	private final Timer<Void> timer = new Timer<>(1);
+	private boolean readyToReceiveUnderAttackMessages = true;
+
+	/**
+	 * Must be called once per game tick.
+	 */
+	public void update() {
+		timer.update(null);
+	}
 
 	public void addObserver(MessageObserver observer) {
 		assert !observers.contains(observer);
@@ -69,6 +79,20 @@ public class Messenger {
 
 	int observerCount() {
 		return observers.size();
+	}
+
+	public void notifyObjectUnderAttack(World world, ActorEntity objectUnderAttack, @Nullable ActorEntity damageProvider) {
+		if (readyToReceiveUnderAttackMessages && damageProvider != null && objectUnderAttack.hasOwner()) {
+			var owner = objectUnderAttack.owner();
+			if (owner.isOwnedByLocalPlayer()) {
+				readyToReceiveUnderAttackMessages = false;
+				timer.scheduleSeconds(5, (Void) -> readyToReceiveUnderAttackMessages = true);
+
+				String zone = world.getZoneFromTile(objectUnderAttack.tileColumn(), objectUnderAttack.tileRow());
+				String attackerName = world.getOwningPlayerName(damageProvider.id());
+				notifyObjectUnderAttack(objectUnderAttack.getClass(), zone, attackerName);
+			}
+		}
 	}
 
 	/**

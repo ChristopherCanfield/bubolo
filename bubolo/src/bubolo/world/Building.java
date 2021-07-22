@@ -54,7 +54,7 @@ public class Building extends StaticEntity implements TerrainImprovement, Collid
 	}
 
 	@Override
-	public void receiveDamage(float damage, ActorEntity damageProvider, World world) {
+	public void receiveDamage(World world, float damage, ActorEntity damageProvider) {
 		assert damage >= 0;
 		hitPoints -= damage;
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Systems;
 import bubolo.audio.Sfx;
+import bubolo.util.Nullable;
 
 /**
  * Trees hide tanks that drive over them, and can spread over time.
@@ -68,7 +69,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	 * @param damagePoints the amount of damage the tree will receive.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
+	public void receiveDamage(World world, float damagePoints, @Nullable ActorEntity damageProvider) {
 		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
 

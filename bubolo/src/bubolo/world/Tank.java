@@ -830,7 +830,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param damagePoints the amount of damage to give to the tank. >= 0.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
+	public void receiveDamage(World world, float damagePoints, @Nullable ActorEntity damageProvider) {
 		assert (damagePoints >= 0);
 
 		if (!isDisposed() && hitPoints > 0) {

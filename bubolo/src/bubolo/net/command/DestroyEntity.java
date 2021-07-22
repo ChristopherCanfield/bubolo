@@ -27,7 +27,7 @@ public class DestroyEntity extends NetworkCommand {
 		var entityToDestroy = world.getEntityOrNull(id);
 		if (entityToDestroy != null) {
 			if (entityToDestroy instanceof Damageable damageable) {
-				damageable.receiveDamage(damageable.maxHitPoints(), null, world);
+				damageable.receiveDamage(world, damageable.maxHitPoints(), null);
 			}
 
 			entityToDestroy.dispose();

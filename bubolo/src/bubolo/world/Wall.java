@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Polygon;
 
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
+import bubolo.util.Nullable;
 import bubolo.util.TileUtil;
 
 /**
@@ -76,7 +77,7 @@ public class Wall extends StaticEntity implements TerrainImprovement, Collidable
 	 * @param damagePoints how much damage the wall has taken
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, ActorEntity damageProvider, World world) {
+	public void receiveDamage(World world, float damagePoints, @Nullable ActorEntity damageProvider) {
 		assert (damagePoints >= 0);
 
 		if (!isDisposed()) {

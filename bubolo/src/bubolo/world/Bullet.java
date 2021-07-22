@@ -102,13 +102,13 @@ public class Bullet extends ActorEntity {
 		processCollisions(world);
 	}
 
-	private void processCollisions(World w) {
-		for (Collidable collidable : w.getCollidablesWithinTileDistance(this, 1, false, Damageable.class)) {
+	private void processCollisions(World world) {
+		for (Collidable collidable : world.getCollidablesWithinTileDistance(this, 1, false, Damageable.class)) {
 			Entity e = (Entity) collidable;
 			if (e != owner() && overlapsEntity(collidable) && !isBaseAlliedOrBroken(e)) {
 				// We know the collision object is Damageable, because we filtered for that in the getNearbyCollidables method.
 				Damageable collisionObject = (Damageable) e;
-				collisionObject.receiveDamage(damage, owner(), w);
+				collisionObject.receiveDamage(world, damage, owner());
 				observer.onBulletHitObject();
 				dispose();
 				break;
