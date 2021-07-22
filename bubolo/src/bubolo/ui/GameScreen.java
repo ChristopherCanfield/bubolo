@@ -181,9 +181,9 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 	/* Messages from the messenger subsystem. */
 
 	private static final Color objectUnderAttackColor = Color.valueOf("E57D06FF");
-	private static final Color thisPlayerLostObjectColor = Color.valueOf("FF72B4FF");
+	private static final Color thisPlayerLostObjectColor = Color.valueOf("FF5987FF");
 	private static final Color thisPlayerCapturedObjectColor = Color.valueOf("00D318FF");
-	private static final Color otherPlayerLostObjectColor = Color.valueOf("C0C0C0FF");
+	private static final Color otherPlayerLostObjectColor = Color.valueOf("E5E5E5FF");
 	private static final Color thisPlayerDiedColor = thisPlayerLostObjectColor;
 	private static final Color otherPlayerDiedColor = Color.CYAN;
 

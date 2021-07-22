@@ -102,7 +102,7 @@ public class Messenger {
 	 * @param zone the world zone that the object is located in.
 	 * @param attackerName the name of the attacker.
 	 */
-	public void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, String attackerName) {
+	public void notifyObjectUnderAttack(Class<? extends ActorEntity> objectType, String zone, @Nullable String attackerName) {
 		var message = buildUnderAttackMessage(objectType, zone, attackerName);
 		for (var observer : observers) {
 			observer.messageObjectUnderAttack(message);
@@ -114,8 +114,11 @@ public class Messenger {
 		message.append(objectType.getSimpleName().toLowerCase());
 		message.append(" in the ");
 		message.append(zone);
-		message.append(" zone is under attack by ");
-		message.append(attackerName);
+		message.append(" zone is under attack");
+		if (attackerName != null) {
+			message.append(" by ");
+			message.append(attackerName);
+		}
 		message.append('.');
 
 		return message.toString();
@@ -233,12 +236,16 @@ public class Messenger {
 			message.append(killerPlayerName);
 		} else {
 			if (localPlayerDied && deadPlayerName.equals(killerPlayerName)) {
-				message.append(" your own ");
+				message.append("your own ");
 			} else if (killerPlayerName != null) {
-				message.append(killerPlayerName);
-				message.append("'s ");
+				if (killerPlayerName.equals(deadPlayerName)) {
+					message.append("their own ");
+				} else {
+					message.append(killerPlayerName);
+					message.append("'s ");
+				}
 			} else {
-				message.append(" a neutral ");
+				message.append("a neutral ");
 			}
 
 			if (killerType.equals(MineExplosion.class)) {

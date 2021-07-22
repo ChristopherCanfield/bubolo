@@ -859,9 +859,7 @@ public class Tank extends ActorEntity implements Damageable {
 			carriedPillbox = null;
 		}
 
-		System.out.println("Tank died; notifying plalyer.");
 		Systems.messenger().notifyPlayerDied(playerName, isOwnedByLocalPlayer(), killerType, killerName);
-
 		notifyNetwork();
 	}
 

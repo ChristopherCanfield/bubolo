@@ -41,11 +41,11 @@ public class ActorEntityCaptured extends NetworkCommand {
 	protected void execute(World world) {
 		try {
 			ActorEntity ownable = (ActorEntity) world.getEntity(id);
-			ActorEntity owner = (ActorEntity) world.getEntityOrNull(ownerId);
-			if (owner == null) {
-				ownable.setOwner(owner);
-			} else if (!owner.equals(ownable.owner())) {
-				ownable.onCaptured(world, owner);
+			ActorEntity newOwner = (ActorEntity) world.getEntityOrNull(ownerId);
+			if (newOwner == null) {
+				ownable.setOwner(newOwner);
+			} else if (!newOwner.equals(ownable.owner())) {
+				ownable.onCaptured(world, newOwner);
 			}
 		} catch (GameLogicException e) {
 			Logger.getLogger(Config.AppProgramaticTitle)
