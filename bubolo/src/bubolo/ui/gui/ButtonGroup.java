@@ -136,10 +136,21 @@ public class ButtonGroup extends UiComponent implements Focusable {
 		return height;
 	}
 
+	/**
+	 * Adds a button with no associated action.
+	 *
+	 * @param text the button's text.
+	 */
 	public void addButton(String text) {
 		addButton(text, null);
 	}
 
+	/**
+	 * Adds a button to the group.
+	 *
+	 * @param text the button's text.
+	 * @param action [optional] an optional action that will be called when the button is activated. May be null.
+	 */
 	public void addButton(String text, @Nullable Consumer<Button> action) {
 		if (args.buttonListLayout == Layout.Vertical) {
 			addButtonVertical(text, action);

@@ -71,6 +71,7 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 	 * @param app reference to the Game Application.
 	 * @param graphics reference to the graphics system.
 	 * @param world reference to the game world.
+	 * @param playerInfo player information.
 	 */
 	public LobbyScreen(BuboloApplication app, Graphics graphics, World world, PlayerInfo playerInfo) {
 		super(graphics, new Table());
