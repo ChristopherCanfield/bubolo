@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.net.command;
 
 import java.io.Serializable;
@@ -21,7 +17,6 @@ import bubolo.world.World;
  * Network command that is used to send basic information, including type, position, and rotation, of all entities in
  * the world to other players.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class SendMap extends NetworkCommand {

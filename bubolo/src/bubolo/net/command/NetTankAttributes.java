@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.net.command;
 
 import java.util.UUID;

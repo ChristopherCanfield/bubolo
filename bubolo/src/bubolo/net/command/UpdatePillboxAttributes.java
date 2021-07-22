@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.net.command;
 
 import java.util.UUID;
@@ -16,7 +12,6 @@ import bubolo.world.World;
 /**
  * Updates a pillbox's attributes, including its owner.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class UpdatePillboxAttributes extends NetworkCommand {

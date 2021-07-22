@@ -18,7 +18,6 @@ import bubolo.world.World;
 /**
  * Changes the owner of an actor entity.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class ActorEntityCaptured extends NetworkCommand {

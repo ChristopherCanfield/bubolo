@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net.command;
 
 import bubolo.Systems;
@@ -12,10 +6,9 @@ import bubolo.net.NetworkCommand;
 /**
  * Notifies a client that it has connected to the server.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class ConnectedToServer extends NetworkCommand
-{
+public class ConnectedToServer extends NetworkCommand {
 	private static final long serialVersionUID = 4L;
 
 	private final String clientName;
@@ -24,38 +17,34 @@ public class ConnectedToServer extends NetworkCommand
 	/**
 	 * Constructs a ConnectedToServer object.
 	 *
-	 * @param clientName
-	 *            the name of the client that connected.
-	 * @param serverName
-	 *            the name of the server player.
+	 * @param clientName the name of the client that connected.
+	 * @param serverName the name of the server player.
 	 */
-	public ConnectedToServer(String clientName, String serverName)
-	{
+	public ConnectedToServer(String clientName, String serverName) {
 		this.clientName = clientName;
 		this.serverName = serverName;
 	}
 
 	@Override
-	protected void execute()
-	{
+	protected void execute() {
 		Systems.network().getNotifier().notifyConnect(clientName, serverName);
 	}
 
 	/**
 	 * Gets the name of the client.
+	 *
 	 * @return the name of the client.
 	 */
-	String getClientName()
-	{
+	String getClientName() {
 		return clientName;
 	}
 
 	/**
 	 * Gets the name of the server.
+	 *
 	 * @return the name of the server.
 	 */
-	String getServerName()
-	{
+	String getServerName() {
 		return serverName;
 	}
 }
