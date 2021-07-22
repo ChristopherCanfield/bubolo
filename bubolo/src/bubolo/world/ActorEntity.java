@@ -123,6 +123,8 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	 * @param owner the object's new owner. May be null.
 	 */
 	public final void setOwner(@Nullable ActorEntity owner) {
+		assert owner != this;
+
 		boolean isNewOwner = this.owner != owner;
 		this.owner = owner;
 

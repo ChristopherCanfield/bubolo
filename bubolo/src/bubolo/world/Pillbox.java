@@ -230,7 +230,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 			notifyNetwork(new MovePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow()));
 
-			setOwner(null);
+			onCaptured(world, null);
 			notifyNetwork(true);
 		}
 	}

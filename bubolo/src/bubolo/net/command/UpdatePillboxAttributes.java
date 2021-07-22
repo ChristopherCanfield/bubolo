@@ -52,6 +52,10 @@ public class UpdatePillboxAttributes extends NetworkCommand {
 		pillbox.setNetPillboxAttributes(solid, buildStatus, builtPct);
 
 		var owner = (Tank) world.getEntityOrNull(ownerId);
-		pillbox.setOwner(owner);
+		if (pillbox.hasOwner() && !pillbox.owner().equals(owner)) {
+			pillbox.onCaptured(world, owner);
+		} else {
+			pillbox.setOwner(owner);
+		}
 	}
 }
