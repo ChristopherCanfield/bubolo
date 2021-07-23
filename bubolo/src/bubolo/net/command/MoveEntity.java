@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net.command;
 
 import java.util.UUID;
@@ -19,10 +13,9 @@ import bubolo.world.World;
 /**
  * Moves an entity in the world.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class MoveEntity extends NetworkCommand
-{
+public class MoveEntity extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -35,11 +28,9 @@ public class MoveEntity extends NetworkCommand
 	/**
 	 * Constructs a MoveEntity object.
 	 *
-	 * @param entity
-	 *            the entity to move.
+	 * @param entity the entity to move.
 	 */
-	public MoveEntity(ActorEntity entity)
-	{
+	public MoveEntity(ActorEntity entity) {
 		this.id = entity.id();
 		this.x = entity.x();
 		this.y = entity.y();
@@ -47,16 +38,13 @@ public class MoveEntity extends NetworkCommand
 	}
 
 	@Override
-	protected void execute(World world)
-	{
-		try
-		{
+	protected void execute(World world) {
+		try {
 			ActorEntity entity = (ActorEntity) world.getEntity(id);
 			entity.setPosition(x, y).setRotation(rotation);
-		}
-		catch (GameLogicException e)
-		{
-			Logger.getLogger(Config.AppProgramaticTitle).log(Level.WARNING, "MoveEntity net command: Unable to find entity " + id);
+		} catch (GameLogicException e) {
+			Logger.getLogger(Config.AppProgramaticTitle).log(Level.WARNING,
+					"MoveEntity net command: Unable to find entity " + id);
 		}
 	}
 }

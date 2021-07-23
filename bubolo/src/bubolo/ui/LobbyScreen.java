@@ -20,16 +20,17 @@ import com.badlogic.gdx.utils.Align;
 import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
+import bubolo.Systems;
 import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
-import bubolo.net.NetworkSystem;
 import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressMessage;
 import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;
 import bubolo.net.command.SendMessage;
 import bubolo.net.command.SendMessage.MessageType;
+import bubolo.util.Nullable;
 import bubolo.world.Tile;
 import bubolo.world.World;
 
@@ -71,6 +72,7 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 	 * @param app reference to the Game Application.
 	 * @param graphics reference to the graphics system.
 	 * @param world reference to the game world.
+	 * @param playerInfo player information.
 	 */
 	public LobbyScreen(BuboloApplication app, Graphics graphics, World world, PlayerInfo playerInfo) {
 		super(graphics, new Table());
@@ -87,7 +89,7 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 		createMessageHistoryBox(skin);
 		createSendMessageRow(skin);
 
-		Network net = NetworkSystem.getInstance();
+		Network net = Systems.network();
 		net.addObserver(this);
 		// If this is the server, the message history was already received.
 		messageHistoryReceivedFromServer = net.isServer();
@@ -122,7 +124,7 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 	private void createSendMessageRow(Skin skin) {
 		root.row().padBottom(15.f);
 
-		final Network net = NetworkSystem.getInstance();
+		final Network net = Systems.network();
 
 		sendMessageButton = new TextButton("Send", skin);
 
@@ -183,15 +185,16 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 					lastSecondsRemaining = secondsRemaining;
 				}
 			} else {
-				app.setState(State.MultiplayerGame);
+				if (app.isReady()) {
+					app.setState(State.MultiplayerGame);
+				}
 			}
 		}
 	}
 
 	private void sendMessage() {
 		if (!sendMessageField.getText().isEmpty()) {
-			Network net = NetworkSystem.getInstance();
-			net.send(new SendMessage(sendMessageField.getText()));
+			Systems.network().send(new SendMessage(sendMessageField.getText()));
 			appendToMessageHistory(messageHistory, playerInfo.name() + ": " + sendMessageField.getText());
 			sendMessageField.setText("");
 		}
@@ -206,16 +209,15 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 	public void onClientConnected(String clientName) {
 		++clientCount;
 
-		Network net = NetworkSystem.getInstance();
-		net.send(new SendMessage(MessageType.LobbyMessageHistory, messageHistory.getText().toString()));
+		Systems.network().send(new SendMessage(MessageType.LobbyMessageHistory, messageHistory.getText().toString()));
 
 		appendToMessageHistory(messageHistory, clientName + " joined the game.");
 	}
 
 	@Override
-	public void onClientDisconnected(String clientName) {
+	public void onClientDisconnected(@Nullable String clientName) {
 		--clientCount;
-		appendToMessageHistory(messageHistory, clientName + " left the game.");
+		appendToMessageHistory(messageHistory, (clientName != null ? clientName : "A player") + " left the game.");
 	}
 
 	@Override
@@ -224,11 +226,9 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 
 		++clientsReadyToStart;
 		if (clientsReadyToStart == clientCount) {
-			Network net = NetworkSystem.getInstance();
-
 			// Send initial spawn positions to the players. The size is the client count + 1, to include the server.
 			var spawnPoints = world.getRandomSpawns(clientCount + 1);
-			net.startGame(spawnPoints);
+			Systems.network().startGame(spawnPoints);
 		}
 	}
 
@@ -265,7 +265,6 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 		if (serverAddressMulticaster != null) {
 			serverAddressMulticaster.shutDown();
 		}
-		Network net = NetworkSystem.getInstance();
-		net.removeObserver(this);
+		Systems.network().removeObserver(this);
 	}
 }

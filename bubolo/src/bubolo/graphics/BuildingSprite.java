@@ -18,8 +18,9 @@ public class BuildingSprite extends AbstractEntitySprite<Building> {
 
 	private static final String textureFile = "buildings.png";
 
-	private static final Color color1 = Color.LIGHT_GRAY;
-	private static final Color color2 = Color.valueOf("B5B5B5");
+	private static final Color color1 = Color.valueOf("F5F5F5FF");
+	private static final Color color2 = Color.valueOf("EBEBEBFF");
+	private static final Color color3 = Color.valueOf("E1E1E1FF");
 
 	protected BuildingSprite(Building entity) {
 		super(DrawLayer.TerrainImprovements, entity);
@@ -27,21 +28,14 @@ public class BuildingSprite extends AbstractEntitySprite<Building> {
 		texture = Graphics.getTextureRegion1d(textureFile, 2, 32, 0);
 		appearanceIndex = MathUtils.random.nextInt(2);
 
-		int colorIndex = MathUtils.random.nextInt(3);
-		Color color;
-		switch (colorIndex) {
-		case 0:
-			color = Color.WHITE;
-			break;
-		case 1:
-			color = color1;
-			break;
-		case 2:
-			color = color2;
-			break;
-		default:
-			throw new GameLogicException("Failed to produce a color in BuildingSprite.");
-		}
+		int colorIndex = MathUtils.random.nextInt(4);
+		Color color = switch (colorIndex) {
+			case 0 -> Color.WHITE;
+			case 1 -> color1;
+			case 2 -> color2;
+			case 3 -> color3;
+			default -> throw new GameLogicException("Failed to produce a color in BuildingSprite.");
+		};
 		setColor(color);
 	}
 
@@ -54,10 +48,5 @@ public class BuildingSprite extends AbstractEntitySprite<Building> {
 		} else {
 			drawTexture(graphics, texture[appearanceIndex]);
 		}
-	}
-
-	@Override
-	public float getRotation() {
-		return 0;
 	}
 }

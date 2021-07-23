@@ -178,4 +178,19 @@ public class MockWorld implements World {
 		return null;
 	}
 
+	@Override
+	public Tank getLocalTank() {
+		return null;
+	}
+
+	@Override
+	public Tank getOwningTank(UUID ownedObjectId) {
+		return null;
+	}
+
+	@Override
+	public String getOwningPlayerName(UUID ownedObjectId) {
+		return null;
+	}
+
 }

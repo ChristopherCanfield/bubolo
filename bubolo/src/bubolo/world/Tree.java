@@ -2,8 +2,9 @@ package bubolo.world;
 
 import com.badlogic.gdx.math.Polygon;
 
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
+import bubolo.util.Nullable;
 
 /**
  * Trees hide tanks that drive over them, and can spread over time.
@@ -65,12 +66,10 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	}
 
 	/**
-	 * Changes the hit point count after taking damage
-	 *
-	 * @param damagePoints how much damage the tree has taken
+	 * @param damagePoints the amount of damage the tree will receive.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(World world, float damagePoints, @Nullable ActorEntity damageProvider) {
 		assert (damagePoints >= 0);
 		hitPoints -= damagePoints;
 
@@ -82,7 +81,7 @@ public class Tree extends StaticEntity implements TerrainImprovement, Collidable
 	@Override
 	protected void onDispose() {
 		super.onDispose();
-		Audio.play(Sfx.TreeHit, x(), y());
+		Systems.audio().play(Sfx.TreeHit, x(), y());
 	}
 
 	@Override

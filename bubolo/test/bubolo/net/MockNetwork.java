@@ -36,11 +36,6 @@ public class MockNetwork implements Network
 	}
 
 	@Override
-	public void startDebug()
-	{
-	}
-
-	@Override
 	public void send(NetworkCommand command)
 	{
 	}

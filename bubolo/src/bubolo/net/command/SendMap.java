@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.net.command;
 
 import java.io.Serializable;
@@ -9,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import bubolo.Systems;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 import bubolo.net.WorldOwner;
 import bubolo.world.Entity;
 import bubolo.world.GameWorld;
@@ -21,7 +17,6 @@ import bubolo.world.World;
  * Network command that is used to send basic information, including type, position, and rotation, of all entities in
  * the world to other players.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class SendMap extends NetworkCommand {
@@ -65,7 +60,7 @@ public class SendMap extends NetworkCommand {
 		world.update();
 
 		// Notify the server that the map has been received.
-		Network net = NetworkSystem.getInstance();
+		Network net = Systems.network();
 		net.send(new MapDownloadComplete(net.getPlayerName()));
 		net.getNotifier().notifyClientReady(net.getPlayerName());
 	}

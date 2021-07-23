@@ -1,6 +1,6 @@
 package bubolo.world;
 
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 
 /**
@@ -57,7 +57,7 @@ public class Bullet extends ActorEntity {
 		super(args, Width, Height);
 		updateBounds();
 
-		Audio.play(Sfx.CannonFired, args.x(), args.y());
+		Systems.audio().play(Sfx.CannonFired, args.x(), args.y());
 	}
 
 	@Override
@@ -102,13 +102,13 @@ public class Bullet extends ActorEntity {
 		processCollisions(world);
 	}
 
-	private void processCollisions(World w) {
-		for (Collidable collidable : w.getCollidablesWithinTileDistance(this, 1, false, Damageable.class)) {
+	private void processCollisions(World world) {
+		for (Collidable collidable : world.getCollidablesWithinTileDistance(this, 1, false, Damageable.class)) {
 			Entity e = (Entity) collidable;
-			if (e != owner() && overlapsEntity(collidable) && !isAlliedOrBrokenBase(e)) {
+			if (e != owner() && overlapsEntity(collidable) && !isBaseAlliedOrBroken(e)) {
 				// We know the collision object is Damageable, because we filtered for that in the getNearbyCollidables method.
 				Damageable collisionObject = (Damageable) e;
-				collisionObject.receiveDamage(damage, w);
+				collisionObject.receiveDamage(world, damage, owner());
 				observer.onBulletHitObject();
 				dispose();
 				break;
@@ -119,7 +119,7 @@ public class Bullet extends ActorEntity {
 	/**
 	 * Used to allow bullets to pass over allied or broken bases.
 	 */
-	private boolean isAlliedOrBrokenBase(Entity e) {
+	private boolean isBaseAlliedOrBroken(Entity e) {
 		if (e instanceof Base base) {
 			return base.owner() == owner() || base.hitPoints() <= 0;
 		}

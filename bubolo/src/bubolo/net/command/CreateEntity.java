@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net.command;
 
 import java.util.UUID;
@@ -20,7 +14,7 @@ import bubolo.world.World;
 /**
  * Notifies the network that an entity has been created.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
 public class CreateEntity extends NetworkCommand {
 	private static final long serialVersionUID = 1L;

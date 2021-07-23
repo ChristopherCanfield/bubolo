@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import bubolo.Systems;
 import bubolo.net.command.ClientConnected;
 
 /**
@@ -91,11 +92,18 @@ class Client implements NetworkSubsystem, Runnable {
 				network.postToGameThread(command);
 			}
 		} catch (IOException | ClassNotFoundException e) {
-			// TODO: Pass this exception to the primary thread, and eliminate the stack track.
 			e.printStackTrace();
-			throw new NetworkException(e);
 		} finally {
 			try {
+				network.postToGameThread(new NetworkCommand() {
+					private static final long serialVersionUID = 1346400800725660320L;
+
+					@Override
+					public void execute() {
+						Systems.messenger().notifyPlayerDisconnected("You have");
+					}
+				});
+
 				server.close();
 			} catch (IOException e) {
 			}

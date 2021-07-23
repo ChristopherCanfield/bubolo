@@ -6,15 +6,14 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
 import bubolo.Config;
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.audio.SfxRateLimiter;
-import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 import bubolo.net.command.MovePillboxOffTileMap;
 import bubolo.net.command.MovePillboxOntoTileMap;
 import bubolo.net.command.UpdatePillboxAttributes;
+import bubolo.util.Nullable;
 import bubolo.util.Time;
 import bubolo.util.Units;
 
@@ -231,7 +230,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 
 			notifyNetwork(new MovePillboxOntoTileMap(this, terrain.tileColumn(), terrain.tileRow()));
 
-			setOwner(null);
+			onCaptured(world, null);
 			notifyNetwork(true);
 		}
 	}
@@ -357,7 +356,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			healthPerTick = maxHealthPerTick;
 		});
 
-		var args = new Entity.ConstructionArgs(Entity.nextId(), x(), y(), cannonRotation);
+		var args = new Entity.ConstructionArgs(x(), y(), cannonRotation);
 		Bullet bullet = world.addEntity(Bullet.class, args);
 		bullet.setOwner(this);
 	}
@@ -443,7 +442,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 * @param damagePoints how much damage the pillbox has taken. Must be >= 0.
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(World world, float damagePoints, @Nullable ActorEntity damageProvider) {
 		assert damagePoints >= 0;
 
 		sfxPlayer.play(Sfx.PillboxHit, x(), y());
@@ -455,18 +454,21 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 				world.timer().rescheduleTicks(capturableTimerId, captureTimeTicks);
 			} else {
 				capturableTimerId = world.timer().scheduleTicks(captureTimeTicks, this::onCapturableTimerExpired);
-				Audio.play(Sfx.PillboxPowerOff, x(), y());
+				Systems.audio().play(Sfx.PillboxPowerOff, x(), y());
 			}
 
 			capturable = true;
 			hitPoints = 0;
+		} else {
+			Systems.messenger().notifyObjectUnderAttack(world, this, damageProvider);
 		}
 	}
 
+	/** @param world unused */
 	private void onCapturableTimerExpired(World world) {
 		capturable = false;
 		capturableTimerId = -1;
-		Audio.play(Sfx.PillboxPowerOn, x(), y());
+		Systems.audio().play(Sfx.PillboxPowerOn, x(), y());
 	}
 
 	/**
@@ -494,8 +496,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 			assert !(additionalNetworkCommand instanceof UpdatePillboxAttributes) :
 					"Use notifyNetwork(), rather than notifyNetwork(additionalNetworkCommand), to send UpdatePillboxAttributes commands.";
 
-			Network net = NetworkSystem.getInstance();
-			net.send(additionalNetworkCommand);
+			Systems.network().send(additionalNetworkCommand);
 
 			notifyNetwork();
 		}
@@ -516,8 +517,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 	 */
 	private void notifyNetwork(boolean overrideOwnedByLocalPlayerCheck) {
 		if (isOwnedByLocalPlayer() || overrideOwnedByLocalPlayerCheck) {
-			Network net = NetworkSystem.getInstance();
-			net.send(new UpdatePillboxAttributes(this));
+			Systems.network().send(new UpdatePillboxAttributes(this));
 		}
 	}
 

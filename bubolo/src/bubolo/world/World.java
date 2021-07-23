@@ -23,7 +23,7 @@ public interface World {
 	 * @return the requested entity.
 	 * @throws GameLogicException if the entity is not found.
 	 */
-	public Entity getEntity(UUID id) throws GameLogicException;
+	Entity getEntity(UUID id) throws GameLogicException;
 
 	/**
 	 * Returns an entity from an entity ID, or null if the entity does not exist.
@@ -31,21 +31,45 @@ public interface World {
 	 * @param id the entity's unique id.
 	 * @return the requested entity, or null if the entity does not exist.
 	 */
-	public @Nullable Entity getEntityOrNull(UUID id);
+	@Nullable Entity getEntityOrNull(UUID id);
 
 	/**
 	 * Returns an unmodifiable view of all entities in the world.
 	 *
 	 * @return the list of entities.
 	 */
-	public List<Entity> getEntities();
+	List<Entity> getEntities();
 
 	/**
 	 * Returns an unmodifiable view of all tanks in the world.
 	 *
 	 * @return the list of tanks.
 	 */
-	public List<Tank> getTanks();
+	List<Tank> getTanks();
+
+	/**
+	 * Returns the local tank.
+	 *
+	 * @return the local player's tank.
+	 * @throws GameLogicException if there is no local tank.
+	 */
+	Tank getLocalTank();
+
+	/**
+	 * Returns the tank that owns the specified object, or null if the object isn't owned by a player.
+	 *
+	 * @param ownedObjectId the owned object's ID.
+	 * @return the tank that owns the specified object, or null if the object isn't owned by a player.
+	 */
+	@Nullable Tank getOwningTank(UUID ownedObjectId);
+
+	/**
+	 * Returns the name of the player that owns the object, or null if the object isn't owned by a player.
+	 *
+	 * @param ownedObjectId the owned object's ID.
+	 * @return the name of the player that owns the object, or null if the object isn't owned by a player.
+	 */
+	@Nullable String getOwningPlayerName(UUID ownedObjectId);
 
 	/**
 	 * Returns a randomly selected spawn location. This method attempts to select an empty spawn point that is in a world
@@ -53,7 +77,7 @@ public interface World {
 	 *
 	 * @return a randomly selected spawn location.
 	 */
-	public Spawn getRandomSpawn();
+	Spawn getRandomSpawn();
 
 	/**
 	 * Gets a list of spawn points. If possible, the spawn points will be located in different world zones.
@@ -61,16 +85,16 @@ public interface World {
 	 * @param count the number of spawn points to find.
 	 * @return a list of spawn points.
 	 */
-	public List<Spawn> getRandomSpawns(int count);
+	List<Spawn> getRandomSpawns(int count);
 
 	/**
 	 * Returns an unmodifiable view of all actors in the world.
 	 *
 	 * @return the list of actors.
 	 */
-	public List<ActorEntity> getActors();
+	List<ActorEntity> getActors();
 
-	public Timer<World> timer();
+	Timer<World> timer();
 
 	/**
 	 * Constructs and adds an entity to the world, and returns a reference to the newly constructed entity.
@@ -83,13 +107,15 @@ public interface World {
 	 * <li>One or more Controllers are created and added to the Controllers list.</li>
 	 * </ol>
 	 *
+	 * Entities are added at the end of the current game tick.
+	 *
 	 * @param c the entity's class object. For example, to create a new Tank, call this method using the following form:
 	 *     <code>World.addEntity(Tank.class, args).</code>
 	 * @param args the entity's construction arguments.
 	 * @return reference to the new entity.
 	 * @throws GameLogicException if the entity cannot be instantiated, or if the UUID already belongs to an entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException;
+	<T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args) throws GameLogicException;
 
 	/**
 	 * @see World#addEntity(Class, Entity.ConstructionArgs)
@@ -102,7 +128,7 @@ public interface World {
 	 * @return reference to the new entity. Note that the entity has already been added to the World.
 	 * @throws GameLogicException if the entity cannot be instantiated, or if the UUID already belongs to an entity.
 	 */
-	public <T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory)
+	<T extends Entity> T addEntity(Class<T> c, Entity.ConstructionArgs args, @Nullable ControllerFactory controllerFactory)
 			throws GameLogicException;
 
 	/**
@@ -110,7 +136,7 @@ public interface World {
 	 *
 	 * @param terrainType the terrain type to populate all empty tiles with.
 	 */
-	public <T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType);
+	<T extends Terrain> void populateEmptyTilesWith(Class<T> terrainType);
 
 	/**
 	 * Adds an entity lifetime observer to this world. The entity lifetime observer is notified whenever an entity is added to or
@@ -121,21 +147,21 @@ public interface World {
 	 *
 	 * @param observer the observer to notify when entities are added to or removed from the world.
 	 */
-	public void addEntityLifetimeObserver(EntityLifetimeObserver observer);
+	void addEntityLifetimeObserver(EntityLifetimeObserver observer);
 
 	/**
 	 * Returns the width of the world in world units.
 	 *
 	 * @return the width of the world.
 	 */
-	public int getWidth();
+	int getWidth();
 
 	/**
 	 * Returns the height of the world in world units.
 	 *
 	 * @return the height of the world.
 	 */
-	public int getHeight();
+	int getHeight();
 
 	/**
 	 * True if the point is within the world, or false otherwise.
@@ -145,7 +171,7 @@ public interface World {
 	 *
 	 * @return true if the point is within the world.
 	 */
-	default public boolean containsPoint(float x, float y) {
+	default boolean containsPoint(float x, float y) {
 		return !(x < 0 || x > getWidth() || y < 0 || y > getHeight());
 	}
 
@@ -154,21 +180,21 @@ public interface World {
 	 *
 	 * @return The number of tile columns.
 	 */
-	public int getTileColumns();
+	int getTileColumns();
 
 	/**
 	 * The number of tile rows.
 	 *
 	 * @return The number of tile rows.
 	 */
-	public int getTileRows();
+	int getTileRows();
 
 	/**
 	 * @param column the column to check.
 	 * @param row the row to check.
 	 * @return true if column is >= 0 and less than getTileColumns() and row is >= 0 and less than getTileRows().
 	 */
-	default public boolean isValidTile(int column, int row) {
+	default boolean isValidTile(int column, int row) {
 		return column >= 0 && column < getTileColumns() && row >= 0 && row < getTileRows();
 	}
 
@@ -179,12 +205,12 @@ public interface World {
 	 * @param row the tile's row.
 	 * @return true if the target tile is adjacent to water.
 	 */
-	public boolean isTileAdjacentToWater(int column, int row);
+	boolean isTileAdjacentToWater(int column, int row);
 
 	/**
 	 * Updates the game world. Must be called once per game tick.
 	 */
-	public void update();
+	void update();
 
 	/**
 	 * Returns the terrain located in the specified (column, row) tile position.
@@ -194,7 +220,7 @@ public interface World {
 	 *
 	 * @return the terrain in the specified tile position.
 	 */
-	public Terrain getTerrain(int column, int row);
+	Terrain getTerrain(int column, int row);
 
 	/**
 	 * Returns the terrain improvement located in the specified (column, row) tile position, or null if none is.
@@ -204,7 +230,7 @@ public interface World {
 	 *
 	 * @return the terrain improvement in the specified tile position, or false otherwise.
 	 */
-	public TerrainImprovement getTerrainImprovement(int column, int row);
+	TerrainImprovement getTerrainImprovement(int column, int row);
 
 	/**
 	 * Moves a pillbox off of the tile map. This is intended to be used when pillboxes are picked up by tanks. Pillboxes
@@ -212,7 +238,7 @@ public interface World {
 	 *
 	 * @param pillbox the pillbox to move.
 	 */
-	public void movePillboxOffTileMap(Pillbox pillbox);
+	void movePillboxOffTileMap(Pillbox pillbox);
 
 	/**
 	 * Moves a pillbox back onto the tile map. This is intended to be used when a pillbox is placed by a tank. The pillbox's
@@ -224,7 +250,7 @@ public interface World {
 	 * @param row >= 0 and < getTileRows().
 	 * @throws GameLogicException if the specified tile is not a valid build location.
 	 */
-	public void movePillboxOntoTileMap(Pillbox pillbox, int column, int row);
+	void movePillboxOntoTileMap(Pillbox pillbox, int column, int row);
 
 	/**
 	 * Returns the mine located in specified (column, row) tile position, or null if none is, or the mine is disposed.
@@ -234,7 +260,7 @@ public interface World {
 	 *
 	 * @return the non-disposed mine in the specified tile position, or null if there is no mine or it is disposed.
 	 */
-	public Mine getMine(int column, int row);
+	Mine getMine(int column, int row);
 
 	/**
 	 * Returns the zone name from a tile position.
@@ -243,7 +269,7 @@ public interface World {
 	 * @param row the tile's row.
 	 * @return the name of the zone in the specified tile position.
 	 */
-	public String getZoneFromTile(int column, int row);
+	String getZoneFromTile(int column, int row);
 
 	/**
 	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by
@@ -255,7 +281,7 @@ public interface World {
 	 *
 	 * @return a list of collidables that meet the specified requirements.
 	 */
-	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects);
+	List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects);
 
 	/**
 	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by
@@ -270,7 +296,7 @@ public interface World {
 	 *
 	 * @return a list of collidables that meet the specified requirements.
 	 */
-	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects,
+	List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter);
 
 	/**
@@ -280,7 +306,7 @@ public interface World {
 	 * @param y the target y position, in world units.
 	 * @return the nearest buildable terrain to the specified position.
 	 */
-	public Terrain getNearestBuildableTerrain(float x, float y);
+	Terrain getNearestBuildableTerrain(float x, float y);
 
 	/**
 	 * Returns the number of tiles to the nearest deep water, up to the maximum distance.
@@ -290,26 +316,26 @@ public interface World {
 	 * @param maxDistanceTiles the maximum distance (inclusive) to check, in tiles.
 	 * @return the number of tiles to the nearest deep water, or -1 if not found within the maximum distance.
 	 */
-	public int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maxDistanceTiles);
+	int getTileDistanceToDeepWater(int tileColumn, int tileRow, int maxDistanceTiles);
 
 	/**
 	 * Adds a controller of the specified type to the world.
 	 *
 	 * @param controllerType the type of the controller to add.
 	 */
-	public void addController(Class<? extends Controller> controllerType);
+	void addController(Class<? extends Controller> controllerType);
 
 	/**
 	 * Removes a controller of the specified type to the world.
 	 *
 	 * @param controllerType the type of the controller to remove.
 	 */
-	public void removeController(Class<? extends Controller> controllerType);
+	void removeController(Class<? extends Controller> controllerType);
 
 	/**
 	 * Returns the world controller count.
 	 *
 	 * @return the world controller count.
 	 */
-	public int getControllerCount();
+	int getControllerCount();
 }

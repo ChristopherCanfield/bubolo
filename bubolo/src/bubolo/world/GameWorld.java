@@ -17,11 +17,11 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import bubolo.Config;
+import bubolo.Systems;
 import bubolo.controllers.Controller;
 import bubolo.controllers.ControllerFactory;
 import bubolo.controllers.Controllers;
 import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
 import bubolo.net.command.DestroyEntity;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
@@ -112,20 +112,33 @@ public class GameWorld implements World {
 	}
 
 	private static Rect[] constructZones(int worldTileColumns, int worldTileRows) {
-		final int zoneCount = 9;
-		int tileColumnsPerZone = worldTileColumns / zoneCount;
-		int tileRowsPerZone = worldTileRows / zoneCount;
+		final int zoneColumns = 3;
+		final int zoneRows = 3;
 
-		Rect[] zones = new Rect[zoneCount];
+		// If there are fewer columns or rows than zones, just create a single zone for the world.
+		if (worldTileColumns / zoneRows == 0 || worldTileRows / zoneRows == 0) {
+			Rect[] zones = new Rect[1];
+			zones[0] = new Rect(0, 0, worldTileColumns, worldTileRows, "Central");
+			return zones;
+		}
+
+		int tileColumnsPerZone = worldTileColumns / zoneColumns;
+		// Count tile columns that couldn't be evenly distributed to the other zones.
+		int extraTileColumns = worldTileColumns % zoneColumns;
+		int tileRowsPerZone = worldTileRows / zoneRows;
+		// Count tile rows that couldn't be evenly distributed to the other zones.
+		int extraTileRows = worldTileRows % zoneRows;
+
+		Rect[] zones = new Rect[zoneColumns * zoneRows];
 		zones[0] = new Rect(0, 0, tileColumnsPerZone, tileRowsPerZone, "Southwest");
 		zones[1] = new Rect(0, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "West");
-		zones[2] = new Rect(0, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northwest");
+		zones[2] = new Rect(0, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone + extraTileRows, "Northwest");
 		zones[3] = new Rect(zones[0].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "South Central");
 		zones[4] = new Rect(zones[0].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Central");
-		zones[5] = new Rect(zones[0].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "North Central");
-		zones[6] = new Rect(zones[1].right() + 1, 0, tileColumnsPerZone, tileRowsPerZone, "Southeast");
-		zones[7] = new Rect(zones[1].right() + 1, zones[0].top() + 1, tileColumnsPerZone, tileRowsPerZone, "East");
-		zones[8] = new Rect(zones[1].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone, "Northeast");
+		zones[5] = new Rect(zones[0].right() + 1, zones[1].top() + 1, tileColumnsPerZone, tileRowsPerZone + extraTileRows, "North Central");
+		zones[6] = new Rect(zones[3].right() + 1, 0, tileColumnsPerZone + extraTileColumns, tileRowsPerZone, "Southeast");
+		zones[7] = new Rect(zones[3].right() + 1, zones[0].top() + 1, tileColumnsPerZone + extraTileColumns, tileRowsPerZone, "East");
+		zones[8] = new Rect(zones[3].right() + 1, zones[1].top() + 1, tileColumnsPerZone + extraTileColumns, tileRowsPerZone + extraTileRows, "Northeast");
 
 		return zones;
 	}
@@ -490,7 +503,7 @@ public class GameWorld implements World {
 			}
 
 			// Notify the network players.
-			Network network = NetworkSystem.getInstance();
+			Network network = Systems.network();
 			markedForRemoval.stream().filter(e -> !(e instanceof Bullet && !(e instanceof Mine))).forEach(e -> {
 				network.send(new DestroyEntity(e.id()));
 			});
@@ -526,16 +539,55 @@ public class GameWorld implements World {
 	}
 
 	@Override
+	public Tank getLocalTank() {
+		// Check the tanks list.
+		for (Tank tank : tanks) {
+			if (tank.isOwnedByLocalPlayer()) {
+				return tank;
+			}
+		}
+		// If there was no local player in the tanks list, check the pending entities list.
+		for (Entity e : entitiesToAdd) {
+			if (e instanceof Tank tank && tank.isOwnedByLocalPlayer()) {
+				return tank;
+			}
+		}
+		throw new GameLogicException("No local tank exists in the world.");
+	}
+
+	@Override
+	public @Nullable Tank getOwningTank(UUID ownedObjectId) {
+		var entity = getEntityOrNull(ownedObjectId);
+		// If the entity is a tank, return it.
+		if (entity instanceof Tank tank) {
+			return tank;
+		// If the entity is a non-tank actor and has an owner, call this method again with the owner's ID.
+		} else if (entity instanceof ActorEntity actor && actor.hasOwner()) {
+			return getOwningTank(actor.owner().id());
+		// If the entity is null, return null, because it means that nothing owns it.
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public @Nullable String getOwningPlayerName(UUID ownedObjectId) {
+		var tank = getOwningTank(ownedObjectId);
+		return (tank != null) ? tank.playerName() : null;
+	}
+
+	@Override
 	public List<ActorEntity> getActors() {
 		return actorsUnmodifiableView;
 	}
 
 	@Override
 	public List<Spawn> getRandomSpawns(int count) {
-		List<Spawn> spawnList = new ArrayList<>();
-		Set<Spawn> spawnsFound = new HashSet<>();
+		List<Spawn> spawnList = new ArrayList<>(count);
+		List<Spawn> spawnsFound = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			var spawn = getRandomSpawn(spawnsFound);
+			spawnsFound.add(spawn);
 			spawnList.add(spawn);
 		}
 		return spawnList;
@@ -546,7 +598,7 @@ public class GameWorld implements World {
 		return getRandomSpawn(null);
 	}
 
-	private Spawn getRandomSpawn(@Nullable Set<Spawn> spawnsToExclude) {
+	private Spawn getRandomSpawn(@Nullable List<Spawn> spawnsToExclude) {
 		assert !spawns.isEmpty();
 
 		List<Integer> zoneIndexes = new ArrayList<>(zones.length);
@@ -556,28 +608,32 @@ public class GameWorld implements World {
 		Collections.shuffle(zoneIndexes);
 
 		Spawn spawn = null;
+		// Attempt to find a spawn that isn't in the exclusion list and is in a different zone than other tanks.
 		for (int zoneIndex : zoneIndexes) {
 			if (!zoneContainsTank(zoneIndex)) {
 				spawn = getSpawnFromZone(zones[zoneIndex], spawnsToExclude);
-			}
-		}
-
-		if (spawn != null) {
-			return spawn;
-		} else {
-			if (spawnsToExclude != null) {
-				for (int attempts = 0; attempts < spawnsToExclude.size(); attempts++) {
-					spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
-					// Return the spawn if it is not in the exclusion list.
-					if (!spawnsToExclude.contains(spawn)) {
-						return spawn;
-					}
+				if (spawn != null) {
+					System.out.println("Found spawn in zone " + zones[zoneIndex].name());
+					return spawn;
 				}
 			}
-
-			// If there is no exclusion list, or if there is, but no valid spawn was found, return a random spawn.
-			return spawns.get(randomGenerator.nextInt(spawns.size()));
 		}
+
+		// If the spawns to exclude list isn't null or empty, and no valid spawns were found, try to find a random spawn
+		// that isn't excluded.
+		if (spawnsToExclude != null && !spawnsToExclude.isEmpty()) {
+			for (int attempts = 0; attempts < spawns.size(); attempts++) {
+				spawn = spawns.get(randomGenerator.nextInt(spawns.size()));
+				// Return the spawn if it is not in the exclusion list.
+				if (!spawnsToExclude.contains(spawn)) {
+					return spawn;
+				}
+			}
+		}
+
+		System.out.println("Using random spawn");
+		// If there is no exclusion list, or if there is, but no valid spawn was found, return a random spawn.
+		return spawns.get(randomGenerator.nextInt(spawns.size()));
 	}
 
 	private boolean zoneContainsTank(int zoneIndex) {
@@ -594,15 +650,25 @@ public class GameWorld implements World {
 	 * Returns a spawn from the specified zone, or null if there are no spawns in the zone.
 	 *
 	 * @param zone the zone that the spawn must be located in.
+	 * @param spawnsToExclude spawns that the found spawn must not overlap or be too close to.
 	 * @return a spawn from the specified zone, or null if there are no spawns in the zone.
 	 */
-	private Spawn getSpawnFromZone(Rect zone, Set<Spawn> spawnsToExclude) {
+	private Spawn getSpawnFromZone(Rect zone, List<Spawn> spawnsToExclude) {
+		final int minimumTileDistanceBetweenSpawns = 10;
 		Collections.shuffle(spawns);
 		for (Spawn spawn : spawns) {
 			if (zone.contains(spawn.tileColumn(), spawn.tileRow())) {
-				if (spawnsToExclude != null) {
-					// Return the spawn if it is not in the exclusion list.
-					if (!spawnsToExclude.contains(spawn)) {
+				if (spawnsToExclude != null && !spawnsToExclude.isEmpty()) {
+					boolean validSpawnFound = true;
+					for (Spawn excludedSpawn : spawnsToExclude) {
+						if (!isMinimumTileDistanceFromExcludedSpawn(spawn, excludedSpawn, minimumTileDistanceBetweenSpawns)) {
+							validSpawnFound = false;
+							break;
+						}
+					}
+
+					// Return the spawn if it does not overlap with, or is too near to, a spawn in the exclusion list.
+					if (validSpawnFound) {
 						return spawn;
 					}
 				// Return the spawn, because it is in the zone and there is no exclusion list.
@@ -612,6 +678,11 @@ public class GameWorld implements World {
 			}
 		}
 		return null;
+	}
+
+	private static boolean isMinimumTileDistanceFromExcludedSpawn(Spawn spawn, Spawn excludedSpawn, int minimumTileDistance) {
+		return Math.abs(spawn.tileColumn() - excludedSpawn.tileColumn()) > minimumTileDistance
+				&& Math.abs(spawn.tileRow() - excludedSpawn.tileRow()) > minimumTileDistance;
 	}
 
 	/**

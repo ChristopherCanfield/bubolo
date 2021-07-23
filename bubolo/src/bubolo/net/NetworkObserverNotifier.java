@@ -1,7 +1,7 @@
 package bubolo.net;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import bubolo.net.command.SendMessage.MessageType;
 
@@ -16,7 +16,7 @@ public class NetworkObserverNotifier {
 	 * Constructs a NetworkObserverNotifier.
 	 */
 	NetworkObserverNotifier() {
-		this.observers = new ArrayList<NetworkObserver>();
+		this.observers = new CopyOnWriteArrayList<>();
 	}
 
 	/**

@@ -16,12 +16,12 @@ import com.badlogic.gdx.math.MathUtils;
 
 import bubolo.GameApplication;
 import bubolo.GameApplication.State;
+import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
-import bubolo.net.NetworkSystem;
 import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressListener;
 import bubolo.net.ServerAddressMessage;
@@ -255,11 +255,15 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 //	}
 
 	private void startServer() {
-		final Network network = NetworkSystem.getInstance();
-		network.startServer(playerNameTextBox.text());
+		if (!playerNameTextBox.isEmpty()) {
+			setInputEventsEnabled(false);
 
-		var playerInfo = new PlayerInfo(playerNameTextBox.text(), TeamColor.valueOf(colorSelectBox.selectedItem()), ipAddress);
-		app.setState(State.MultiplayerLobby, playerInfo);
+			final Network network = Systems.network();
+			network.startServer(playerNameTextBox.text());
+
+			var playerInfo = new PlayerInfo(playerNameTextBox.text(), TeamColor.valueOf(colorSelectBox.selectedItem()), ipAddress);
+			app.setState(State.MultiplayerLobby, playerInfo);
+		}
 	}
 
 	private void connectToServer() {
@@ -283,6 +287,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	}
 
 	private void goBackOneScreen() {
+		setInputEventsEnabled(false);
 		if (isClient) {
 			app.setState(State.MainMenu);
 		} else {
@@ -297,7 +302,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 				connectToServer = false;
 
 				try {
-					final Network network = NetworkSystem.getInstance();
+					final Network network = Systems.network();
 					network.connect(serverIpAddress, playerNameTextBox.text());
 				} catch (NetworkException e) {
 //					statusLabel1.setText("");
@@ -305,6 +310,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 					return;
 				}
 
+				setInputEventsEnabled(false);
 				var playerInfo = new PlayerInfo(playerNameTextBox.text(), TeamColor.valueOf(colorSelectBox.selectedItem()), null);
 				app.setState(State.MultiplayerLobby, playerInfo);
 			} else {
@@ -314,20 +320,16 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {
+	protected void onKeyUp(int keycode) {
 		if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
-//			if (textFieldsPopulated()) {
-//				if (isClient) {
-//					connectToServer();
-//				} else {
-//					startServer();
-//				}
-//			}
+			if (isClient) {
+				connectToServer();
+			} else {
+				startServer();
+			}
 		} else if (keycode == Keys.ESCAPE) {
 			goBackOneScreen();
 		}
-
-		return false;
 	}
 
 	@Override

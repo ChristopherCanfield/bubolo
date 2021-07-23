@@ -3,6 +3,7 @@ package bubolo.world;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 
+import bubolo.Systems;
 import bubolo.controllers.Controller;
 import bubolo.util.Nullable;
 
@@ -106,11 +107,24 @@ public abstract class ActorEntity extends Entity implements Collidable {
 	}
 
 	/**
+	 * Notifies the messenger system that this object has been captured, and then calls setOwner(newOwner).
+	 *
+	 * @param world reference to the game world.
+	 * @param newOwner the object's new owner. May be null.
+	 */
+	public final void onCaptured(World world, @Nullable ActorEntity newOwner) {
+		Systems.messenger().notifyObjectCaptured(world, this, owner(), newOwner);
+		setOwner(newOwner);
+	}
+
+	/**
 	 * Sets the object's owner. May be null.
 	 *
 	 * @param owner the object's new owner. May be null.
 	 */
 	public final void setOwner(@Nullable ActorEntity owner) {
+		assert owner != this;
+
 		boolean isNewOwner = this.owner != owner;
 		this.owner = owner;
 

@@ -12,14 +12,13 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import bubolo.audio.Audio;
+import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
 import bubolo.net.PlayerInfo;
 import bubolo.net.command.CreateTank;
+import bubolo.ui.GameScreen;
 import bubolo.ui.LoadingScreen;
 import bubolo.ui.LobbyScreen;
 import bubolo.ui.MainMenuScreen;
@@ -48,7 +47,6 @@ public class BuboloApplication extends AbstractGameApplication {
 	private final int windowHeight;
 
 	private Graphics graphics;
-	private Network network;
 	private Screen screen;
 
 	private String defaultMapName = "Canfield Island.json";
@@ -100,7 +98,6 @@ public class BuboloApplication extends AbstractGameApplication {
 		initializeLogger();
 
 		graphics = new Graphics(windowWidth, windowHeight);
-		network = NetworkSystem.getInstance();
 
 		setState(State.MainMenu);
 	}
@@ -130,10 +127,12 @@ public class BuboloApplication extends AbstractGameApplication {
 			final State state = getState();
 			World world = world();
 
+			Systems.messenger().update();
+
 			switch (state) {
 			case MultiplayerStarting:
 			case MultiplayerLobby:
-				network.update(this);
+				Systems.network().update(this);
 				//$FALL-THROUGH$
 			case MainMenu:
 			case MultiplayerMapSelection:
@@ -145,31 +144,34 @@ public class BuboloApplication extends AbstractGameApplication {
 				break;
 			case MultiplayerGame:
 			case SinglePlayerGame:
-				graphics.draw(world);
 				world.update();
-				network.update(this);
+				Systems.network().update(this);
+				graphics.draw(world, screen);
 				break;
 			case SinglePlayerLoading:
 				LoadingScreen loadingScreen = (LoadingScreen) screen;
 				graphics.draw(loadingScreen);
 				if (loadingScreen.drawCount() > 1 && !isReady()) {
 					setWorld(importWorld());
-					Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
+					Systems.initializeAudio(world().getWidth(), world().getHeight(),
+							TargetWindowWidth * DefaultPixelsPerWorldUnit,
 							TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 					var spawn = world().getRandomSpawn();
-					Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(), spawn.x(), spawn.y(), 0);
+					Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(spawn.x(), spawn.y(), 0);
 
-					Tank tank = world().addEntity(Tank.class, args);
+					Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
 					tank.initialize("Player 1", TeamColor.Blue, true);
 
-					network.startDebug();
+					Systems.initializeNetwork(NetworkType.Null);
+
 					setReady(true);
-					setState(State.SinglePlayerGame);
+					setState(State.SinglePlayerGame, tank);
 				}
 			}
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, e.toString(), e);
+			throw e;
 		}
 	}
 
@@ -183,7 +185,6 @@ public class BuboloApplication extends AbstractGameApplication {
 		switch (newState) {
 		case MainMenu:
 			screen = new MainMenuScreen(this);
-			graphics.camera().position.set(0, 0, 0);
 			break;
 
 		case MultiplayerMapSelection:
@@ -197,11 +198,13 @@ public class BuboloApplication extends AbstractGameApplication {
 			assert previousState == State.MultiplayerMapSelection;
 			assert mapPath != null;
 			mapPath = (Path) arg;
+			Systems.initializeNetwork();
 			screen = new MultiplayerSetupScreen(this, PlayerType.Server);
 			break;
 
 		case MultiplayerSetupClient:
 			assert previousState == State.MainMenu;
+			Systems.initializeNetwork();
 			screen = new MultiplayerSetupScreen(this, PlayerType.Client);
 			break;
 
@@ -222,30 +225,34 @@ public class BuboloApplication extends AbstractGameApplication {
 			assert screen != null;
 			assert arg != null;
 
-			Audio.initialize(world().getWidth(), world().getHeight(), TargetWindowWidth * DefaultPixelsPerWorldUnit,
+			Systems.initializeAudio(world().getWidth(), world().getHeight(),
+					TargetWindowWidth * DefaultPixelsPerWorldUnit,
 					TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
 			Tile spawnTile = (Tile) arg;
-			Entity.ConstructionArgs args = new Entity.ConstructionArgs(Entity.nextId(),
+			Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(
 					spawnTile.column() * Units.TileToWorldScale,
 					spawnTile.row() * Units.TileToWorldScale,
 					0);
 
-			Tank tank = world().addEntity(Tank.class, args);
+			Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
 			tank.initialize(playerInfo.name(), playerInfo.color(), true);
 
-			network.send(new CreateTank(tank));
+			Systems.network().send(new CreateTank(tank));
 
 			setReady(true);
 			break;
 
-		case MultiplayerGame: {
-			if (screen != null) {
-				screen.dispose();
-				screen = null;
-			}
+		case MultiplayerGame:
+			assert previousState == State.MultiplayerStarting;
+			assert screen instanceof LobbyScreen;
+
+			screen.dispose();
+			screen = new GameScreen();
+			world().getLocalTank().setObserver((GameScreen) screen);
+
 			break;
-		}
+
 		case SinglePlayerLoading:
 			assert previousState == State.SinglePlayerSetup;
 			assert mapPath != null;
@@ -255,6 +262,12 @@ public class BuboloApplication extends AbstractGameApplication {
 
 		case SinglePlayerGame: {
 			assert previousState == State.SinglePlayerLoading;
+			assert arg != null;
+
+			Tank localTank = (Tank) arg;
+			screen = new GameScreen();
+			localTank.setObserver((GameScreen) screen);
+
 			break;
 		}
 		case Settings:
@@ -288,9 +301,9 @@ public class BuboloApplication extends AbstractGameApplication {
 	 */
 	@Override
 	public void dispose() {
-		Audio.dispose();
-		NetworkSystem.getInstance().dispose();
+		Systems.dispose();
 		graphics.dispose();
+
 		/*
 		 * TODO (2021-04-13): After updating to lwjgl3, the process remains in the background even after the window is
 		 * closed and this dispose method is called. I'm not sure why that is. System.exit is a temporary hack until I

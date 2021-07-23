@@ -75,6 +75,7 @@ public class MainMenuScreen extends AbstractScreen {
 	 * @param button unused.
 	 */
 	private void onSinglePlayerButtonActivated(Button button) {
+		setInputEventsEnabled(false);
 		app.setState(State.SinglePlayerSetup);
 	}
 
@@ -82,6 +83,7 @@ public class MainMenuScreen extends AbstractScreen {
 	 * @param button unused.
 	 */
 	private void onJoinMultiplayerButtonActivated(Button button) {
+		setInputEventsEnabled(false);
 		app.setState(State.MultiplayerSetupClient);
 	}
 
@@ -89,6 +91,7 @@ public class MainMenuScreen extends AbstractScreen {
 	 * @param button unused.
 	 */
 	private void onHostMultiplayerButtonActivated(Button button) {
+		setInputEventsEnabled(false);
 		app.setState(State.MultiplayerMapSelection);
 	}
 

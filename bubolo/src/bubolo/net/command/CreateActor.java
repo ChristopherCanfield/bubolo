@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net.command;
 
 import java.util.UUID;
@@ -21,7 +15,6 @@ import bubolo.world.World;
 /**
  * Creates an actor entity on remote computers.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class CreateActor extends NetworkCommand {
@@ -68,7 +61,8 @@ public class CreateActor extends NetworkCommand {
 	 * @param ownerId [optional] the id of the entity that owns the actor. May be null.
 	 * @param factory [optional] a factory that attaches a controller to the entity. May be null.
 	 */
-	public CreateActor(Class<? extends ActorEntity> type, UUID id, float x, float y, float rotation, @Nullable UUID ownerId, @Nullable ControllerFactory factory) {
+	public CreateActor(Class<? extends ActorEntity> type, UUID id, float x, float y, float rotation,
+			@Nullable UUID ownerId, @Nullable ControllerFactory factory) {
 		this.type = type;
 		this.id = id;
 		this.x = x;

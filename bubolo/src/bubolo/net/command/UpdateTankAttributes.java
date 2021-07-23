@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.net.command;
 
 import java.util.UUID;
@@ -13,7 +9,6 @@ import bubolo.world.World;
 /**
  * Updates a tank's attributes.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class UpdateTankAttributes extends NetworkCommand {

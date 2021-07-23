@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
@@ -15,7 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.badlogic.gdx.Gdx;
 
+import bubolo.Systems;
 import bubolo.net.command.ClientConnected;
+import bubolo.net.command.ClientDisconnected;
 import bubolo.net.command.ConnectedToServer;
 import bubolo.net.command.StartGame;
 import bubolo.util.Nullable;
@@ -126,9 +129,15 @@ class Server implements NetworkSubsystem {
 	 *
 	 * @param client the client to remove.
 	 */
-	private void removeClient(ClientSocket client) {
+	private void removeClient(ClientSocket client, @Nullable String clientName) {
 		client.dispose();
 		clients.remove(client);
+
+		// @TODO (cdc 2021-07-21): Consider consolidating the Messenger and the NetworkObserverNotifier.
+		Systems.network().getNotifier().notifyClientDisconnected(clientName);
+		Systems.messenger().notifyPlayerDisconnected(clientName);
+
+		send(new ClientDisconnected(clientName));
 	}
 
 	/**
@@ -181,7 +190,6 @@ class Server implements NetworkSubsystem {
 
 		@Override
 		public void run() {
-			int clientCount = 0;
 			// Continue accepting connections until the network has been shut down, the game has
 			// been started, or this thread has received an interrupt.
 			while (!shutdown.get() && !gameStarted.get() && !Thread.interrupted()) {
@@ -200,8 +208,8 @@ class Server implements NetworkSubsystem {
 				}
 
 				// Start the network reader thread.
+				var clientCount = clients.size() - 1;
 				new Thread(new ClientReader(clients.get(clientCount), server, network, shutdown)).start();
-				++clientCount;
 			}
 		}
 	}
@@ -216,6 +224,8 @@ class Server implements NetworkSubsystem {
 		private final Network network;
 		private final ClientSocket client;
 		private final Server server;
+
+		private String clientName;
 
 		/**
 		 * Constructs a new ClientReader.
@@ -240,6 +250,7 @@ class Server implements NetworkSubsystem {
 		public void run() {
 			try (ObjectInputStream inputStream = new ObjectInputStream(client.getClient().getInputStream())) {
 				ClientConnected welcomeCommand = (ClientConnected) inputStream.readObject();
+				this.clientName = welcomeCommand.getClientName();
 				server.send(new ConnectedToServer(welcomeCommand.getClientName(), server.getServerName()));
 				network.postToGameThread(welcomeCommand);
 
@@ -248,6 +259,8 @@ class Server implements NetworkSubsystem {
 					server.send(command, client);
 					network.postToGameThread(command);
 				}
+			} catch (SocketException e) {
+				// Socket closed: this is fine.
 			} catch (IOException | ClassNotFoundException e) {
 				// TODO: Pass this exception to the primary thread, and eliminate the stack track.
 				e.printStackTrace();
@@ -256,19 +269,21 @@ class Server implements NetworkSubsystem {
 				class RemoveClient implements Runnable {
 					private final Server serverSocket;
 					private final ClientSocket clientSocket;
+					private final String clientName;
 
-					RemoveClient(Server server, ClientSocket client) {
+					RemoveClient(Server server, ClientSocket client, String clientName) {
 						this.clientSocket = client;
 						this.serverSocket = server;
+						this.clientName = clientName;
 					}
 
 					@Override
 					public void run() {
-						serverSocket.removeClient(clientSocket);
+						serverSocket.removeClient(clientSocket, clientName);
 					}
 				}
 
-				Gdx.app.postRunnable(new RemoveClient(server, client));
+				Gdx.app.postRunnable(new RemoveClient(server, client, clientName));
 			}
 		}
 	}

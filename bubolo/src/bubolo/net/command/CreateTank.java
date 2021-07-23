@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2014 BU MET CS673 Game Engineering Team
- *
- * See the file license.txt for copying permission.
- */
-
 package bubolo.net.command;
 
 import java.util.logging.Logger;
@@ -19,7 +13,6 @@ import bubolo.world.World;
 /**
  * Creates a network-controlled tank on connected computers.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class CreateTank extends CreateActor {

@@ -192,6 +192,8 @@ public class SelectBox extends UiComponent implements Focusable {
 			highlightRightArrow = withinRightArrow(screenX);
 
 			return 0;
+		} else {
+			lostFocus();
 		}
 		return NoIndex;
 	}

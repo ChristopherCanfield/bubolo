@@ -36,6 +36,8 @@ public abstract class Stage2dScreen<T extends WidgetGroup> implements Screen {
 
 		this.root = root;
 		stage.addActor(root);
+		root.setFillParent(true);
+		stage.getRoot().setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		Gdx.input.setInputProcessor(stage);
 	}

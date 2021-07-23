@@ -1,5 +1,7 @@
 package bubolo.audio;
 
+import bubolo.Systems;
+
 /**
  * Limits the rate that that sound effects are played. Most useful for damage sounds, to prevent cascading duplicate sound effects.
  *
@@ -23,7 +25,7 @@ public class SfxRateLimiter {
 	 */
 	public boolean play(Sfx soundEffect, float x, float y) {
 		if (nextSfxPlayTime < System.currentTimeMillis()) {
-			Audio.play(soundEffect, x, y);
+			Systems.audio().play(soundEffect, x, y);
 			nextSfxPlayTime = System.currentTimeMillis() + rateLimitMillis;
 			return true;
 		}

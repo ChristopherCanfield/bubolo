@@ -18,7 +18,6 @@ import bubolo.map.InvalidMapException;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
 import bubolo.ui.gui.ButtonGroup;
-import bubolo.ui.gui.GuiGroup.ClickedObjectInfo;
 import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Image;
 import bubolo.ui.gui.Label;
@@ -57,9 +56,6 @@ public class MapSelectionScreen extends AbstractScreen {
 	private final String mapDescriptionText = "Description: ";
 	private final String mapSizeText = "Size: ";
 	private final String lastUpdatedText = "Last Updated: ";
-
-	// Used to prevent buggy touchpads that send multiple clicks in rapid succession from causing a crash.
-	private boolean switchingScreens;
 
 	private static final String mapFileExtension = Config.MapFileExtension;
 
@@ -207,6 +203,7 @@ public class MapSelectionScreen extends AbstractScreen {
 			}
 		});
 		okCancelButtons.addButton("Back", button -> {
+			setInputEventsEnabled(false);
 			app.setState(State.MainMenu);
 		});
 
@@ -233,7 +230,7 @@ public class MapSelectionScreen extends AbstractScreen {
 		mapSizeLabel.recalculateLayout(newWidth, newHeight);
 
 		mapDescriptionLabel.recalculateLayout(newWidth, newHeight);
-		mapDescriptionLabel.setMaxRowSize(calculateDescriptionRowSize());
+		mapDescriptionLabel.setMaxLineWidth(calculateDescriptionRowSize());
 	}
 
 	/**
@@ -258,46 +255,19 @@ public class MapSelectionScreen extends AbstractScreen {
 	private void onMapActivated() {
 		var selectedMapFileName = mapPathsGroup.selectedButtonText();
 		if (selectedMapFileName != null) {
-			switchingScreens = true;
+			setInputEventsEnabled(false);
 			app.setState(nextState, Config.MapsPath.resolve(selectedMapFileName + mapFileExtension));
 		}
 	}
 
-//	private void switchTabGroup() {
-//		activeGroup = (activeGroup == TabGroup.MapNames) ? TabGroup.OkCancel : TabGroup.MapNames;
-//	}
-
 	@Override
-	public boolean keyUp(int keycode) {
-//		switch (keycode) {
-//			case Keys.UP, Keys.W, Keys.NUMPAD_8 -> mapPathsGroup.selectPrevious();
-//			case Keys.DOWN, Keys.S, Keys.NUMPAD_5, Keys.NUMPAD_2 -> mapPathsGroup.selectNext();
-//			case Keys.SPACE, Keys.ENTER, Keys.NUMPAD_ENTER -> {
-//				mapPathsGroup.activateSelectedButton();
-//				onMapActivated();
-//			}
-//			case Keys.TAB -> switchTabGroup();
-//			case Keys.ESCAPE -> app.setState(State.MainMenu);
-//		}
-
+	protected void onKeyUp(int keycode) {
 		if (keycode == Keys.ESCAPE) {
+			setInputEventsEnabled(false);
 			app.setState(State.MainMenu);
 		}
 
 		onSelectedMapChanged();
-
-		return false;
-	}
-
-	@Override
-	protected void onMouseClickedObject(ClickedObjectInfo clickedObjectInfo) {
-		if (!switchingScreens) {
-			if (clickedObjectInfo.component() == mapPathsGroup) {
-				mapPathsGroup.selectButton(clickedObjectInfo.clickedItemIndex());
-				onSelectedMapChanged();
-				onMapActivated();
-			}
-		}
 	}
 
 	@Override

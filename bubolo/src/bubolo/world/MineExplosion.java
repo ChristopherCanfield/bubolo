@@ -1,7 +1,7 @@
 package bubolo.world;
 
-import bubolo.util.Units;
 import bubolo.util.Time;
+import bubolo.util.Units;
 
 /**
  * MineExplosions are created when mines blow up. The explosion area is larger than the mine that exploded.
@@ -41,7 +41,7 @@ public class MineExplosion extends ActorEntity {
 		for (Collidable collider : world.getCollidablesWithinTileDistance (this, blastRadiusTiles, false, Damageable.class)) {
 			// We know the collider is a damageable, since we filtered to include only Damageables.
 			Damageable damageable = (Damageable) collider;
-			damageable.receiveDamage(damagePerTick, world);
+			damageable.receiveDamage(world, damagePerTick, this);
 		}
 	}
 

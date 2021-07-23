@@ -15,8 +15,8 @@ import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
  * 	<li>It comes with a base GuiGroup, named root.</li>
  * 	<li>It sets itself as the LibGdx input processor using Gdx.input.setInputProcessor.</li>
  * 	<li>It forwards keyDown, keyType, touchUp (click), mouseMoved, and viewportResized events.</li>
- * 	<li>It draws all components attached to the root gui group.</li>
- * 	<li>It removes iteself as the InputProcessor when it is disposed, and disposes all components attached to root.</li>
+ * 	<li>It draws all components attached to the root GUI group.</li>
+ * 	<li>It removes itself as the InputProcessor when it is disposed, and disposes all components attached to root.</li>
  * 	<li>It provides hooks into many events.</li>
  * </ul>
  *
@@ -25,14 +25,25 @@ import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 public abstract class AbstractScreen implements Screen, InputProcessor {
 	protected final GuiGroup root = new GuiGroup();
 
+	private boolean handleInputEvents = true;
+
 	protected AbstractScreen() {
 		Gdx.input.setInputProcessor(this);
 	}
 
+	/**
+	 * When set to true, which is the default, input events are enabled.
+	 */
+	protected final void setInputEventsEnabled(boolean val) {
+		this.handleInputEvents = val;
+	}
+
 	@Override
 	public final boolean keyDown(int keycode) {
-		root.onKeyDown(keycode);
-		onKeyDown(keycode);
+		if (handleInputEvents) {
+			root.onKeyDown(keycode);
+			onKeyDown(keycode);
+		}
 		return false;
 	}
 
@@ -40,7 +51,10 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 
 	@Override
 	public final boolean keyTyped(char character) {
-		root.onKeyTyped(character);
+		if (handleInputEvents) {
+			root.onKeyTyped(character);
+			onKeyTyped(character);
+		}
 		return false;
 	}
 
@@ -48,9 +62,11 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 
 	@Override
 	public final boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		var info = root.onMouseClicked(screenX, screenY);
-		if (info != null) {
-			onMouseClickedObject(info);
+		if (handleInputEvents) {
+			var info = root.onMouseClicked(screenX, screenY);
+			if (info != null) {
+				onMouseClickedObject(info);
+			}
 		}
 		return false;
 	}
@@ -59,14 +75,22 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 
 	@Override
 	public final boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		if (handleInputEvents) {
+			onMouseButtonDown(screenX, screenY, pointer, button);
+		}
 		return false;
+	}
+
+	protected void onMouseButtonDown(int screenX, int screenY, int pointer, int button) {
 	}
 
 	@Override
 	public final boolean mouseMoved(int screenX, int screenY) {
-		var info = root.onMouseMoved(screenX, screenY);
-		if (info != null) {
-			onMouseHoveredOverObject(info);
+		if (handleInputEvents) {
+			var info = root.onMouseMoved(screenX, screenY);
+			if (info != null) {
+				onMouseHoveredOverObject(info);
+			}
 		}
 		return false;
 	}
@@ -74,18 +98,36 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	protected void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {}
 
 	@Override
-	public boolean keyUp(int keycode) {
+	public final boolean keyUp(int keycode) {
+		if (handleInputEvents) {
+			onKeyUp(keycode);
+		}
 		return false;
 	}
 
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return false;
+	protected void onKeyUp(int keycode) {
 	}
 
 	@Override
-	public boolean scrolled(float amountX, float amountY) {
+	public final boolean touchDragged(int screenX, int screenY, int pointer) {
+		if (handleInputEvents) {
+			onMouseDragged(screenX, screenY, pointer);
+		}
 		return false;
+	}
+
+	protected void onMouseDragged(int screenX, int screenY, int pointer) {
+	}
+
+	@Override
+	public final boolean scrolled(float amountX, float amountY) {
+		if (handleInputEvents) {
+			onMouseWheelScrolled(amountX, amountY);
+		}
+		return false;
+	}
+
+	protected void onMouseWheelScrolled(float amountX, float amountY) {
 	}
 
 	@Override
@@ -122,6 +164,7 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 
 	@Override
 	public final void dispose() {
+		setInputEventsEnabled(false);
 		if (Gdx.input.getInputProcessor() == this) {
 			Gdx.input.setInputProcessor(null);
 		}

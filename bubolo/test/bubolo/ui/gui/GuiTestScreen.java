@@ -1,4 +1,4 @@
-package bubolo.graphics.gui;
+package bubolo.ui.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.Color;
 import bubolo.Config;
 import bubolo.graphics.Graphics;
 import bubolo.ui.Screen;
-import bubolo.ui.gui.ButtonGroup;
-import bubolo.ui.gui.LayoutArgs;
 
 public class GuiTestScreen implements Screen, InputProcessor {
 	private final ButtonGroup buttonGroup;

@@ -8,10 +8,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import bubolo.Systems;
 import bubolo.mock.MockWorldOwner;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 
 /**
  * @author BU CS673 - Clone Productions
@@ -36,8 +36,7 @@ public class SendMessageTest
 	{
 		final String MESSAGE = "TEST TEST";
 		final String NAME = "HELLO";
-		Network net = NetworkSystem.getInstance();
-		net.startDebug();
+		Network net = Systems.network();
 		net.startServer(NAME);
 
 		SendMessage command = new SendMessage(MESSAGE);

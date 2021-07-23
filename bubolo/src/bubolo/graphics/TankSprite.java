@@ -1,16 +1,11 @@
 package bubolo.graphics;
 
-import java.text.DecimalFormat;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
 import bubolo.util.Units;
@@ -33,6 +28,10 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	// An array of all frames held in the texture sheet, by row and then column. Row = color set.
 	private TextureRegion[][] frames;
 
+	private static final int treadRow = 0;
+	private static final int bodyRow = 1;
+	private static final int highlightRow = 2;
+
 	// The number of milliseconds per animation frame.
 	private static final long millisPerFrame = 100;
 
@@ -53,15 +52,6 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	/** The file name of the texture. */
 	private static final String textureFileName = "tank.png";
 
-	private static final String BULLET_TEXTURE_FILE = "bullet.png";
-	private static final String MINE_TEXTURE_FILE = "mine.png";
-
-	private final Texture bulletTexture;
-	private final TextureRegion[][] mineTexture;
-
-	private static final Color TANK_UI_BOX_COLOR = new Color(50 / 255f, 50 / 255f, 50 / 255f, 110 / 255f);
-	private static final Color TANK_UI_FONT_COLOR = new Color(240 / 255f, 240 / 255f, 240 / 255f, 1f);
-
 	private final ParticleEffect[] smokeEmitter = new ParticleEffect[3];
 	private static final String smokeParticleEffectLowDamageFile = "res/particles/Particle Park Smoke Low Damage.p";
 	private static final String smokeParticleEffectMediumDamageFile = "res/particles/Particle Park Smoke Medium Damage.p";
@@ -75,9 +65,6 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	 */
 	TankSprite(Tank tank) {
 		super(DrawLayer.Tanks, tank);
-
-		bulletTexture = Graphics.getTexture(BULLET_TEXTURE_FILE);
-		mineTexture = Graphics.getTextureRegion2d(MINE_TEXTURE_FILE, 21, 20);
 
 		smokeEmitter[0] = new ParticleEffect();
 		smokeEmitter[0].load(Gdx.files.internal(smokeParticleEffectLowDamageFile), Gdx.files.internal("res/particles"));
@@ -118,73 +105,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 			if (tank.isAlive()) {
 				StatusBarRenderer.drawHealthBar(tank, graphics.shapeRenderer(), graphics.camera());
 			}
-			drawStatusBar(tank, graphics);
 		}
-	}
-
-	private void drawStatusBar(Tank tank, Graphics graphics) {
-		drawStatusBarBackground(graphics);
-		drawStatusBarValues(tank, graphics);
-	}
-
-	private static void drawStatusBarBackground(Graphics graphics) {
-		// Blending is required to enable transparency.
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-		var shapeRenderer = graphics.shapeRenderer();
-		shapeRenderer.begin(ShapeType.Filled);
-
-		shapeRenderer.setColor(TANK_UI_BOX_COLOR);
-
-		float screenHalfWidth = graphics.camera().viewportWidth / 2.0f;
-		float screenHeight = graphics.camera().viewportHeight;
-		shapeRenderer.rect(screenHalfWidth - 110, screenHeight - 25, 220, 30);
-
-		shapeRenderer.end();
-
-		// Draw a thin border around the ammo UI box.
-		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.setColor(Color.BLACK);
-		shapeRenderer.rect(screenHalfWidth - 110, screenHeight - 25, 220, 30);
-
-		shapeRenderer.end();
-	}
-
-	private static final DecimalFormat speedFormatter = new DecimalFormat("0.0 Kph");
-
-	private void drawStatusBarValues(Tank tank, Graphics graphics) {
-		var spriteBatch = graphics.batch();
-		spriteBatch.begin();
-		spriteBatch.setColor(Color.WHITE);
-
-		float screenHalfWidth = graphics.camera().viewportWidth / 2.0f;
-		float screenHeight = graphics.camera().viewportHeight;
-		float bulletWidth = bulletTexture.getWidth() * 2;
-		float bulletHeight = bulletTexture.getHeight() * 2;
-		// Draw the bullet texture.
-		spriteBatch.draw(bulletTexture, screenHalfWidth - 100, screenHeight - 20, bulletWidth, bulletHeight);
-
-		int textVerticalPosition = (int) screenHeight - 5;
-		// Render the ammo count text.
-		font.setColor(TANK_UI_FONT_COLOR);
-		font.draw(spriteBatch, "x " + tank.ammo(), screenHalfWidth - 100 + 12, textVerticalPosition);
-
-		// Render the tank's speed.
-		int tankSpeedTextLocation = (int) ((tank.speedKph() < 10) ? screenHalfWidth - 20 : screenHalfWidth - 25);
-		font.draw(spriteBatch, speedFormatter.format(tank.speedKph()), tankSpeedTextLocation, textVerticalPosition);
-
-		// Mine texture divided by number of frames per row.
-		float mineWidth = mineTexture[0][0].getRegionWidth();
-		// Mine texture divided by number of frames per column.
-		float mineHeight = mineTexture[0][0].getRegionHeight();
-		// Draw the mine.
-		spriteBatch.draw(mineTexture[0][1], screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight);
-		// Draw the darkest light on top of the mine.
-		spriteBatch.draw(mineTexture[0][0], screenHalfWidth + 53, screenHeight - 22, mineWidth, mineHeight);
-
-		// Render the mine count text.
-		font.draw(spriteBatch, "x " + tank.mines(), screenHalfWidth + 53 + 22, textVerticalPosition);
-
-		spriteBatch.end();
 	}
 
 	private static Vector2 tankCameraCoordinates(Tank tank, Camera camera) {
@@ -226,11 +147,17 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 		// Draw treads.
 		setColor(treadColor);
-		drawTexture(graphics, frames[frameIndex][0]);
+		drawTexture(graphics, frames[frameIndex][treadRow]);
 
 		// Draw body.
 		setColor(bodyColor);
-		drawTexture(graphics, frames[frameIndex][1]);
+		drawTexture(graphics, frames[frameIndex][bodyRow]);
+
+		// Draw highlight, if this is the local player.
+		if (getEntity().isOwnedByLocalPlayer()) {
+			setColor(Color.WHITE);
+			drawTexture(graphics, frames[frameIndex][highlightRow]);
+		}
 	}
 
 	private void animate() {

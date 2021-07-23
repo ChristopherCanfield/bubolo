@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 
+import bubolo.Systems;
 import bubolo.controllers.Controller;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
 import bubolo.net.command.CreateEntity;
 import bubolo.util.Units;
 import bubolo.world.Entity;
@@ -158,14 +157,13 @@ public class ForestGrowthController implements Controller, EntityLifetimeObserve
 			findHighestScores(world);
 		} else {
 			if (world.getTerrainImprovement(nextLocation.column, nextLocation.row) == null) {
-				var args = new Entity.ConstructionArgs(Entity.nextId(),
+				var args = new Entity.ConstructionArgs(
 						nextLocation.column * Units.TileToWorldScale,
 						nextLocation.row * Units.TileToWorldScale,
 						0);
 				world.addEntity(Tree.class, args);
 
-				Network net = NetworkSystem.getInstance();
-				net.send(new CreateEntity(Tree.class, args));
+				Systems.network().send(new CreateEntity(Tree.class, args));
 			}
 
 			world.timer().scheduleSeconds(secondsPerTreeGrowth, this::growNextTree);

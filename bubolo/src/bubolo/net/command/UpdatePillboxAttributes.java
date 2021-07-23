@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.net.command;
 
 import java.util.UUID;
@@ -16,7 +12,6 @@ import bubolo.world.World;
 /**
  * Updates a pillbox's attributes, including its owner.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
 public class UpdatePillboxAttributes extends NetworkCommand {
@@ -52,6 +47,11 @@ public class UpdatePillboxAttributes extends NetworkCommand {
 		pillbox.setNetPillboxAttributes(solid, buildStatus, builtPct);
 
 		var owner = (Tank) world.getEntityOrNull(ownerId);
-		pillbox.setOwner(owner);
+		if ((pillbox.hasOwner() && !pillbox.owner().equals(owner)) ||
+				(!pillbox.hasOwner() && owner != null)) {
+			pillbox.onCaptured(world, owner);
+		} else {
+			pillbox.setOwner(owner);
+		}
 	}
 }

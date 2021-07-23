@@ -3,8 +3,9 @@ package bubolo.world;
 import com.badlogic.gdx.math.Rectangle;
 
 import bubolo.Config;
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
+import bubolo.util.Nullable;
 import bubolo.util.Time;
 
 /**
@@ -98,7 +99,7 @@ public class Mine extends ActorEntity implements Damageable {
 
 	@Override
 	protected void onDispose() {
-		Audio.play(Sfx.MineExplosion, x(), y());
+		Systems.audio().play(Sfx.MineExplosion, x(), y());
 	}
 
 	@Override
@@ -117,7 +118,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	@Override
-	public void receiveDamage(float damage, World world) {
+	public void receiveDamage(World world, float damage, @Nullable ActorEntity damageProvider) {
 		hitPoints -= damage;
 
 		if (!isDisposed() && hitPoints <= 0) {
@@ -130,14 +131,15 @@ public class Mine extends ActorEntity implements Damageable {
 
 		dispose();
 
-		addExplosion(world, x(), y());
+		addExplosion(world, x(), y(), owner());
 		removeTerrainImprovement(world, tileColumn(), tileRow());
 		addCrater(world, x(), y());
 	}
 
-	private static void addExplosion(World world, float x, float y) {
-		var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
-		world.addEntity(MineExplosion.class, args);
+	private static void addExplosion(World world, float x, float y, ActorEntity owner) {
+		var args = new Entity.ConstructionArgs(x, y, 0);
+		var explosion = world.addEntity(MineExplosion.class, args);
+		explosion.setOwner(owner);
 	}
 
 	private static void removeTerrainImprovement(World world, int tileColumn, int tileRow) {
@@ -148,7 +150,7 @@ public class Mine extends ActorEntity implements Damageable {
 	}
 
 	private static Crater addCrater(World world, float x, float y) {
-		var args = new Entity.ConstructionArgs(Entity.nextId(), x, y, 0);
+		var args = new Entity.ConstructionArgs(x, y, 0);
 		return world.addEntity(Crater.class, args);
 	}
 }

@@ -2,12 +2,10 @@ package bubolo.controllers.ai;
 
 import com.badlogic.gdx.math.Intersector;
 
-import bubolo.audio.Audio;
+import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.controllers.ActorEntityController;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
-import bubolo.net.command.ChangeOwner;
+import bubolo.net.command.ActorEntityCaptured;
 import bubolo.util.Units;
 import bubolo.world.Pillbox;
 import bubolo.world.Pillbox.BuildStatus;
@@ -47,7 +45,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 				Tank target = getTarget(world);
 				if (target != null) {
 					if (!pillbox.hasTarget()) {
-						Audio.play(Sfx.PillboxTargetFound, pillbox.x(), pillbox.y());
+						Systems.audio().play(Sfx.PillboxTargetFound, pillbox.x(), pillbox.y());
 						pillbox.setHasTarget(true);
 						firingDelayExpired = false;
 						targetLost = false;
@@ -65,7 +63,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 					world.timer().scheduleSeconds(1.5f, w -> {
 						if (pillbox.hasTarget()) {
 							if (pillbox.hitPoints() > 0) {
-								Audio.play(Sfx.PillboxTargetLost, pillbox.x(), pillbox.y());
+								Systems.audio().play(Sfx.PillboxTargetLost, pillbox.x(), pillbox.y());
 							}
 							pillbox.setHasTarget(false);
 						}
@@ -88,7 +86,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 			for (Tank tank : world.getTanks()) {
 				if (pillbox.owner() != tank && tank.isOwnedByLocalPlayer() && tank.isAlive()) {
 					if (Intersector.overlapConvexPolygons(pillbox.captureBounds(), tank.bounds())) {
-						pillbox.setOwner(tank);
+						pillbox.onCaptured(world, tank);
 						sendNetUpdate(pillbox);
 					}
 				}
@@ -195,7 +193,6 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 	}
 
 	private static void sendNetUpdate(Pillbox pillbox) {
-		Network net = NetworkSystem.getInstance();
-		net.send(new ChangeOwner(pillbox));
+		Systems.network().send(new ActorEntityCaptured(pillbox));
 	}
 }

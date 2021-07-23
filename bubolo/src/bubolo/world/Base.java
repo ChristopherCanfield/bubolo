@@ -1,9 +1,9 @@
 package bubolo.world;
 
 import bubolo.Config;
-import bubolo.net.Network;
-import bubolo.net.NetworkSystem;
-import bubolo.net.command.ChangeOwner;
+import bubolo.Systems;
+import bubolo.net.command.ActorEntityCaptured;
+import bubolo.util.Nullable;
 import bubolo.util.Time;
 
 /**
@@ -93,7 +93,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 					isFriendlyTankOnThisRepairBay = true;
 				} else {
 					refuelingTank = false;
-					processCapture(tank);
+					processCapture(world, tank);
 				}
 			}
 		}
@@ -171,12 +171,11 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 		}
 	}
 
-	private void processCapture(Tank tank) {
+	private void processCapture(World world, Tank tank) {
 		if (owner() == null || (hitPoints <= 0 && tank != owner() && tank.isOwnedByLocalPlayer())) {
-			setOwner(tank);
+			onCaptured(world, tank);
 
-			Network net = NetworkSystem.getInstance();
-			net.send(new ChangeOwner(this));
+			Systems.network().send(new ActorEntityCaptured(this));
 		}
 	}
 
@@ -253,7 +252,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	 * @param damagePoints how much damage the base has taken
 	 */
 	@Override
-	public void receiveDamage(float damagePoints, World world) {
+	public void receiveDamage(World world, float damagePoints, @Nullable ActorEntity damageProvider) {
 		assert (damagePoints >= 0);
 
 		hitPoints -= damagePoints;
@@ -268,6 +267,8 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 				captureTimerExpiredTimerId = world.timer().scheduleSeconds(captureTimeSeconds, this::onCaptureTimeExpired);
 			}
 			capturable = true;
+		} else {
+			Systems.messenger().notifyObjectUnderAttack(world, this, damageProvider);
 		}
 	}
 

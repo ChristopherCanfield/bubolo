@@ -1,20 +1,15 @@
-/**
- *
- */
-
 package bubolo.net.command;
 
+import bubolo.Systems;
 import bubolo.net.Network;
 import bubolo.net.NetworkCommand;
-import bubolo.net.NetworkSystem;
 
 /**
  * Used to send a message across the network.
  *
- * @author BU CS673 - Clone Productions
+ * @author Christopher D. Canfield
  */
-public class SendMessage extends NetworkCommand
-{
+public class SendMessage extends NetworkCommand {
 	private static final long serialVersionUID = 1L;
 
 	public enum MessageType {
@@ -31,12 +26,10 @@ public class SendMessage extends NetworkCommand
 	 * @param messageType the type of message to send.
 	 * @param message the message to send.
 	 */
-	public SendMessage(MessageType messageType, String message)
-	{
-		Network net = NetworkSystem.getInstance();
+	public SendMessage(MessageType messageType, String message) {
 		this.messageType = messageType;
 		if (messageType == MessageType.Message) {
-			this.message = net.getPlayerName() + ": " + message;
+			this.message = Systems.network().getPlayerName() + ": " + message;
 		} else {
 			this.message = message;
 		}
@@ -52,18 +45,17 @@ public class SendMessage extends NetworkCommand
 	}
 
 	@Override
-	protected void execute()
-	{
-		Network net = NetworkSystem.getInstance();
+	protected void execute() {
+		Network net = Systems.network();
 		net.getNotifier().notifyMessageReceived(messageType, message);
 	}
 
 	/**
 	 * Gets the message.
+	 *
 	 * @return the message.
 	 */
-	String getMessage()
-	{
+	String getMessage() {
 		return message;
 	}
 }
