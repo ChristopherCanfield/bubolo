@@ -262,6 +262,18 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
+	 * Provides the world size to the graphics system. Required for the camera.
+	 *
+	 * @param worldWidth the world's width, in world units.
+	 * @param worldHeight the world's height, in world height.
+	 */
+	public void setWorldSize(int worldWidth, int worldHeight) {
+		int worldWidthPixels = (int) Config.DefaultPixelsPerWorldUnit * worldWidth;
+		int worldHeightPixels = (int) Config.DefaultPixelsPerWorldUnit * worldHeight;
+		cameraController.setWorldSize(worldWidthPixels, worldHeightPixels);
+	}
+
+	/**
 	 * Updates and draws the specified screen.
 	 *
 	 * @param screen the ui screen to update.

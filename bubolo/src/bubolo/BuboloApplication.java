@@ -81,6 +81,7 @@ public class BuboloApplication extends AbstractGameApplication {
 	public void setWorld(World world) {
 		super.setWorld(world);
 		world.addEntityLifetimeObserver(graphics);
+		graphics.setWorldSize(world().getWidth(), world().getHeight());
 	}
 
 	public String mapName() {
@@ -249,7 +250,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 			screen.dispose();
 			screen = new GameScreen();
-			world().getLocalTank().setObserver((GameScreen) screen);
+			world().getLocalTank().setInventoryObserver((GameScreen) screen);
 
 			break;
 
@@ -266,7 +267,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 			Tank localTank = (Tank) arg;
 			screen = new GameScreen();
-			localTank.setObserver((GameScreen) screen);
+			localTank.setInventoryObserver((GameScreen) screen);
 
 			break;
 		}

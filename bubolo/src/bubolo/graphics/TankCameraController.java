@@ -12,8 +12,8 @@ import bubolo.world.TankPositionObserver;
 class TankCameraController implements TankPositionObserver {
 	private final Camera camera;
 
-	private int worldWidth;
-	private int worldHeight;
+	private int worldWidthPixels;
+	private int worldHeightPixels;
 
 	private boolean cameraPositionChanged;
 
@@ -24,9 +24,9 @@ class TankCameraController implements TankPositionObserver {
 		this.camera = camera;
 	}
 
-	void setWorldSize(int worldWidth, int worldHeight) {
-		this.worldWidth = worldWidth;
-		this.worldHeight = worldHeight;
+	void setWorldSize(int worldWidthPixels, int worldHeightPixels) {
+		this.worldWidthPixels = worldWidthPixels;
+		this.worldHeightPixels = worldHeightPixels;
 	}
 
 	boolean cameraPositionChanged() {
@@ -39,8 +39,8 @@ class TankCameraController implements TankPositionObserver {
 
 	@Override
 	public void onTankPositionChanged(float newX, float newY) {
-		float newCameraX = calculateCameraX(newX, camera.viewportWidth, worldWidth);
-		float newCameraY = calculateCameraY(newY, camera.viewportHeight, worldHeight);
+		float newCameraX = calculateCameraX(newX, camera.viewportWidth, worldWidthPixels);
+		float newCameraY = calculateCameraY(newY, camera.viewportHeight, worldHeightPixels);
 
 		// The libgdx camera's position is from the bottom left corner:
 		// https://github.com/libgdx/libgdx/wiki/Orthographic-camera
@@ -50,13 +50,13 @@ class TankCameraController implements TankPositionObserver {
 		cameraPositionChanged = true;
 	}
 
-	private static float calculateCameraX(float tankX, float viewportWidth, int worldWidth) {
+	private static float calculateCameraX(float tankX, float viewportWidth, int worldWidthPixels) {
 		float cameraX = tankX - viewportWidth / 2.f;
 		if (cameraX < 0) {
 			cameraX = 0;
-		} else if (cameraX > worldWidth - viewportWidth) {
+		} else if (cameraX > worldWidthPixels - viewportWidth) {
 			// Ensure that screen doesn't go negative if the world is smaller than the camera.
-			float newCameraX = worldWidth - viewportWidth;
+			float newCameraX = worldWidthPixels - viewportWidth;
 			cameraX = (newCameraX >= 0) ? newCameraX : 0;
 		}
 

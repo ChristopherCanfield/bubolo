@@ -232,9 +232,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 		var tank = getEntity();
 		if (tank.isOwnedByLocalPlayer()) {
-			CameraController controller = new TankCameraController(tank);
-			graphics.setCameraController(controller);
-			controller.setCamera(graphics.camera());
+			tank.setPositionObserver(graphics.getCameraController());
 		}
 
 		color = tank.teamColor().color;
