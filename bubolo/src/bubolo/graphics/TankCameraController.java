@@ -1,94 +1,75 @@
 package bubolo.graphics;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.badlogic.gdx.graphics.Camera;
 
-import bubolo.world.Tank;
-import bubolo.world.World;
+import bubolo.world.TankPositionObserver;
 
 /**
  * Controller that moves the camera based on the tank's position.
  *
  * @author BU CS673 - Clone Productions
  */
-class TankCameraController implements CameraController
-{
-	private Tank tank;
-	private Camera camera;
+class TankCameraController implements TankPositionObserver {
+	private final Camera camera;
+
+	private int worldWidth;
+	private int worldHeight;
+
+	private boolean cameraPositionChanged;
 
 	/**
-	 * Constructs a TankCameraController. Package-private because TankCameraControllers are internal
-	 * to the Graphics system.
-	 *
-	 * @param tank the tank that the camera will follow.
+	 * Constructs a TankCameraController. Package-private because TankCameraControllers are internal to the Graphics system.
 	 */
-	TankCameraController(Tank tank)
-	{
-		this.tank = checkNotNull(tank);
+	TankCameraController(Camera camera) {
+		this.camera = camera;
+	}
+
+	void setWorldSize(int worldWidth, int worldHeight) {
+		this.worldWidth = worldWidth;
+		this.worldHeight = worldHeight;
+	}
+
+	boolean cameraPositionChanged() {
+		return cameraPositionChanged;
+	}
+
+	void resetCameraPositionChanged() {
+		cameraPositionChanged = false;
 	}
 
 	@Override
-	public void setCamera(Camera camera)
-	{
-		this.camera = checkNotNull(camera);
-	}
-
-	@Override
-	public boolean hasCamera()
-	{
-		return (camera != null);
-	}
-
-	@Override
-	public void update(World world)
-	{
-		if (camera == null)
-		{
-			throw new IllegalStateException("No camera has been set for this TankCameraController.");
-		}
-
-		float tankX = calculateCameraX(camera, tank, world);
-		float tankY = calculateCameraY(camera, tank, world);
+	public void onTankPositionChanged(float newX, float newY) {
+		float newCameraX = calculateCameraX(newX, camera.viewportWidth, worldWidth);
+		float newCameraY = calculateCameraY(newY, camera.viewportHeight, worldHeight);
 
 		// The libgdx camera's position is from the bottom left corner:
 		// https://github.com/libgdx/libgdx/wiki/Orthographic-camera
-		camera.position.set(Math.round(tankX), Math.round(tankY), 0.f);
+		camera.position.set(newCameraX, newCameraY, 0.f);
 		camera.update();
+
+		cameraPositionChanged = true;
 	}
 
-	private static float calculateCameraX(Camera camera, Tank tank, World world)
-	{
-		float tankX = tank.x();
-
-		float cameraX = tankX - camera.viewportWidth / 2.f;
-		if (cameraX < 0)
-		{
+	private static float calculateCameraX(float tankX, float viewportWidth, int worldWidth) {
+		float cameraX = tankX - viewportWidth / 2.f;
+		if (cameraX < 0) {
 			cameraX = 0;
-		}
-		else if (cameraX > world.getWidth() - camera.viewportWidth)
-		{
+		} else if (cameraX > worldWidth - viewportWidth) {
 			// Ensure that screen doesn't go negative if the world is smaller than the camera.
-			float newCameraX = world.getWidth() - camera.viewportWidth;
+			float newCameraX = worldWidth - viewportWidth;
 			cameraX = (newCameraX >= 0) ? newCameraX : 0;
 		}
 
 		return cameraX;
 	}
 
-	private static float calculateCameraY(Camera camera, Tank tank, World world)
-	{
-		float tankY = tank.y();
-
-		float cameraY = tankY - camera.viewportHeight / 2.f;
-		if (cameraY < 0)
-		{
+	private static float calculateCameraY(float tankY, float viewportHeight, int worldHeight) {
+		float cameraY = tankY - viewportHeight / 2.f;
+		if (cameraY < 0) {
 			cameraY = 0;
-		}
-		else if (cameraY > world.getHeight() - camera.viewportHeight)
-		{
+		} else if (cameraY > worldHeight - viewportHeight) {
 			// Ensure that screen doesn't go negative if the world is smaller than the camera.
-			float newCameraY = world.getHeight() - camera.viewportHeight;
+			float newCameraY = worldHeight - viewportHeight;
 			cameraY = (newCameraY >= 0) ? newCameraY : 0;
 		}
 

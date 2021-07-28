@@ -49,8 +49,8 @@ public class Graphics implements EntityLifetimeObserver {
 
 	private SpriteSystem spriteSystem;
 
-	// The attached camera controllers.
-	private CameraController cameraController;
+	// Controls the camera's position.
+	private TankCameraController cameraController;
 
 	// The comparator used to sort sprites.
 	private static final Comparator<Sprite> sortSpritesByLayerThenName = Comparator.comparing(Sprite::getDrawLayer)
@@ -320,21 +320,19 @@ public class Graphics implements EntityLifetimeObserver {
 		}
 
 		// Get list of sprites, and clip sprites that are outside of the camera's view.
-		spritesInView.clear();
-		for (Sprite sprite : spriteSystem.getSprites()) {
-			if (withinCameraView(camera, sprite)) {
-				spritesInView.add(sprite);
+		if (cameraController.cameraPositionChanged()) {
+			spritesInView.clear();
+			for (Sprite sprite : spriteSystem.getSprites()) {
+				if (withinCameraView(camera, sprite)) {
+					spritesInView.add(sprite);
+				}
 			}
 		}
+		cameraController.resetCameraPositionChanged();
 
 		// Render sprites.
 		drawSpritesByLayer(spritesInView);
 		drawTankUiElements(spritesInView);
-
-		// Update the camera controller.
-		if (cameraController != null) {
-			cameraController.update(world);
-		}
 
 		// Remove destroyed sprites from the list.
 		List<Sprite> sprites = spriteSystem.getSprites();
@@ -346,13 +344,10 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
-	 * Attaches the specified camera controller to the graphics system. Only one camera controller can be attached at a
-	 * time. The camera controller's update method will be called once per draw call.
-	 *
-	 * @param controller the camera controller to attach.
+	 * Returns the camera controller, which controls the camera's position.
 	 */
-	void setCameraController(CameraController controller) {
-		cameraController = controller;
+	TankCameraController getCameraController() {
+		return cameraController;
 	}
 
 	/**

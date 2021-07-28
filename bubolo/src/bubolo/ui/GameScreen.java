@@ -18,14 +18,14 @@ import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.MessageBar;
 import bubolo.ui.gui.UiComponent.OffsetType;
 import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.world.TankObserver;
+import bubolo.world.TankInventoryObserver;
 
 /**
  * The game user interface elements.
  *
  * @author Christopher D. Canfield
  */
-public class GameScreen extends AbstractScreen implements TankObserver, MessageObserver {
+public class GameScreen extends AbstractScreen implements TankInventoryObserver, MessageObserver {
 	private static final Color clearColor =  new Color(0.15f, 0.15f, 0.15f, 1);
 
 	private final BitmapFont font = Fonts.Arial16;

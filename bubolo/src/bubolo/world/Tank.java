@@ -135,7 +135,8 @@ public class Tank extends ActorEntity implements Damageable {
 	private float pillboxBuildLocationX = -1;
 	private float pillboxBuildLocationY = -1;
 
-	private TankObserver observer;
+	private TankInventoryObserver inventoryObserver;
+	private TankPositionObserver positionObserver;
 
 	/**
 	 * Constructs a Tank.
@@ -226,8 +227,12 @@ public class Tank extends ActorEntity implements Damageable {
 		uncoverHiddenMines(world);
 		hidden = checkIfHidden(world);
 
-		if (observer != null && (decelerated || accelerated)) {
-			observer.onTankSpeedChanged(speed, speedKph());
+		if (inventoryObserver != null && (decelerated || accelerated)) {
+			inventoryObserver.onTankSpeedChanged(speed, speedKph());
+		}
+
+		if (positionObserver != null && speed != 0) {
+			positionObserver.onTankPositionChanged(x(), y());
 		}
 
 		decelerated = false;
@@ -408,7 +413,7 @@ public class Tank extends ActorEntity implements Damageable {
 			bullet.setOwner(this);
 
 			ammoCount--;
-			if (observer != null) { observer.onTankAmmoCountChanged(ammoCount); }
+			if (inventoryObserver != null) { inventoryObserver.onTankAmmoCountChanged(ammoCount); }
 
 			Systems.network().send(new CreateActor(Bullet.class, bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
 
@@ -904,7 +909,7 @@ public class Tank extends ActorEntity implements Damageable {
 			ammoCount = maxAmmo;
 		}
 
-		if (observer != null) { observer.onTankAmmoCountChanged(ammoCount); }
+		if (inventoryObserver != null) { inventoryObserver.onTankAmmoCountChanged(ammoCount); }
 	}
 
 	/**
@@ -919,7 +924,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mineCount = maxMines;
 		}
 
-		if (observer != null) { observer.onTankMineCountChanged(mineCount); }
+		if (inventoryObserver != null) { inventoryObserver.onTankMineCountChanged(mineCount); }
 	}
 
 	/**
@@ -942,7 +947,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mine.setOwner(this);
 
 			mineCount--;
-			if (observer != null) { observer.onTankMineCountChanged(mineCount); }
+			if (inventoryObserver != null) { inventoryObserver.onTankMineCountChanged(mineCount); }
 
 			Systems.network().send(new CreateActor(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation(), id()));
 
@@ -1015,17 +1020,34 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Sets the tank observer. Only one observer can be associated with a tank.
+	 * Sets the tank inventory observer. Only one inventory observer can be associated with a tank.
 	 * <p>
 	 * When the observer is first added, each of the observation functions is called with the tank's current status.
 	 * </p>
 	 *
-	 * @param observer the tank observer.
+	 * @param observer the tank inventory observer.
 	 */
-	public void setObserver(TankObserver observer) {
-		this.observer = observer;
+	public void setInventoryObserver(TankInventoryObserver observer) {
+		assert inventoryObserver == null : "Only one inventory observer can be associated with a tank.";
+
+		this.inventoryObserver = observer;
 		observer.onTankAmmoCountChanged(ammoCount);
 		observer.onTankMineCountChanged(mineCount);
 		observer.onTankSpeedChanged(speed, speedKph());
+	}
+
+	/**
+	 * Sets the tank position observer. Only one position observer can be associated with a tank.
+	 * <p>
+	 * When the observer is first added, the {@code tankPositionChanged} method is called with the tank's current position.
+	 * </p>
+	 *
+	 * @param observer the tank position observer.
+	 */
+	public void setPositionObserver(TankPositionObserver observer) {
+		assert positionObserver == null : "Only one position observer can be associated with a tank.";
+
+		this.positionObserver = observer;
+		observer.onTankPositionChanged(x(), y());
 	}
 }
