@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  *
  * @author BU673 - Clone Industries
  */
-class TankExplosionSprite extends Sprite
-{
+class TankExplosionSprite extends Sprite {
 	private TextureRegion[][] frames;
 
 	// The number of milliseconds per frame.
@@ -30,20 +29,17 @@ class TankExplosionSprite extends Sprite
 	private static final int HEIGHT = 32;
 	private static final int WIDTH = 32;
 
-	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "tank_explosion.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	/**
-	 * Constructs a TankExplosionSprite. This is Package-private because sprites should not be
-	 * directly created outside of the graphics system.
+	 * Constructs a TankExplosionSprite. This is Package-private because sprites should not be directly created outside of the
+	 * graphics system.
 	 *
-	 * @param x
-	 *            the x position of the explosion.
-	 * @param y
-	 *            the y position of the explosion.
+	 * @param x the x position of the explosion.
+	 * @param y the y position of the explosion.
 	 */
-	TankExplosionSprite(int x, int y)
-	{
+	TankExplosionSprite(int x, int y) {
 		super(DrawLayer.Top);
 
 		frames = Graphics.getTextureRegion2d(TEXTURE_FILE, WIDTH, HEIGHT);
@@ -56,64 +52,57 @@ class TankExplosionSprite extends Sprite
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
+	protected int getTextureId() {
+		return textureFileHashCode;
+	}
+
+	@Override
+	public void draw(Graphics graphics) {
 		drawTexture(graphics, frames[frameIndex][0]);
 		animate();
 	}
 
-	private void animate()
-	{
+	private void animate() {
 		frameTimeRemaining -= (System.currentTimeMillis() - lastFrameTime);
 		lastFrameTime = System.currentTimeMillis();
-		if (frameTimeRemaining < 0)
-		{
+		if (frameTimeRemaining < 0) {
 			frameTimeRemaining = millisPerFrame;
 
-			if (frameIndex < frames.length - 1)
-			{
+			if (frameIndex < frames.length - 1) {
 				++frameIndex;
-			}
-			else
-			{
+			} else {
 				disposed = true;
 			}
 		}
 	}
 
 	@Override
-	public boolean isDisposed()
-	{
+	public boolean isDisposed() {
 		return disposed;
 	}
 
 	@Override
-	public float getX()
-	{
+	public float getX() {
 		return x;
 	}
 
 	@Override
-	public float getY()
-	{
+	public float getY() {
 		return y;
 	}
 
 	@Override
-	public int getWidth()
-	{
+	public int getWidth() {
 		return WIDTH;
 	}
 
 	@Override
-	public int getHeight()
-	{
+	public int getHeight() {
 		return HEIGHT;
 	}
 
 	@Override
-	public float getRotation()
-	{
+	public float getRotation() {
 		return 0.f;
 	}
 }

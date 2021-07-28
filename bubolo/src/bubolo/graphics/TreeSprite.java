@@ -11,40 +11,41 @@ import bubolo.world.Tree;
  *
  * @author BU673 - Clone Industries
  */
-class TreeSprite extends AbstractEntitySprite<Tree>
-{
+class TreeSprite extends AbstractEntitySprite<Tree> {
 	private Texture image;
 
 	private float rotation;
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "tree.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	/**
-	 * Constructor for the TreeSprite. This is Package-private because sprites should not
-	 * be directly created outside of the graphics system.
+	 * Constructor for the TreeSprite. This is Package-private because sprites should not be directly created outside of the
+	 * graphics system.
 	 *
-	 * @param tree
-	 *            Reference to the Tree that this TreeSprite represents.
+	 * @param tree reference to the Tree that this TreeSprite represents.
 	 */
-	TreeSprite(Tree tree)
-	{
+	TreeSprite(Tree tree) {
 		super(DrawLayer.TerrainImprovements, tree);
 
 		image = Graphics.getTexture(TEXTURE_FILE);
 		Random rand = new Random();
-		rotation = (float) (rand.nextInt(4) * (Math.PI/2));
+		rotation = (float) (rand.nextInt(4) * (Math.PI / 2));
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
+	protected int getTextureId() {
+		return textureFileHashCode;
+	}
+
+	@Override
+	public void draw(Graphics graphics) {
 		drawTexture(graphics, image);
 	}
 
 	@Override
-	public float getRotation()
-	{
+	public float getRotation() {
 		return rotation;
 	}
 }

@@ -16,6 +16,7 @@ class RubbleSprite extends AbstractStaticEntitySprite {
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "rubble.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	/**
 	 * Constructor for the RubbleSprite. This is Package-private because sprites should not be directly created outside of the
@@ -27,6 +28,11 @@ class RubbleSprite extends AbstractStaticEntitySprite {
 		super(DrawLayer.TerrainLevel1, rubble, (float) (MathUtils.random.nextInt(4) * (Math.PI / 2)) );
 
 		texture = Graphics.getTexture(textureFileName);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

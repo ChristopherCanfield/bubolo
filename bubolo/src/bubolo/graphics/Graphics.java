@@ -50,11 +50,12 @@ public class Graphics implements EntityLifetimeObserver {
 	private SpriteSystem spriteSystem;
 
 	// Controls the camera's position.
-	private TankCameraController cameraController;
+	private final TankCameraController cameraController;
 
 	// The comparator used to sort sprites.
-	private static final Comparator<Sprite> sortSpritesByLayerThenName = Comparator.comparing(Sprite::getDrawLayer)
-			.thenComparing(s -> s.getClass().getSimpleName());
+	private static final Comparator<Sprite> sortByLayerThenTextureThenName = Comparator.comparing(Sprite::getDrawLayer)
+			.thenComparingInt(s -> s.getTextureId())
+			.thenComparingInt(s -> s.getClass().getSimpleName().hashCode());
 
 	private final List<Sprite> spritesInView = new ArrayList<Sprite>();
 
@@ -175,6 +176,8 @@ public class Graphics implements EntityLifetimeObserver {
 		uiCamera = new OrthographicCamera(resolutionX, resolutionY);
 		uiCamera.position.x = uiCamera.position.y = 0;
 		uiCamera.update();
+
+		cameraController = new TankCameraController(camera);
 
 		batch = new SpriteBatch(3500);
 		shapeRenderer = new ShapeRenderer(500);
@@ -332,15 +335,12 @@ public class Graphics implements EntityLifetimeObserver {
 		}
 
 		// Get list of sprites, and clip sprites that are outside of the camera's view.
-		if (cameraController.cameraPositionChanged()) {
-			spritesInView.clear();
-			for (Sprite sprite : spriteSystem.getSprites()) {
-				if (withinCameraView(camera, sprite)) {
-					spritesInView.add(sprite);
-				}
+		spritesInView.clear();
+		for (Sprite sprite : spriteSystem.getSprites()) {
+			if (withinCameraView(camera, sprite)) {
+				spritesInView.add(sprite);
 			}
 		}
-		cameraController.resetCameraPositionChanged();
 
 		// Render sprites.
 		drawSpritesByLayer(spritesInView);
@@ -370,7 +370,7 @@ public class Graphics implements EntityLifetimeObserver {
 	private void drawSpritesByLayer(List<Sprite> sprites) {
 		// Sort list by draw layer, to ensure that sprites are drawn in the correct order,
 		// then by sprite type, to facilitate batching.
-		Collections.sort(spritesInView, sortSpritesByLayerThenName);
+		Collections.sort(spritesInView, sortByLayerThenTextureThenName);
 
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		batch.begin();

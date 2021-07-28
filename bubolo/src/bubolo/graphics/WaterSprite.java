@@ -14,6 +14,7 @@ class WaterSprite extends AbstractEntitySprite<Water> {
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "water.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	/**
 	 * Constructor for the WaterSprite. This is Package-private because sprites should not be directly created outside
@@ -25,6 +26,11 @@ class WaterSprite extends AbstractEntitySprite<Water> {
 		super(DrawLayer.TerrainLevel1, water);
 
 		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

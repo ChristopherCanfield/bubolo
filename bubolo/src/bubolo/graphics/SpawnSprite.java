@@ -17,6 +17,7 @@ class SpawnSprite extends AbstractEntitySprite<Spawn> {
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "spawn.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	/**
 	 * Constructor for the SpawnSprite. This is Package-private because sprites should not be directly created outside
@@ -28,6 +29,11 @@ class SpawnSprite extends AbstractEntitySprite<Spawn> {
 		super(DrawLayer.Top, spawn);
 
 		image = Graphics.getTexture(TEXTURE_FILE);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

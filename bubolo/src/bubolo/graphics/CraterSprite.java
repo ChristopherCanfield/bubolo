@@ -12,6 +12,7 @@ import bubolo.world.Crater;
  */
 class CraterSprite extends AbstractEntitySprite<Crater> {
 	private static final String textureFileName = "crater.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	private static final int frameCount = 10;
 	private static final int frameWidth = 32;
@@ -36,6 +37,11 @@ class CraterSprite extends AbstractEntitySprite<Crater> {
 		super(DrawLayer.TerrainImprovements, crater);
 
 		frames = Graphics.getTextureRegion1d(textureFileName, frameCount, frameWidth, framePaddingWidth);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

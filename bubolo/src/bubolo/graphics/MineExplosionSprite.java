@@ -14,6 +14,7 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion> {
 	private final TextureRegion[] frames;
 
 	private static final String textureFileName = "mine_explosion.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 	private static final int frameCount = 12;
 	private static final int frameWidth = 60;
 
@@ -35,6 +36,11 @@ class MineExplosionSprite extends AbstractEntitySprite<MineExplosion> {
 				frameIndex++;
 			});
 		}
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

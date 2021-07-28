@@ -42,6 +42,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "repair_bay.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	private static final String bulletTextureFile = "bullet.png";
 	private static final String mineTextureFile = "mine.png";
@@ -60,6 +61,11 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20)[1][1];
 		repairPointsIconTexture = Graphics.getTexture(repairPointsIconFile);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

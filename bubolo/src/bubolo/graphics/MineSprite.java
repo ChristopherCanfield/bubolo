@@ -34,6 +34,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "mine.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	/**
 	 * Constructor for the MineSprite. This is Package-private because sprites should not be directly created outside of the
@@ -45,6 +46,11 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 		super(DrawLayer.Mines, mine);
 
 		frames = Graphics.getTextureRegion2d(textureFileName, 21, 20);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

@@ -16,6 +16,7 @@ class BulletSprite extends AbstractEntitySprite<Bullet> implements Bullet.Bullet
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "bullet.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	/**
 	 * Constructor for the BulletSprite. This is Package-private because sprites should not be directly created outside of the
@@ -28,6 +29,11 @@ class BulletSprite extends AbstractEntitySprite<Bullet> implements Bullet.Bullet
 
 		image = Graphics.getTexture(TEXTURE_FILE);
 		bullet.setBulletHitObjectObserver(this);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

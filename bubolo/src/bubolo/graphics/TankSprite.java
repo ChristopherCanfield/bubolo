@@ -49,8 +49,8 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
 
-	/** The file name of the texture. */
 	private static final String textureFileName = "tank.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	private final ParticleEffect[] smokeEmitter = new ParticleEffect[3];
 	private static final String smokeParticleEffectLowDamageFile = "res/particles/Particle Park Smoke Low Damage.p";
@@ -77,6 +77,11 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		smokeEmitter[2] = new ParticleEffect();
 		smokeEmitter[2].load(Gdx.files.internal(smokeParticleEffectHighDamageFile), Gdx.files.internal("res/particles"));
 		smokeEmitter[2].start();
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	/**

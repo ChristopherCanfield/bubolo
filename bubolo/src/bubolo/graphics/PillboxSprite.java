@@ -21,6 +21,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	private static final int pillboxNoTargetColumn = 0;
 	private static final int pillboxHasTargetColumn = 1;
@@ -45,6 +46,11 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 		super(defaultDrawLayer, pillbox);
 
 		frames = Graphics.getTextureRegion2d(textureFileName, 32, 32, 1, 0);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	private void updateColor() {
