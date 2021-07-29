@@ -55,8 +55,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	private void updateColor() {
 		var pillbox = getEntity();
-		var owner = pillbox.owner();
-		if (pillbox.hasOwner() && owner instanceof Tank tank) {
+		if (pillbox.owner() instanceof Tank tank) {
 			lightColor = tank.teamColor().color;
 		} else {
 			lightColor = Color.LIGHT_GRAY;

@@ -60,7 +60,7 @@ class TankCameraController implements TankPositionObserver {
 			cameraX = (newCameraX >= 0) ? newCameraX : 0;
 		}
 
-		return cameraX;
+		return Math.round(cameraX);
 	}
 
 	private static float calculateCameraY(float tankY, float viewportHeight, int worldHeight) {
@@ -73,6 +73,6 @@ class TankCameraController implements TankPositionObserver {
 			cameraY = (newCameraY >= 0) ? newCameraY : 0;
 		}
 
-		return cameraY;
+		return Math.round(cameraY);
 	}
 }
