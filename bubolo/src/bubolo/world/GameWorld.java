@@ -85,6 +85,7 @@ public class GameWorld implements World {
 	//			and the map importer will handle these issues on its side.
 	private boolean isFirstUpdate = true;
 
+	// @TODO (cdc 2021-07-29): Set the seed.
 	private final Random randomGenerator = new Random();
 
 	// The world is divided into six zones for the purpose of notifications and player spawning.

@@ -148,6 +148,16 @@ public abstract class ActorEntity extends Entity implements Collidable {
 		return (owner == null) ? false : owner.isOwnedByLocalPlayer();
 	}
 
+	public boolean isAlliedWithLocalPlayer() {
+		if (owner == null) {
+			return false;
+		} else if (owner instanceof Tank tank) {
+			return tank.isAlliedWithLocalPlayer();
+		} else {
+			return owner.isAlliedWithLocalPlayer();
+		}
+	}
+
 	/**
 	 * Called once per tick by the game world.
 	 *

@@ -100,7 +100,7 @@ class Client implements NetworkSubsystem, Runnable {
 
 					@Override
 					public void execute() {
-						Systems.messenger().notifyPlayerDisconnected("You have");
+						Systems.messenger().notifyPlayerDisconnected(playerName);
 					}
 				});
 

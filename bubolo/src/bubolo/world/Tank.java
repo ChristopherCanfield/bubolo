@@ -3,7 +3,9 @@ package bubolo.world;
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.badlogic.gdx.math.Circle;
@@ -36,6 +38,9 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private String playerName;
 	private TeamColor playerColor;
+	private boolean controlledByLocalPlayer;
+	private final Set<Tank> allies = new HashSet<>(4);
+	private boolean alliedWithLocalPlayer;
 
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 2.77779f; // 2.77779 WU per tick is about 90 Kph.
@@ -126,8 +131,6 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private final List<Controller> controllers = new ArrayList<>();
 
-	private boolean controlledByLocalPlayer;
-
 	// The pillbox that is being carried, built, or unbuilt (packed).
 	private Pillbox carriedPillbox;
 	private boolean unbuildPillbox;
@@ -149,6 +152,9 @@ public class Tank extends ActorEntity implements Damageable {
 
 		boundingCircle = new Circle(x(), y(), boundingCircleRadius);
 		updateBounds();
+
+		// Simplifies some checks.
+		allies.add(this);
 	}
 
 	/**
@@ -257,6 +263,42 @@ public class Tank extends ActorEntity implements Damageable {
 	@Override
 	public boolean isOwnedByLocalPlayer() {
 		return controlledByLocalPlayer;
+	}
+
+	public void addAlly(Tank tank) {
+		this.allies.add(tank);
+		if (tank.isOwnedByLocalPlayer()) {
+			alliedWithLocalPlayer = true;
+		}
+	}
+
+	public void removeAlly(Tank tank) {
+		this.allies.remove(tank);
+		if (tank.isOwnedByLocalPlayer()) {
+			alliedWithLocalPlayer = false;
+		}
+	}
+
+	/**
+	 * @return whether this tank is either controlled by or allied with the local player.
+	 */
+	@Override
+	public boolean isAlliedWithLocalPlayer() {
+		return controlledByLocalPlayer || alliedWithLocalPlayer;
+	}
+
+	/**
+	 * @param actor the actor to check.
+	 * @return whether this tank is allied with the specified actor, or its owner.
+	 */
+	public boolean isAlliedWith(ActorEntity actor) {
+		if (actor instanceof Tank tank) {
+			return allies.contains(tank);
+		} else if (actor.owner() instanceof Tank tank) {
+			return allies.contains(tank);
+		} else {
+			return false;
+		}
 	}
 
 	/**

@@ -55,7 +55,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 							firingDelayExpired = true;
 						});
 					} else if (firingDelayExpired) {
-						fire(getTargetDirection(target), world);
+						fire(getAngleToTarget(target), world);
 					}
 				} else if (pillbox.hasTarget() && !targetLost) {
 					targetLost = true;
@@ -98,11 +98,13 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 	 * Finds a target for the pillbox.
 	 *
 	 * @param world reference to the game world
-	 *
-	 * @return target always the closest tank that is within range, or null if no tank is within range.
+	 * @return target the closest enemy tank that is within range, or null if no tank is within range.
 	 */
 	private Tank getTarget(World world) {
-		var pillbox = parent();
+		double maxRange = parent().range();
+		float x = parent().x();
+		float y = parent().y();
+		var owner = parent().owner();
 
 		Tank target = null;
 		double targetDistance = Integer.MAX_VALUE;
@@ -115,36 +117,23 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 		for (int i = 0; i < tanks.size(); i++) {
 			var tank = tanks.get(i);
 			// Don't attack the owner's tank, or hidden tanks.
-			if (!tank.equals(pillbox.owner()) && !tank.isHidden()) {
-				if (targetInRange(tank)) {
-					double xdistance = Math.abs(pillbox.x() - tank.x());
-					double ydistance = Math.abs(pillbox.y() - tank.y());
-					double newTargetDistance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
-
-					// Select the closest tank as the target.
-					if (newTargetDistance < targetDistance) {
-						target = tank;
-						targetDistance = newTargetDistance;
-					}
+			if (!tank.isAlliedWith(owner) && !tank.isHidden()) {
+				double newTargetDistance = distance(x, y, tank.x(), tank.y());
+				if (newTargetDistance < maxRange && newTargetDistance < targetDistance) {
+					target = tank;
+					targetDistance = newTargetDistance;
 				}
 			}
 		}
 		return target;
 	}
 
-	/**
-	 * determine if the target tank is within range of the pillbox
-	 *
-	 * @param target the tank the pillbox is targeting
-	 * @return targetInRange returns true if the target is within range of this pillbox
-	 */
-	private boolean targetInRange(Tank target) {
-		double xdistance = Math.abs(parent().x() - target.x());
-		double ydistance = Math.abs(parent().y() - target.y());
-		double distance = Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
-
-		return (distance < parent().range());
+	private static double distance(float pillboxX, float pillboxY, float targetX, float targetY) {
+		double xdistance = Math.abs(pillboxX - targetX);
+		double ydistance = Math.abs(pillboxY - targetY);
+		return Math.sqrt((xdistance * xdistance) + (ydistance * ydistance));
 	}
+
 
 	/**
 	 * returns the angle to the closest target for the pillbox
@@ -152,12 +141,12 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 	 * @param target the Tank that the pillbox will target.
 	 * @return the angle between this pillbox and the target.
 	 */
-	private float getTargetDirection(Tank target) {
+	private float getAngleToTarget(Tank target) {
 		double xvector = target.x() - parent().x();
 		double yvector = target.y() - parent().y();
-		float direction = (float) Math.atan2(yvector, xvector);
+		float radians = (float) Math.atan2(yvector, xvector);
 
-		return direction;
+		return radians;
 	}
 
 	/**
