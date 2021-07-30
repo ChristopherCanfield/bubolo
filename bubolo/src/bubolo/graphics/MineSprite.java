@@ -92,8 +92,7 @@ class MineSprite extends AbstractEntitySprite<Mine> {
 	}
 
 	private void initialize() {
-		var mineOwner = getEntity().owner();
-		if (mineOwner instanceof Tank tank) {
+		if (getEntity().owner() instanceof Tank tank) {
 			color = tank.teamColor().color;
 		} else {
 			color = TeamColor.Neutral.color;

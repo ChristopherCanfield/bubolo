@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 
 import bubolo.GameApplication;
+import bubolo.PlayerInfo;
 import bubolo.GameApplication.State;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
@@ -22,7 +23,6 @@ import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
-import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressListener;
 import bubolo.net.ServerAddressMessage;
 import bubolo.ui.gui.ButtonGroup;

@@ -139,7 +139,8 @@ public class Tank extends ActorEntity implements Damageable {
 	private float pillboxBuildLocationY = -1;
 
 	private TankInventoryObserver inventoryObserver;
-	private TankPositionObserver positionObserver;
+	private static final TankPositionObserver nullObserver = (x, y) -> {};
+	private TankPositionObserver positionObserver = nullObserver;
 
 	/**
 	 * Constructs a Tank.
@@ -206,6 +207,8 @@ public class Tank extends ActorEntity implements Damageable {
 			carriedPillbox = null;
 			pillboxBuildLocationX = pillboxBuildLocationY = 0;
 
+			positionObserver.onTankPositionChanged(x(), y());
+
 			notifyNetwork();
 		}
 	}
@@ -237,7 +240,7 @@ public class Tank extends ActorEntity implements Damageable {
 			inventoryObserver.onTankSpeedChanged(speed, speedKph());
 		}
 
-		if (positionObserver != null && speed != 0) {
+		if (speed != 0) {
 			positionObserver.onTankPositionChanged(x(), y());
 		}
 
@@ -266,16 +269,21 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	public void addAlly(Tank tank) {
-		this.allies.add(tank);
-		if (tank.isOwnedByLocalPlayer()) {
-			alliedWithLocalPlayer = true;
+		if (tank != this) {
+			this.allies.add(tank);
+			if (tank.isOwnedByLocalPlayer()) {
+				System.out.println("Tank is now allied with the local player.");
+				alliedWithLocalPlayer = true;
+			}
 		}
 	}
 
 	public void removeAlly(Tank tank) {
-		this.allies.remove(tank);
-		if (tank.isOwnedByLocalPlayer()) {
-			alliedWithLocalPlayer = false;
+		if (tank != this) {
+			this.allies.remove(tank);
+			if (tank.isOwnedByLocalPlayer()) {
+				alliedWithLocalPlayer = false;
+			}
 		}
 	}
 
@@ -288,11 +296,13 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * @param actor the actor to check.
+	 * @param actor the actor to check. May be null.
 	 * @return whether this tank is allied with the specified actor, or its owner.
 	 */
-	public boolean isAlliedWith(ActorEntity actor) {
-		if (actor instanceof Tank tank) {
+	public boolean isAlliedWith(@Nullable ActorEntity actor) {
+		if (actor == null) {
+			return false;
+		} else if (actor instanceof Tank tank) {
 			return allies.contains(tank);
 		} else if (actor.owner() instanceof Tank tank) {
 			return allies.contains(tank);
@@ -1087,7 +1097,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param observer the tank position observer.
 	 */
 	public void setPositionObserver(TankPositionObserver observer) {
-		assert positionObserver == null : "Only one position observer can be associated with a tank.";
+		assert positionObserver == nullObserver || positionObserver == null : "Only one position observer can be associated with a tank.";
 
 		this.positionObserver = observer;
 		observer.onTankPositionChanged(x(), y());

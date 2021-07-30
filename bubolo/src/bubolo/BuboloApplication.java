@@ -16,7 +16,6 @@ import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
-import bubolo.net.PlayerInfo;
 import bubolo.net.command.CreateTank;
 import bubolo.ui.GameScreen;
 import bubolo.ui.LoadingScreen;

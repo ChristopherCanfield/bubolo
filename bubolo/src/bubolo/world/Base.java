@@ -127,7 +127,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	}
 
 	private boolean refuelTank(Tank tank) {
-		if (tank == owner() && tank.isAlive() && !isTankRefueled(tank)) {
+		if (tank.isAlive() && tank.isAlliedWith(owner()) && !isTankRefueled(tank)) {
 			if (readyToResupplyTank) {
 				float refuelRepairPoints;
 				if (tank.hitPoints() < tank.maxHitPoints()) {
@@ -311,7 +311,7 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 
 	@Override
 	public boolean isSolid() {
-		return (hitPoints > 0 && owner() != null && !isOwnedByLocalPlayer());
+		return (hitPoints > 0 && owner() != null && !isAlliedWithLocalPlayer());
 	}
 
 	@Override

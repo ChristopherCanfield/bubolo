@@ -1,4 +1,4 @@
-package bubolo.net;
+package bubolo;
 
 import java.net.InetAddress;
 

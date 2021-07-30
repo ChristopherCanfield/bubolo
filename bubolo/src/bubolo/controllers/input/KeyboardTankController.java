@@ -5,6 +5,7 @@ import static com.badlogic.gdx.Gdx.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
+import bubolo.Config;
 import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.controllers.Controller;
@@ -32,8 +33,29 @@ public class KeyboardTankController implements Controller {
 		this.tank = tank;
 	}
 
+	// @TODO (cdc 2021-07-29): For testing. Remove this after testing is complete.
+	private boolean tankAllyButtonPressed;
+	private int timer;
+
 	@Override
 	public void update(World world) {
+		// @TODO (cdc 2021-07-29): For testing. Remove this after testing is complete.
+		if (input.isKeyPressed(Keys.NUM_1) && timer <= 0) {
+			var tanks = world.getTanks();
+			if (!tankAllyButtonPressed) {
+				tanks.forEach(t -> tank.addAlly(t));
+				tanks.forEach(t -> t.addAlly(tank));
+				System.out.println("Allied with all tanks.");
+			} else {
+				tanks.forEach(t -> tank.removeAlly(t));
+				tanks.forEach(t -> t.removeAlly(tank));
+				System.out.println("All tanks are now your enemy!");
+			}
+			timer = Config.FPS;
+			tankAllyButtonPressed = !tankAllyButtonPressed;
+		}
+		timer--;
+
 		processMovement(tank);
 		processCannon(tank, world);
 		processMineLaying(tank, world);

@@ -97,7 +97,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 	}
 
 	private static Color getTintColor(Base base) {
-		if (base.hasOwner() && base.owner() instanceof Tank tank) {
+		if (base.owner() instanceof Tank tank) {
 			return tank.teamColor().color;
 		} else {
 			return TeamColor.Neutral.color;
@@ -146,7 +146,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var repairBay = getEntity();
-		if (repairBay.isOwnedByLocalPlayer()) {
+		if (repairBay.isAlliedWithLocalPlayer()) {
 			StatusBarRenderer.drawHealthBar(repairBay, graphics.shapeRenderer(), graphics.camera());
 
 			if (repairBay.isFriendlyTankOnThisRepairBay()) {

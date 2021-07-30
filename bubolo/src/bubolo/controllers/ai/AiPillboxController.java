@@ -117,7 +117,7 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 		for (int i = 0; i < tanks.size(); i++) {
 			var tank = tanks.get(i);
 			// Don't attack the owner's tank, or hidden tanks.
-			if (!tank.isAlliedWith(owner) && !tank.isHidden()) {
+			if (!tank.isHidden() && !tank.isAlliedWith(owner)) {
 				double newTargetDistance = distance(x, y, tank.x(), tank.y());
 				if (newTargetDistance < maxRange && newTargetDistance < targetDistance) {
 					target = tank;

@@ -19,12 +19,12 @@ import com.badlogic.gdx.utils.Align;
 
 import bubolo.BuboloApplication;
 import bubolo.Config;
+import bubolo.PlayerInfo;
 import bubolo.GameApplication.State;
 import bubolo.Systems;
 import bubolo.graphics.Graphics;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
-import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressMessage;
 import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;

@@ -205,7 +205,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 	private Visibility visibility() {
 		if (getEntity().isHidden()) {
-			if (getEntity().isOwnedByLocalPlayer()) {
+			if (getEntity().isAlliedWithLocalPlayer()) {
 				return Visibility.Hidden;
 			} else {
 				return Visibility.NetworkTankHidden;
