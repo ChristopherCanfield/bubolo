@@ -272,7 +272,6 @@ public class Tank extends ActorEntity implements Damageable {
 		if (tank != this) {
 			this.allies.add(tank);
 			if (tank.isOwnedByLocalPlayer()) {
-				System.out.println("Tank is now allied with the local player.");
 				alliedWithLocalPlayer = true;
 			}
 		}
