@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import bubolo.Config;
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkGameCommand;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
 import bubolo.world.World;
@@ -15,7 +15,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class MoveEntity extends NetworkCommand {
+public class MoveEntity implements NetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -38,7 +38,7 @@ public class MoveEntity extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute(World world) {
+	public void execute(World world) {
 		try {
 			ActorEntity entity = (ActorEntity) world.getEntity(id);
 			entity.setPosition(x, y).setRotation(rotation);

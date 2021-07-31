@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package bubolo.net;
 
 import static org.junit.Assert.assertEquals;
@@ -90,20 +86,6 @@ public class NetworkObserverNotifierTest
 
 		assertEquals(CLIENT, o.getClientName());
 	}
-
-	/**
-	 * Test method for {@link bubolo.net.NetworkObserverNotifier#notifyGameStart(int)}.
-	 */
-//	@Test
-//	public void testNotifyGameStart()
-//	{
-//		notifier.addObserver(o);
-//
-//		final int TIME = 8;
-//		notifier.notifyGameStart(TIME);
-//
-//		assertEquals(TIME, o.getTimeUntilStart());
-//	}
 
 	@Test
 	public void testNotifyClientReady() {

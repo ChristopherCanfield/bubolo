@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.util.List;
 
+import bubolo.GameApplication;
 import bubolo.world.Spawn;
 
 /**
@@ -66,27 +67,15 @@ public class MockNetwork implements Network
 	}
 
 	@Override
-	public NetworkObserverNotifier getNotifier()
-	{
-		return null;
-	}
-
-	@Override
 	public boolean isServer()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public String getPlayerName()
 	{
-		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void update(WorldOwner worldOwner) {
 	}
 
 	@Override
@@ -95,5 +84,9 @@ public class MockNetwork implements Network
 
 	@Override
 	public void startGame(List<Spawn> initialSpawnPositions) {
+	}
+
+	@Override
+	public void update(GameApplication app) {
 	}
 }

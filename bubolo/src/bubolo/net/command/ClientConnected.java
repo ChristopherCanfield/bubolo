@@ -1,14 +1,15 @@
 package bubolo.net.command;
 
-import bubolo.Systems;
-import bubolo.net.NetworkCommand;
+import bubolo.GameApplication;
+import bubolo.net.NetworkApplicationCommand;
+import bubolo.net.NetworkObserverNotifier;
 
 /**
  * Notifies players that a new client has connected.
  *
  * @author Christopher D. Canfield
  */
-public class ClientConnected extends NetworkCommand {
+public class ClientConnected implements NetworkApplicationCommand {
 	private static final long serialVersionUID = 2L;
 
 	private final String playerName;
@@ -32,7 +33,7 @@ public class ClientConnected extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute() {
-		Systems.network().getNotifier().notifyClientConnected(playerName);
+	public void execute(GameApplication app, NetworkObserverNotifier notifier) {
+		notifier.notifyClientConnected(playerName);
 	}
 }

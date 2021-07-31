@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import bubolo.GameApplication;
 import bubolo.Systems;
 import bubolo.net.Network;
-import bubolo.net.NetworkCommand;
-import bubolo.net.WorldOwner;
+import bubolo.net.NetworkApplicationCommand;
+import bubolo.net.NetworkObserverNotifier;
 import bubolo.world.Entity;
 import bubolo.world.GameWorld;
 import bubolo.world.World;
@@ -19,7 +20,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class SendMap extends NetworkCommand {
+public class SendMap implements NetworkApplicationCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final List<EntitySerializationData> entities = new ArrayList<>();
@@ -46,9 +47,9 @@ public class SendMap extends NetworkCommand {
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner) {
+	public void execute(GameApplication app, NetworkObserverNotifier notifier) {
 		World world = new GameWorld(Short.toUnsignedInt(columns), Short.toUnsignedInt(rows));
-		worldOwner.setWorld(world);
+		app.setWorld(world);
 
 		for (var entityData : entities) {
 			var args = new Entity.ConstructionArgs(entityData.id(), entityData.x(), entityData.y(),
@@ -62,7 +63,7 @@ public class SendMap extends NetworkCommand {
 		// Notify the server that the map has been received.
 		Network net = Systems.network();
 		net.send(new MapDownloadComplete(net.getPlayerName()));
-		net.getNotifier().notifyClientReady(net.getPlayerName());
+		notifier.notifyClientReady(net.getPlayerName());
 	}
 
 	// Minimal data record for sending map data to remote players.

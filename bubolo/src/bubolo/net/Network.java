@@ -13,6 +13,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bubolo.GameApplication;
 import bubolo.world.Spawn;
 
 /**
@@ -56,7 +57,7 @@ public interface Network {
 	void connect(InetAddress serverIpAddress, String clientName) throws NetworkException, IllegalStateException;
 
 	/**
-	 * Queues a network command to be sent to the other players.
+	 * Queues a network command to be sent to the connected players.
 	 *
 	 * @param command the network command to send.
 	 */
@@ -74,9 +75,9 @@ public interface Network {
 	/**
 	 * Performs all network system updates. This should be called once per game tick.
 	 *
-	 * @param worldOwner a game world owner.
+	 * @param app the core game application object.
 	 */
-	void update(WorldOwner worldOwner);
+	void update(GameApplication app);
 
 	/**
 	 * Runs a NetworkCommand in the game logic thread.
@@ -112,7 +113,7 @@ public interface Network {
 	 *
 	 * @return reference to the observer notifier.
 	 */
-	NetworkObserverNotifier getNotifier();
+	//NetworkObserverNotifier getNotifier();
 
 	/**
 	 * Shuts down the network system.

@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import bubolo.GameApplication;
 import bubolo.Systems;
 import bubolo.net.command.ClientConnected;
 
@@ -95,11 +96,11 @@ class Client implements NetworkSubsystem, Runnable {
 			e.printStackTrace();
 		} finally {
 			try {
-				network.postToGameThread(new NetworkCommand() {
+				network.postToGameThread(new NetworkApplicationCommand() {
 					private static final long serialVersionUID = 1346400800725660320L;
 
 					@Override
-					public void execute() {
+					public void execute(GameApplication app, NetworkObserverNotifier notifier) {
 						Systems.messenger().notifyPlayerDisconnected(playerName);
 					}
 				});

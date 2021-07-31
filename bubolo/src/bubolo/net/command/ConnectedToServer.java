@@ -1,14 +1,15 @@
 package bubolo.net.command;
 
-import bubolo.Systems;
-import bubolo.net.NetworkCommand;
+import bubolo.GameApplication;
+import bubolo.net.NetworkApplicationCommand;
+import bubolo.net.NetworkObserverNotifier;
 
 /**
  * Notifies a client that it has connected to the server.
  *
  * @author Christopher D. Canfield
  */
-public class ConnectedToServer extends NetworkCommand {
+public class ConnectedToServer implements NetworkApplicationCommand {
 	private static final long serialVersionUID = 4L;
 
 	private final String clientName;
@@ -26,8 +27,8 @@ public class ConnectedToServer extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute() {
-		Systems.network().getNotifier().notifyConnect(clientName, serverName);
+	public void execute(GameApplication app, NetworkObserverNotifier notifier) {
+		notifier.notifyConnect(clientName, serverName);
 	}
 
 	/**

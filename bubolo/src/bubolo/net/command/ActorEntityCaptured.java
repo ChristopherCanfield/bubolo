@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import bubolo.Config;
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkGameCommand;
 import bubolo.util.GameLogicException;
 import bubolo.world.ActorEntity;
 import bubolo.world.World;
@@ -20,7 +20,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class ActorEntityCaptured extends NetworkCommand {
+public class ActorEntityCaptured implements NetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -37,7 +37,7 @@ public class ActorEntityCaptured extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute(World world) {
+	public void execute(World world) {
 		try {
 			ActorEntity ownable = (ActorEntity) world.getEntity(id);
 			ActorEntity newOwner = (ActorEntity) world.getEntityOrNull(ownerId);

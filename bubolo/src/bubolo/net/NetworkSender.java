@@ -2,18 +2,19 @@ package bubolo.net;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 import bubolo.Config;
 
 /**
- * Sends NetworkCommands to connected players.
+ * Sends NetworkCommand or NetworkGameCommand objects to connected players.
  *
  * @author Christopher D. Canfield
  */
 class NetworkSender implements Runnable {
 	private final ObjectOutputStream stream;
-	private final NetworkCommand command;
+	private final Serializable command;
 
 	/**
 	 * Constructs a NetworkSender.
@@ -21,7 +22,8 @@ class NetworkSender implements Runnable {
 	 * @param stream the object output stream to the client.
 	 * @param command the command to send.
 	 */
-	NetworkSender(ObjectOutputStream stream, NetworkCommand command) {
+	NetworkSender(ObjectOutputStream stream, Serializable command) {
+		assert command instanceof NetworkCommand || command instanceof NetworkGameCommand;
 		this.stream = stream;
 		this.command = command;
 	}

@@ -1,14 +1,15 @@
 package bubolo.net.command;
 
-import bubolo.Systems;
-import bubolo.net.NetworkCommand;
+import bubolo.GameApplication;
+import bubolo.net.NetworkApplicationCommand;
+import bubolo.net.NetworkObserverNotifier;
 
 /**
  * Notifies the server that a client has completed downloaded the map.
  *
  * @author Christopher D. Canfield
  */
-public class MapDownloadComplete extends NetworkCommand {
+public class MapDownloadComplete implements NetworkApplicationCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final String playerName;
@@ -18,7 +19,7 @@ public class MapDownloadComplete extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute() {
-		Systems.network().getNotifier().notifyClientReady(playerName);
+	public void execute(GameApplication app, NetworkObserverNotifier notifier) {
+		notifier.notifyClientReady(playerName);
 	}
 }

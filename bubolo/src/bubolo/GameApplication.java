@@ -2,15 +2,15 @@ package bubolo;
 
 import com.badlogic.gdx.ApplicationListener;
 
-import bubolo.net.WorldOwner;
 import bubolo.util.Nullable;
+import bubolo.world.World;
 
 /**
  * Defines the interface for the main game class.
  *
  * @author Christopher D. Canfield
  */
-public interface GameApplication extends ApplicationListener, WorldOwner {
+public interface GameApplication extends ApplicationListener {
 	/**
 	 * The application's state.
 	 *
@@ -79,4 +79,16 @@ public interface GameApplication extends ApplicationListener, WorldOwner {
 	 * @return the application's state.
 	 */
 	State getState();
+
+	/**
+	 * Sets the active game world.
+	 *
+	 * @param world the active game world.
+	 */
+	void setWorld(World world);
+
+	/**
+	 * @return the active game world, or null if no world is active.
+	 */
+	public World world();
 }

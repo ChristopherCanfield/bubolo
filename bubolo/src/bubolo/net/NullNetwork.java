@@ -3,11 +3,10 @@ package bubolo.net;
 import java.net.InetAddress;
 import java.util.List;
 
+import bubolo.GameApplication;
 import bubolo.world.Spawn;
 
 public class NullNetwork implements Network {
-	private final NetworkObserverNotifier notifier = new NetworkObserverNotifier();
-
 	private String playerName;
 
 	@Override
@@ -38,7 +37,7 @@ public class NullNetwork implements Network {
 	}
 
 	@Override
-	public void update(WorldOwner worldOwner) {
+	public void update(GameApplication app) {
 	}
 
 	@Override
@@ -58,12 +57,6 @@ public class NullNetwork implements Network {
 	}
 
 	@Override
-	public NetworkObserverNotifier getNotifier() {
-		return notifier;
-	}
-
-	@Override
 	public void dispose() {
 	}
-
 }

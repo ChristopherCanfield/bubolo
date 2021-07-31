@@ -5,7 +5,7 @@ package bubolo.net;
  */
 public interface NetworkSubsystem {
 	/**
-	 * Queues a network command to be sent to the other players.
+	 * Queues a network command to be sent to connected players.
 	 *
 	 * @param command the network command to send.
 	 */
