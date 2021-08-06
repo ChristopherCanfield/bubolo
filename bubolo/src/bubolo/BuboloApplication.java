@@ -6,7 +6,6 @@ import static bubolo.Config.TargetWindowWidth;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -25,6 +24,7 @@ import bubolo.ui.MapSelectionScreen;
 import bubolo.ui.MultiplayerSetupScreen;
 import bubolo.ui.MultiplayerSetupScreen.PlayerType;
 import bubolo.ui.Screen;
+import bubolo.util.FrameInfo;
 import bubolo.util.GameRuntimeException;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
@@ -54,24 +54,26 @@ public class BuboloApplication extends AbstractGameApplication {
 	// Player information for network games.
 	private PlayerInfo playerInfo;
 
+	// Whether to print the amount of time each frame takes.
+	private boolean printFrameTime;
+	private FrameInfo frameInfo;
+
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
 	 *
 	 * @param windowWidth the width of the window.
 	 * @param windowHeight the height of the window.
-	 * @param commandLineArgs the arguments passed to the application through the command line. The first argument
-	 * specifies the map to use. Any additional arguments are ignored.
+	 * @param commandLineArgs the arguments passed to the application through the command line. The only application setting is -frameInfo, which prints
+	 * frame debug info.
 	 */
 	public BuboloApplication(int windowWidth, int windowHeight, String[] commandLineArgs) {
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
 
 		// The first command line argument specifies the map to use. If there is no argument, use the default map.
-		if (commandLineArgs.length != 0) {
-			defaultMapName = commandLineArgs[0];
-			Path argPath = FileSystems.getDefault().getPath("res", "maps", defaultMapName);
-			if (Files.exists(argPath)) {
-				mapPath = argPath;
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equals("-frameInfo")) {
+				printFrameTime = true;
 			}
 		}
 	}
@@ -98,6 +100,7 @@ public class BuboloApplication extends AbstractGameApplication {
 		initializeLogger();
 
 		graphics = new Graphics(windowWidth, windowHeight);
+		frameInfo = new FrameInfo(graphics);
 
 		setState(State.MainMenu);
 	}
@@ -144,10 +147,19 @@ public class BuboloApplication extends AbstractGameApplication {
 				break;
 			case MultiplayerGame:
 			case SinglePlayerGame:
+
+				frameInfo.beginFrame();
+
 				world.update();
 				Systems.network().update(this);
 				graphics.draw(world, screen);
+
+				frameInfo.endFrame();
+				if (printFrameTime) {
+					System.out.println(frameInfo.toString());
+				}
 				break;
+
 			case SinglePlayerLoading:
 				LoadingScreen loadingScreen = (LoadingScreen) screen;
 				graphics.draw(loadingScreen);

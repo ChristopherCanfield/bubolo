@@ -74,7 +74,7 @@ abstract class Sprite implements Drawable {
 	 * @param color the sprite's new color.
 	 */
 	protected final void setColor(Color color) {
-		this.color = new Color(color);
+		this.color = color;
 	}
 
 	/**

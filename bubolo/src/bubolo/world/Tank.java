@@ -142,6 +142,9 @@ public class Tank extends ActorEntity implements Damageable {
 	private static final TankPositionObserver nullObserver = (x, y) -> {};
 	private TankPositionObserver positionObserver = nullObserver;
 
+	// Temporary storage for storing collidables. This is used so arrays aren't generated multiple times per frame and then discarded.
+	private static final List<Collidable> collidablesTempList = new ArrayList<>(8);
+
 	/**
 	 * Constructs a Tank.
 	 *
@@ -247,6 +250,7 @@ public class Tank extends ActorEntity implements Damageable {
 		decelerated = false;
 		accelerated = false;
 		rotated = false;
+		collidablesTempList.clear();
 
 		if (isOwnedByLocalPlayer()) {
 			Systems.audio().setListenerPosition(x(), y());
@@ -538,7 +542,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private boolean unbuildNearestFriendlyPillbox(World world) {
 		if (carriedPillbox == null) {
-			var pillboxes = world.getCollidablesWithinTileDistance(this, 2, true, Pillbox.class);
+			var pillboxes = world.getCollidablesWithinTileDistance(collidablesTempList, this, 2, true, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
 				float maxDistanceWorldUnits = Units.TileToWorldScale * 1.5f;
 				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
@@ -650,7 +654,7 @@ public class Tank extends ActorEntity implements Damageable {
 		final float minTreeCoverage = width() * 0.7f;
 
 		float treeCoverage = 0;
-		List<Collidable> trees = world.getCollidablesWithinTileDistance(this, 1, false, Tree.class);
+		List<Collidable> trees = world.getCollidablesWithinTileDistance(collidablesTempList, this, 1, false, Tree.class);
 		for (var tree : trees) {
 			if (tree.overlapsEntity(this, minTranslationVector)) {
 				if (minTranslationVector.depth > minTreeCoverage) {
@@ -792,7 +796,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 		// Search for collisions. If one is found, move the tank back to its previous position, plus an
 		// offset defined by collisionBounce.
-		var adjacentCollidables = world.getCollidablesWithinTileDistance(this, 1, true, null);
+		var adjacentCollidables = world.getCollidablesWithinTileDistance(collidablesTempList, this, 1, true, null);
 		for (var collider : adjacentCollidables) {
 			// Ensure that network tanks can dead-reckon through their own base.
 			if (!(collider instanceof Base base && base.hasOwner() && id().equals(base.owner().id()))) {
@@ -824,7 +828,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private void uncoverHiddenMines(World world) {
 		if (speedKph() <= maxSpeedToSeeHiddenMinesKph) {
-			var adjacentMines = world.getCollidablesWithinTileDistance(this, 2, false, Mine.class);
+			var adjacentMines = world.getCollidablesWithinTileDistance(collidablesTempList, this, 2, false, Mine.class);
 			for (Collidable adjacentMine : adjacentMines) {
 				Mine mine = (Mine) adjacentMine;
 				mine.makeVisibleToLocalPlayer();

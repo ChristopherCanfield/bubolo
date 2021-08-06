@@ -237,6 +237,14 @@ public class Graphics implements EntityLifetimeObserver {
 		return timer;
 	}
 
+	public int getBatchedRenderCalls() {
+		return nonScalingBatch.totalRenderCalls + batch.totalRenderCalls;
+	}
+
+	public int getMaxSpritesInScalingBatch() {
+		return batch.maxSpritesInBatch;
+	}
+
 	@Override
 	public void onEntityAdded(Entity entity) {
 		spriteSystem.createSprite(this, entity);
@@ -301,6 +309,8 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param screen the ui screen to update and draw.
 	 */
 	public void draw(World world, Screen screen) {
+		batch.totalRenderCalls = nonScalingBatch.totalRenderCalls = 0;
+
 		if (screen != null) {
 			var clearColor = screen.clearColor();
 			Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
@@ -314,8 +324,6 @@ public class Graphics implements EntityLifetimeObserver {
 
 		drawWorld(world);
 		drawScreen(screen);
-
-		batch.totalRenderCalls = 0;
 	}
 
 	private void drawScreen(@Nullable Screen screen) {

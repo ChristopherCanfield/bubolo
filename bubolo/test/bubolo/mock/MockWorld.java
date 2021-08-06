@@ -193,4 +193,10 @@ public class MockWorld implements World {
 		return null;
 	}
 
+	@Override
+	public List<Collidable> getCollidablesWithinTileDistance(List<Collidable> listToPopulate, Entity entity, int tileMaxDistance,
+			boolean onlyIncludeSolidObjects, Class<?> typeFilter) {
+		return null;
+	}
+
 }
