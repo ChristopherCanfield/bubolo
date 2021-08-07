@@ -9,18 +9,18 @@ import com.badlogic.gdx.Input.Keys;
 
 import bubolo.graphics.Graphics;
 
-public class GuiGroup {
+public class GuiGroup implements UiComponent {
 	private	final List<UiComponent> components = new ArrayList<>();
 
 	private final List<Focusable> focusables = new ArrayList<>();
-	private int focusedComponentIndex = UiComponent.NoIndex;
+	private int focusedComponentIndex = PositionableUiComponent.NoIndex;
 
 	public void add(UiComponent component) {
 		components.add(component);
 
 		if (component instanceof Focusable focusable) {
 			focusables.add(focusable);
-			if (focusedComponentIndex == UiComponent.NoIndex) {
+			if (focusedComponentIndex == PositionableUiComponent.NoIndex) {
 				focusedComponentIndex = focusables.size() - 1;
 				focusable.gainFocus();
 			}
@@ -31,22 +31,27 @@ public class GuiGroup {
 		return Collections.unmodifiableList(components);
 	}
 
+	@Override
 	public void recalculateLayout() {
 		components.forEach(c -> c.recalculateLayout());
 	}
 
+	@Override
 	public void recalculateLayout(int parentWidth, int parentHeight) {
 		components.forEach(c -> c.recalculateLayout(parentWidth, parentHeight));
 	}
 
+	@Override
 	public void draw(Graphics graphics) {
 		components.forEach(c -> c.draw(graphics));
 	}
 
+	@Override
 	public void onKeyTyped(char character) {
 		components.forEach(c -> c.onKeyTyped(character));
 	}
 
+	@Override
 	public void onKeyDown(int keycode) {
 		if (keycode == Keys.TAB) {
 			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
@@ -89,53 +94,45 @@ public class GuiGroup {
 		}
 	}
 
-	public record ClickedObjectInfo(UiComponent component, int clickedItemIndex) {
-	}
-
+	@Override
 	public ClickedObjectInfo onMouseClicked(int screenX, int screenY) {
-		UiComponent clickedComponent = null;
-		int clickedItemIndex = -1;
 		for (UiComponent component : components) {
-			var itemIndex = component.onMouseClicked(screenX, screenY);
-			if (itemIndex != UiComponent.NoIndex) {
-				clickedItemIndex = itemIndex;
-				clickedComponent = component;
-				if (component instanceof Focusable focusable) {
+			var clickedObjectInfo = component.onMouseClicked(screenX, screenY);
+			if (clickedObjectInfo != null && clickedObjectInfo.component() instanceof Focusable focusable) {
+				if (clickedObjectInfo.clickedItemIndex() != NoIndex) {
 					focusable.gainFocus();
+					return clickedObjectInfo;
+				} else {
+					focusable.lostFocus();
 				}
-			} else if (component instanceof Focusable focusable) {
-				focusable.lostFocus();
 			}
 		}
 
-		if (clickedComponent != null) {
-			return new ClickedObjectInfo(clickedComponent, clickedItemIndex);
-		} else {
-			return null;
-		}
+		return null;
 	}
 
-	public record HoveredObjectInfo(UiComponent component, int hoveredItemIndex) {
-	}
-
+	@Override
 	public HoveredObjectInfo onMouseMoved(int screenX, int screenY) {
-		UiComponent hoveredComponent = null;
-		int hoveredItemIndex = UiComponent.NoIndex;
 		for (UiComponent component : components) {
-			var itemIndex = component.onMouseMoved(screenX, screenY);
-			if (itemIndex != UiComponent.NoIndex) {
-				hoveredItemIndex = itemIndex;
-				hoveredComponent = component;
+			var hoveredObjectInfo = component.onMouseMoved(screenX, screenY);
+			if (hoveredObjectInfo != null && hoveredObjectInfo.hoveredItemIndex() != NoIndex) {
+				return hoveredObjectInfo;
 			}
 		}
-
-		if (hoveredComponent != null) {
-			return new HoveredObjectInfo(hoveredComponent, hoveredItemIndex);
-		} else {
-			return null;
-		}
+		return null;
 	}
 
+	@Override
+	public boolean containsPoint(float screenX, float screenY) {
+		for (UiComponent c : components) {
+			if (c.containsPoint(screenX, screenY)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public void dispose() {
 		components.forEach(c -> c.dispose());
 	}

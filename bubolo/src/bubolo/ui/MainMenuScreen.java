@@ -15,12 +15,12 @@ import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.Button;
 import bubolo.ui.gui.ButtonGroup;
-import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
-import bubolo.ui.gui.UiComponent.HOffsetFrom;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
+import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
 
 public class MainMenuScreen extends AbstractScreen {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);

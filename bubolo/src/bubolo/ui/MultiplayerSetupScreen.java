@@ -15,8 +15,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 
 import bubolo.GameApplication;
-import bubolo.PlayerInfo;
 import bubolo.GameApplication.State;
+import bubolo.PlayerInfo;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
@@ -26,18 +26,18 @@ import bubolo.net.NetworkException;
 import bubolo.net.ServerAddressListener;
 import bubolo.net.ServerAddressMessage;
 import bubolo.ui.gui.ButtonGroup;
-import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.Line;
+import bubolo.ui.gui.PositionableUiComponent;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFromObjectSide;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFromObjectSide;
 import bubolo.ui.gui.SelectBox;
 import bubolo.ui.gui.TextBox;
-import bubolo.ui.gui.UiComponent;
-import bubolo.ui.gui.UiComponent.HOffsetFrom;
-import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
+import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
 
 /**
  * The join game screen, which allows the user to enter a name and ip address.
@@ -269,7 +269,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	private void connectToServer() {
 		if (!playerNameTextBox.isEmpty()) {
 			int selectedServerIndex = availableServersList.selectedButtonIndex();
-			if (selectedServerIndex != UiComponent.NoIndex) {
+			if (selectedServerIndex != PositionableUiComponent.NoIndex) {
 				serverIpAddress = availableServers.get(selectedServerIndex).serverAddress();
 			} else if (!serverIpAddressTextBox.isEmpty()) {
 				try {

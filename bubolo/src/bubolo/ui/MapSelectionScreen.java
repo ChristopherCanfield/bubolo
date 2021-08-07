@@ -18,16 +18,16 @@ import bubolo.map.InvalidMapException;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
 import bubolo.ui.gui.ButtonGroup;
-import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Image;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
-import bubolo.ui.gui.UiComponent;
-import bubolo.ui.gui.UiComponent.HOffsetFrom;
-import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
+import bubolo.ui.gui.PositionableUiComponent;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFromObjectSide;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFromObjectSide;
+import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
 import bubolo.util.GameRuntimeException;
 
 public class MapSelectionScreen extends AbstractScreen {
@@ -128,6 +128,7 @@ public class MapSelectionScreen extends AbstractScreen {
 		mapPathsVGroupArgs.buttonSelectedBackgroundColor = transparent;
 		mapPathsVGroupArgs.buttonHoverBackgroundColor = transparent;
 		mapPathsVGroupArgs.buttonHoverBorderColor = transparent;
+		mapPathsVGroupArgs.selectOnHover = true;
 
 		var layoutArgs = new LayoutArgs(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 10);
 		mapPathsGroup = new ButtonGroup(layoutArgs, mapPathsVGroupArgs);
@@ -198,7 +199,7 @@ public class MapSelectionScreen extends AbstractScreen {
 		okCancelButtons = new ButtonGroup(layoutArgs, buttonArgs);
 		String okText = "OK";
 		okCancelButtons.addButton(okText, button -> {
-			if (mapPathsGroup.selectedButtonIndex() != UiComponent.NoIndex) {
+			if (mapPathsGroup.selectedButtonIndex() != PositionableUiComponent.NoIndex) {
 				onMapActivated();
 			}
 		});

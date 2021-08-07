@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import bubolo.graphics.Graphics;
 import bubolo.util.Units;
 
-public class Line extends UiComponent {
+public class Line extends PositionableUiComponent {
 	private final Color color;
 	private final int width;
 	private final int height;

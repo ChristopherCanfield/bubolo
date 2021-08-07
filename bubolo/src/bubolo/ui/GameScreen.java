@@ -14,10 +14,11 @@ import bubolo.Messenger.MessageObserver;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.ui.gui.GuiGroup;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.MessageBar;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
 import bubolo.world.TankInventoryObserver;
 
 /**
@@ -57,11 +58,17 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 
 	/* End tank hud variables. */
 
+	private final GuiGroup diplomacyScreenTop = new GuiGroup();
+	private final GuiGroup diplomacyScreenRequestAlliance = new GuiGroup();
+	private final GuiGroup diplomacyScreenEndAlliance = new GuiGroup();
+	private final GuiGroup diplomacyScreenPendingRequests = new GuiGroup();
+
 	public GameScreen() {
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
 
 		addMessageBar();
+		addDiplomacyScreens();
 
 		Systems.messenger().addObserver(this);
 	}
@@ -72,6 +79,11 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 		messageBar.setVerticalOffset(50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
 		root.add(messageBar);
+	}
+
+	private void addDiplomacyScreens() {
+		root.add(diplomacyScreenTop);
+		root.add(diplomacyScreenRequestAlliance);
 	}
 
 	@Override

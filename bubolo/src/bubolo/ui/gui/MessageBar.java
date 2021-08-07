@@ -15,7 +15,7 @@ import bubolo.util.Time;
  *
  * @author Christopher D. Canfield
  */
-public class MessageBar extends UiComponent {
+public class MessageBar extends PositionableUiComponent {
 
 	private static class Message {
 		final String text;

@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 import bubolo.ui.AbstractScreen;
-import bubolo.ui.gui.UiComponent.HOffsetFrom;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
 
 public class MessageBarTestScreen extends AbstractScreen {
 	private final Color clearColor = Color.BLACK; //new Color(0.85f, 0.85f, 0.85f, 1);

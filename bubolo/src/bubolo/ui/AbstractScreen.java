@@ -5,8 +5,8 @@ import com.badlogic.gdx.InputProcessor;
 
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.GuiGroup;
-import bubolo.ui.gui.GuiGroup.ClickedObjectInfo;
-import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
+import bubolo.ui.gui.UiComponent.ClickedObjectInfo;
+import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
 
 /**
  * Base class for screens that use UiComponents. AbstractScreen provides the following functionality:

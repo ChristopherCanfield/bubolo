@@ -26,7 +26,7 @@ import bubolo.util.Units;
  *
  * @author Christopher D. Canfield
  */
-public class ButtonGroup extends UiComponent implements Focusable {
+public class ButtonGroup extends PositionableUiComponent implements Focusable {
 	private final List<Button> buttons = new ArrayList<>();
 
 	private final Args args;
@@ -358,25 +358,29 @@ public class ButtonGroup extends UiComponent implements Focusable {
 	}
 
 	@Override
-	public int onMouseClicked(int screenX, int screenY) {
+	public ClickedObjectInfo onMouseClicked(int screenX, int screenY) {
 		if (containsPoint(screenX, screenY)) {
 			selectedButtonIndex = findButtonThatContainsPoint(screenX, screenY);
 			gainFocus();
 			activateSelectedButton();
-			return selectedButtonIndex;
+			return new ClickedObjectInfo(this, selectedButtonIndex);
 		} else {
-			return NoIndex;
+			return null;
 		}
 	}
 
 	@Override
-	public int onMouseMoved(int screenX, int screenY) {
+	public HoveredObjectInfo onMouseMoved(int screenX, int screenY) {
 		hoveredButtonIndex = findButtonThatContainsPoint(screenX, screenY);
 		if (hoveredButtonIndex != NoIndex && args.selectOnHover) {
-			selectedButtonIndex = hoveredButtonIndex;
-			gainFocus();
+			if (args.selectOnHover) {
+				selectedButtonIndex = hoveredButtonIndex;
+				gainFocus();
+			}
+			return new HoveredObjectInfo(this, hoveredButtonIndex);
+		} else {
+			return null;
 		}
-		return hoveredButtonIndex;
 	}
 
 	private int findButtonThatContainsPoint(int screenX, int screenY) {

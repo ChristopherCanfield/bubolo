@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import bubolo.graphics.Graphics;
 import bubolo.util.Units;
 
-public class Image extends UiComponent {
+public class Image extends PositionableUiComponent {
 	private int width;
 	private int height;
 	private Texture texture;

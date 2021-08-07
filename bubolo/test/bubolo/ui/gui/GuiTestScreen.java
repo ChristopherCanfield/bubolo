@@ -73,7 +73,7 @@ public class GuiTestScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY)) != -1;
+		return buttonGroup.onMouseMoved((int) (screenX * scaleX), (int) (screenY * scaleY)) != null;
 	}
 
 	@Override
