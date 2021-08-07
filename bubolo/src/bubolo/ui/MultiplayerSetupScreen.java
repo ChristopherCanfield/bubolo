@@ -336,6 +336,8 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	protected void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {
 		if (hoveredObjectInfo.component() == okCancelButtons) {
 			okCancelButtons.selectButton(hoveredObjectInfo.hoveredItemIndex());
+		} else {
+			okCancelButtons.lostFocus();
 		}
 	}
 
