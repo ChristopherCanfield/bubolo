@@ -13,14 +13,16 @@ public class GuiGroup implements UiComponent {
 	private	final List<UiComponent> components = new ArrayList<>();
 
 	private final List<Focusable> focusables = new ArrayList<>();
-	private int focusedComponentIndex = PositionableUiComponent.NoIndex;
+	private int focusedComponentIndex = NoIndex;
+
+	private boolean visible = true;
 
 	public void add(UiComponent component) {
 		components.add(component);
 
 		if (component instanceof Focusable focusable) {
 			focusables.add(focusable);
-			if (focusedComponentIndex == PositionableUiComponent.NoIndex) {
+			if (focusedComponentIndex == NoIndex) {
 				focusedComponentIndex = focusables.size() - 1;
 				focusable.gainFocus();
 			}
@@ -41,26 +43,46 @@ public class GuiGroup implements UiComponent {
 		components.forEach(c -> c.recalculateLayout(parentWidth, parentHeight));
 	}
 
+	/**
+	 * Sets the visibility of the gui group. If the group is not visible, none of its children will be drawn, and no
+	 * user input events will be passed to the children.
+	 *
+	 * @param visible true to make the group visible, false otherwise.
+	 */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
 	@Override
 	public void draw(Graphics graphics) {
-		components.forEach(c -> c.draw(graphics));
+		if (visible) {
+			components.forEach(c -> c.draw(graphics));
+		}
 	}
 
 	@Override
 	public void onKeyTyped(char character) {
-		components.forEach(c -> c.onKeyTyped(character));
+		if (visible) {
+			components.forEach(c -> c.onKeyTyped(character));
+		}
 	}
 
 	@Override
 	public void onKeyDown(int keycode) {
-		if (keycode == Keys.TAB) {
-			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-				focusOnPreviousFocusable();
+		if (visible) {
+			if (keycode == Keys.TAB) {
+				if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+					focusOnPreviousFocusable();
+				} else {
+					focusOnNextFocusable();
+				}
 			} else {
-				focusOnNextFocusable();
+				components.forEach(c -> c.onKeyDown(keycode));
 			}
-		} else {
-			components.forEach(c -> c.onKeyDown(keycode));
 		}
 	}
 
@@ -96,14 +118,16 @@ public class GuiGroup implements UiComponent {
 
 	@Override
 	public ClickedObjectInfo onMouseClicked(int screenX, int screenY) {
-		for (UiComponent component : components) {
-			var clickedObjectInfo = component.onMouseClicked(screenX, screenY);
-			if (clickedObjectInfo != null && clickedObjectInfo.component() instanceof Focusable focusable) {
-				if (clickedObjectInfo.clickedItemIndex() != NoIndex) {
-					focusable.gainFocus();
-					return clickedObjectInfo;
-				} else {
-					focusable.lostFocus();
+		if (visible) {
+			for (UiComponent component : components) {
+				var clickedObjectInfo = component.onMouseClicked(screenX, screenY);
+				if (clickedObjectInfo != null && clickedObjectInfo.component() instanceof Focusable focusable) {
+					if (clickedObjectInfo.clickedItemIndex() != NoIndex) {
+						focusable.gainFocus();
+						return clickedObjectInfo;
+					} else {
+						focusable.lostFocus();
+					}
 				}
 			}
 		}
@@ -113,10 +137,12 @@ public class GuiGroup implements UiComponent {
 
 	@Override
 	public HoveredObjectInfo onMouseMoved(int screenX, int screenY) {
-		for (UiComponent component : components) {
-			var hoveredObjectInfo = component.onMouseMoved(screenX, screenY);
-			if (hoveredObjectInfo != null && hoveredObjectInfo.hoveredItemIndex() != NoIndex) {
-				return hoveredObjectInfo;
+		if (visible) {
+			for (UiComponent component : components) {
+				var hoveredObjectInfo = component.onMouseMoved(screenX, screenY);
+				if (hoveredObjectInfo != null && hoveredObjectInfo.hoveredItemIndex() != NoIndex) {
+					return hoveredObjectInfo;
+				}
 			}
 		}
 		return null;
@@ -124,9 +150,11 @@ public class GuiGroup implements UiComponent {
 
 	@Override
 	public boolean containsPoint(float screenX, float screenY) {
-		for (UiComponent c : components) {
-			if (c.containsPoint(screenX, screenY)) {
-				return true;
+		if (visible) {
+			for (UiComponent c : components) {
+				if (c.containsPoint(screenX, screenY)) {
+					return true;
+				}
 			}
 		}
 		return false;

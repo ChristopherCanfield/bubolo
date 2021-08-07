@@ -3,6 +3,7 @@ package bubolo.ui;
 import java.text.DecimalFormat;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,7 +15,6 @@ import bubolo.Messenger.MessageObserver;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
-import bubolo.ui.gui.GuiGroup;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.MessageBar;
 import bubolo.ui.gui.PositionableUiComponent.OffsetType;
@@ -58,17 +58,14 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 
 	/* End tank hud variables. */
 
-	private final GuiGroup diplomacyScreenTop = new GuiGroup();
-	private final GuiGroup diplomacyScreenRequestAlliance = new GuiGroup();
-	private final GuiGroup diplomacyScreenEndAlliance = new GuiGroup();
-	private final GuiGroup diplomacyScreenPendingRequests = new GuiGroup();
+	private final DiplomacyScreen diplomacyScreen = new DiplomacyScreen();
 
 	public GameScreen() {
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
 
 		addMessageBar();
-		addDiplomacyScreens();
+		root.add(diplomacyScreen);
 
 		Systems.messenger().addObserver(this);
 	}
@@ -79,11 +76,6 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 		messageBar.setVerticalOffset(50, OffsetType.ScreenUnits, VOffsetFrom.Top);
 
 		root.add(messageBar);
-	}
-
-	private void addDiplomacyScreens() {
-		root.add(diplomacyScreenTop);
-		root.add(diplomacyScreenRequestAlliance);
 	}
 
 	@Override
@@ -168,6 +160,12 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 	public void onViewportResized(int newWidth, int newHeight) {
 	}
 
+	@Override
+	protected void onKeyUp(int keycode) {
+		if (keycode == Keys.F1) {
+			diplomacyScreen.show();
+		}
+	}
 
 	/* Messages from the tank. */
 
