@@ -29,7 +29,7 @@ public class Line extends PositionableUiComponent {
 		batch.setColor(color);
 		batch.begin(ShapeType.Filled);
 
-		var cameraY = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
+		var cameraY = Units.screenYToCameraY(graphics.uiCamera(), top + padding + height);
 		batch.rect(left() + padding, cameraY, width, height);
 
 		batch.end();
