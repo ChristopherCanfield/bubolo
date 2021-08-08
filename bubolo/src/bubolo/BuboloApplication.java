@@ -131,6 +131,7 @@ public class BuboloApplication extends AbstractGameApplication {
 			World world = world();
 
 			Systems.messenger().update();
+			Systems.input().update();
 
 			switch (state) {
 			case MultiplayerStarting:

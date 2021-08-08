@@ -1,7 +1,5 @@
 package bubolo.controllers.input;
 
-import static com.badlogic.gdx.Gdx.input;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
@@ -9,16 +7,17 @@ import bubolo.Config;
 import bubolo.Systems;
 import bubolo.audio.Sfx;
 import bubolo.controllers.Controller;
+import bubolo.input.InputManager;
+import bubolo.input.InputManager.Action;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
 /**
- * Controls the tank using the keyboard.
+ * Controls the tank using player inputs.
  *
- * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class KeyboardTankController implements Controller {
+public class PlayerTankController implements Controller {
 	private final Tank tank;
 
 	// Whether the pillbox build key was pressed.
@@ -29,7 +28,7 @@ public class KeyboardTankController implements Controller {
 	 *
 	 * @param tank reference to the local tank.
 	 */
-	public KeyboardTankController(Tank tank) {
+	public PlayerTankController(Tank tank) {
 		this.tank = tank;
 	}
 
@@ -40,7 +39,7 @@ public class KeyboardTankController implements Controller {
 	@Override
 	public void update(World world) {
 		// @TODO (cdc 2021-07-29): For testing. Remove this after testing is complete.
-		if (input.isKeyPressed(Keys.NUM_1) && timer <= 0) {
+		if (Gdx.input.isKeyPressed(Keys.NUM_1) && timer <= 0) {
 			var tanks = world.getTanks();
 			if (!tankAllyButtonPressed) {
 				tanks.forEach(t -> tank.addAlly(t));
@@ -56,43 +55,43 @@ public class KeyboardTankController implements Controller {
 		}
 		timer--;
 
-		processMovement(tank);
-		processCannon(tank, world);
-		processMineLaying(tank, world);
-		processPillboxBuilding(tank, world);
-		processAppExit();
+		var input = Systems.input();
+
+		processMovement(input, tank);
+		processCannon(input, tank, world);
+		processMineLaying(input, tank, world);
+		processPillboxBuilding(input, tank, world);
+		processAppExit(input);
 	}
 
-	private static void processMovement(Tank tank) {
-		// TODO (cdc - 3/14/2014): allow the key mappings to be changed.
-
-		if (input.isKeyPressed(Keys.W) || input.isKeyPressed(Keys.UP)) {
+	private static void processMovement(InputManager input, Tank tank) {
+		if (input.isPressed(Action.Accelerate)) {
 			tank.accelerate();
-		} else if (input.isKeyPressed(Keys.S) || input.isKeyPressed(Keys.DOWN)) {
+		} else if (input.isPressed(Action.Decelerate)) {
 			tank.decelerate();
 		}
 
-		if (input.isKeyPressed(Keys.A) || input.isKeyPressed(Keys.LEFT)) {
+		if (input.isPressed(Action.RotateClockwise)) {
 			tank.rotateRight();
-		} else if (input.isKeyPressed(Keys.D) || input.isKeyPressed(Keys.RIGHT)) {
+		} else if (input.isPressed(Action.RotateCounterClockwise)) {
 			tank.rotateLeft();
 		}
 	}
 
-	private static void processCannon(Tank tank, World world) {
-		if (input.isKeyPressed(Keys.SPACE)) {
+	private static void processCannon(InputManager input, Tank tank, World world) {
+		if (input.isPressed(Action.FireCannon)) {
 			tank.fireCannon(world);
 		}
 	}
 
-	private static void processMineLaying(Tank tank, World world) {
-		if (input.isKeyPressed(Keys.CONTROL_LEFT)) {
+	private static void processMineLaying(InputManager input, Tank tank, World world) {
+		if (input.isPressed(Action.LayMine)) {
 			tank.placeMine(world);
 		}
 	}
 
-	private void processPillboxBuilding(Tank tank, World world) {
-		if (input.isKeyPressed(Keys.E)) {
+	private void processPillboxBuilding(InputManager input, Tank tank, World world) {
+		if (input.isPressed(Action.Build)) {
 			if (!pillboxBuildKeyPressed) {
 				pillboxBuildKeyPressed = true;
 				if (!tank.buildPillbox(world)) {
@@ -108,8 +107,8 @@ public class KeyboardTankController implements Controller {
 		}
 	}
 
-	private static void processAppExit() {
-		if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+	private static void processAppExit(InputManager input) {
+		if (input.isPressed(Action.Cancel)) {
 			Gdx.app.exit();
 		}
 	}
