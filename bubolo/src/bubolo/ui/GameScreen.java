@@ -3,7 +3,6 @@ package bubolo.ui;
 import java.text.DecimalFormat;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,6 +14,7 @@ import bubolo.Messenger.MessageObserver;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.MessageBar;
 import bubolo.ui.gui.PositionableUiComponent.OffsetType;
@@ -161,8 +161,8 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 	}
 
 	@Override
-	protected void onKeyUp(int keycode) {
-		if (keycode == Keys.F1) {
+	protected void onInputActionReceived(Action action) {
+		if (action == Action.ShowDiplomacyMenu) {
 			diplomacyScreen.show();
 		}
 	}

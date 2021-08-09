@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-
 import bubolo.graphics.Graphics;
 import bubolo.input.InputManager.Action;
 
@@ -69,9 +66,9 @@ public class GuiGroup implements UiComponent {
 	public void onInputAction(Action action) {
 		if (visible) {
 			if (action == Action.MenuMoveToNextGroup) {
-
+				focusOnNextFocusable();
 			} else if (action == Action.MenuMoveToPreviousGroup) {
-
+				focusOnPreviousFocusable();
 			} else {
 				components.forEach(c -> c.onInputAction(action));
 			}
@@ -88,15 +85,7 @@ public class GuiGroup implements UiComponent {
 	@Override
 	public void onKeyDown(int keycode) {
 		if (visible) {
-			if (keycode == Keys.TAB) {
-				if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
-					focusOnPreviousFocusable();
-				} else {
-					focusOnNextFocusable();
-				}
-			} else {
-				components.forEach(c -> c.onKeyDown(keycode));
-			}
+			components.forEach(c -> c.onKeyDown(keycode));
 		}
 	}
 

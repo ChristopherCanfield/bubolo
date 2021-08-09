@@ -1,13 +1,16 @@
 package bubolo.ui.gui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 
 import bubolo.Config;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.ui.Screen;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
 
 public class GuiTestScreen implements Screen, InputProcessor {
 	private final ButtonGroup buttonGroup;
@@ -20,15 +23,18 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	public GuiTestScreen() {
 		var buttonGroupArgs = new ButtonGroup.Args(300, 50);
 		buttonGroupArgs.paddingBetweenButtons = 10;
-		var layoutArgs = new LayoutArgs(Config.TargetWindowWidth, Config.TargetWindowHeight, 0);
+		var layoutArgs = new LayoutArgs(Config.TargetWindowWidth, Config.TargetWindowHeight, 15);
 
 		buttonGroup = new ButtonGroup(layoutArgs, buttonGroupArgs);
 		buttonGroup.addButton("Single Player Game", button -> { System.out.println("I'm an action attached to Single Player Game!"); });
-		buttonGroup.addButton("Join Multiplayer Game");
-		buttonGroup.addButton("Host Multiplayer Game");
-		buttonGroup.addButton("Settings");
-		buttonGroup.addButton("I'm Useless.");
+		buttonGroup.addButton("Join Multiplayer Game", button -> System.out.println("Join Multiplayer"));
+		buttonGroup.addButton("Host Multiplayer Game", button -> System.out.println("Host Multiplayer"));
+		buttonGroup.addButton("Settings", button -> System.out.println("Settings"));
+		buttonGroup.addButton("I'm Useless.", button -> System.out.println("Useless"));
 		buttonGroup.addButton("Exit", button -> { Gdx.app.exit(); });
+
+		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		buttonGroup.setVerticalOffset(0.2f, OffsetType.Percent, VOffsetFrom.Top);
 	}
 
 	@Override
@@ -45,6 +51,8 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	public void viewportResized(int newWidth, int newHeight) {
 		scaleX = (float) Config.TargetWindowWidth / newWidth;
 		scaleY = (float) Config.TargetWindowHeight / newHeight;
+
+		buttonGroup.recalculateLayout(newWidth, newHeight);
 	}
 
 	@Override
@@ -52,16 +60,16 @@ public class GuiTestScreen implements Screen, InputProcessor {
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {
-		if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
+	public void onInputAction(Action action) {
+		if (action == Action.MenuUp) {
 			buttonGroup.selectPrevious();
-		} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
+		} else if (action == Action.MenuDown) {
 			buttonGroup.selectNext();
-		} else if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+		} else if (action == Action.Activate) {
 			buttonGroup.activateSelectedButton();
+		} else if (action == Action.Cancel) {
+			Gdx.app.exit();
 		}
-
-		return false;
 	}
 
 	@Override
@@ -98,6 +106,11 @@ public class GuiTestScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean scrolled(float amountX, float amountY) {
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
 		return false;
 	}
 }

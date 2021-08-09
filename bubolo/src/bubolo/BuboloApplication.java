@@ -11,6 +11,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.badlogic.gdx.Gdx;
+
 import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
@@ -101,6 +103,7 @@ public class BuboloApplication extends AbstractGameApplication {
 
 		graphics = new Graphics(windowWidth, windowHeight);
 		frameInfo = new FrameInfo(graphics);
+		Gdx.input.setInputProcessor(Systems.input());
 
 		setState(State.MainMenu);
 	}

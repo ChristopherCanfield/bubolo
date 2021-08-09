@@ -3,10 +3,12 @@ package bubolo.input;
 import static com.badlogic.gdx.Gdx.input;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 
+import bubolo.Systems;
 import bubolo.input.InputManager.Action;
 
-class KeyboardInputManager {
+class KeyboardInputManager implements InputProcessor {
 
 	/**
 	 * Updates the actions array with keyboard input. Must be called once per frame.
@@ -18,26 +20,19 @@ class KeyboardInputManager {
 		processCannonAction(actions);
 		processMineLayingAction(actions);
 		processBuildActions(actions);
-		processNextMenuGroupAction(actions);
-		processActivateAction(actions);
-		processCancelAction(actions);
 	}
 
 	private static void processMovementActions(boolean[] actions) {
 		if (input.isKeyPressed(Keys.W) || input.isKeyPressed(Keys.UP) || input.isKeyPressed(Keys.NUMPAD_8)) {
 			actions[Action.Accelerate.ordinal()] = true;
-			actions[Action.MenuUp.ordinal()] = true;
 		} else if (input.isKeyPressed(Keys.S) || input.isKeyPressed(Keys.DOWN) || input.isKeyPressed(Keys.NUMPAD_5) || input.isKeyPressed(Keys.NUMPAD_2)) {
 			actions[Action.Decelerate.ordinal()] = true;
-			actions[Action.MenuDown.ordinal()] = true;
 		}
 
 		if (input.isKeyPressed(Keys.A) || input.isKeyPressed(Keys.LEFT) || input.isKeyPressed(Keys.NUMPAD_4)) {
 			actions[Action.RotateClockwise.ordinal()] = true;
-			actions[Action.MenuRight.ordinal()] = true;
 		} else if (input.isKeyPressed(Keys.D) || input.isKeyPressed(Keys.RIGHT) || input.isKeyPressed(Keys.NUMPAD_6)) {
-			actions[Action.RotateCounterClockwise.ordinal()] = true;
-			actions[Action.MenuLeft.ordinal()] = true;
+			actions[Action.RotateCounterclockwise.ordinal()] = true;
 		}
 	}
 
@@ -59,8 +54,34 @@ class KeyboardInputManager {
 		}
 	}
 
-	private static void processNextMenuGroupAction(boolean[] actions) {
-		if (input.isKeyPressed(Keys.TAB)) {
+	@Override
+	public boolean keyDown(int keycode) {
+		boolean[] actionsBackBuffer = Systems.input().actionsBackBuffer();
+		processMenuMovementActions(actionsBackBuffer, keycode);
+		processNextMenuGroupAction(actionsBackBuffer, keycode);
+		processShowDiplomacyMenu(actionsBackBuffer, keycode);
+		processActivateAction(actionsBackBuffer, keycode);
+		processCancelAction(actionsBackBuffer, keycode);
+
+		return false;
+	}
+
+	private static void processMenuMovementActions(boolean[] actions, int keycode) {
+		if (keycode == Keys.W || keycode == Keys.UP || keycode == Keys.NUMPAD_8) {
+			actions[Action.MenuUp.ordinal()] = true;
+		} else if (keycode == Keys.S || keycode == Keys.DOWN || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
+			actions[Action.MenuDown.ordinal()] = true;
+		}
+
+		if (keycode == Keys.A || keycode == Keys.LEFT || keycode == Keys.NUMPAD_4) {
+			actions[Action.MenuRight.ordinal()] = true;
+		} else if (keycode == Keys.D || keycode == Keys.RIGHT || keycode == Keys.NUMPAD_6) {
+			actions[Action.MenuLeft.ordinal()] = true;
+		}
+	}
+
+	private static void processNextMenuGroupAction(boolean[] actions, int keycode) {
+		if (keycode == Keys.TAB) {
 			if (input.isKeyPressed(Keys.SHIFT_LEFT) || input.isKeyPressed(Keys.SHIFT_RIGHT)) {
 				actions[Action.MenuMoveToPreviousGroup.ordinal()] = true;
 			} else {
@@ -69,15 +90,56 @@ class KeyboardInputManager {
 		}
 	}
 
-	private static void processActivateAction(boolean[] actions) {
-		if (input.isKeyPressed(Keys.ENTER) || input.isKeyPressed(Keys.NUMPAD_ENTER)) {
+	private static void processShowDiplomacyMenu(boolean[] actions, int keycode) {
+		if (keycode == Keys.F1) {
+			actions[Action.ShowDiplomacyMenu.ordinal()] = true;
+		}
+	}
+
+	private static void processActivateAction(boolean[] actions, int keycode) {
+		if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
 			actions[Action.Activate.ordinal()] = true;
 		}
 	}
 
-	private static void processCancelAction(boolean[] actions) {
-		if (input.isKeyPressed(Keys.ESCAPE)) {
+	private static void processCancelAction(boolean[] actions, int keycode) {
+		if (keycode == Keys.ESCAPE) {
 			actions[Action.Cancel.ordinal()] = true;
 		}
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(float amountX, float amountY) {
+		return false;
 	}
 }

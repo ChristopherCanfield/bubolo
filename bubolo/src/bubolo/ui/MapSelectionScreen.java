@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 
 import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
+import bubolo.input.InputManager.Action;
 import bubolo.map.InvalidMapException;
 import bubolo.map.MapImporter;
 import bubolo.map.MapImporter.MapInfo;
@@ -262,13 +262,15 @@ public class MapSelectionScreen extends AbstractScreen {
 	}
 
 	@Override
-	protected void onKeyUp(int keycode) {
-		if (keycode == Keys.ESCAPE) {
+	protected void onInputActionReceived(Action action) {
+		if (action == Action.Cancel) {
 			setInputEventsEnabled(false);
 			app.setState(State.MainMenu);
 		}
 
-		onSelectedMapChanged();
+		if (action == Action.MenuUp || action == Action.MenuDown) {
+			onSelectedMapChanged();
+		}
 	}
 
 	@Override

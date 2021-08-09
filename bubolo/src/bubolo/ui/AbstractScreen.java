@@ -1,9 +1,10 @@
 package bubolo.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 
+import bubolo.Systems;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.ui.gui.GuiGroup;
 import bubolo.ui.gui.UiComponent.ClickedObjectInfo;
 import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
@@ -13,10 +14,10 @@ import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
  * <ul>
  *	<li>It implements Screen and InputProcessor.</li>
  * 	<li>It comes with a base GuiGroup, named root.</li>
- * 	<li>It sets itself as the LibGdx input processor using Gdx.input.setInputProcessor.</li>
+ * 	<li>It adds itself to the InputManager as an input event and input action observer.</li>
  * 	<li>It forwards keyDown, keyType, touchUp (click), mouseMoved, and viewportResized events.</li>
  * 	<li>It draws all components attached to the root GUI group.</li>
- * 	<li>It removes itself as the InputProcessor when it is disposed, and disposes all components attached to root.</li>
+ * 	<li>It removes itself as an input event and input action observer when disposed, and disposes all components attached to root.</li>
  * 	<li>It provides hooks into many events.</li>
  * </ul>
  *
@@ -28,7 +29,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	private boolean handleInputEvents = true;
 
 	protected AbstractScreen() {
-		Gdx.input.setInputProcessor(this);
+		Systems.input().addActionObserver(this);
+		Systems.input().addInputEventObserver(this);
 	}
 
 	/**
@@ -37,6 +39,21 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	protected final void setInputEventsEnabled(boolean val) {
 		this.handleInputEvents = val;
 	}
+
+	@Override
+	public final void onInputAction(Action action) {
+		if (handleInputEvents) {
+			root.onInputAction(action);
+			onInputActionReceived(action);
+		}
+	}
+
+	/**
+	 * Override to receive input action events.
+	 *
+	 * @param action the input action that occurred.
+	 */
+	protected void onInputActionReceived(Action action) {}
 
 	@Override
 	public final boolean keyDown(int keycode) {
@@ -165,9 +182,8 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	@Override
 	public final void dispose() {
 		setInputEventsEnabled(false);
-		if (Gdx.input.getInputProcessor() == this) {
-			Gdx.input.setInputProcessor(null);
-		}
+		Systems.input().removeActionObserver(this);
+		Systems.input().removeInputEventObserver(this);
 		root.dispose();
 
 		onDispose();

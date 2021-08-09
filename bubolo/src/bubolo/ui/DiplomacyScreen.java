@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 
+import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.ui.gui.Button;
 import bubolo.ui.gui.ButtonGroup;
@@ -226,6 +227,7 @@ class DiplomacyScreen extends GuiGroup {
 		hideSubscreens();
 		setVisible(true);
 		diplomacyScreenTop.setVisible(true);
+		Systems.input().disableGameActions();
 	}
 
 	private void hide(Button unused) {
@@ -235,6 +237,7 @@ class DiplomacyScreen extends GuiGroup {
 	private void hide() {
 		setVisible(false);
 		hideSubscreens();
+		Systems.input().enableGameActions();
 	}
 
 	private void hideSubscreens() {

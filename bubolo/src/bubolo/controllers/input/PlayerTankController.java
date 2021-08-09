@@ -61,7 +61,6 @@ public class PlayerTankController implements Controller {
 		processCannon(input, tank, world);
 		processMineLaying(input, tank, world);
 		processPillboxBuilding(input, tank, world);
-		processAppExit(input);
 	}
 
 	private static void processMovement(InputManager input, Tank tank) {
@@ -73,7 +72,7 @@ public class PlayerTankController implements Controller {
 
 		if (input.isPressed(Action.RotateClockwise)) {
 			tank.rotateRight();
-		} else if (input.isPressed(Action.RotateCounterClockwise)) {
+		} else if (input.isPressed(Action.RotateCounterclockwise)) {
 			tank.rotateLeft();
 		}
 	}
@@ -104,12 +103,6 @@ public class PlayerTankController implements Controller {
 				pillboxBuildKeyPressed = false;
 				tank.cancelBuildingPillbox();
 			}
-		}
-	}
-
-	private static void processAppExit(InputManager input) {
-		if (input.isPressed(Action.Cancel)) {
-			Gdx.app.exit();
 		}
 	}
 }
