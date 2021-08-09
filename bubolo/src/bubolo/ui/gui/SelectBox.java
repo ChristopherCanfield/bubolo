@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -13,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
 
@@ -133,11 +133,11 @@ public class SelectBox extends PositionableUiComponent implements Focusable {
 	}
 
 	@Override
-	public void onKeyDown(int keycode) {
+	public void onInputAction(Action action) {
 		if (hasFocus && !items.isEmpty()) {
-			if (keycode == Keys.LEFT || keycode == Keys.A || keycode == Keys.NUMPAD_4) {
+			if (action == Action.MenuLeft) {
 				selectPrevious();
-			} else if (keycode == Keys.RIGHT || keycode == Keys.D || keycode == Keys.NUMPAD_6) {
+			} else if (action == Action.MenuRight) {
 				selectNext();
 			}
 		}

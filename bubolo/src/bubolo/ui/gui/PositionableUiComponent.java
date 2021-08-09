@@ -1,6 +1,7 @@
 package bubolo.ui.gui;
 
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 
 /**
  * Provides layout functionality to user interface elements.
@@ -236,6 +237,15 @@ public abstract class PositionableUiComponent implements UiComponent {
 	public boolean containsPoint(float screenX, float screenY) {
 		return screenX >= left && screenX <= right()
 				&& screenY >= top && screenY <= bottom();
+	}
+
+	/**
+	 * Override to receive input action events.
+	 *
+	 * @param action the input action.
+	 */
+	@Override
+	public void onInputAction(Action action) {
 	}
 
 	/**

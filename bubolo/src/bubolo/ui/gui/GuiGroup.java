@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 
 public class GuiGroup implements UiComponent {
 	private	final List<UiComponent> components = new ArrayList<>();
@@ -61,6 +62,19 @@ public class GuiGroup implements UiComponent {
 	public void draw(Graphics graphics) {
 		if (visible) {
 			components.forEach(c -> c.draw(graphics));
+		}
+	}
+
+	@Override
+	public void onInputAction(Action action) {
+		if (visible) {
+			if (action == Action.MenuMoveToNextGroup) {
+
+			} else if (action == Action.MenuMoveToPreviousGroup) {
+
+			} else {
+				components.forEach(c -> c.onInputAction(action));
+			}
 		}
 	}
 

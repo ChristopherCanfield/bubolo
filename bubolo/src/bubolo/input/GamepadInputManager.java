@@ -7,6 +7,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
@@ -29,6 +35,7 @@ class GamepadInputManager {
 			processCannonAction(actions);
 			processMineLayingAction(actions);
 			processBuildActions(actions);
+			processNextMenuGroupAction(actions);
 			processActivateAction(actions);
 			processCancelAction(actions);
 		}
@@ -50,6 +57,16 @@ class GamepadInputManager {
 			actions[Action.RotateCounterClockwise.ordinal()] = true;
 			actions[Action.MenuLeft.ordinal()] = true;
 		}
+
+		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_DPAD_UP) != 0) {
+			actions[Action.MenuUp.ordinal()] = true;
+		} else if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_DPAD_DOWN) != 0) {
+			actions[Action.MenuDown.ordinal()] = true;
+		} else if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_DPAD_LEFT) != 0) {
+			actions[Action.MenuLeft.ordinal()] = true;
+		} else if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_DPAD_RIGHT) != 0) {
+			actions[Action.MenuRight.ordinal()] = true;
+		}
 	}
 
 	private void processCannonAction(boolean[] actions) {
@@ -69,6 +86,14 @@ class GamepadInputManager {
 	private void processBuildActions(boolean[] actions) {
 		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_X) != 0) {
 			actions[Action.Build.ordinal()] = true;
+		}
+	}
+
+	private void processNextMenuGroupAction(boolean[] actions) {
+		if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_LEFT_BUMPER) != 0) {
+			actions[Action.MenuMoveToPreviousGroup.ordinal()] = true;
+		} else if (gamepadState.buttons(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER) != 0) {
+			actions[Action.MenuMoveToNextGroup.ordinal()] = true;
 		}
 	}
 

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,6 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.ui.gui.Button.ButtonStatus;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
@@ -393,20 +393,20 @@ public class ButtonGroup extends PositionableUiComponent implements Focusable {
 	}
 
 	@Override
-	public void onKeyDown(int keycode) {
+	public void onInputAction(Action action) {
 		if (hasFocus && !buttons.isEmpty()) {
-			if (keycode == Keys.SPACE || keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+			if (action == Action.Activate) {
 				activateSelectedButton();
 			} else if (args.buttonListLayout == Layout.Vertical) {
-				if (keycode == Keys.UP || keycode == Keys.W || keycode == Keys.NUMPAD_8) {
+				if (action == Action.MenuUp) {
 					selectPrevious();
-				} else if (keycode == Keys.DOWN || keycode == Keys.S || keycode == Keys.NUMPAD_5 || keycode == Keys.NUMPAD_2) {
+				} else if (action == Action.MenuDown) {
 					selectNext();
 				}
 			} else {
-				if (keycode == Keys.LEFT || keycode == Keys.A || keycode == Keys.NUMPAD_4) {
+				if (action == Action.MenuLeft) {
 					selectPrevious();
-				} else if (keycode == Keys.RIGHT || keycode == Keys.D || keycode == Keys.NUMPAD_6) {
+				} else if (action == Action.MenuRight) {
 					selectNext();
 				}
 			}

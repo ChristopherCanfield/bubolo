@@ -18,23 +18,24 @@ class KeyboardInputManager {
 		processCannonAction(actions);
 		processMineLayingAction(actions);
 		processBuildActions(actions);
+		processNextMenuGroupAction(actions);
 		processActivateAction(actions);
 		processCancelAction(actions);
 	}
 
 	private static void processMovementActions(boolean[] actions) {
-		if (input.isKeyPressed(Keys.W) || input.isKeyPressed(Keys.UP)) {
+		if (input.isKeyPressed(Keys.W) || input.isKeyPressed(Keys.UP) || input.isKeyPressed(Keys.NUMPAD_8)) {
 			actions[Action.Accelerate.ordinal()] = true;
 			actions[Action.MenuUp.ordinal()] = true;
-		} else if (input.isKeyPressed(Keys.S) || input.isKeyPressed(Keys.DOWN)) {
+		} else if (input.isKeyPressed(Keys.S) || input.isKeyPressed(Keys.DOWN) || input.isKeyPressed(Keys.NUMPAD_5) || input.isKeyPressed(Keys.NUMPAD_2)) {
 			actions[Action.Decelerate.ordinal()] = true;
 			actions[Action.MenuDown.ordinal()] = true;
 		}
 
-		if (input.isKeyPressed(Keys.A) || input.isKeyPressed(Keys.LEFT)) {
+		if (input.isKeyPressed(Keys.A) || input.isKeyPressed(Keys.LEFT) || input.isKeyPressed(Keys.NUMPAD_4)) {
 			actions[Action.RotateClockwise.ordinal()] = true;
 			actions[Action.MenuRight.ordinal()] = true;
-		} else if (input.isKeyPressed(Keys.D) || input.isKeyPressed(Keys.RIGHT)) {
+		} else if (input.isKeyPressed(Keys.D) || input.isKeyPressed(Keys.RIGHT) || input.isKeyPressed(Keys.NUMPAD_6)) {
 			actions[Action.RotateCounterClockwise.ordinal()] = true;
 			actions[Action.MenuLeft.ordinal()] = true;
 		}
@@ -55,6 +56,16 @@ class KeyboardInputManager {
 	private static void processBuildActions(boolean[] actions) {
 		if (input.isKeyPressed(Keys.E)) {
 			actions[Action.Build.ordinal()] = true;
+		}
+	}
+
+	private static void processNextMenuGroupAction(boolean[] actions) {
+		if (input.isKeyPressed(Keys.TAB)) {
+			if (input.isKeyPressed(Keys.SHIFT_LEFT) || input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+				actions[Action.MenuMoveToPreviousGroup.ordinal()] = true;
+			} else {
+				actions[Action.MenuMoveToNextGroup.ordinal()] = true;
+			}
 		}
 	}
 

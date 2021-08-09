@@ -3,6 +3,7 @@ package bubolo.ui;
 import com.badlogic.gdx.graphics.Color;
 
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 
 public interface Screen {
 	/**
@@ -24,6 +25,13 @@ public interface Screen {
 	 * @param newHeight the new window height.
 	 */
 	void viewportResized(int newWidth, int newHeight);
+
+	/**
+	 * Called when an input action is received.
+	 *
+	 * @param action the action that was received.
+	 */
+	void onInputAction(Action action);
 
 	/**
 	 * Releases all heavy-weight resources.

@@ -1,6 +1,7 @@
 package bubolo.ui.gui;
 
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 
 public interface UiComponent {
 	public static final int NoIndex = -1;
@@ -13,11 +14,17 @@ public interface UiComponent {
 
 	void recalculateLayout();
 	void recalculateLayout(int parentWidth, int parentHeight);
+
 	void draw(Graphics graphics);
+
 	boolean containsPoint(float screenX, float screenY);
+
+	void onInputAction(Action action);
+
 	void onKeyTyped(char character);
 	void onKeyDown(int keycode);
 	HoveredObjectInfo onMouseMoved(int screenX, int screenY);
 	ClickedObjectInfo onMouseClicked(int screenX, int screenY);
+
 	void dispose();
 }
