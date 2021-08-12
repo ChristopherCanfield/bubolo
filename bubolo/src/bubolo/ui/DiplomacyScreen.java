@@ -19,6 +19,7 @@ import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
 import bubolo.ui.gui.PositionableUiComponent.VOffsetFromObjectSide;
 import bubolo.ui.gui.Rectangle;
 import bubolo.ui.gui.SelectBox;
+import bubolo.world.Player;
 
 /**
  * The diplomacy screen is a pop-up window that overlays the game screen.
@@ -38,10 +39,16 @@ class DiplomacyScreen extends GuiGroup {
 			diplomacyScreenEndAlliance
 	};
 
+	private final Player player;
+
 	/**
 	 * Constructs the diplomacy screens.
+	 *
+	 * @param localPlayer reference to the local player. Used for alliance functionality.
 	 */
-	DiplomacyScreen() {
+	DiplomacyScreen(Player localPlayer) {
+		this.player = localPlayer;
+
 		createDiplomacyScreenTop();
 		createDiplomacyScreenRequestAlliance();
 		createDiplomacyScreenEndAlliance();

@@ -3,9 +3,7 @@ package bubolo.world;
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.badlogic.gdx.math.Circle;
@@ -36,11 +34,13 @@ import bubolo.world.Pillbox.BuildStatus;
 public class Tank extends ActorEntity implements Damageable {
 	private boolean initialized;
 
-	private String playerName;
-	private TeamColor playerColor;
-	private boolean controlledByLocalPlayer;
-	private final Set<Tank> allies = new HashSet<>(4);
-	private boolean alliedWithLocalPlayer;
+//	private String playerName;
+//	private TeamColor playerColor;
+//	private boolean controlledByLocalPlayer;
+//	private final Set<Tank> allies = new HashSet<>(4);
+//	private boolean alliedWithLocalPlayer;
+
+	private Player player;
 
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 2.77779f; // 2.77779 WU per tick is about 90 Kph.
@@ -158,7 +158,7 @@ public class Tank extends ActorEntity implements Damageable {
 		updateBounds();
 
 		// Simplifies some checks.
-		allies.add(this);
+		player.addAlly(this);
 	}
 
 	/**
@@ -169,9 +169,8 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param controlledByLocalPlayer whether this tank is controlled by the local player.
 	 */
 	public void initialize(String playerName, TeamColor color, boolean controlledByLocalPlayer) {
-		this.playerName = playerName;
-		this.playerColor = color;
-		this.controlledByLocalPlayer = controlledByLocalPlayer;
+		this.player = new Player(playerName, color, controlledByLocalPlayer);
+
 		this.initialized = true;
 	}
 
@@ -259,34 +258,32 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
+
 	public String playerName() {
-		return playerName;
+		return player.name();
 	}
 
 	public TeamColor teamColor() {
-		return playerColor;
+		return player.color();
 	}
 
 	@Override
 	public boolean isOwnedByLocalPlayer() {
-		return controlledByLocalPlayer;
+		return player.isLocal();
 	}
 
 	public void addAlly(Tank tank) {
 		if (tank != this) {
-			this.allies.add(tank);
-			if (tank.isOwnedByLocalPlayer()) {
-				alliedWithLocalPlayer = true;
-			}
+			player.addAlly(tank);
 		}
 	}
 
 	public void removeAlly(Tank tank) {
 		if (tank != this) {
-			this.allies.remove(tank);
-			if (tank.isOwnedByLocalPlayer()) {
-				alliedWithLocalPlayer = false;
-			}
+			player.removeAlly(tank);
 		}
 	}
 
@@ -295,7 +292,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	@Override
 	public boolean isAlliedWithLocalPlayer() {
-		return controlledByLocalPlayer || alliedWithLocalPlayer;
+		return player.isAlliedWithLocalPlayer();
 	}
 
 	/**
@@ -303,15 +300,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @return whether this tank is allied with the specified actor, or its owner.
 	 */
 	public boolean isAlliedWith(@Nullable ActorEntity actor) {
-		if (actor == null) {
-			return false;
-		} else if (actor instanceof Tank tank) {
-			return allies.contains(tank);
-		} else if (actor.owner() instanceof Tank tank) {
-			return allies.contains(tank);
-		} else {
-			return false;
-		}
+		return player.isAlliedWith(actor);
 	}
 
 	/**
@@ -922,7 +911,7 @@ public class Tank extends ActorEntity implements Damageable {
 			carriedPillbox = null;
 		}
 
-		Systems.messenger().notifyPlayerDied(playerName, isOwnedByLocalPlayer(), killerType, killerName);
+		Systems.messenger().notifyPlayerDied(playerName(), isOwnedByLocalPlayer(), killerType, killerName);
 		notifyNetwork();
 	}
 
@@ -1055,7 +1044,7 @@ public class Tank extends ActorEntity implements Damageable {
 		var originalDrowningState = this.drowned;
 		this.drowned = drowning;
 		if (!originalDrowningState && drowning) {
-			Systems.messenger().notifyPlayerDied(playerName, isOwnedByLocalPlayer(), DeepWater.class, null);
+			Systems.messenger().notifyPlayerDied(playerName(), isOwnedByLocalPlayer(), DeepWater.class, null);
 		}
 	}
 

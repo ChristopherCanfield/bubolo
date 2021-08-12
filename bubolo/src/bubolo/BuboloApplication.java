@@ -259,29 +259,30 @@ public class BuboloApplication extends AbstractGameApplication {
 			setReady(true);
 			break;
 
-		case MultiplayerGame:
+		case MultiplayerGame: {
 			assert previousState == State.MultiplayerStarting;
 			assert screen instanceof LobbyScreen;
 
 			screen.dispose();
-			screen = new GameScreen();
-			world().getLocalTank().setInventoryObserver((GameScreen) screen);
+			var localTank = world().getLocalTank();
+			screen = new GameScreen(localTank.getPlayer());
+			localTank.setInventoryObserver((GameScreen) screen);
 
 			break;
-
-		case SinglePlayerLoading:
+		}
+		case SinglePlayerLoading: {
 			assert previousState == State.SinglePlayerSetup;
 			assert mapPath != null;
 			mapPath = (Path) arg;
 			screen = new LoadingScreen(mapName());
 			break;
-
+		}
 		case SinglePlayerGame: {
 			assert previousState == State.SinglePlayerLoading;
 			assert arg != null;
 
 			Tank localTank = (Tank) arg;
-			screen = new GameScreen();
+			screen = new GameScreen(localTank.getPlayer());
 			localTank.setInventoryObserver((GameScreen) screen);
 
 			break;

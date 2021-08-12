@@ -19,6 +19,7 @@ import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.MessageBar;
 import bubolo.ui.gui.PositionableUiComponent.OffsetType;
 import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
+import bubolo.world.Player;
 import bubolo.world.TankInventoryObserver;
 
 /**
@@ -58,13 +59,14 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 
 	/* End tank hud variables. */
 
-	private final DiplomacyScreen diplomacyScreen = new DiplomacyScreen();
+	private final DiplomacyScreen diplomacyScreen;
 
-	public GameScreen() {
+	public GameScreen(Player player) {
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
 
 		addMessageBar();
+		diplomacyScreen(player);
 		root.add(diplomacyScreen);
 
 		Systems.messenger().addObserver(this);
