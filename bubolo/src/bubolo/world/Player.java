@@ -17,32 +17,23 @@ public class Player {
 
 	private final Set<Tank> allies = new HashSet<>(4);
 	private final List<Player> pendingAllianceRequests;
-	private Player[] otherPlayers;
+	private final World world;
 
 
-	Player(String playerName, TeamColor playerColor, boolean isLocal, Tank owningTank, List<Tank> allTanks) {
+	Player(String playerName, TeamColor playerColor, boolean isLocal, Tank owningTank, World world) {
 		this.playerName = playerName;
 		this.playerColor = playerColor;
 		this.isLocal = isLocal;
+
 		allies.add(owningTank);
 
 		if (isLocal) {
 			pendingAllianceRequests = new ArrayList<>();
-			otherPlayers = tanksToPlayers(allTanks);
+			this.world = world;
 		} else {
 			pendingAllianceRequests = null;
+			this.world = null;
 		}
-	}
-
-	private static Player[] tanksToPlayers(List<Tank> allTanks) {
-		Player[] otherPlayers = new Player[allTanks.size() - 1];
-		int playerIndex = 0;
-		for (Tank tank : allTanks) {
-			if (!tank.isOwnedByLocalPlayer()) {
-				otherPlayers[playerIndex++] = tank.getPlayer();
-			}
-		}
-		return otherPlayers;
 	}
 
 	public String name() {
@@ -81,6 +72,7 @@ public class Player {
 	/**
 	 * Returns a list of allied players. Intended for use by the diplomacy screen.
 	 *
+	 * @precondition this must be the local tank.
 	 * @return a list of allied players.
 	 */
 	public List<Player> getAlliedPlayers() {
@@ -103,37 +95,38 @@ public class Player {
 	/**
 	 * Returns a list of enemy players. Intended for use by the diplomacy screen.
 	 *
+	 * @precondition this must be the local tank.
 	 * @return a list of enemy players.
 	 */
 	public List<Player> getEnemyPlayers() {
 		assert isLocal : "Player.getEnemyPlayers() can only be called on the local player.";
 
-		int enemyCount = otherPlayers.length - allies.size() + 1;
-		if (enemyCount == 0) {
+		var tanks = world.getTanks();
+
+		int enemyCount = tanks.size() - allies.size() + 1;
+		if (enemyCount <= 0) {
 			return Collections.emptyList();
 		}
 
-		var enemies = new ArrayList<Player>();
-		for (int i = 0; i < otherPlayers.length; i++) {
-			if (isEnemy(otherPlayers[i].playerName, allies)) {
-				enemies.add(otherPlayers[i]);
+		var enemies = new ArrayList<Player>(enemyCount);
+		for (Tank tank : tanks) {
+			if (!allies.contains(tank)) {
+				enemies.add(tank.getPlayer());
 			}
 		}
 
 		return enemies;
 	}
 
+	/**
+	 * Returns a list of pending alliance requests. Intended for use by the diplomacy screen.
+	 *
+	 * @precondition this must be the local tank.
+	 * @return a list of pending alliance requests.
+	 */
 	public List<Player> getPendingAllianceRequests() {
+		assert isLocal : "Player.getPendingAllianceRequests() can only be called on the local player.";
 		return Collections.unmodifiableList(pendingAllianceRequests);
-	}
-
-	private static boolean isEnemy(String name, Set<Tank> allies) {
-		for (Tank tank : allies) {
-			if (tank.playerName().equals(name)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

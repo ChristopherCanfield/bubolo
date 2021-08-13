@@ -162,7 +162,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param world reference to the game world.
 	 */
 	public void initialize(String playerName, TeamColor color, boolean controlledByLocalPlayer, World world) {
-		this.player = new Player(playerName, color, controlledByLocalPlayer, this, world.getTanks());
+		this.player = new Player(playerName, color, controlledByLocalPlayer, this, world);
 
 		this.initialized = true;
 	}
