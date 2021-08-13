@@ -26,7 +26,7 @@ import bubolo.util.Units;
 import bubolo.world.Pillbox.BuildStatus;
 
 /**
- * The tank, which may be controlled by a local player or networked player..
+ * The tank, which may be controlled by a local player or networked player.
  *
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
@@ -34,12 +34,7 @@ import bubolo.world.Pillbox.BuildStatus;
 public class Tank extends ActorEntity implements Damageable {
 	private boolean initialized;
 
-//	private String playerName;
-//	private TeamColor playerColor;
-//	private boolean controlledByLocalPlayer;
-//	private final Set<Tank> allies = new HashSet<>(4);
-//	private boolean alliedWithLocalPlayer;
-
+	// Information about the player who owns this tank.
 	private Player player;
 
 	// Max speed in world units per tick.
@@ -156,9 +151,6 @@ public class Tank extends ActorEntity implements Damageable {
 
 		boundingCircle = new Circle(x(), y(), boundingCircleRadius);
 		updateBounds();
-
-		// Simplifies some checks.
-		player.addAlly(this);
 	}
 
 	/**
@@ -167,9 +159,10 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param playerName the name of the player who controls the tank.
 	 * @param color the tank's color.
 	 * @param controlledByLocalPlayer whether this tank is controlled by the local player.
+	 * @param world reference to the game world.
 	 */
-	public void initialize(String playerName, TeamColor color, boolean controlledByLocalPlayer) {
-		this.player = new Player(playerName, color, controlledByLocalPlayer);
+	public void initialize(String playerName, TeamColor color, boolean controlledByLocalPlayer, World world) {
+		this.player = new Player(playerName, color, controlledByLocalPlayer, this, world.getTanks());
 
 		this.initialized = true;
 	}

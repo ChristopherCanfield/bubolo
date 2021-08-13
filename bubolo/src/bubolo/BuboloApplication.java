@@ -131,58 +131,58 @@ public class BuboloApplication extends AbstractGameApplication {
 	public void render() {
 		try {
 			final State state = getState();
-			World world = world();
 
 			Systems.messenger().update();
 			Systems.input().update();
 
 			switch (state) {
-			case MultiplayerStarting:
-			case MultiplayerLobby:
-				Systems.network().update(this);
-				//$FALL-THROUGH$
-			case MainMenu:
-			case MultiplayerMapSelection:
-			case MultiplayerSetupClient:
-			case MultiplayerSetupServer:
-			case SinglePlayerSetup:
-			case Settings:
-				graphics.draw(screen);
-				break;
-			case MultiplayerGame:
-			case SinglePlayerGame:
+				case MultiplayerStarting:
+				case MultiplayerLobby:
+					Systems.network().update(this);
+					//$FALL-THROUGH$
+				case MainMenu:
+				case MultiplayerMapSelection:
+				case MultiplayerSetupClient:
+				case MultiplayerSetupServer:
+				case SinglePlayerSetup:
+				case Settings:
+					graphics.draw(screen);
+					break;
+				case MultiplayerGame:
+				case SinglePlayerGame: {
 
-				frameInfo.beginFrame();
+					frameInfo.beginFrame();
 
-				world.update();
-				Systems.network().update(this);
-				graphics.draw(world, screen);
+					world().update();
+					Systems.network().update(this);
+					graphics.draw(world(), screen);
 
-				frameInfo.endFrame();
-				if (printFrameTime) {
-					System.out.println(frameInfo.toString());
+					frameInfo.endFrame();
+					if (printFrameTime) {
+						System.out.println(frameInfo.toString());
+					}
+					break;
 				}
-				break;
+				case SinglePlayerLoading: {
+					LoadingScreen loadingScreen = (LoadingScreen) screen;
+					graphics.draw(loadingScreen);
+					if (loadingScreen.drawCount() > 1 && !isReady()) {
+						setWorld(importWorld());
+						Systems.initializeAudio(world().getWidth(), world().getHeight(),
+								TargetWindowWidth * DefaultPixelsPerWorldUnit,
+								TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
-			case SinglePlayerLoading:
-				LoadingScreen loadingScreen = (LoadingScreen) screen;
-				graphics.draw(loadingScreen);
-				if (loadingScreen.drawCount() > 1 && !isReady()) {
-					setWorld(importWorld());
-					Systems.initializeAudio(world().getWidth(), world().getHeight(),
-							TargetWindowWidth * DefaultPixelsPerWorldUnit,
-							TargetWindowHeight * DefaultPixelsPerWorldUnit);
+						var spawn = world().getRandomSpawn();
+						Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(spawn.x(), spawn.y(), 0);
 
-					var spawn = world().getRandomSpawn();
-					Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(spawn.x(), spawn.y(), 0);
+						Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
+						tank.initialize("Player 1", TeamColor.Blue, true, world());
 
-					Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
-					tank.initialize("Player 1", TeamColor.Blue, true);
+						Systems.initializeNetwork(NetworkType.Null);
 
-					Systems.initializeNetwork(NetworkType.Null);
-
-					setReady(true);
-					setState(State.SinglePlayerGame, tank);
+						setReady(true);
+						setState(State.SinglePlayerGame, tank);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -252,7 +252,7 @@ public class BuboloApplication extends AbstractGameApplication {
 					0);
 
 			Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
-			tank.initialize(playerInfo.name(), playerInfo.color(), true);
+			tank.initialize(playerInfo.name(), playerInfo.color(), true, world());
 
 			Systems.network().send(new CreateTank(tank));
 

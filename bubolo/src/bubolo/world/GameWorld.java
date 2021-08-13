@@ -194,6 +194,8 @@ public class GameWorld implements World {
 
 		entitiesToAdd.add(entity);
 		entityMap.put(entity.id(), entity);
+		// Tanks should be immediately processed, rather than added at the end of a frame.
+		processNewTank(entity);
 
 		for (var observer : entityLifetimeObservers) {
 			observer.onEntityAdded(entity);
@@ -447,7 +449,6 @@ public class GameWorld implements World {
 					(leftEntity, rightEntity) -> leftEntity.getClass().getName().compareTo(rightEntity.getClass().getName()));
 
 			for (Entity entity : entitiesToAdd) {
-				processNewTank(entity);
 				processNewActorEntity(entity);
 				processNewAdaptable(entity);
 				processNewTerrain(entity);

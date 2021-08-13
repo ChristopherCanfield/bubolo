@@ -39,6 +39,10 @@ class DiplomacyScreen extends GuiGroup {
 			diplomacyScreenEndAlliance
 	};
 
+	private SelectBox allyWithSelectBox;
+	private SelectBox pendingAllianceRequests;
+	private SelectBox alliancesSelectBox;
+
 	private final Player player;
 
 	/**
@@ -93,12 +97,9 @@ class DiplomacyScreen extends GuiGroup {
 		selectBoxArgs.textWidth = 300;
 		selectBoxArgs.labelText = "Player:";
 		selectBoxArgs.labelWidth = 100;
-		var allyWithSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
+		allyWithSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
 		allyWithSelectBox.setVerticalOffset(headerLabel, VOffsetFromObjectSide.Bottom, 80, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		allyWithSelectBox.setHorizontalOffset(headerLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		// @TODO (cdc 2021-08-07): Add other players.
-		allyWithSelectBox.addItem("Player 2");
-		allyWithSelectBox.addItem("Test Person");
 		diplomacyScreenRequestAlliance.add(allyWithSelectBox);
 
 		var buttonGroupArgs = new ButtonGroup.Args(200, 50);
@@ -135,13 +136,10 @@ class DiplomacyScreen extends GuiGroup {
 		selectBoxArgs.textWidth = 300;
 		selectBoxArgs.labelText = "Ally:";
 		selectBoxArgs.labelWidth = 100;
-		var pendingAllianceRequests = new SelectBox(layoutArgs, selectBoxArgs);
-		pendingAllianceRequests.setVerticalOffset(headerLabel, VOffsetFromObjectSide.Bottom, 80, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		pendingAllianceRequests.setHorizontalOffset(headerLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		// @TODO (cdc 2021-08-07): Add alliances.
-		pendingAllianceRequests.addItem("Player 2");
-		pendingAllianceRequests.addItem("Test Person");
-		diplomacyScreenEndAlliance.add(pendingAllianceRequests);
+		alliancesSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
+		alliancesSelectBox.setVerticalOffset(headerLabel, VOffsetFromObjectSide.Bottom, 80, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		alliancesSelectBox.setHorizontalOffset(headerLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		diplomacyScreenEndAlliance.add(alliancesSelectBox);
 
 		var buttonGroupArgs = new ButtonGroup.Args(200, 50);
 		buttonGroupArgs.selectOnHover = true;
@@ -177,12 +175,9 @@ class DiplomacyScreen extends GuiGroup {
 		selectBoxArgs.textWidth = 300;
 		selectBoxArgs.labelText = "Pending Request:";
 		selectBoxArgs.labelWidth = 175;
-		var pendingAllianceRequests = new SelectBox(layoutArgs, selectBoxArgs);
+		pendingAllianceRequests = new SelectBox(layoutArgs, selectBoxArgs);
 		pendingAllianceRequests.setVerticalOffset(headerLabel, VOffsetFromObjectSide.Bottom, 80, OffsetType.ScreenUnits, VOffsetFrom.Top);
 		pendingAllianceRequests.setHorizontalOffset(headerLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		// @TODO (cdc 2021-08-07): Add pending requests.
-		pendingAllianceRequests.addItem("Player 2");
-		pendingAllianceRequests.addItem("Test Person");
 		diplomacyScreenPendingRequests.add(pendingAllianceRequests);
 
 		var buttonGroupArgs = new ButtonGroup.Args(200, 50);
@@ -214,16 +209,37 @@ class DiplomacyScreen extends GuiGroup {
 
 	private void goToAllianceScreen(Button button) {
 		hideSubscreens();
+
+		allyWithSelectBox.removeAllItems();
+		var enemies = player.getEnemyPlayers();
+		for (Player enemy : enemies) {
+			allyWithSelectBox.addItem(enemy.name(), sb -> sb.setTextColor(enemy.color().color));
+		}
+
 		diplomacyScreenRequestAlliance.setVisible(true);
 	}
 
 	private void goToEndAllianceScreen(Button button) {
 		hideSubscreens();
+
+		alliancesSelectBox.removeAllItems();
+		var allies = player.getAlliedPlayers();
+		for (Player ally : allies) {
+			alliancesSelectBox.addItem(ally.name(), sb -> sb.setTextColor(ally.color().color));
+		}
+
 		diplomacyScreenEndAlliance.setVisible(true);
 	}
 
 	private void goToRespondToAllianceScreen(Button button) {
 		hideSubscreens();
+
+		pendingAllianceRequests.removeAllItems();
+		var pendingRequests = player.getPendingAllianceRequests();
+		for (Player pendingRequest : pendingRequests) {
+			pendingAllianceRequests.addItem(pendingRequest.name(), sb -> sb.setTextColor(pendingRequest.color().color));
+		}
+
 		diplomacyScreenPendingRequests.setVisible(true);
 	}
 

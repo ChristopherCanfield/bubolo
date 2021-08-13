@@ -66,7 +66,7 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
 
 		addMessageBar();
-		diplomacyScreen(player);
+		diplomacyScreen = new DiplomacyScreen(player);
 		root.add(diplomacyScreen);
 
 		Systems.messenger().addObserver(this);

@@ -108,6 +108,13 @@ public class SelectBox extends PositionableUiComponent implements Focusable {
 		}
 	}
 
+	/**
+	 * Removes all select box items.
+	 */
+	public void removeAllItems() {
+		items.clear();
+	}
+
 	public void setSelectedIndex(int index) {
 		assert !items.isEmpty();
 		assert index >= 0 && index < items.size();
