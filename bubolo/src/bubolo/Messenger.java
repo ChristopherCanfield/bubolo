@@ -1,6 +1,7 @@
 package bubolo;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import bubolo.util.GameLogicException;
@@ -11,6 +12,7 @@ import bubolo.world.DeepWater;
 import bubolo.world.Entity;
 import bubolo.world.Mine;
 import bubolo.world.MineExplosion;
+import bubolo.world.Player;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
@@ -58,6 +60,23 @@ public class Messenger {
 		 * @param message a message that can be displayed to the player.
 		 */
 		void messagePlayerDisconnected(String message);
+
+		/**
+		 * Called when a player proposes an alliance with this player.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 * @param thisPlayer reference to the local player.
+		 * @param requesterId the requester's ID.
+		 * @param requesterName the requester's name.
+		 */
+		void messageAllianceRequestReceived(String message, Player thisPlayer, UUID requesterId, String requesterName);
+
+		/**
+		 * Called when this player sends an alliance request to another player.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messageAllianceRequestSent(String message);
 	}
 
 	private final List<MessageObserver> observers = new CopyOnWriteArrayList<>();
@@ -264,6 +283,29 @@ public class Messenger {
 
 		message.append(".");
 		return message.toString();
+	}
+
+	/**
+	 * Notifies observers that an alliance request has been received.
+	 *
+	 * @param thisPlayer reference to the local player.
+	 * @param requesterId the requester's ID.
+	 * @param requesterName the requester's name.
+	 */
+	public void notifyAllianceRequestReceived(Player thisPlayer, UUID requesterId, String requesterName) {
+		String message = requesterName + " proposes an alliance. Use the diplomacy screen (F1 or DPAD Up) to accept or reject this request.";
+
+		for (var observer : observers) {
+			observer.messageAllianceRequestReceived(message, thisPlayer, requesterId, requesterName);
+		}
+	}
+
+	public void notifyAllianceRequestSent(String targetName) {
+		String message = "Alliance request sent to " + targetName;
+
+		for (var observer : observers) {
+			observer.messageAllianceRequestSent(message);
+		}
 	}
 
 	/**

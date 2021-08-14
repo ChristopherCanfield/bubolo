@@ -1,11 +1,15 @@
 package bubolo.ui;
 
+import java.util.UUID;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 
+import bubolo.Messenger.MessageObserver;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
+import bubolo.net.command.RequestAlliance;
 import bubolo.ui.gui.Button;
 import bubolo.ui.gui.ButtonGroup;
 import bubolo.ui.gui.ButtonGroup.Layout;
@@ -26,7 +30,7 @@ import bubolo.world.Player;
  *
  * @author Christopher D. Canfield
  */
-class DiplomacyScreen extends GuiGroup {
+class DiplomacyScreen extends GuiGroup implements MessageObserver {
 	private final GuiGroup diplomacyScreenTop = new GuiGroup();
 	private final GuiGroup diplomacyScreenRequestAlliance = new GuiGroup();
 	private final GuiGroup diplomacyScreenEndAlliance = new GuiGroup();
@@ -59,6 +63,8 @@ class DiplomacyScreen extends GuiGroup {
 		createDiplomacyScreenPendingRequests();
 
 		hide();
+
+		Systems.messenger().addObserver(this);
 	}
 
 	private void createDiplomacyScreenTop() {
@@ -113,7 +119,7 @@ class DiplomacyScreen extends GuiGroup {
 		var buttonGroup = new ButtonGroup(buttonGroupLayoutArgs, buttonGroupArgs);
 		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		buttonGroup.setVerticalOffset(background, VOffsetFromObjectSide.Bottom, -140, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		buttonGroup.addButton("Send Request");
+		buttonGroup.addButton("Send Request", this::buttonPressed_SendAllianceRequest);
 		buttonGroup.addButton("Back", this::goToDiplomacyTopScreen);
 		diplomacyScreenRequestAlliance.add(buttonGroup);
 
@@ -152,7 +158,7 @@ class DiplomacyScreen extends GuiGroup {
 		var buttonGroup = new ButtonGroup(buttonGroupLayoutArgs, buttonGroupArgs);
 		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		buttonGroup.setVerticalOffset(background, VOffsetFromObjectSide.Bottom, -140, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		buttonGroup.addButton("End Alliance");
+		buttonGroup.addButton("End Alliance", this::buttonPressed_EndAlliance);
 		buttonGroup.addButton("Back", this::goToDiplomacyTopScreen);
 		diplomacyScreenEndAlliance.add(buttonGroup);
 
@@ -191,8 +197,8 @@ class DiplomacyScreen extends GuiGroup {
 		var buttonGroup = new ButtonGroup(buttonGroupLayoutArgs, buttonGroupArgs);
 		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		buttonGroup.setVerticalOffset(background, VOffsetFromObjectSide.Bottom, -140, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		buttonGroup.addButton("Accept Request");
-		buttonGroup.addButton("Reject Request");
+		buttonGroup.addButton("Accept Request", this::buttonPressed_AcceptAllianceRequest);
+		buttonGroup.addButton("Reject Request", this::buttonPressed_RejectAllianceRequest);
 		buttonGroup.addButton("Back", this::goToDiplomacyTopScreen);
 		diplomacyScreenPendingRequests.add(buttonGroup);
 
@@ -207,13 +213,19 @@ class DiplomacyScreen extends GuiGroup {
 		diplomacyScreenTop.setVisible(true);
 	}
 
+	// The player id that corresponds to the currently selected player name.
+	private UUID selectedPlayerId;
+
 	private void goToAllianceScreen(Button button) {
 		hideSubscreens();
 
 		allyWithSelectBox.removeAllItems();
 		var enemies = player.getEnemyPlayers();
 		for (Player enemy : enemies) {
-			allyWithSelectBox.addItem(enemy.name(), sb -> sb.setTextColor(enemy.color().color));
+			allyWithSelectBox.addItem(enemy.name(), sb -> {
+				sb.setTextColor(enemy.color().color);
+				selectedPlayerId = enemy.id();
+			});
 		}
 
 		diplomacyScreenRequestAlliance.setVisible(true);
@@ -225,7 +237,10 @@ class DiplomacyScreen extends GuiGroup {
 		alliancesSelectBox.removeAllItems();
 		var allies = player.getAlliedPlayers();
 		for (Player ally : allies) {
-			alliancesSelectBox.addItem(ally.name(), sb -> sb.setTextColor(ally.color().color));
+			alliancesSelectBox.addItem(ally.name(), sb -> {
+				sb.setTextColor(ally.color().color);
+				selectedPlayerId = ally.id();
+			});
 		}
 
 		diplomacyScreenEndAlliance.setVisible(true);
@@ -237,10 +252,30 @@ class DiplomacyScreen extends GuiGroup {
 		pendingAllianceRequests.removeAllItems();
 		var pendingRequests = player.getPendingAllianceRequests();
 		for (Player pendingRequest : pendingRequests) {
-			pendingAllianceRequests.addItem(pendingRequest.name(), sb -> sb.setTextColor(pendingRequest.color().color));
+			pendingAllianceRequests.addItem(pendingRequest.name(), sb -> {
+				sb.setTextColor(pendingRequest.color().color);
+				selectedPlayerId = pendingRequest.id();
+			});
 		}
 
 		diplomacyScreenPendingRequests.setVisible(true);
+	}
+
+	private void buttonPressed_SendAllianceRequest(Button button) {
+		Systems.network().send(new RequestAlliance(selectedPlayerId, player.id(), player.name()));
+		Systems.messenger().notifyAllianceRequestSent(allyWithSelectBox.selectedItem());
+	}
+
+	private void buttonPressed_EndAlliance(Button button) {
+
+	}
+
+	private void buttonPressed_AcceptAllianceRequest(Button button) {
+
+	}
+
+	private void buttonPressed_RejectAllianceRequest(Button button) {
+
 	}
 
 	/* End button callbacks */
@@ -279,4 +314,39 @@ class DiplomacyScreen extends GuiGroup {
 			}
 		}
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		Systems.messenger().removeObserver(this);
+	}
+
+
+	/* Message callbacks. Not all of these are used. */
+
+	@Override
+	public void messageObjectUnderAttack(String message) {
+	}
+
+	@Override
+	public void messageObjectCaptured(String message, boolean thisPlayerLostObject, boolean thisPlayerCapturedObject) {
+	}
+
+	@Override
+	public void messagePlayerDied(String message, boolean thisPlayerDied) {
+	}
+
+	@Override
+	public void messagePlayerDisconnected(String message) {
+	}
+
+	@Override
+	public void messageAllianceRequestReceived(String message, Player thisPlayer, UUID requesterId, String requesterName) {
+	}
+
+	@Override
+	public void messageAllianceRequestSent(String message) {
+	}
+
+	/* End message callbacks. */
 }

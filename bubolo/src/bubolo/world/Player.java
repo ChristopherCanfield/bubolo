@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import bubolo.graphics.TeamColor;
 import bubolo.util.Nullable;
 
 public class Player {
+	private final UUID id;
 	private final String playerName;
 	private final TeamColor playerColor;
 	private final boolean isLocal;
@@ -21,6 +23,7 @@ public class Player {
 
 
 	Player(String playerName, TeamColor playerColor, boolean isLocal, Tank owningTank, World world) {
+		this.id = owningTank.id();
 		this.playerName = playerName;
 		this.playerColor = playerColor;
 		this.isLocal = isLocal;
@@ -34,6 +37,10 @@ public class Player {
 			pendingAllianceRequests = null;
 			this.world = null;
 		}
+	}
+
+	public UUID id() {
+		return id;
 	}
 
 	public String name() {
@@ -146,12 +153,25 @@ public class Player {
 	}
 
 	public void addAllianceRequest(Player requestingPlayer) {
-		assert !this.playerName.equals(requestingPlayer.playerName);
+		assert !this.equals(requestingPlayer);
 		pendingAllianceRequests.add(requestingPlayer);
 	}
 
 	public void removeAllianceRequest(Player requestingPlayer) {
-		assert !this.playerName.equals(requestingPlayer.playerName);
+		assert !this.equals(requestingPlayer);
 		pendingAllianceRequests.remove(requestingPlayer);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Player otherPlayer) {
+			return id.equals(otherPlayer.id());
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 }
