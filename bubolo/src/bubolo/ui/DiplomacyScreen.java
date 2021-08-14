@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 
-import bubolo.Messenger.MessageObserver;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.net.command.RequestAlliance;
@@ -30,7 +29,7 @@ import bubolo.world.Player;
  *
  * @author Christopher D. Canfield
  */
-class DiplomacyScreen extends GuiGroup implements MessageObserver {
+class DiplomacyScreen extends GuiGroup {
 	private final GuiGroup diplomacyScreenTop = new GuiGroup();
 	private final GuiGroup diplomacyScreenRequestAlliance = new GuiGroup();
 	private final GuiGroup diplomacyScreenEndAlliance = new GuiGroup();
@@ -63,8 +62,6 @@ class DiplomacyScreen extends GuiGroup implements MessageObserver {
 		createDiplomacyScreenPendingRequests();
 
 		hide();
-
-		Systems.messenger().addObserver(this);
 	}
 
 	private void createDiplomacyScreenTop() {
@@ -314,39 +311,4 @@ class DiplomacyScreen extends GuiGroup implements MessageObserver {
 			}
 		}
 	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-		Systems.messenger().removeObserver(this);
-	}
-
-
-	/* Message callbacks. Not all of these are used. */
-
-	@Override
-	public void messageObjectUnderAttack(String message) {
-	}
-
-	@Override
-	public void messageObjectCaptured(String message, boolean thisPlayerLostObject, boolean thisPlayerCapturedObject) {
-	}
-
-	@Override
-	public void messagePlayerDied(String message, boolean thisPlayerDied) {
-	}
-
-	@Override
-	public void messagePlayerDisconnected(String message) {
-	}
-
-	@Override
-	public void messageAllianceRequestReceived(String message, Player thisPlayer, UUID requesterId, String requesterName) {
-	}
-
-	@Override
-	public void messageAllianceRequestSent(String message) {
-	}
-
-	/* End message callbacks. */
 }

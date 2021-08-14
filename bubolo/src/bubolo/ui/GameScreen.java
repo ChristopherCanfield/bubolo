@@ -1,6 +1,7 @@
 package bubolo.ui;
 
 import java.text.DecimalFormat;
+import java.util.UUID;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -198,6 +199,8 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 	private static final Color otherPlayerLostObjectColor = Color.valueOf("E5E5E5FF");
 	private static final Color thisPlayerDiedColor = thisPlayerLostObjectColor;
 	private static final Color otherPlayerDiedColor = Color.CYAN;
+	private static final Color allianceRequestSentColor = Color.valueOf("31BC9EFF");
+	private static final Color allianceAcceptedColor = Color.valueOf("31BC9EFF");
 
 	@Override
 	public void messageObjectUnderAttack(String message) {
@@ -225,5 +228,15 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 	@Override
 	public void messagePlayerDisconnected(String message) {
 		messageBar.addMessage(message, Color.GOLD);
+	}
+
+	@Override
+	public void messageAllianceRequestReceived(String message, Player thisPlayer, UUID requesterId, String requesterName) {
+		messageBar.addMessage(message, allianceRequestSentColor);
+	}
+
+	@Override
+	public void messageAllianceRequestSent(String message) {
+		messageBar.addMessage(message, allianceAcceptedColor);
 	}
 }

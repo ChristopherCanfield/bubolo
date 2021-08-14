@@ -174,4 +174,8 @@ public class Player {
 	public int hashCode() {
 		return id.hashCode();
 	}
+
+	public void dispose() {
+
+	}
 }

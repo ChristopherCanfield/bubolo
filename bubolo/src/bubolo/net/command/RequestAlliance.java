@@ -7,6 +7,7 @@ import bubolo.world.Tank;
 import bubolo.world.World;
 
 public class RequestAlliance extends ToPlayerNetworkGameCommand {
+	private static final long serialVersionUID = 1L;
 
 	private final UUID requesterId;
 	private final String requesterName;
@@ -19,6 +20,9 @@ public class RequestAlliance extends ToPlayerNetworkGameCommand {
 
 	@Override
 	protected void onExecute(World world, Tank targetTank) {
+		var requestingPlayer = ((Tank) world.getEntity(requesterId)).getPlayer();
+		targetTank.getPlayer().addAllianceRequest(requestingPlayer);
+
 		Systems.messenger().notifyAllianceRequestReceived(targetTank.getPlayer(), requesterId, requesterName);
 	}
 }
