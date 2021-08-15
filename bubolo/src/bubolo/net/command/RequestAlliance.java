@@ -10,12 +10,10 @@ public class RequestAlliance extends ToPlayerNetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID requesterId;
-	private final String requesterName;
 
-	public RequestAlliance(UUID targetPlayerId, UUID requesterId, String requesterName) {
+	public RequestAlliance(UUID targetPlayerId, UUID requesterId) {
 		super(targetPlayerId);
 		this.requesterId = requesterId;
-		this.requesterName = requesterName;
 	}
 
 	@Override
@@ -23,6 +21,6 @@ public class RequestAlliance extends ToPlayerNetworkGameCommand {
 		var requestingPlayer = ((Tank) world.getEntity(requesterId)).getPlayer();
 		targetTank.getPlayer().addAllianceRequest(requestingPlayer);
 
-		Systems.messenger().notifyAllianceRequestReceived(targetTank.getPlayer(), requesterId, requesterName);
+		Systems.messenger().notifyAllianceRequestReceived(requestingPlayer.name());
 	}
 }

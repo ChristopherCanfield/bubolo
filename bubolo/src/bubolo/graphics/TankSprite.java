@@ -47,7 +47,8 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	// For player name drawing.
 	private static final BitmapFont font = Fonts.Arial16;
 
-	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
+	private static final Color enemyTankColor = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
+	private static final Color friendlyTankColor = Color.valueOf("00C972FF");
 
 	private static final String textureFileName = "tank.png";
 	private static final int textureFileHashCode = textureFileName.hashCode();
@@ -92,8 +93,9 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		var tank = getEntity();
 		// Render names for visible network tanks.
 		if (!tank.isOwnedByLocalPlayer() && visibility() != Visibility.NetworkTankHidden) {
+			var color = tank.isAlliedWithLocalPlayer() ? friendlyTankColor : enemyTankColor;
+			font.setColor(color);
 			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
-			font.setColor(ENEMY_TANK_NAME_COLOR);
 			font.draw(graphics.batch(), tank.playerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
 	}

@@ -10,7 +10,7 @@ import java.util.UUID;
 import bubolo.graphics.TeamColor;
 import bubolo.util.Nullable;
 
-public class Player {
+public class Player implements PlayerAttributes {
 	private final UUID id;
 	private final String playerName;
 	private final TeamColor playerColor;
@@ -39,18 +39,22 @@ public class Player {
 		}
 	}
 
+	@Override
 	public UUID id() {
 		return id;
 	}
 
+	@Override
 	public String name() {
 		return playerName;
 	}
 
+	@Override
 	public TeamColor color() {
 		return playerColor;
 	}
 
+	@Override
 	public boolean isLocal() {
 		return isLocal;
 	}
@@ -154,13 +158,34 @@ public class Player {
 
 	public void addAllianceRequest(Player requestingPlayer) {
 		assert !this.equals(requestingPlayer);
-		pendingAllianceRequests.add(requestingPlayer);
+		if (!pendingAllianceRequests.contains(requestingPlayer)) {
+			pendingAllianceRequests.add(requestingPlayer);
+		}
 	}
 
 	public void removeAllianceRequest(Player requestingPlayer) {
 		assert !this.equals(requestingPlayer);
 		pendingAllianceRequests.remove(requestingPlayer);
 	}
+
+	// @TODO (cdc 2021-08-15): This may not be needed. Remove it if it isn't.
+//	public void removeAllianceRequest(UUID playerIdToRemove) {
+//		assert !this.id.equals(playerIdToRemove);
+//
+//		Player playerToRemove = null;
+//		for (Player pendingRequest : pendingAllianceRequests) {
+//			if (pendingRequest.id().equals(playerIdToRemove)) {
+//				playerToRemove = pendingRequest;
+//				break;
+//			}
+//		}
+//
+//		if (playerToRemove != null) {
+//			removeAllianceRequest(playerToRemove);
+//		} else {
+//			throw new GameLogicException("Player.removeAllianceRequest called with an ID that does not correspond to an existing request: " + playerIdToRemove);
+//		}
+//	}
 
 	@Override
 	public boolean equals(Object other) {
@@ -173,9 +198,5 @@ public class Player {
 	@Override
 	public int hashCode() {
 		return id.hashCode();
-	}
-
-	public void dispose() {
-
 	}
 }

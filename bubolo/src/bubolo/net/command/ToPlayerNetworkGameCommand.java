@@ -18,6 +18,7 @@ public abstract class ToPlayerNetworkGameCommand implements NetworkGameCommand {
 	private final UUID targetPlayerId;
 
 	protected ToPlayerNetworkGameCommand(UUID targetPlayerId) {
+		assert targetPlayerId != null;
 		this.targetPlayerId = targetPlayerId;
 	}
 
@@ -30,5 +31,5 @@ public abstract class ToPlayerNetworkGameCommand implements NetworkGameCommand {
 		}
 	}
 
-	protected abstract void onExecute(World world, Tank targetPlayer);
+	protected abstract void onExecute(World world, Tank localTank);
 }

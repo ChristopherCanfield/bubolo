@@ -1,13 +1,13 @@
 package bubolo.ui;
 
-import java.util.UUID;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
+import bubolo.net.command.AcceptAllianceRequest;
+import bubolo.net.command.RejectAllianceRequest;
 import bubolo.net.command.RequestAlliance;
 import bubolo.ui.gui.Button;
 import bubolo.ui.gui.ButtonGroup;
@@ -43,7 +43,7 @@ class DiplomacyScreen extends GuiGroup {
 	};
 
 	private SelectBox allyWithSelectBox;
-	private SelectBox pendingAllianceRequests;
+	private SelectBox pendingAllianceRequestsSelectBox;
 	private SelectBox alliancesSelectBox;
 
 	private final Player player;
@@ -76,8 +76,8 @@ class DiplomacyScreen extends GuiGroup {
 		buttonGroup.setHorizontalOffset(0, OffsetType.ScreenUnits, HOffsetFrom.Center);
 		buttonGroup.setVerticalOffset(0.2f, OffsetType.Percent, VOffsetFrom.Top);
 		buttonGroup.addButton("Request Alliance", this::goToAllianceScreen);
-		buttonGroup.addButton("End Alliance", this::goToEndAllianceScreen);
 		buttonGroup.addButton("Respond to Alliance Request", this::goToRespondToAllianceScreen);
+		buttonGroup.addButton("End Alliance", this::goToEndAllianceScreen);
 		buttonGroup.addButton("Back to Game", this::hide);
 
 		add(diplomacyScreenTop);
@@ -178,10 +178,10 @@ class DiplomacyScreen extends GuiGroup {
 		selectBoxArgs.textWidth = 300;
 		selectBoxArgs.labelText = "Pending Request:";
 		selectBoxArgs.labelWidth = 175;
-		pendingAllianceRequests = new SelectBox(layoutArgs, selectBoxArgs);
-		pendingAllianceRequests.setVerticalOffset(headerLabel, VOffsetFromObjectSide.Bottom, 80, OffsetType.ScreenUnits, VOffsetFrom.Top);
-		pendingAllianceRequests.setHorizontalOffset(headerLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Center);
-		diplomacyScreenPendingRequests.add(pendingAllianceRequests);
+		pendingAllianceRequestsSelectBox = new SelectBox(layoutArgs, selectBoxArgs);
+		pendingAllianceRequestsSelectBox.setVerticalOffset(headerLabel, VOffsetFromObjectSide.Bottom, 80, OffsetType.ScreenUnits, VOffsetFrom.Top);
+		pendingAllianceRequestsSelectBox.setHorizontalOffset(headerLabel, HOffsetFromObjectSide.Left, 0, OffsetType.ScreenUnits, HOffsetFrom.Center);
+		diplomacyScreenPendingRequests.add(pendingAllianceRequestsSelectBox);
 
 		var buttonGroupArgs = new ButtonGroup.Args(200, 50);
 		buttonGroupArgs.selectOnHover = true;
@@ -210,8 +210,8 @@ class DiplomacyScreen extends GuiGroup {
 		diplomacyScreenTop.setVisible(true);
 	}
 
-	// The player id that corresponds to the currently selected player name.
-	private UUID selectedPlayerId;
+	// The player that corresponds to the currently selected player name.
+	private Player selectedPlayer;
 
 	private void goToAllianceScreen(Button button) {
 		hideSubscreens();
@@ -221,7 +221,7 @@ class DiplomacyScreen extends GuiGroup {
 		for (Player enemy : enemies) {
 			allyWithSelectBox.addItem(enemy.name(), sb -> {
 				sb.setTextColor(enemy.color().color);
-				selectedPlayerId = enemy.id();
+				selectedPlayer = enemy;
 			});
 		}
 
@@ -236,7 +236,7 @@ class DiplomacyScreen extends GuiGroup {
 		for (Player ally : allies) {
 			alliancesSelectBox.addItem(ally.name(), sb -> {
 				sb.setTextColor(ally.color().color);
-				selectedPlayerId = ally.id();
+				selectedPlayer = ally;
 			});
 		}
 
@@ -246,12 +246,12 @@ class DiplomacyScreen extends GuiGroup {
 	private void goToRespondToAllianceScreen(Button button) {
 		hideSubscreens();
 
-		pendingAllianceRequests.removeAllItems();
+		pendingAllianceRequestsSelectBox.removeAllItems();
 		var pendingRequests = player.getPendingAllianceRequests();
 		for (Player pendingRequest : pendingRequests) {
-			pendingAllianceRequests.addItem(pendingRequest.name(), sb -> {
+			pendingAllianceRequestsSelectBox.addItem(pendingRequest.name(), sb -> {
 				sb.setTextColor(pendingRequest.color().color);
-				selectedPlayerId = pendingRequest.id();
+				selectedPlayer = pendingRequest;
 			});
 		}
 
@@ -259,20 +259,27 @@ class DiplomacyScreen extends GuiGroup {
 	}
 
 	private void buttonPressed_SendAllianceRequest(Button button) {
-		Systems.network().send(new RequestAlliance(selectedPlayerId, player.id(), player.name()));
+		player.removeAllianceRequest(selectedPlayer);
+		Systems.network().send(new RequestAlliance(selectedPlayer.id(), player.id()));
 		Systems.messenger().notifyAllianceRequestSent(allyWithSelectBox.selectedItem());
+		hide();
 	}
 
 	private void buttonPressed_EndAlliance(Button button) {
-
 	}
 
 	private void buttonPressed_AcceptAllianceRequest(Button button) {
-
+		player.removeAllianceRequest(selectedPlayer);
+		Systems.network().send(new AcceptAllianceRequest(selectedPlayer.id(), player.id()));
+		Systems.messenger().notifyAllianceRequestAccepted(selectedPlayer, player);
+		hide();
 	}
 
 	private void buttonPressed_RejectAllianceRequest(Button button) {
-
+		player.removeAllianceRequest(selectedPlayer);
+		Systems.network().send(new RejectAllianceRequest(selectedPlayer.id(), player.id()));
+		Systems.messenger().notifyAllianceRequestRejected(selectedPlayer, player);
+		hide();
 	}
 
 	/* End button callbacks */
