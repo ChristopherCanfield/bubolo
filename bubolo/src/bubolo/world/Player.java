@@ -66,11 +66,25 @@ public class Player implements PlayerAttributes {
 		return isLocal || alliedWithLocalPlayer;
 	}
 
+	public void addAlly(Player newAlly) {
+		assert !this.equals(newAlly);
+
+		Tank newAllyTank = (Tank) world.getEntity(newAlly.id());
+		addAlly(newAllyTank);
+	}
+
 	void addAlly(Tank tank) {
 		this.allies.add(tank);
 		if (tank.isOwnedByLocalPlayer()) {
 			alliedWithLocalPlayer = true;
 		}
+	}
+
+	public void removeAlly(Player oldAlly) {
+		assert !this.equals(oldAlly);
+
+		Tank oldAllyTank = (Tank) world.getEntity(oldAlly.id());
+		removeAlly(oldAllyTank);
 	}
 
 	void removeAlly(Tank tank) {

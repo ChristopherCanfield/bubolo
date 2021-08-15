@@ -29,8 +29,6 @@ public class AcceptAllianceRequest implements NetworkGameCommand {
 		requester.addAlly(accepter);
 		accepter.addAlly(requester);
 
-		if (!accepter.isOwnedByLocalPlayer()) {
-			Systems.messenger().notifyAllianceRequestAccepted(requester.getPlayer(), accepter.getPlayer());
-		}
+		Systems.messenger().notifyAllianceRequestAccepted(requester.getPlayer(), accepter.getPlayer());
 	}
 }

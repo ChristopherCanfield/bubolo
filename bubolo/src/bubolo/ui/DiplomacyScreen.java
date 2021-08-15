@@ -270,6 +270,7 @@ class DiplomacyScreen extends GuiGroup {
 
 	private void buttonPressed_AcceptAllianceRequest(Button button) {
 		player.removeAllianceRequest(selectedPlayer);
+		player.addAlly(selectedPlayer);
 		Systems.network().send(new AcceptAllianceRequest(selectedPlayer.id(), player.id()));
 		Systems.messenger().notifyAllianceRequestAccepted(selectedPlayer, player);
 		hide();
@@ -286,6 +287,7 @@ class DiplomacyScreen extends GuiGroup {
 
 
 	public void show() {
+		selectedPlayer = null;
 		hideSubscreens();
 		setVisible(true);
 		diplomacyScreenTop.setVisible(true);
