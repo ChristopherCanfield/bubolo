@@ -27,15 +27,14 @@ public class Player implements PlayerAttributes {
 		this.playerName = playerName;
 		this.playerColor = playerColor;
 		this.isLocal = isLocal;
+		this.world = world;
 
 		allies.add(owningTank);
 
 		if (isLocal) {
 			pendingAllianceRequests = new ArrayList<>();
-			this.world = world;
 		} else {
 			pendingAllianceRequests = null;
-			this.world = null;
 		}
 	}
 

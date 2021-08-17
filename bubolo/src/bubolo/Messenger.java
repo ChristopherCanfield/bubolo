@@ -87,6 +87,13 @@ public class Messenger {
 		 * @param message a message that can be displayed to the player.
 		 */
 		void messageAllianceRequestRejected(String message);
+
+		/**
+		 * Called when an alliance has terminated.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messageAllianceEnded(String message);
 	}
 
 	private final List<MessageObserver> observers = new CopyOnWriteArrayList<>();
@@ -380,6 +387,36 @@ public class Messenger {
 		} else {
 			message.append(requester.name()).append('.');
 		}
+
+		return message.toString();
+	}
+
+	public void notifyAllianceEnded(PlayerAttributes allianceEnder, PlayerAttributes alliancePartner) {
+		var message = buildAllianceEndedMessage(allianceEnder, alliancePartner);
+
+		for (var observer : observers) {
+			observer.messageAllianceEnded(message);
+		}
+	}
+
+	private static String buildAllianceEndedMessage(PlayerAttributes allianceEnder, PlayerAttributes alliancePartner) {
+		StringBuilder message = new StringBuilder();
+
+		if (allianceEnder.isLocal()) {
+			message.append("You");
+		} else {
+			message.append(allianceEnder.name());
+		}
+
+		message.append(" and ");
+
+		if (alliancePartner.isLocal()) {
+			message.append("you");
+		} else {
+			message.append(alliancePartner.name());
+		}
+
+		message.append(" are no longer allied.");
 
 		return message.toString();
 	}

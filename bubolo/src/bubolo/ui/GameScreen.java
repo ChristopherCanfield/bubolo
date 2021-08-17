@@ -201,6 +201,7 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 	private static final Color allianceRequestSentColor = Color.valueOf("31BC9EFF");
 	private static final Color allianceAcceptedColor = Color.valueOf("31BC9EFF");
 	private static final Color allianceRejectedColor = thisPlayerDiedColor;
+	private static final Color allianceEndedColor = thisPlayerDiedColor;
 
 	@Override
 	public void messageObjectUnderAttack(String message) {
@@ -248,5 +249,10 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 	@Override
 	public void messageAllianceRequestRejected(String message) {
 		messageBar.addMessage(message, allianceRejectedColor);
+	}
+
+	@Override
+	public void messageAllianceEnded(String message) {
+		messageBar.addMessage(message, allianceEndedColor);
 	}
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.net.command.AcceptAllianceRequest;
+import bubolo.net.command.EndAlliance;
 import bubolo.net.command.RejectAllianceRequest;
 import bubolo.net.command.RequestAlliance;
 import bubolo.ui.gui.Button;
@@ -259,6 +260,10 @@ class DiplomacyScreen extends GuiGroup {
 	}
 
 	private void buttonPressed_SendAllianceRequest(Button button) {
+		if (selectedPlayer == null) {
+			return;
+		}
+
 		player.removeAllianceRequest(selectedPlayer);
 		Systems.network().send(new RequestAlliance(selectedPlayer.id(), player.id()));
 		Systems.messenger().notifyAllianceRequestSent(allyWithSelectBox.selectedItem());
@@ -266,17 +271,37 @@ class DiplomacyScreen extends GuiGroup {
 	}
 
 	private void buttonPressed_EndAlliance(Button button) {
+		if (selectedPlayer == null) {
+			return;
+		}
+
+		player.removeAlly(selectedPlayer);
+		selectedPlayer.addAlly(player);
+
+		Systems.network().send(new EndAlliance(selectedPlayer.id(), player.id()));
+		Systems.messenger().notifyAllianceEnded(player, selectedPlayer);
+		hide();
 	}
 
 	private void buttonPressed_AcceptAllianceRequest(Button button) {
+		if (selectedPlayer == null) {
+			return;
+		}
+
 		player.removeAllianceRequest(selectedPlayer);
 		player.addAlly(selectedPlayer);
+		selectedPlayer.addAlly(player);
+
 		Systems.network().send(new AcceptAllianceRequest(selectedPlayer.id(), player.id()));
 		Systems.messenger().notifyAllianceRequestAccepted(selectedPlayer, player);
 		hide();
 	}
 
 	private void buttonPressed_RejectAllianceRequest(Button button) {
+		if (selectedPlayer == null) {
+			return;
+		}
+
 		player.removeAllianceRequest(selectedPlayer);
 		Systems.network().send(new RejectAllianceRequest(selectedPlayer.id(), player.id()));
 		Systems.messenger().notifyAllianceRequestRejected(selectedPlayer, player);

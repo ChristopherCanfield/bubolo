@@ -118,6 +118,21 @@ class MessengerTest {
 		assertTrue(observer.allianceRequestRejected);
 	}
 
+	/**
+	 * Tests notifying that an alliance was ended, first with a local ender and a remote partner, then a remote ender and a local partner.
+	 */
+	@ParameterizedTest
+	@ValueSource(booleans = { true, false })
+	void notifyAllianceEnded(boolean localRequester) {
+		boolean localAccepter = !localRequester;
+
+		messenger.addObserver(observer);
+		assertFalse(observer.allianceEnded);
+
+		messenger.notifyAllianceEnded(new MockPlayerAttributes(localRequester), new MockPlayerAttributes(localAccepter));
+		assertTrue(observer.allianceEnded);
+	}
+
 	private static class TestObserver implements Messenger.MessageObserver {
 		boolean attackMessageReceived;
 		boolean capturedMessageReceived;
@@ -127,6 +142,7 @@ class MessengerTest {
 		boolean allianceRequestReceived;
 		boolean allianceRequestAccepted;
 		boolean allianceRequestRejected;
+		boolean allianceEnded;
 
 		@Override
 		public void messageObjectUnderAttack(String message) {
@@ -166,6 +182,11 @@ class MessengerTest {
 		@Override
 		public void messageAllianceRequestRejected(String message) {
 			allianceRequestRejected = true;
+		}
+
+		@Override
+		public void messageAllianceEnded(String message) {
+			allianceEnded = true;
 		}
 	}
 }
