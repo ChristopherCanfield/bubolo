@@ -121,21 +121,34 @@ public class GuiGroup implements UiComponent {
 
 	@Override
 	public ClickedObjectInfo onMouseClicked(int screenX, int screenY) {
+		ClickedObjectInfo clickedObject = null;
+
 		if (visible) {
 			for (UiComponent component : components) {
 				var clickedObjectInfo = component.onMouseClicked(screenX, screenY);
-				if (clickedObjectInfo != null && clickedObjectInfo.component() instanceof Focusable focusable) {
-					if (clickedObjectInfo.clickedItemIndex() != NoIndex) {
+				if (clickedObjectInfo != null && clickedObjectInfo.clickedItemIndex() != NoIndex) {
+					clickedObject = clickedObjectInfo;
+					if (clickedObjectInfo.component() instanceof Focusable focusable) {
 						focusable.gainFocus();
-						return clickedObjectInfo;
-					} else {
+					}
+					break;
+				}
+			}
+
+			// If a focusable was found, set the focusedComponentIndex and deselect all others.
+			if (clickedObject != null && clickedObject.component() instanceof Focusable) {
+				for (int i = 0; i < focusables.size(); i++) {
+					var focusable = focusables.get(i);
+					if (focusable == clickedObject.component()) {
+						focusedComponentIndex = i;
+					} else if (focusable != clickedObject.component()) {
 						focusable.lostFocus();
 					}
 				}
 			}
 		}
 
-		return null;
+		return clickedObject;
 	}
 
 	@Override

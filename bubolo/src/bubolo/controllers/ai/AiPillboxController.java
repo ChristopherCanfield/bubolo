@@ -82,13 +82,12 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 	 */
 	private void handleTankCapture(World world) {
 		var pillbox = parent();
-		if (pillbox.hitPoints() <= 0) {
-			for (Tank tank : world.getTanks()) {
-				if (pillbox.owner() != tank && tank.isOwnedByLocalPlayer() && tank.isAlive()) {
-					if (Intersector.overlapConvexPolygons(pillbox.captureBounds(), tank.bounds())) {
-						pillbox.onCaptured(world, tank);
-						sendNetUpdate(pillbox);
-					}
+		if (pillbox.hitPoints() <= 0 && !pillbox.isAlliedWithLocalPlayer()) {
+			Tank tank = world.getLocalTank();
+			if (tank.isOwnedByLocalPlayer() && tank.isAlive()) {
+				if (Intersector.overlapConvexPolygons(pillbox.captureBounds(), tank.bounds())) {
+					pillbox.onCaptured(world, tank);
+					sendNetUpdate(pillbox);
 				}
 			}
 		}
@@ -173,8 +172,8 @@ public class AiPillboxController extends ActorEntityController<Pillbox> {
 	 * @return whether the pillbox will hit an adjacent wall if it fires.
 	 */
 	private static boolean willBulletHitAdjacentWall(Pillbox pillbox, World world) {
-		var oneTileDistX = (float) Math.cos(pillbox.cannonRotation()) * Units.TileToWorldScale + pillbox.centerX();
-		var oneTileDistY = (float) Math.sin(pillbox.cannonRotation()) * Units.TileToWorldScale + pillbox.centerY();
+		var oneTileDistX = (float) (Math.cos(pillbox.cannonRotation()) * Units.TileToWorldScale + pillbox.centerX());
+		var oneTileDistY = (float) (Math.sin(pillbox.cannonRotation()) * Units.TileToWorldScale + pillbox.centerY());
 		int oneTileColumn = Units.worldUnitToTile(oneTileDistX);
 		int oneTileRow = Units.worldUnitToTile(oneTileDistY);
 

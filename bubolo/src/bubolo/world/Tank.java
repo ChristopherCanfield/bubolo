@@ -20,6 +20,7 @@ import bubolo.controllers.Controller;
 import bubolo.graphics.TeamColor;
 import bubolo.net.command.CreateActor;
 import bubolo.net.command.NetTankAttributes;
+import bubolo.net.command.TankDeath;
 import bubolo.net.command.UpdateTankAttributes;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
@@ -658,9 +659,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private boolean checkForDrowned(World world) {
 		var terrain = world.getTerrain(tileColumn(), tileRow());
 		if (terrain instanceof DeepWater) {
-			drowned = true;
-			Systems.audio().play(Sfx.TankDrowned, x(), y());
-			onDeath(world, DeepWater.class, null);
+			onDeath(world, false, DeepWater.class, null);
 			return true;
 		}
 		return false;
@@ -736,7 +735,7 @@ public class Tank extends ActorEntity implements Damageable {
 		 * @return the nearest axis, or None if the tank isn't nearly facing an axis.
 		 */
 		private static NearAxis getNearAxis(float rotationRadians) {
-			if (between(rotationRadians, MathUtils.HALF_PI * 0.85f, MathUtils.HALF_PI * 1.15f)) {
+			if (between(rotationRadians, MathUtils.HALF_PI * 0.8725f, MathUtils.HALF_PI * 1.15f)) {
 				return NorthY;
 			} else if (between(rotationRadians, -MathUtils.HALF_PI * 1.15f, -MathUtils.HALF_PI * 0.85f)) {
 				return SouthY;
@@ -885,27 +884,57 @@ public class Tank extends ActorEntity implements Damageable {
 			sfxPlayer.play(Sfx.TankHit, x(), y());
 
 			if (hitPoints <= 0) {
-				Systems.audio().play(Sfx.TankExplosion, x(), y());
-
-				onDeath(world, damageProvider.getClass(), world.getOwningPlayerName(damageProvider.id()));
+				onDeath(world, false, damageProvider.getClass(), world.getOwningPlayerName(damageProvider.id()));
 			}
 		}
 	}
 
 	/**
-	 * Called when the tank dies.
+	 * Called by the network system to indicate that a remote tank has died.
+	 *
+	 * @param world reference to the game world.
+	 * @param killerType the killer's entity type.
+	 * @param killerName the killer's name. May be null.
 	 */
-	private void onDeath(World world, Class<? extends Entity> killerType, @Nullable String killerName) {
-		hitPoints = 0;
-		solid = false;
-		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
-		if (isCarryingPillbox()) {
-			carriedPillbox.dropFromTank(world);
-			carriedPillbox = null;
-		}
+	public void netDeath(World world, Class<? extends Entity> killerType, @Nullable String killerName) {
+		onDeath(world, true, killerType, killerName);
+	}
 
-		Systems.messenger().notifyPlayerDied(playerName(), isOwnedByLocalPlayer(), killerType, killerName);
-		notifyNetwork();
+	/**
+	 * Called when the tank dies.
+	 *
+	 * @param world reference to the game world.
+	 * @param netDeath whether this death was reported by the network system.
+	 * @param killerType the killer's entity type.
+	 * @param killerName the killer's name. May be null.
+	 */
+	private void onDeath(World world, boolean netDeath, Class<? extends Entity> killerType, @Nullable String killerName) {
+		// The local tank can't be killed by the network.
+		assert !(netDeath && isOwnedByLocalPlayer());
+
+		if (isOwnedByLocalPlayer() || netDeath) {
+			hitPoints = 0;
+			solid = false;
+			speed = 0;
+			nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
+
+			if (isCarryingPillbox()) {
+				carriedPillbox.dropFromTank(world);
+				carriedPillbox = null;
+			}
+
+			if (killerType == DeepWater.class) {
+				drowned = true;
+				Systems.audio().play(Sfx.TankDrowned, x(), y());
+			} else {
+				Systems.audio().play(Sfx.TankExplosion, x(), y());
+			}
+
+			Systems.messenger().notifyPlayerDied(playerName(), isOwnedByLocalPlayer(), killerType, killerName);
+			if (isOwnedByLocalPlayer()) {
+				Systems.network().send(new TankDeath(id(), killerType, killerName));
+			}
+		}
 	}
 
 	/**

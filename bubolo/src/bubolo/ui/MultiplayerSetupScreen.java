@@ -233,25 +233,6 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		root.add(okCancelButtons);
 	}
 
-//	private void addStatusLabels() {
-//		VerticalGroup statusGroup = new VerticalGroup();
-//		statusGroup.align(Align.center);
-//		statusGroup.padTop(50);
-//		statusGroup.padLeft(leftPadding);
-//
-//		statusLabel1 = new Label("Test", skin);
-//		statusGroup.addActor(statusLabel1);
-//
-//		statusLabel2 = new Label("Test2", skin);
-//		statusGroup.addActor(statusLabel2);
-//
-//		root.addActor(statusGroup);
-//	}
-//
-//	private boolean textFieldsPopulated() {
-//		return !playerNameField.getText().isEmpty() && !(isClient && ipAddressField.getText().isEmpty());
-//	}
-
 	private boolean startingServer = false;
 
 	private void startServer() {

@@ -172,7 +172,9 @@ public class Base extends ActorEntity implements Damageable, TerrainImprovement 
 	}
 
 	private void processCapture(World world, Tank tank) {
-		if (owner() == null || (hitPoints <= 0 && tank != owner() && tank.isOwnedByLocalPlayer())) {
+		if ((hitPoints <= 0 || !hasOwner())
+				&& (tank.isOwnedByLocalPlayer() && tank.isAlive())
+				&& !this.isAlliedWithLocalPlayer()) {
 			onCaptured(world, tank);
 
 			Systems.network().send(new ActorEntityCaptured(this));

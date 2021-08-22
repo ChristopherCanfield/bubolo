@@ -119,9 +119,10 @@ public class Bullet extends ActorEntity {
 	/**
 	 * Used to allow bullets to pass over allied or broken bases.
 	 */
-	private static boolean isBaseAlliedOrBroken(Entity e) {
+	private boolean isBaseAlliedOrBroken(Entity e) {
 		if (e instanceof Base base) {
-			return base.owner().isAlliedWithLocalPlayer() || base.hitPoints() <= 0;
+			return base.hitPoints() <= 0
+					|| (this.isAlliedWithLocalPlayer() && base.owner().isAlliedWithLocalPlayer());
 		}
 		return false;
 	}
