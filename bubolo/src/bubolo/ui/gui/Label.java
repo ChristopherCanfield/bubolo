@@ -12,7 +12,7 @@ import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.util.Units;
 
-public class Label extends UiComponent {
+public class Label extends PositionableUiComponent {
 	private final BitmapFont font;
 	private Color color;
 	private String text;

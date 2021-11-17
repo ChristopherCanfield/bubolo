@@ -300,6 +300,25 @@ public interface World {
 			@Nullable Class<?> typeFilter);
 
 	/**
+	 * Returns a list of collidables that are within a specified tile distance from an entity. The collidables may be filtered by
+	 * solidness and type. The entity that is passed in is not included in the returned list. This overload allows for the collidables
+	 * to be filtered by type, in addition to distance and solidness.
+	 * <p>
+	 * This overload allows an existing list to be passed in, which will be used instead of a newly-allocated list.
+	 * </p>
+	 *
+	 * @param listToPopulate an existing list that will be populated with the collidables. The list will be cleared.
+	 * @param entity the target entity.
+	 * @param tileMaxDistance the maximum distance that an object can be from this entity. Must be >= 0.
+	 * @param onlyIncludeSolidObjects true if only solid objects should be included, or false to include all collidable objects.
+	 * @param typeFilter [optional] only collidables of this type will be included in the returned list. May be null, in which
+	 *     case no type filter is applied.
+	 *
+	 * @return reference to the listToPopulate list.
+	 */
+	List<Collidable> getCollidablesWithinTileDistance(List<Collidable> listToPopulate, Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter);
+
+	/**
 	 * Finds the nearest buildable terrain to the x,y world unit position.
 	 *
 	 * @param x the target x position, in world units.

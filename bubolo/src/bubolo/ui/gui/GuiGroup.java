@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 
-public class GuiGroup {
+public class GuiGroup implements UiComponent {
 	private	final List<UiComponent> components = new ArrayList<>();
 
 	private final List<Focusable> focusables = new ArrayList<>();
-	private int focusedComponentIndex = UiComponent.NoIndex;
+	private int focusedComponentIndex = NoIndex;
+
+	private boolean visible = true;
 
 	public void add(UiComponent component) {
 		components.add(component);
 
 		if (component instanceof Focusable focusable) {
 			focusables.add(focusable);
-			if (focusedComponentIndex == UiComponent.NoIndex) {
+			if (focusedComponentIndex == NoIndex) {
 				focusedComponentIndex = focusables.size() - 1;
 				focusable.gainFocus();
 			}
@@ -31,30 +31,60 @@ public class GuiGroup {
 		return Collections.unmodifiableList(components);
 	}
 
+	@Override
 	public void recalculateLayout() {
 		components.forEach(c -> c.recalculateLayout());
 	}
 
+	@Override
 	public void recalculateLayout(int parentWidth, int parentHeight) {
 		components.forEach(c -> c.recalculateLayout(parentWidth, parentHeight));
 	}
 
+	/**
+	 * Sets the visibility of the gui group. If the group is not visible, none of its children will be drawn, and no
+	 * user input events will be passed to the children.
+	 *
+	 * @param visible true to make the group visible, false otherwise.
+	 */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
 	public void draw(Graphics graphics) {
-		components.forEach(c -> c.draw(graphics));
+		if (visible) {
+			components.forEach(c -> c.draw(graphics));
+		}
 	}
 
-	public void onKeyTyped(char character) {
-		components.forEach(c -> c.onKeyTyped(character));
-	}
-
-	public void onKeyDown(int keycode) {
-		if (keycode == Keys.TAB) {
-			if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+	@Override
+	public void onInputAction(Action action) {
+		if (visible) {
+			if (action == Action.MenuMoveToNextGroup) {
+				focusOnNextFocusable();
+			} else if (action == Action.MenuMoveToPreviousGroup) {
 				focusOnPreviousFocusable();
 			} else {
-				focusOnNextFocusable();
+				components.forEach(c -> c.onInputAction(action));
 			}
-		} else {
+		}
+	}
+
+	@Override
+	public void onKeyTyped(char character) {
+		if (visible) {
+			components.forEach(c -> c.onKeyTyped(character));
+		}
+	}
+
+	@Override
+	public void onKeyDown(int keycode) {
+		if (visible) {
 			components.forEach(c -> c.onKeyDown(keycode));
 		}
 	}
@@ -89,53 +119,64 @@ public class GuiGroup {
 		}
 	}
 
-	public record ClickedObjectInfo(UiComponent component, int clickedItemIndex) {
-	}
-
+	@Override
 	public ClickedObjectInfo onMouseClicked(int screenX, int screenY) {
-		UiComponent clickedComponent = null;
-		int clickedItemIndex = -1;
-		for (UiComponent component : components) {
-			var itemIndex = component.onMouseClicked(screenX, screenY);
-			if (itemIndex != UiComponent.NoIndex) {
-				clickedItemIndex = itemIndex;
-				clickedComponent = component;
-				if (component instanceof Focusable focusable) {
-					focusable.gainFocus();
+		ClickedObjectInfo clickedObject = null;
+
+		if (visible) {
+			for (UiComponent component : components) {
+				var clickedObjectInfo = component.onMouseClicked(screenX, screenY);
+				if (clickedObjectInfo != null && clickedObjectInfo.clickedItemIndex() != NoIndex) {
+					clickedObject = clickedObjectInfo;
+					if (clickedObjectInfo.component() instanceof Focusable focusable) {
+						focusable.gainFocus();
+					}
+					break;
 				}
-			} else if (component instanceof Focusable focusable) {
-				focusable.lostFocus();
+			}
+
+			// If a focusable was found, set the focusedComponentIndex and deselect all others.
+			if (clickedObject != null && clickedObject.component() instanceof Focusable) {
+				for (int i = 0; i < focusables.size(); i++) {
+					var focusable = focusables.get(i);
+					if (focusable == clickedObject.component()) {
+						focusedComponentIndex = i;
+					} else if (focusable != clickedObject.component()) {
+						focusable.lostFocus();
+					}
+				}
 			}
 		}
 
-		if (clickedComponent != null) {
-			return new ClickedObjectInfo(clickedComponent, clickedItemIndex);
-		} else {
-			return null;
-		}
+		return clickedObject;
 	}
 
-	public record HoveredObjectInfo(UiComponent component, int hoveredItemIndex) {
-	}
-
+	@Override
 	public HoveredObjectInfo onMouseMoved(int screenX, int screenY) {
-		UiComponent hoveredComponent = null;
-		int hoveredItemIndex = UiComponent.NoIndex;
-		for (UiComponent component : components) {
-			var itemIndex = component.onMouseMoved(screenX, screenY);
-			if (itemIndex != UiComponent.NoIndex) {
-				hoveredItemIndex = itemIndex;
-				hoveredComponent = component;
+		if (visible) {
+			for (UiComponent component : components) {
+				var hoveredObjectInfo = component.onMouseMoved(screenX, screenY);
+				if (hoveredObjectInfo != null && hoveredObjectInfo.hoveredItemIndex() != NoIndex) {
+					return hoveredObjectInfo;
+				}
 			}
 		}
-
-		if (hoveredComponent != null) {
-			return new HoveredObjectInfo(hoveredComponent, hoveredItemIndex);
-		} else {
-			return null;
-		}
+		return null;
 	}
 
+	@Override
+	public boolean containsPoint(float screenX, float screenY) {
+		if (visible) {
+			for (UiComponent c : components) {
+				if (c.containsPoint(screenX, screenY)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public void dispose() {
 		components.forEach(c -> c.dispose());
 	}

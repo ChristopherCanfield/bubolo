@@ -2,7 +2,7 @@ package bubolo.net.command;
 
 import java.util.UUID;
 
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkGameCommand;
 import bubolo.util.Nullable;
 import bubolo.world.Pillbox;
 import bubolo.world.Pillbox.BuildStatus;
@@ -14,7 +14,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class UpdatePillboxAttributes extends NetworkCommand {
+public class UpdatePillboxAttributes implements NetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -41,7 +41,7 @@ public class UpdatePillboxAttributes extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute(World world) {
+	public void execute(World world) {
 		Pillbox pillbox = (Pillbox) world.getEntity(id);
 		pillbox.setPosition(x, y);
 		pillbox.setNetPillboxAttributes(solid, buildStatus, builtPct);

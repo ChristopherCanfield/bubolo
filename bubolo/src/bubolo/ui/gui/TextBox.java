@@ -14,7 +14,7 @@ import bubolo.util.Nullable;
 import bubolo.util.Timer;
 import bubolo.util.Units;
 
-public class TextBox extends UiComponent implements Focusable {
+public class TextBox extends PositionableUiComponent implements Focusable {
 	private final Args args;
 
 	private String text = "";
@@ -128,12 +128,12 @@ public class TextBox extends UiComponent implements Focusable {
 	}
 
 	@Override
-	public int onMouseClicked(int screenX, int screenY) {
+	public ClickedObjectInfo onMouseClicked(int screenX, int screenY) {
 		if (contains(screenX, screenY)) {
 			gainFocus();
-			return 0;
+			return new ClickedObjectInfo(this, 0);
 		}
-		return NoIndex;
+		return null;
 	}
 
 	private boolean contains(float screenX, float screenY) {

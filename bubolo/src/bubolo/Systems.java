@@ -3,6 +3,7 @@ package bubolo;
 import bubolo.audio.Audio;
 import bubolo.audio.AudioSystem;
 import bubolo.audio.NullAudio;
+import bubolo.input.InputManager;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
 import bubolo.net.NullNetwork;
@@ -16,6 +17,7 @@ public class Systems {
 	private static Audio audio = new NullAudio();
 	private static Network network = new NullNetwork();
 	private static final Messenger messenger = new Messenger();
+	private static final InputManager input = new InputManager();
 
 	/**
 	 * Initializes the sound system.
@@ -54,6 +56,10 @@ public class Systems {
 
 	public static Messenger messenger() {
 		return messenger;
+	}
+
+	public static InputManager input() {
+		return input;
 	}
 
 	/**

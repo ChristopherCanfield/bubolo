@@ -20,11 +20,12 @@ import com.badlogic.gdx.utils.Align;
 import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
+import bubolo.PlayerInfo;
 import bubolo.Systems;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.net.Network;
 import bubolo.net.NetworkObserver;
-import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressMessage;
 import bubolo.net.ServerAddressMulticaster;
 import bubolo.net.command.SendMap;
@@ -189,6 +190,13 @@ public class LobbyScreen extends Stage2dScreen<Table> implements NetworkObserver
 					app.setState(State.MultiplayerGame);
 				}
 			}
+		}
+	}
+
+	@Override
+	public void onInputAction(Action action) {
+		if (action == Action.Cancel) {
+			// @TODO (cdc 2021-08-09): Not yet handled.
 		}
 	}
 

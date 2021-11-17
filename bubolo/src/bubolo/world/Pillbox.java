@@ -420,7 +420,7 @@ public class Pillbox extends ActorEntity implements Damageable, TerrainImproveme
 		var damagePercent = hitPoints() / maxHitPoints();
 		if (damagePercent >= 0.9F) {
 			return DamageState.Undamaged;
-		} else if (damagePercent > 0.60f && damagePercent < 0.85f) {
+		} else if (damagePercent > 0.60f && damagePercent < 0.9f) {
 			return DamageState.LightlyDamaged;
 		} else if (damagePercent > 0.30f && damagePercent <= 0.60f) {
 			return DamageState.ModeratelyDamaged;

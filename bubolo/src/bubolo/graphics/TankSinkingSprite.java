@@ -17,6 +17,8 @@ class TankSinkingSprite extends Sprite {
 	private int ticksRemaining = drownTimeTicks;
 
 	private static final String textureFile = "tank.png";
+	private static final int textureFileHashCode = textureFile.hashCode();
+
 	private final Color tankColor;
 	private final TextureRegion bodyFrame;
 	private final TextureRegion treadsFrame;
@@ -37,6 +39,11 @@ class TankSinkingSprite extends Sprite {
 		TextureRegion[][] texture = Graphics.getTextureRegion2d(textureFile, 32, 32);
 		this.bodyFrame = texture[0][1];
 		this.treadsFrame = texture[0][0];
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

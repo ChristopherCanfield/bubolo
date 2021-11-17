@@ -48,17 +48,6 @@ public class NetworkTest
 	}
 
 	@Test
-	public void addRemoveObserver()
-	{
-		NetworkObserver o = new MockNetworkObserver();
-		net.addObserver(o);
-		assertEquals(1, net.getNotifier().getObserverCount());
-
-		net.removeObserver(o);
-		assertEquals(0, net.getNotifier().getObserverCount());
-	}
-
-	@Test
 	public void isServer()
 	{
 		assertFalse(net.isServer());

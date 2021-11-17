@@ -16,6 +16,7 @@ class GrassSprite extends AbstractStaticEntitySprite {
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "grass.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	/**
 	 * Constructor for the GrassSprite. This is Package-private because sprites should not be directly created outside
@@ -27,6 +28,11 @@ class GrassSprite extends AbstractStaticEntitySprite {
 		super(DrawLayer.TerrainLevel1, grass, (float) (MathUtils.random.nextInt(4) * (Math.PI / 2)) );
 
 		texture = Graphics.getTexture(textureFileName);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

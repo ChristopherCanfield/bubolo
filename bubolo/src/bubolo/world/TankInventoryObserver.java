@@ -1,11 +1,11 @@
 package bubolo.world;
 
 /**
- * Observes a tank. Call {@code tank.setTankObserver} to assocate a TankObserver with a tank.
+ * Observes a tank. Call {@code tank.setTankObserver} to associate a TankObserver with a tank.
  *
  * @author Christopher D. Canfield
  */
-public interface TankObserver {
+public interface TankInventoryObserver {
 	void onTankAmmoCountChanged(int ammo);
 
 	void onTankMineCountChanged(int mines);

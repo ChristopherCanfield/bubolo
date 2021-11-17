@@ -53,6 +53,11 @@ abstract class Sprite implements Drawable {
 	}
 
 	/**
+	 * A unique ID associated with a texture. For sorting sprites by texture.
+	 */
+	protected abstract int getTextureId();
+
+	/**
 	 * Gets the sprite's color. Sprites are white by default, which means that they draw the texture without changes. Do not
 	 * mutate the returned Color directly: Make a copy of it, and then set this sprite's color to the new color using setColor.
 	 *
@@ -69,7 +74,7 @@ abstract class Sprite implements Drawable {
 	 * @param color the sprite's new color.
 	 */
 	protected final void setColor(Color color) {
-		this.color = new Color(color);
+		this.color = color;
 	}
 
 	/**

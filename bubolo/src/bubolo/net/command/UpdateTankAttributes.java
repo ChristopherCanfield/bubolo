@@ -2,7 +2,7 @@ package bubolo.net.command;
 
 import java.util.UUID;
 
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkGameCommand;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
@@ -11,7 +11,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class UpdateTankAttributes extends NetworkCommand {
+public class UpdateTankAttributes implements NetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -40,7 +40,7 @@ public class UpdateTankAttributes extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute(World world) {
+	public void execute(World world) {
 		Tank tank = (Tank) world.getEntity(id);
 		tank.setNetAttributes(new NetTankAttributes(speed, health, carriedPillboxId));
 		tank.setPosition(x, y);

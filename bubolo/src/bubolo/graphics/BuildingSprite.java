@@ -17,6 +17,7 @@ public class BuildingSprite extends AbstractEntitySprite<Building> {
 	private final int appearanceIndex;
 
 	private static final String textureFile = "buildings.png";
+	private static final int textureFileHashCode = textureFile.hashCode();
 
 	private static final Color color1 = Color.valueOf("F5F5F5FF");
 	private static final Color color2 = Color.valueOf("EBEBEBFF");
@@ -48,5 +49,10 @@ public class BuildingSprite extends AbstractEntitySprite<Building> {
 		} else {
 			drawTexture(graphics, texture[appearanceIndex]);
 		}
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 }

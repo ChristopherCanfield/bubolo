@@ -46,6 +46,8 @@ class Server implements NetworkSubsystem {
 	// Reference to the network system.
 	private final Network network;
 
+	private final NetworkObserverNotifier notifier;
+
 	// The name of the server player.
 	private String serverPlayerName;
 
@@ -56,9 +58,11 @@ class Server implements NetworkSubsystem {
 	 * Constructs a Server object.
 	 *
 	 * @param network reference to the network system.
+	 * @param notifier reference to the network observer notifier.
 	 */
-	Server(Network network) {
+	Server(Network network, NetworkObserverNotifier notifier) {
 		this.network = network;
+		this.notifier = notifier;
 		this.clients = new CopyOnWriteArrayList<ClientSocket>();
 		this.sender = Executors.newSingleThreadExecutor();
 	}
@@ -106,7 +110,7 @@ class Server implements NetworkSubsystem {
 		}
 
 		var spawn = initialSpawnPositions.get(initialSpawnPositions.size() - 1);
-		network.getNotifier().notifyGameStart(secondsUntilStart, spawn.tileColumn(), spawn.tileRow());
+		notifier.notifyGameStart(secondsUntilStart, spawn.tileColumn(), spawn.tileRow());
 	}
 
 	@Override
@@ -134,7 +138,7 @@ class Server implements NetworkSubsystem {
 		clients.remove(client);
 
 		// @TODO (cdc 2021-07-21): Consider consolidating the Messenger and the NetworkObserverNotifier.
-		Systems.network().getNotifier().notifyClientDisconnected(clientName);
+		notifier.notifyClientDisconnected(clientName);
 		Systems.messenger().notifyPlayerDisconnected(clientName);
 
 		send(new ClientDisconnected(clientName));

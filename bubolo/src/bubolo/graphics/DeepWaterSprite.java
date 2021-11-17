@@ -16,6 +16,7 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater> {
 
 	// The texture's file name.
 	private static final String TEXTURE_FILE = "deepwater.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	/**
 	 * Constructor for the DeepWaterSprite. This is Package-private because sprites should not be directly created
@@ -27,6 +28,11 @@ class DeepWaterSprite extends AbstractEntitySprite<DeepWater> {
 		super(DrawLayer.TerrainLevel1, deepWater);
 
 		frames = Graphics.getTextureRegion1d(TEXTURE_FILE, getClass());
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

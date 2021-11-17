@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import bubolo.Systems;
 import bubolo.graphics.Graphics;
 
 /**
@@ -39,7 +40,8 @@ public abstract class Stage2dScreen<T extends WidgetGroup> implements Screen {
 		root.setFillParent(true);
 		stage.getRoot().setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		Gdx.input.setInputProcessor(stage);
+		Systems.input().addActionObserver(this);
+		Systems.input().addInputEventObserver(stage);
 	}
 
 	@Override
@@ -86,9 +88,9 @@ public abstract class Stage2dScreen<T extends WidgetGroup> implements Screen {
 	 */
 	@Override
 	public final void dispose() {
-		if (Gdx.input.getInputProcessor() == this) {
-			Gdx.input.setInputProcessor(null);
-		}
+		Systems.input().removeActionObserver(this);
+		Systems.input().removeInputEventObserver(stage);
+
 		onDispose();
 	}
 

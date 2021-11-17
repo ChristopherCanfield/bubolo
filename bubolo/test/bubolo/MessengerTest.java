@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import bubolo.mock.MockPlayerAttributes;
 import bubolo.world.Pillbox;
 import bubolo.world.Tank;
 
@@ -67,12 +70,79 @@ class MessengerTest {
 		assertTrue(observer.playerDisconnectedMessageReceived);
 	}
 
+	@Test
+	void notifyAllianceRequestSent() {
+		messenger.addObserver(observer);
+		assertFalse(observer.allianceRequestSent);
+
+		messenger.notifyAllianceRequestSent("Player");
+		assertTrue(observer.allianceRequestSent);
+	}
+
+	@Test
+	void notifyAllianceRequestReceived() {
+		messenger.addObserver(observer);
+		assertFalse(observer.allianceRequestReceived);
+
+		messenger.notifyAllianceRequestReceived("Player");
+		assertTrue(observer.allianceRequestReceived);
+	}
+
+	/**
+	 * Tests notifying that an alliance request was accepted, first with a local requester and a remote accepter, then a remote requester and a local accepter.
+	 */
+	@ParameterizedTest
+	@ValueSource(booleans = { true, false })
+	void notifyAllianceRequestAccepted(boolean localRequester) {
+		boolean localAccepter = !localRequester;
+
+		messenger.addObserver(observer);
+		assertFalse(observer.allianceRequestAccepted);
+
+		messenger.notifyAllianceRequestAccepted(new MockPlayerAttributes(localRequester), new MockPlayerAttributes(localAccepter));
+		assertTrue(observer.allianceRequestAccepted);
+	}
+
+	/**
+	 * Tests notifying that an alliance request was rejected, first with a local requester and a remote rejecter, then a remote requester and a local rejecter.
+	 */
+	@ParameterizedTest
+	@ValueSource(booleans = { true, false })
+	void notifyAllianceRequestRejected(boolean localRequester) {
+		boolean localAccepter = !localRequester;
+
+		messenger.addObserver(observer);
+		assertFalse(observer.allianceRequestRejected);
+
+		messenger.notifyAllianceRequestRejected(new MockPlayerAttributes(localRequester), new MockPlayerAttributes(localAccepter));
+		assertTrue(observer.allianceRequestRejected);
+	}
+
+	/**
+	 * Tests notifying that an alliance was ended, first with a local ender and a remote partner, then a remote ender and a local partner.
+	 */
+	@ParameterizedTest
+	@ValueSource(booleans = { true, false })
+	void notifyAllianceEnded(boolean localRequester) {
+		boolean localAccepter = !localRequester;
+
+		messenger.addObserver(observer);
+		assertFalse(observer.allianceEnded);
+
+		messenger.notifyAllianceEnded(new MockPlayerAttributes(localRequester), new MockPlayerAttributes(localAccepter));
+		assertTrue(observer.allianceEnded);
+	}
 
 	private static class TestObserver implements Messenger.MessageObserver {
 		boolean attackMessageReceived;
 		boolean capturedMessageReceived;
 		boolean playerDiedMessageReceived;
 		boolean playerDisconnectedMessageReceived;
+		boolean allianceRequestSent;
+		boolean allianceRequestReceived;
+		boolean allianceRequestAccepted;
+		boolean allianceRequestRejected;
+		boolean allianceEnded;
 
 		@Override
 		public void messageObjectUnderAttack(String message) {
@@ -92,6 +162,31 @@ class MessengerTest {
 		@Override
 		public void messagePlayerDisconnected(String message) {
 			playerDisconnectedMessageReceived = true;
+		}
+
+		@Override
+		public void messageAllianceRequestReceived(String message) {
+			allianceRequestReceived = true;
+		}
+
+		@Override
+		public void messageAllianceRequestSent(String message) {
+			allianceRequestSent = true;
+		}
+
+		@Override
+		public void messageAllianceRequestAccepted(String message) {
+			allianceRequestAccepted = true;
+		}
+
+		@Override
+		public void messageAllianceRequestRejected(String message) {
+			allianceRequestRejected = true;
+		}
+
+		@Override
+		public void messageAllianceEnded(String message) {
+			allianceEnded = true;
 		}
 	}
 }

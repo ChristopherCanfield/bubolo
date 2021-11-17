@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bubolo.controllers.ai.AiPillboxController;
-import bubolo.controllers.input.GamepadTankController;
-import bubolo.controllers.input.KeyboardTankController;
+import bubolo.controllers.input.PlayerTankController;
 import bubolo.util.Nullable;
 import bubolo.world.ActorEntity;
 import bubolo.world.Pillbox;
@@ -76,8 +75,7 @@ public class Controllers {
 
 			@Override
 			public void create(ActorEntity entity) {
-				entity.addController(new KeyboardTankController((Tank) entity));
-				entity.addController(new GamepadTankController((Tank) entity));
+				entity.addController(new PlayerTankController((Tank) entity));
 			}
 		});
 

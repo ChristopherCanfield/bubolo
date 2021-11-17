@@ -10,34 +10,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 
 import bubolo.GameApplication;
 import bubolo.GameApplication.State;
+import bubolo.PlayerInfo;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
+import bubolo.input.InputManager.Action;
 import bubolo.net.Network;
 import bubolo.net.NetworkException;
-import bubolo.net.PlayerInfo;
 import bubolo.net.ServerAddressListener;
 import bubolo.net.ServerAddressMessage;
 import bubolo.ui.gui.ButtonGroup;
-import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.Line;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFromObjectSide;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFromObjectSide;
 import bubolo.ui.gui.SelectBox;
 import bubolo.ui.gui.TextBox;
 import bubolo.ui.gui.UiComponent;
-import bubolo.ui.gui.UiComponent.HOffsetFrom;
-import bubolo.ui.gui.UiComponent.HOffsetFromObjectSide;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.ui.gui.UiComponent.VOffsetFromObjectSide;
+import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
 
 /**
  * The join game screen, which allows the user to enter a name and ip address.
@@ -107,8 +107,6 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 			assert !networkInterfaces.isEmpty();
 			serverAddressListener.start(networkInterfaces.get(0));
 		}
-
-		Gdx.input.setInputProcessor(this);
 	}
 
 	private static TextBox.Args defaultTextBoxArgs() {
@@ -235,27 +233,11 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		root.add(okCancelButtons);
 	}
 
-//	private void addStatusLabels() {
-//		VerticalGroup statusGroup = new VerticalGroup();
-//		statusGroup.align(Align.center);
-//		statusGroup.padTop(50);
-//		statusGroup.padLeft(leftPadding);
-//
-//		statusLabel1 = new Label("Test", skin);
-//		statusGroup.addActor(statusLabel1);
-//
-//		statusLabel2 = new Label("Test2", skin);
-//		statusGroup.addActor(statusLabel2);
-//
-//		root.addActor(statusGroup);
-//	}
-//
-//	private boolean textFieldsPopulated() {
-//		return !playerNameField.getText().isEmpty() && !(isClient && ipAddressField.getText().isEmpty());
-//	}
+	private boolean startingServer = false;
 
 	private void startServer() {
-		if (!playerNameTextBox.isEmpty()) {
+		if (!startingServer && !playerNameTextBox.isEmpty()) {
+			startingServer = true;
 			setInputEventsEnabled(false);
 
 			final Network network = Systems.network();
@@ -267,7 +249,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	}
 
 	private void connectToServer() {
-		if (!playerNameTextBox.isEmpty()) {
+		if (!connectToServer && !playerNameTextBox.isEmpty()) {
 			int selectedServerIndex = availableServersList.selectedButtonIndex();
 			if (selectedServerIndex != UiComponent.NoIndex) {
 				serverIpAddress = availableServers.get(selectedServerIndex).serverAddress();
@@ -320,14 +302,14 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	}
 
 	@Override
-	protected void onKeyUp(int keycode) {
-		if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+	protected void onInputActionReceived(Action action) {
+		if (action == Action.Activate) {
 			if (isClient) {
 				connectToServer();
 			} else {
 				startServer();
 			}
-		} else if (keycode == Keys.ESCAPE) {
+		} else if (action == Action.Cancel) {
 			goBackOneScreen();
 		}
 	}
@@ -336,6 +318,8 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	protected void onMouseHoveredOverObject(HoveredObjectInfo hoveredObjectInfo) {
 		if (hoveredObjectInfo.component() == okCancelButtons) {
 			okCancelButtons.selectButton(hoveredObjectInfo.hoveredItemIndex());
+		} else {
+			okCancelButtons.lostFocus();
 		}
 	}
 

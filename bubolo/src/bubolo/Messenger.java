@@ -11,6 +11,7 @@ import bubolo.world.DeepWater;
 import bubolo.world.Entity;
 import bubolo.world.Mine;
 import bubolo.world.MineExplosion;
+import bubolo.world.PlayerAttributes;
 import bubolo.world.Tank;
 import bubolo.world.World;
 
@@ -58,6 +59,41 @@ public class Messenger {
 		 * @param message a message that can be displayed to the player.
 		 */
 		void messagePlayerDisconnected(String message);
+
+		/**
+		 * Called when a player proposes an alliance with this player.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messageAllianceRequestReceived(String message);
+
+		/**
+		 * Called when this player sends an alliance request to another player.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messageAllianceRequestSent(String message);
+
+		/**
+		 * Called when a player accepts an alliance request.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messageAllianceRequestAccepted(String message);
+
+		/**
+		 * Called when a player rejects an alliance request.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messageAllianceRequestRejected(String message);
+
+		/**
+		 * Called when an alliance has terminated.
+		 *
+		 * @param message a message that can be displayed to the player.
+		 */
+		void messageAllianceEnded(String message);
 	}
 
 	private final List<MessageObserver> observers = new CopyOnWriteArrayList<>();
@@ -263,6 +299,125 @@ public class Messenger {
 		}
 
 		message.append(".");
+		return message.toString();
+	}
+
+	/**
+	 * Notifies observers that an alliance request has been received.
+	 *
+	 * @param requesterName the requester's name.
+	 */
+	public void notifyAllianceRequestReceived(String requesterName) {
+		String message = requesterName + " proposes an alliance. Use the diplomacy screen (F1 or DPAD Up) to accept or reject this request.";
+
+		for (var observer : observers) {
+			observer.messageAllianceRequestReceived(message);
+		}
+	}
+
+	public void notifyAllianceRequestSent(String targetName) {
+		String message = "Alliance request sent to " + targetName;
+
+		for (var observer : observers) {
+			observer.messageAllianceRequestSent(message);
+		}
+	}
+
+	/**
+	 * Notifies observers that a player has accepted an alliance request.
+	 *
+	 * @param requester the player who requested the alliance.
+	 * @param accepter the player who accepted the alliance request.
+	 */
+	public void notifyAllianceRequestAccepted(PlayerAttributes requester, PlayerAttributes accepter) {
+		var message = buildAllianceRequestAcceptedMessage(requester, accepter);
+
+		for (var observer : observers) {
+			observer.messageAllianceRequestAccepted(message);
+		}
+	}
+
+	private static String buildAllianceRequestAcceptedMessage(PlayerAttributes requester, PlayerAttributes accepter) {
+		StringBuilder message = new StringBuilder();
+
+		if (requester.isLocal()) {
+			message.append("You are");
+		} else {
+			message.append(requester.name()).append(" is");
+		}
+
+		message.append(" now allied with ");
+
+		if (accepter.isLocal()) {
+			message.append("you.");
+		} else {
+			message.append(accepter.name()).append('.');
+		}
+
+		return message.toString();
+	}
+
+	/**
+	 * Notifies observers that a player has rejected an alliance request.
+	 *
+	 * @param requester the player who requested the alliance.
+	 * @param rejecter the player who rejected the alliance request.
+	 */
+	public void notifyAllianceRequestRejected(PlayerAttributes requester, PlayerAttributes rejecter) {
+		var message = buildAllianceRequestRejectedMessage(requester, rejecter);
+
+		for (var observer : observers) {
+			observer.messageAllianceRequestRejected(message);
+		}
+	}
+
+	private static String buildAllianceRequestRejectedMessage(PlayerAttributes requester, PlayerAttributes rejecter) {
+		StringBuilder message = new StringBuilder();
+
+		if (rejecter.isLocal()) {
+			message.append("You");
+		} else {
+			message.append(rejecter.name());
+		}
+
+		message.append(" rejected an alliance request from ");
+
+		if (requester.isLocal()) {
+			message.append("you.");
+		} else {
+			message.append(requester.name()).append('.');
+		}
+
+		return message.toString();
+	}
+
+	public void notifyAllianceEnded(PlayerAttributes allianceEnder, PlayerAttributes alliancePartner) {
+		var message = buildAllianceEndedMessage(allianceEnder, alliancePartner);
+
+		for (var observer : observers) {
+			observer.messageAllianceEnded(message);
+		}
+	}
+
+	private static String buildAllianceEndedMessage(PlayerAttributes allianceEnder, PlayerAttributes alliancePartner) {
+		StringBuilder message = new StringBuilder();
+
+		if (allianceEnder.isLocal()) {
+			message.append("You");
+		} else {
+			message.append(allianceEnder.name());
+		}
+
+		message.append(" and ");
+
+		if (alliancePartner.isLocal()) {
+			message.append("you");
+		} else {
+			message.append(alliancePartner.name());
+		}
+
+		message.append(" are no longer allied.");
+
 		return message.toString();
 	}
 

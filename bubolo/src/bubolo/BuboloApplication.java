@@ -6,17 +6,17 @@ import static bubolo.Config.TargetWindowWidth;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.badlogic.gdx.Gdx;
+
 import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
 import bubolo.map.MapImporter;
-import bubolo.net.PlayerInfo;
 import bubolo.net.command.CreateTank;
 import bubolo.ui.GameScreen;
 import bubolo.ui.LoadingScreen;
@@ -26,6 +26,7 @@ import bubolo.ui.MapSelectionScreen;
 import bubolo.ui.MultiplayerSetupScreen;
 import bubolo.ui.MultiplayerSetupScreen.PlayerType;
 import bubolo.ui.Screen;
+import bubolo.util.FrameInfo;
 import bubolo.util.GameRuntimeException;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
@@ -55,24 +56,26 @@ public class BuboloApplication extends AbstractGameApplication {
 	// Player information for network games.
 	private PlayerInfo playerInfo;
 
+	// Whether to print the amount of time each frame takes.
+	private boolean printFrameTime;
+	private FrameInfo frameInfo;
+
 	/**
 	 * Constructs an instance of the game application. Only one instance should ever exist.
 	 *
 	 * @param windowWidth the width of the window.
 	 * @param windowHeight the height of the window.
-	 * @param commandLineArgs the arguments passed to the application through the command line. The first argument
-	 * specifies the map to use. Any additional arguments are ignored.
+	 * @param commandLineArgs the arguments passed to the application through the command line. The only application setting is -frameInfo, which prints
+	 * frame debug info.
 	 */
 	public BuboloApplication(int windowWidth, int windowHeight, String[] commandLineArgs) {
 		this.windowWidth = windowWidth;
 		this.windowHeight = windowHeight;
 
 		// The first command line argument specifies the map to use. If there is no argument, use the default map.
-		if (commandLineArgs.length != 0) {
-			defaultMapName = commandLineArgs[0];
-			Path argPath = FileSystems.getDefault().getPath("res", "maps", defaultMapName);
-			if (Files.exists(argPath)) {
-				mapPath = argPath;
+		for (int i = 0; i < commandLineArgs.length; i++) {
+			if (commandLineArgs[i].equals("-frameInfo")) {
+				printFrameTime = true;
 			}
 		}
 	}
@@ -81,6 +84,7 @@ public class BuboloApplication extends AbstractGameApplication {
 	public void setWorld(World world) {
 		super.setWorld(world);
 		world.addEntityLifetimeObserver(graphics);
+		graphics.setWorldSize(world().getWidth(), world().getHeight());
 	}
 
 	public String mapName() {
@@ -98,6 +102,8 @@ public class BuboloApplication extends AbstractGameApplication {
 		initializeLogger();
 
 		graphics = new Graphics(windowWidth, windowHeight);
+		frameInfo = new FrameInfo(graphics);
+		Gdx.input.setInputProcessor(Systems.input());
 
 		setState(State.MainMenu);
 	}
@@ -125,48 +131,58 @@ public class BuboloApplication extends AbstractGameApplication {
 	public void render() {
 		try {
 			final State state = getState();
-			World world = world();
 
 			Systems.messenger().update();
+			Systems.input().update();
 
 			switch (state) {
-			case MultiplayerStarting:
-			case MultiplayerLobby:
-				Systems.network().update(this);
-				//$FALL-THROUGH$
-			case MainMenu:
-			case MultiplayerMapSelection:
-			case MultiplayerSetupClient:
-			case MultiplayerSetupServer:
-			case SinglePlayerSetup:
-			case Settings:
-				graphics.draw(screen);
-				break;
-			case MultiplayerGame:
-			case SinglePlayerGame:
-				world.update();
-				Systems.network().update(this);
-				graphics.draw(world, screen);
-				break;
-			case SinglePlayerLoading:
-				LoadingScreen loadingScreen = (LoadingScreen) screen;
-				graphics.draw(loadingScreen);
-				if (loadingScreen.drawCount() > 1 && !isReady()) {
-					setWorld(importWorld());
-					Systems.initializeAudio(world().getWidth(), world().getHeight(),
-							TargetWindowWidth * DefaultPixelsPerWorldUnit,
-							TargetWindowHeight * DefaultPixelsPerWorldUnit);
+				case MultiplayerStarting:
+				case MultiplayerLobby:
+					Systems.network().update(this);
+					//$FALL-THROUGH$
+				case MainMenu:
+				case MultiplayerMapSelection:
+				case MultiplayerSetupClient:
+				case MultiplayerSetupServer:
+				case SinglePlayerSetup:
+				case Settings:
+					graphics.draw(screen);
+					break;
+				case MultiplayerGame:
+				case SinglePlayerGame: {
 
-					var spawn = world().getRandomSpawn();
-					Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(spawn.x(), spawn.y(), 0);
+					frameInfo.beginFrame();
 
-					Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
-					tank.initialize("Player 1", TeamColor.Blue, true);
+					world().update();
+					Systems.network().update(this);
+					graphics.draw(world(), screen);
 
-					Systems.initializeNetwork(NetworkType.Null);
+					frameInfo.endFrame();
+					if (printFrameTime) {
+						System.out.println(frameInfo.toString());
+					}
+					break;
+				}
+				case SinglePlayerLoading: {
+					LoadingScreen loadingScreen = (LoadingScreen) screen;
+					graphics.draw(loadingScreen);
+					if (loadingScreen.drawCount() > 1 && !isReady()) {
+						setWorld(importWorld());
+						Systems.initializeAudio(world().getWidth(), world().getHeight(),
+								TargetWindowWidth * DefaultPixelsPerWorldUnit,
+								TargetWindowHeight * DefaultPixelsPerWorldUnit);
 
-					setReady(true);
-					setState(State.SinglePlayerGame, tank);
+						var spawn = world().getRandomSpawn();
+						Entity.ConstructionArgs tankSpawnArgs = new Entity.ConstructionArgs(spawn.x(), spawn.y(), 0);
+
+						Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
+						tank.initialize("Player 1", TeamColor.Blue, true, world());
+
+						Systems.initializeNetwork(NetworkType.Null);
+
+						setReady(true);
+						setState(State.SinglePlayerGame, tank);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -236,37 +252,38 @@ public class BuboloApplication extends AbstractGameApplication {
 					0);
 
 			Tank tank = world().addEntity(Tank.class, tankSpawnArgs);
-			tank.initialize(playerInfo.name(), playerInfo.color(), true);
+			tank.initialize(playerInfo.name(), playerInfo.color(), true, world());
 
 			Systems.network().send(new CreateTank(tank));
 
 			setReady(true);
 			break;
 
-		case MultiplayerGame:
+		case MultiplayerGame: {
 			assert previousState == State.MultiplayerStarting;
 			assert screen instanceof LobbyScreen;
 
 			screen.dispose();
-			screen = new GameScreen();
-			world().getLocalTank().setObserver((GameScreen) screen);
+			var localTank = world().getLocalTank();
+			screen = new GameScreen(localTank.getPlayer());
+			localTank.setInventoryObserver((GameScreen) screen);
 
 			break;
-
-		case SinglePlayerLoading:
+		}
+		case SinglePlayerLoading: {
 			assert previousState == State.SinglePlayerSetup;
 			assert mapPath != null;
 			mapPath = (Path) arg;
 			screen = new LoadingScreen(mapName());
 			break;
-
+		}
 		case SinglePlayerGame: {
 			assert previousState == State.SinglePlayerLoading;
 			assert arg != null;
 
 			Tank localTank = (Tank) arg;
-			screen = new GameScreen();
-			localTank.setObserver((GameScreen) screen);
+			screen = new GameScreen(localTank.getPlayer());
+			localTank.setInventoryObserver((GameScreen) screen);
 
 			break;
 		}

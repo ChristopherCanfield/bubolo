@@ -1,7 +1,9 @@
 package bubolo.net.command;
 
+import bubolo.GameApplication;
 import bubolo.Systems;
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkApplicationCommand;
+import bubolo.net.NetworkObserverNotifier;
 import bubolo.util.Nullable;
 
 /**
@@ -9,7 +11,7 @@ import bubolo.util.Nullable;
  *
  * @author Christopher D. Canfield
  */
-public class ClientDisconnected extends NetworkCommand {
+public class ClientDisconnected implements NetworkApplicationCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final String clientName;
@@ -22,8 +24,8 @@ public class ClientDisconnected extends NetworkCommand {
 	}
 
 	@Override
-	public void execute() {
+	public void execute(GameApplication app, NetworkObserverNotifier notifier) {
 		Systems.messenger().notifyPlayerDisconnected(clientName);
-		Systems.network().getNotifier().notifyClientDisconnected(clientName);
+		notifier.notifyClientDisconnected(clientName);
 	}
 }

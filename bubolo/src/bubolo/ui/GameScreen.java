@@ -14,18 +14,20 @@ import bubolo.Messenger.MessageObserver;
 import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.ui.gui.LayoutArgs;
 import bubolo.ui.gui.MessageBar;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
-import bubolo.world.TankObserver;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
+import bubolo.world.Player;
+import bubolo.world.TankInventoryObserver;
 
 /**
  * The game user interface elements.
  *
  * @author Christopher D. Canfield
  */
-public class GameScreen extends AbstractScreen implements TankObserver, MessageObserver {
+public class GameScreen extends AbstractScreen implements TankInventoryObserver, MessageObserver {
 	private static final Color clearColor =  new Color(0.15f, 0.15f, 0.15f, 1);
 
 	private final BitmapFont font = Fonts.Arial16;
@@ -57,11 +59,15 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 
 	/* End tank hud variables. */
 
-	public GameScreen() {
+	private final DiplomacyScreen diplomacyScreen;
+
+	public GameScreen(Player player) {
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20);
 
 		addMessageBar();
+		diplomacyScreen = new DiplomacyScreen(player);
+		root.add(diplomacyScreen);
 
 		Systems.messenger().addObserver(this);
 	}
@@ -156,6 +162,12 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 	public void onViewportResized(int newWidth, int newHeight) {
 	}
 
+	@Override
+	protected void onInputActionReceived(Action action) {
+		if (action == Action.ShowDiplomacyMenu) {
+			diplomacyScreen.show();
+		}
+	}
 
 	/* Messages from the tank. */
 
@@ -186,6 +198,10 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 	private static final Color otherPlayerLostObjectColor = Color.valueOf("E5E5E5FF");
 	private static final Color thisPlayerDiedColor = thisPlayerLostObjectColor;
 	private static final Color otherPlayerDiedColor = Color.CYAN;
+	private static final Color allianceRequestSentColor = Color.valueOf("31BC9EFF");
+	private static final Color allianceAcceptedColor = Color.valueOf("31BC9EFF");
+	private static final Color allianceRejectedColor = thisPlayerDiedColor;
+	private static final Color allianceEndedColor = thisPlayerDiedColor;
 
 	@Override
 	public void messageObjectUnderAttack(String message) {
@@ -213,5 +229,30 @@ public class GameScreen extends AbstractScreen implements TankObserver, MessageO
 	@Override
 	public void messagePlayerDisconnected(String message) {
 		messageBar.addMessage(message, Color.GOLD);
+	}
+
+	@Override
+	public void messageAllianceRequestReceived(String message) {
+		messageBar.addMessage(message, allianceRequestSentColor);
+	}
+
+	@Override
+	public void messageAllianceRequestSent(String message) {
+		messageBar.addMessage(message, allianceRequestSentColor);
+	}
+
+	@Override
+	public void messageAllianceRequestAccepted(String message) {
+		messageBar.addMessage(message, allianceAcceptedColor);
+	}
+
+	@Override
+	public void messageAllianceRequestRejected(String message) {
+		messageBar.addMessage(message, allianceRejectedColor);
+	}
+
+	@Override
+	public void messageAllianceEnded(String message) {
+		messageBar.addMessage(message, allianceEndedColor);
 	}
 }

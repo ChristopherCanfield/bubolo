@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 import bubolo.AbstractGameApplication;
 import bubolo.Config;
+import bubolo.Systems;
 import bubolo.graphics.Graphics;
 import bubolo.ui.gui.GuiTestScreen;
 
@@ -28,7 +29,8 @@ public class SimpleUiTestApp extends AbstractGameApplication {
 		graphics = new Graphics(Config.TargetWindowWidth, Config.TargetWindowHeight);
 		screen = new GuiTestScreen();
 		graphics.camera().position.set(0, 0, 0);
-		Gdx.input.setInputProcessor(screen);
+		Gdx.input.setInputProcessor(Systems.input());
+		Systems.input().addActionObserver(screen);
 	}
 
 	@Override
@@ -41,6 +43,7 @@ public class SimpleUiTestApp extends AbstractGameApplication {
 
 	@Override
 	public void render() {
+		Systems.input().update();
 		graphics.draw(screen);
 	}
 

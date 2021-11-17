@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -13,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
 
@@ -21,7 +21,7 @@ import bubolo.util.Units;
  *
  * @author Christopher D. Canfield
  */
-public class SelectBox extends UiComponent implements Focusable {
+public class SelectBox extends PositionableUiComponent implements Focusable {
 	private final Args args;
 
 	private boolean hasFocus;
@@ -108,6 +108,13 @@ public class SelectBox extends UiComponent implements Focusable {
 		}
 	}
 
+	/**
+	 * Removes all select box items.
+	 */
+	public void removeAllItems() {
+		items.clear();
+	}
+
 	public void setSelectedIndex(int index) {
 		assert !items.isEmpty();
 		assert index >= 0 && index < items.size();
@@ -133,11 +140,11 @@ public class SelectBox extends UiComponent implements Focusable {
 	}
 
 	@Override
-	public void onKeyDown(int keycode) {
+	public void onInputAction(Action action) {
 		if (hasFocus && !items.isEmpty()) {
-			if (keycode == Keys.LEFT || keycode == Keys.A || keycode == Keys.NUMPAD_4) {
+			if (action == Action.MenuLeft) {
 				selectPrevious();
-			} else if (keycode == Keys.RIGHT || keycode == Keys.D || keycode == Keys.NUMPAD_6) {
+			} else if (action == Action.MenuRight) {
 				selectNext();
 			}
 		}
@@ -169,7 +176,7 @@ public class SelectBox extends UiComponent implements Focusable {
 	}
 
 	@Override
-	public int onMouseClicked(int screenX, int screenY) {
+	public ClickedObjectInfo onMouseClicked(int screenX, int screenY) {
 		if (contains(screenX, screenY)) {
 			gainFocus();
 			if (withinLeftArrow(screenX)) {
@@ -177,13 +184,13 @@ public class SelectBox extends UiComponent implements Focusable {
 			} else if (withinRightArrow(screenX)) {
 				selectNext();
 			}
-			return 0;
+			return new ClickedObjectInfo(this, 0);
 		}
-		return NoIndex;
+		return null;
 	}
 
 	@Override
-	public int onMouseMoved(int screenX, int screenY) {
+	public HoveredObjectInfo onMouseMoved(int screenX, int screenY) {
 		highlightLeftArrow = highlightRightArrow = false;
 
 		if (contains(screenX, screenY)) {
@@ -191,11 +198,11 @@ public class SelectBox extends UiComponent implements Focusable {
 			highlightLeftArrow = withinLeftArrow(screenX);
 			highlightRightArrow = withinRightArrow(screenX);
 
-			return 0;
+			return new HoveredObjectInfo(this, 0);
 		} else {
 			lostFocus();
 		}
-		return NoIndex;
+		return null;
 	}
 
 	private boolean contains(float screenX, float screenY) {

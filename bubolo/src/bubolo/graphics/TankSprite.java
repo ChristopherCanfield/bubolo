@@ -47,10 +47,11 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 	// For player name drawing.
 	private static final BitmapFont font = Fonts.Arial16;
 
-	private static final Color ENEMY_TANK_NAME_COLOR = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
+	private static final Color enemyTankColor = new Color(229 / 255f, 74 / 255f, 39 / 255f, 1);
+	private static final Color friendlyTankColor = Color.valueOf("00C972FF");
 
-	/** The file name of the texture. */
 	private static final String textureFileName = "tank.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	private final ParticleEffect[] smokeEmitter = new ParticleEffect[3];
 	private static final String smokeParticleEffectLowDamageFile = "res/particles/Particle Park Smoke Low Damage.p";
@@ -79,6 +80,11 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		smokeEmitter[2].start();
 	}
 
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
+	}
+
 	/**
 	 * Draws the tank's name. This is a separate method to ensure that tank UI elements are drawn above all other objects. begin()
 	 * must have been called on graphics.batch() before calling this method.
@@ -87,8 +93,9 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 		var tank = getEntity();
 		// Render names for visible network tanks.
 		if (!tank.isOwnedByLocalPlayer() && visibility() != Visibility.NetworkTankHidden) {
+			var color = tank.isAlliedWithLocalPlayer() ? friendlyTankColor : enemyTankColor;
+			font.setColor(color);
 			var tankCameraCoords = tankCameraCoordinates(getEntity(), graphics.camera());
-			font.setColor(ENEMY_TANK_NAME_COLOR);
 			font.draw(graphics.batch(), tank.playerName(), tankCameraCoords.x - 20, tankCameraCoords.y + 35);
 		}
 	}
@@ -200,7 +207,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 	private Visibility visibility() {
 		if (getEntity().isHidden()) {
-			if (getEntity().isOwnedByLocalPlayer()) {
+			if (getEntity().isAlliedWithLocalPlayer()) {
 				return Visibility.Hidden;
 			} else {
 				return Visibility.NetworkTankHidden;
@@ -232,9 +239,7 @@ class TankSprite extends AbstractEntitySprite<Tank> implements UiDrawable {
 
 		var tank = getEntity();
 		if (tank.isOwnedByLocalPlayer()) {
-			CameraController controller = new TankCameraController(tank);
-			graphics.setCameraController(controller);
-			controller.setCamera(graphics.camera());
+			tank.setPositionObserver(graphics.getCameraController());
 		}
 
 		color = tank.teamColor().color;

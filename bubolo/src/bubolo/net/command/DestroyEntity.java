@@ -2,7 +2,7 @@ package bubolo.net.command;
 
 import java.util.UUID;
 
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkGameCommand;
 import bubolo.world.Damageable;
 import bubolo.world.World;
 
@@ -13,7 +13,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class DestroyEntity extends NetworkCommand {
+public class DestroyEntity implements NetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -23,7 +23,7 @@ public class DestroyEntity extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute(World world) {
+	public void execute(World world) {
 		var entityToDestroy = world.getEntityOrNull(id);
 		if (entityToDestroy != null) {
 			if (entityToDestroy instanceof Damageable damageable) {

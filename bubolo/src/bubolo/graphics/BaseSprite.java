@@ -42,6 +42,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 
 	/** The file name of the texture. */
 	private static final String TEXTURE_FILE = "repair_bay.png";
+	private static final int textureFileHashCode = TEXTURE_FILE.hashCode();
 
 	private static final String bulletTextureFile = "bullet.png";
 	private static final String mineTextureFile = "mine.png";
@@ -60,6 +61,11 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 		bulletTexture = Graphics.getTexture(bulletTextureFile);
 		mineTexture = Graphics.getTextureRegion2d(mineTextureFile, 21, 20)[1][1];
 		repairPointsIconTexture = Graphics.getTexture(repairPointsIconFile);
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override
@@ -91,7 +97,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 	}
 
 	private static Color getTintColor(Base base) {
-		if (base.hasOwner() && base.owner() instanceof Tank tank) {
+		if (base.owner() instanceof Tank tank) {
 			return tank.teamColor().color;
 		} else {
 			return TeamColor.Neutral.color;
@@ -140,7 +146,7 @@ class BaseSprite extends AbstractEntitySprite<Base> implements UiDrawable {
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var repairBay = getEntity();
-		if (repairBay.isOwnedByLocalPlayer()) {
+		if (repairBay.isAlliedWithLocalPlayer()) {
 			StatusBarRenderer.drawHealthBar(repairBay, graphics.shapeRenderer(), graphics.camera());
 
 			if (repairBay.isFriendlyTankOnThisRepairBay()) {

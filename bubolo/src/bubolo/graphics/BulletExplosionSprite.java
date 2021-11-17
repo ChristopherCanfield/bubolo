@@ -35,6 +35,8 @@ class BulletExplosionSprite extends Sprite {
 	private static final String hitObjectTextureFileName = "bullet_explosion.png";
 	private static final String maxRangeTextureFileName = "bullet_explosion_smoke.png";
 
+	private static final int textureFileHashCode = hitObjectTextureFileName.hashCode();
+
 	/**
 	 * Constructs a BulletExplosionSprite. This is Package-private because sprites should not be directly created
 	 * outside of the graphics system.
@@ -59,6 +61,11 @@ class BulletExplosionSprite extends Sprite {
 
 		this.x = x;
 		this.y = y;
+	}
+
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
 	}
 
 	@Override

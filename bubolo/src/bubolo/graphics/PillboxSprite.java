@@ -21,6 +21,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 
 	/** The file name of the texture. */
 	private static final String textureFileName = "pillbox.png";
+	private static final int textureFileHashCode = textureFileName.hashCode();
 
 	private static final int pillboxNoTargetColumn = 0;
 	private static final int pillboxHasTargetColumn = 1;
@@ -47,10 +48,14 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 		frames = Graphics.getTextureRegion2d(textureFileName, 32, 32, 1, 0);
 	}
 
+	@Override
+	protected int getTextureId() {
+		return textureFileHashCode;
+	}
+
 	private void updateColor() {
 		var pillbox = getEntity();
-		var owner = pillbox.owner();
-		if (pillbox.hasOwner() && owner instanceof Tank tank) {
+		if (pillbox.owner() instanceof Tank tank) {
 			lightColor = tank.teamColor().color;
 		} else {
 			lightColor = Color.LIGHT_GRAY;
@@ -132,7 +137,7 @@ class PillboxSprite extends AbstractEntitySprite<Pillbox> implements UiDrawable 
 	@Override
 	public void drawUiElements(Graphics graphics) {
 		var e = getEntity();
-		if (e.isOwnedByLocalPlayer()) {
+		if (e.isAlliedWithLocalPlayer()) {
 			if (e.buildStatus() == BuildStatus.Built) {
 				StatusBarRenderer.drawHealthBar(e, graphics.shapeRenderer(), graphics.camera());
 			} else if (e.buildStatus() == BuildStatus.Building || e.buildStatus() == BuildStatus.Unbuilding) {

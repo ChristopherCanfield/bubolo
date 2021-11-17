@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import bubolo.Config;
 import bubolo.controllers.ControllerFactory;
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkGameCommand;
 import bubolo.util.GameLogicException;
 import bubolo.util.Nullable;
 import bubolo.world.ActorEntity;
@@ -17,7 +17,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class CreateActor extends NetworkCommand {
+public class CreateActor implements NetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final Class<? extends ActorEntity> type;
@@ -73,7 +73,7 @@ public class CreateActor extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute(World world) {
+	public void execute(World world) {
 		var entity = (ActorEntity) world.addEntity(type, new Entity.ConstructionArgs(id, x, y, rotation), factory);
 
 		if (ownerId != null) {

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import bubolo.graphics.Graphics;
 import bubolo.util.Units;
 
-public class Line extends UiComponent {
+public class Line extends PositionableUiComponent {
 	private final Color color;
 	private final int width;
 	private final int height;
@@ -29,7 +29,7 @@ public class Line extends UiComponent {
 		batch.setColor(color);
 		batch.begin(ShapeType.Filled);
 
-		var cameraY = Units.screenYToCameraY(graphics.uiCamera(), top + padding);
+		var cameraY = Units.screenYToCameraY(graphics.uiCamera(), top + padding + height);
 		batch.rect(left() + padding, cameraY, width, height);
 
 		batch.end();

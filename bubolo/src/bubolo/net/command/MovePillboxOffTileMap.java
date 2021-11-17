@@ -2,7 +2,7 @@ package bubolo.net.command;
 
 import java.util.UUID;
 
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkGameCommand;
 import bubolo.world.Pillbox;
 import bubolo.world.World;
 
@@ -11,7 +11,7 @@ import bubolo.world.World;
  *
  * @author Christopher D. Canfield
  */
-public class MovePillboxOffTileMap extends NetworkCommand {
+public class MovePillboxOffTileMap implements NetworkGameCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final UUID id;
@@ -22,7 +22,7 @@ public class MovePillboxOffTileMap extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute(World world) {
+	public void execute(World world) {
 		var pillbox = (Pillbox) world.getEntity(id);
 		world.movePillboxOffTileMap(pillbox);
 	}

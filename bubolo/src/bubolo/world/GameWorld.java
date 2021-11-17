@@ -85,6 +85,7 @@ public class GameWorld implements World {
 	//			and the map importer will handle these issues on its side.
 	private boolean isFirstUpdate = true;
 
+	// @TODO (cdc 2021-07-29): Set the seed.
 	private final Random randomGenerator = new Random();
 
 	// The world is divided into six zones for the purpose of notifications and player spawning.
@@ -193,6 +194,7 @@ public class GameWorld implements World {
 
 		entitiesToAdd.add(entity);
 		entityMap.put(entity.id(), entity);
+		processNewTank(entity);
 
 		for (var observer : entityLifetimeObservers) {
 			observer.onEntityAdded(entity);
@@ -710,6 +712,11 @@ public class GameWorld implements World {
 	@Override
 	public List<Collidable> getCollidablesWithinTileDistance(Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects,
 			@Nullable Class<?> typeFilter) {
+		return getCollidablesWithinTileDistance(new ArrayList<>(), entity, tileMaxDistance, onlyIncludeSolidObjects, typeFilter);
+	}
+
+	@Override
+	public List<Collidable> getCollidablesWithinTileDistance(List<Collidable> listToPopulate, Entity entity, int tileMaxDistance, boolean onlyIncludeSolidObjects, @Nullable Class<?> typeFilter) {
 		assert tileMaxDistance >= 0;
 
 		final int startTileColumn = entity.tileColumn() - tileMaxDistance;
@@ -718,7 +725,8 @@ public class GameWorld implements World {
 		final int endTileColumn = entity.tileColumn() + tileMaxDistance;
 		final int endTileRow = entity.tileRow() + tileMaxDistance;
 
-		List<Collidable> nearbyCollidables = new ArrayList<>();
+		List<Collidable> nearbyCollidables = listToPopulate;
+		nearbyCollidables.clear();
 		for (int column = startTileColumn; column <= endTileColumn; column++) {
 			for (int row = startTileRow; row <= endTileRow; row++) {
 				if (isValidTile(column, row)) {

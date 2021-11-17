@@ -47,7 +47,7 @@ public class CreateTank extends CreateActor {
 
 		try {
 			Tank tank = (Tank) world.getEntity(getId());
-			tank.initialize(playerName, color, false);
+			tank.initialize(playerName, color, false, world);
 		} catch (Exception e) {
 			Logger.getLogger(Config.AppProgramaticTitle)
 					.severe("CreateTank net command: The tank was not created. ID: " + getId());

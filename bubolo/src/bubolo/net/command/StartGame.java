@@ -1,9 +1,8 @@
 package bubolo.net.command;
 
-import bubolo.Systems;
-import bubolo.net.Network;
-import bubolo.net.NetworkCommand;
-import bubolo.net.WorldOwner;
+import bubolo.GameApplication;
+import bubolo.net.NetworkApplicationCommand;
+import bubolo.net.NetworkObserverNotifier;
 import bubolo.world.Spawn;
 
 /**
@@ -12,7 +11,7 @@ import bubolo.world.Spawn;
  *
  * @author Christopher D. Canfield
  */
-public class StartGame extends NetworkCommand {
+public class StartGame implements NetworkApplicationCommand {
 	private static final long serialVersionUID = 1L;
 
 	private final byte secondsUntilStart;
@@ -36,10 +35,9 @@ public class StartGame extends NetworkCommand {
 	}
 
 	@Override
-	public void execute(WorldOwner worldOwner) {
+	public void execute(GameApplication app, NetworkObserverNotifier notifier) {
 		// Notify NetworkObservers about the game start time.
-		Network net = Systems.network();
-		net.getNotifier().notifyGameStart(Byte.toUnsignedInt(secondsUntilStart),
+		notifier.notifyGameStart(Byte.toUnsignedInt(secondsUntilStart),
 				Short.toUnsignedInt(initialSpawnColumn),
 				Short.toUnsignedInt(initialSpawnRow));
 	}

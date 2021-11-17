@@ -1,7 +1,6 @@
 package bubolo.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -13,14 +12,15 @@ import bubolo.Config;
 import bubolo.GameApplication.State;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
+import bubolo.input.InputManager.Action;
 import bubolo.ui.gui.Button;
 import bubolo.ui.gui.ButtonGroup;
-import bubolo.ui.gui.GuiGroup.HoveredObjectInfo;
 import bubolo.ui.gui.Label;
 import bubolo.ui.gui.LayoutArgs;
-import bubolo.ui.gui.UiComponent.HOffsetFrom;
-import bubolo.ui.gui.UiComponent.OffsetType;
-import bubolo.ui.gui.UiComponent.VOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.HOffsetFrom;
+import bubolo.ui.gui.PositionableUiComponent.OffsetType;
+import bubolo.ui.gui.PositionableUiComponent.VOffsetFrom;
+import bubolo.ui.gui.UiComponent.HoveredObjectInfo;
 
 public class MainMenuScreen extends AbstractScreen {
 	private final Color clearColor =  new Color(0.85f, 0.85f, 0.85f, 1);
@@ -126,8 +126,8 @@ public class MainMenuScreen extends AbstractScreen {
 	}
 
 	@Override
-	public void onKeyDown(int keycode) {
-		if (keycode == Keys.ESCAPE) {
+	protected void onInputActionReceived(Action action) {
+		if (action == Action.Cancel) {
 			Gdx.app.exit();
 		}
 	}

@@ -1,15 +1,16 @@
 package bubolo.net.command;
 
+import bubolo.GameApplication;
 import bubolo.Systems;
-import bubolo.net.Network;
-import bubolo.net.NetworkCommand;
+import bubolo.net.NetworkApplicationCommand;
+import bubolo.net.NetworkObserverNotifier;
 
 /**
  * Used to send a message across the network.
  *
  * @author Christopher D. Canfield
  */
-public class SendMessage extends NetworkCommand {
+public class SendMessage implements NetworkApplicationCommand {
 	private static final long serialVersionUID = 1L;
 
 	public enum MessageType {
@@ -45,9 +46,8 @@ public class SendMessage extends NetworkCommand {
 	}
 
 	@Override
-	protected void execute() {
-		Network net = Systems.network();
-		net.getNotifier().notifyMessageReceived(messageType, message);
+	public void execute(GameApplication app, NetworkObserverNotifier notifier) {
+		notifier.notifyMessageReceived(messageType, message);
 	}
 
 	/**

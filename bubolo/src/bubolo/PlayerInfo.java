@@ -1,4 +1,4 @@
-package bubolo.net;
+package bubolo;
 
 import java.net.InetAddress;
 
@@ -10,7 +10,7 @@ import bubolo.util.Nullable;
  *
  * @param name the player's name.
  * @param color the player's color.
- * @param ipAddress [optional] the player's ip address. May be null.
+ * @param ipAddress [optional] the player's ip address. Will be null if the player isn't the server.
  *
  * @author Christopher D. Canfield
  */
@@ -18,5 +18,9 @@ public record PlayerInfo(String name, TeamColor color, @Nullable InetAddress ipA
 	public PlayerInfo {
 		assert name != null;
 		assert color != null;
+	}
+
+	public boolean isServer() {
+		return ipAddress() != null;
 	}
 }

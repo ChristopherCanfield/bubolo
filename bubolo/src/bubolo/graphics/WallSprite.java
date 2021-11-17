@@ -9,8 +9,7 @@ import bubolo.world.Wall;
  *
  * @author BU673 - Clone Industries
  */
-class WallSprite extends AbstractEntitySprite<Wall>
-{
+class WallSprite extends AbstractEntitySprite<Wall> {
 	private TextureRegion[] undamagedFrames;
 	private TextureRegion[][] damagedFrames = new TextureRegion[3][];
 
@@ -20,15 +19,15 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	private static final String MEDIUM_DAMAGE_TEXTURE_FILE = "wall_damaged_medium.png";
 	private static final String MAJOR_DAMAGE_TEXTURE_FILE = "wall_damaged_major.png";
 
+	private static final int textureFileHashCode = UNDAMAGED_TEXTURE_FILE.hashCode();
+
 	/**
-	 * Constructor for the WallSprite. This is Package-private because sprites should not be
-	 * directly created outside of the graphics system.
+	 * Constructor for the WallSprite. This is Package-private because sprites should not be directly created outside of the
+	 * graphics system.
 	 *
-	 * @param wall
-	 *            the wall entity.
+	 * @param wall the wall entity.
 	 */
-	WallSprite(Wall wall)
-	{
+	WallSprite(Wall wall) {
 		super(DrawLayer.TerrainImprovements, wall);
 
 		undamagedFrames = Graphics.getTextureRegion1d(UNDAMAGED_TEXTURE_FILE, getClass());
@@ -38,8 +37,12 @@ class WallSprite extends AbstractEntitySprite<Wall>
 	}
 
 	@Override
-	public void draw(Graphics graphics)
-	{
+	protected int getTextureId() {
+		return textureFileHashCode;
+	}
+
+	@Override
+	public void draw(Graphics graphics) {
 		TextureRegion[] frames;
 		if (getEntity().hitPoints() == getEntity().maxHitPoints()) {
 			frames = undamagedFrames;

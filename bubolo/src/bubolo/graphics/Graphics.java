@@ -49,12 +49,13 @@ public class Graphics implements EntityLifetimeObserver {
 
 	private SpriteSystem spriteSystem;
 
-	// The attached camera controllers.
-	private CameraController cameraController;
+	// Controls the camera's position.
+	private final TankCameraController cameraController;
 
 	// The comparator used to sort sprites.
-	private static final Comparator<Sprite> sortSpritesByLayerThenName = Comparator.comparing(Sprite::getDrawLayer)
-			.thenComparing(s -> s.getClass().getSimpleName());
+	private static final Comparator<Sprite> sortByLayerThenTextureThenName = Comparator.comparing(Sprite::getDrawLayer)
+			.thenComparingInt(s -> s.getTextureId())
+			.thenComparingInt(s -> s.getClass().getSimpleName().hashCode());
 
 	private final List<Sprite> spritesInView = new ArrayList<Sprite>();
 
@@ -176,6 +177,8 @@ public class Graphics implements EntityLifetimeObserver {
 		uiCamera.position.x = uiCamera.position.y = 0;
 		uiCamera.update();
 
+		cameraController = new TankCameraController(camera);
+
 		batch = new SpriteBatch(3500);
 		shapeRenderer = new ShapeRenderer(500);
 
@@ -234,6 +237,14 @@ public class Graphics implements EntityLifetimeObserver {
 		return timer;
 	}
 
+	public int getBatchedRenderCalls() {
+		return nonScalingBatch.totalRenderCalls + batch.totalRenderCalls;
+	}
+
+	public int getMaxSpritesInScalingBatch() {
+		return batch.maxSpritesInBatch;
+	}
+
 	@Override
 	public void onEntityAdded(Entity entity) {
 		spriteSystem.createSprite(this, entity);
@@ -262,6 +273,18 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
+	 * Provides the world size to the graphics system. Required for the camera.
+	 *
+	 * @param worldWidth the world's width, in world units.
+	 * @param worldHeight the world's height, in world height.
+	 */
+	public void setWorldSize(int worldWidth, int worldHeight) {
+		int worldWidthPixels = (int) Config.DefaultPixelsPerWorldUnit * worldWidth;
+		int worldHeightPixels = (int) Config.DefaultPixelsPerWorldUnit * worldHeight;
+		cameraController.setWorldSize(worldWidthPixels, worldHeightPixels);
+	}
+
+	/**
 	 * Updates and draws the specified screen.
 	 *
 	 * @param screen the ui screen to update.
@@ -286,6 +309,8 @@ public class Graphics implements EntityLifetimeObserver {
 	 * @param screen the ui screen to update and draw.
 	 */
 	public void draw(World world, Screen screen) {
+		batch.totalRenderCalls = nonScalingBatch.totalRenderCalls = 0;
+
 		if (screen != null) {
 			var clearColor = screen.clearColor();
 			Gdx.gl20.glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
@@ -299,8 +324,6 @@ public class Graphics implements EntityLifetimeObserver {
 
 		drawWorld(world);
 		drawScreen(screen);
-
-		batch.totalRenderCalls = 0;
 	}
 
 	private void drawScreen(@Nullable Screen screen) {
@@ -331,11 +354,6 @@ public class Graphics implements EntityLifetimeObserver {
 		drawSpritesByLayer(spritesInView);
 		drawTankUiElements(spritesInView);
 
-		// Update the camera controller.
-		if (cameraController != null) {
-			cameraController.update(world);
-		}
-
 		// Remove destroyed sprites from the list.
 		List<Sprite> sprites = spriteSystem.getSprites();
 		for (int i = 0; i < sprites.size(); ++i) {
@@ -346,13 +364,10 @@ public class Graphics implements EntityLifetimeObserver {
 	}
 
 	/**
-	 * Attaches the specified camera controller to the graphics system. Only one camera controller can be attached at a
-	 * time. The camera controller's update method will be called once per draw call.
-	 *
-	 * @param controller the camera controller to attach.
+	 * Returns the camera controller, which controls the camera's position.
 	 */
-	void setCameraController(CameraController controller) {
-		cameraController = controller;
+	TankCameraController getCameraController() {
+		return cameraController;
 	}
 
 	/**
@@ -363,7 +378,7 @@ public class Graphics implements EntityLifetimeObserver {
 	private void drawSpritesByLayer(List<Sprite> sprites) {
 		// Sort list by draw layer, to ensure that sprites are drawn in the correct order,
 		// then by sprite type, to facilitate batching.
-		Collections.sort(spritesInView, sortSpritesByLayerThenName);
+		Collections.sort(spritesInView, sortByLayerThenTextureThenName);
 
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		batch.begin();

@@ -56,7 +56,7 @@ public class Mine extends ActorEntity implements Damageable {
 
 			var tanks = world.getTanks();
 			for (Tank tank : tanks) {
-				if (tank.isOwnedByLocalPlayer() && visibleRect.overlaps(tank.bounds().getBoundingRectangle())) {
+				if (tank.isAlliedWithLocalPlayer() && visibleRect.overlaps(tank.bounds().getBoundingRectangle())) {
 					canBeSeenByLocalPlayer = true;
 				}
 			}

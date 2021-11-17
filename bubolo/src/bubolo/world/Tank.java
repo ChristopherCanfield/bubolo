@@ -20,13 +20,14 @@ import bubolo.controllers.Controller;
 import bubolo.graphics.TeamColor;
 import bubolo.net.command.CreateActor;
 import bubolo.net.command.NetTankAttributes;
+import bubolo.net.command.TankDeath;
 import bubolo.net.command.UpdateTankAttributes;
 import bubolo.util.Nullable;
 import bubolo.util.Units;
 import bubolo.world.Pillbox.BuildStatus;
 
 /**
- * The tank, which may be controlled by a local player or networked player..
+ * The tank, which may be controlled by a local player or networked player.
  *
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
@@ -34,8 +35,8 @@ import bubolo.world.Pillbox.BuildStatus;
 public class Tank extends ActorEntity implements Damageable {
 	private boolean initialized;
 
-	private String playerName;
-	private TeamColor playerColor;
+	// Information about the player who owns this tank.
+	private Player player;
 
 	// Max speed in world units per tick.
 	private static final float maxSpeed = 2.77779f; // 2.77779 WU per tick is about 90 Kph.
@@ -126,8 +127,6 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private final List<Controller> controllers = new ArrayList<>();
 
-	private boolean controlledByLocalPlayer;
-
 	// The pillbox that is being carried, built, or unbuilt (packed).
 	private Pillbox carriedPillbox;
 	private boolean unbuildPillbox;
@@ -135,7 +134,12 @@ public class Tank extends ActorEntity implements Damageable {
 	private float pillboxBuildLocationX = -1;
 	private float pillboxBuildLocationY = -1;
 
-	private TankObserver observer;
+	private TankInventoryObserver inventoryObserver;
+	private static final TankPositionObserver nullObserver = (x, y) -> {};
+	private TankPositionObserver positionObserver = nullObserver;
+
+	// Temporary storage for storing collidables. This is used so arrays aren't generated multiple times per frame and then discarded.
+	private static final List<Collidable> collidablesTempList = new ArrayList<>(8);
 
 	/**
 	 * Constructs a Tank.
@@ -156,11 +160,11 @@ public class Tank extends ActorEntity implements Damageable {
 	 * @param playerName the name of the player who controls the tank.
 	 * @param color the tank's color.
 	 * @param controlledByLocalPlayer whether this tank is controlled by the local player.
+	 * @param world reference to the game world.
 	 */
-	public void initialize(String playerName, TeamColor color, boolean controlledByLocalPlayer) {
-		this.playerName = playerName;
-		this.playerColor = color;
-		this.controlledByLocalPlayer = controlledByLocalPlayer;
+	public void initialize(String playerName, TeamColor color, boolean controlledByLocalPlayer, World world) {
+		this.player = new Player(playerName, color, controlledByLocalPlayer, this, world);
+
 		this.initialized = true;
 	}
 
@@ -199,6 +203,8 @@ public class Tank extends ActorEntity implements Damageable {
 			carriedPillbox = null;
 			pillboxBuildLocationX = pillboxBuildLocationY = 0;
 
+			positionObserver.onTankPositionChanged(x(), y());
+
 			notifyNetwork();
 		}
 	}
@@ -226,13 +232,18 @@ public class Tank extends ActorEntity implements Damageable {
 		uncoverHiddenMines(world);
 		hidden = checkIfHidden(world);
 
-		if (observer != null && (decelerated || accelerated)) {
-			observer.onTankSpeedChanged(speed, speedKph());
+		if (inventoryObserver != null && (decelerated || accelerated)) {
+			inventoryObserver.onTankSpeedChanged(speed, speedKph());
+		}
+
+		if (speed != 0) {
+			positionObserver.onTankPositionChanged(x(), y());
 		}
 
 		decelerated = false;
 		accelerated = false;
 		rotated = false;
+		collidablesTempList.clear();
 
 		if (isOwnedByLocalPlayer()) {
 			Systems.audio().setListenerPosition(x(), y());
@@ -241,17 +252,49 @@ public class Tank extends ActorEntity implements Damageable {
 		}
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
+
 	public String playerName() {
-		return playerName;
+		return player.name();
 	}
 
 	public TeamColor teamColor() {
-		return playerColor;
+		return player.color();
 	}
 
 	@Override
 	public boolean isOwnedByLocalPlayer() {
-		return controlledByLocalPlayer;
+		return player.isLocal();
+	}
+
+	public void addAlly(Tank tank) {
+		if (tank != this) {
+			player.addAlly(tank);
+		}
+	}
+
+	public void removeAlly(Tank tank) {
+		if (tank != this) {
+			player.removeAlly(tank);
+		}
+	}
+
+	/**
+	 * @return whether this tank is either controlled by or allied with the local player.
+	 */
+	@Override
+	public boolean isAlliedWithLocalPlayer() {
+		return player.isAlliedWithLocalPlayer();
+	}
+
+	/**
+	 * @param actor the actor to check. May be null.
+	 * @return whether this tank is allied with the specified actor, or its owner.
+	 */
+	public boolean isAlliedWith(@Nullable ActorEntity actor) {
+		return player.isAlliedWith(actor);
 	}
 
 	/**
@@ -408,7 +451,7 @@ public class Tank extends ActorEntity implements Damageable {
 			bullet.setOwner(this);
 
 			ammoCount--;
-			if (observer != null) { observer.onTankAmmoCountChanged(ammoCount); }
+			if (inventoryObserver != null) { inventoryObserver.onTankAmmoCountChanged(ammoCount); }
 
 			Systems.network().send(new CreateActor(Bullet.class, bullet.id(), bullet.x(), bullet.y(), bullet.rotation(), id()));
 
@@ -482,7 +525,7 @@ public class Tank extends ActorEntity implements Damageable {
 	 */
 	private boolean unbuildNearestFriendlyPillbox(World world) {
 		if (carriedPillbox == null) {
-			var pillboxes = world.getCollidablesWithinTileDistance(this, 2, true, Pillbox.class);
+			var pillboxes = world.getCollidablesWithinTileDistance(collidablesTempList, this, 2, true, Pillbox.class);
 			if (!pillboxes.isEmpty()) {
 				float maxDistanceWorldUnits = Units.TileToWorldScale * 1.5f;
 				float targetLineX = (float) Math.cos(rotation()) * maxDistanceWorldUnits + centerX();
@@ -594,7 +637,7 @@ public class Tank extends ActorEntity implements Damageable {
 		final float minTreeCoverage = width() * 0.7f;
 
 		float treeCoverage = 0;
-		List<Collidable> trees = world.getCollidablesWithinTileDistance(this, 1, false, Tree.class);
+		List<Collidable> trees = world.getCollidablesWithinTileDistance(collidablesTempList, this, 1, false, Tree.class);
 		for (var tree : trees) {
 			if (tree.overlapsEntity(this, minTranslationVector)) {
 				if (minTranslationVector.depth > minTreeCoverage) {
@@ -616,9 +659,7 @@ public class Tank extends ActorEntity implements Damageable {
 	private boolean checkForDrowned(World world) {
 		var terrain = world.getTerrain(tileColumn(), tileRow());
 		if (terrain instanceof DeepWater) {
-			drowned = true;
-			Systems.audio().play(Sfx.TankDrowned, x(), y());
-			onDeath(world, DeepWater.class, null);
+			onDeath(world, false, DeepWater.class, null);
 			return true;
 		}
 		return false;
@@ -694,7 +735,7 @@ public class Tank extends ActorEntity implements Damageable {
 		 * @return the nearest axis, or None if the tank isn't nearly facing an axis.
 		 */
 		private static NearAxis getNearAxis(float rotationRadians) {
-			if (between(rotationRadians, MathUtils.HALF_PI * 0.85f, MathUtils.HALF_PI * 1.15f)) {
+			if (between(rotationRadians, MathUtils.HALF_PI * 0.8725f, MathUtils.HALF_PI * 1.15f)) {
 				return NorthY;
 			} else if (between(rotationRadians, -MathUtils.HALF_PI * 1.15f, -MathUtils.HALF_PI * 0.85f)) {
 				return SouthY;
@@ -736,7 +777,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 		// Search for collisions. If one is found, move the tank back to its previous position, plus an
 		// offset defined by collisionBounce.
-		var adjacentCollidables = world.getCollidablesWithinTileDistance(this, 1, true, null);
+		var adjacentCollidables = world.getCollidablesWithinTileDistance(collidablesTempList, this, 1, true, null);
 		for (var collider : adjacentCollidables) {
 			// Ensure that network tanks can dead-reckon through their own base.
 			if (!(collider instanceof Base base && base.hasOwner() && id().equals(base.owner().id()))) {
@@ -768,7 +809,7 @@ public class Tank extends ActorEntity implements Damageable {
 
 	private void uncoverHiddenMines(World world) {
 		if (speedKph() <= maxSpeedToSeeHiddenMinesKph) {
-			var adjacentMines = world.getCollidablesWithinTileDistance(this, 2, false, Mine.class);
+			var adjacentMines = world.getCollidablesWithinTileDistance(collidablesTempList, this, 2, false, Mine.class);
 			for (Collidable adjacentMine : adjacentMines) {
 				Mine mine = (Mine) adjacentMine;
 				mine.makeVisibleToLocalPlayer();
@@ -843,27 +884,57 @@ public class Tank extends ActorEntity implements Damageable {
 			sfxPlayer.play(Sfx.TankHit, x(), y());
 
 			if (hitPoints <= 0) {
-				Systems.audio().play(Sfx.TankExplosion, x(), y());
-
-				onDeath(world, damageProvider.getClass(), world.getOwningPlayerName(damageProvider.id()));
+				onDeath(world, false, damageProvider.getClass(), world.getOwningPlayerName(damageProvider.id()));
 			}
 		}
 	}
 
 	/**
-	 * Called when the tank dies.
+	 * Called by the network system to indicate that a remote tank has died.
+	 *
+	 * @param world reference to the game world.
+	 * @param killerType the killer's entity type.
+	 * @param killerName the killer's name. May be null.
 	 */
-	private void onDeath(World world, Class<? extends Entity> killerType, @Nullable String killerName) {
-		hitPoints = 0;
-		solid = false;
-		nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
-		if (isCarryingPillbox()) {
-			carriedPillbox.dropFromTank(world);
-			carriedPillbox = null;
-		}
+	public void netDeath(World world, Class<? extends Entity> killerType, @Nullable String killerName) {
+		onDeath(world, true, killerType, killerName);
+	}
 
-		Systems.messenger().notifyPlayerDied(playerName, isOwnedByLocalPlayer(), killerType, killerName);
-		notifyNetwork();
+	/**
+	 * Called when the tank dies.
+	 *
+	 * @param world reference to the game world.
+	 * @param netDeath whether this death was reported by the network system.
+	 * @param killerType the killer's entity type.
+	 * @param killerName the killer's name. May be null.
+	 */
+	private void onDeath(World world, boolean netDeath, Class<? extends Entity> killerType, @Nullable String killerName) {
+		// The local tank can't be killed by the network.
+		assert !(netDeath && isOwnedByLocalPlayer());
+
+		if (isOwnedByLocalPlayer() || netDeath) {
+			hitPoints = 0;
+			solid = false;
+			speed = 0;
+			nextRespawnTime = System.currentTimeMillis() + respawnTimeMillis;
+
+			if (isCarryingPillbox()) {
+				carriedPillbox.dropFromTank(world);
+				carriedPillbox = null;
+			}
+
+			if (killerType == DeepWater.class) {
+				drowned = true;
+				Systems.audio().play(Sfx.TankDrowned, x(), y());
+			} else {
+				Systems.audio().play(Sfx.TankExplosion, x(), y());
+			}
+
+			Systems.messenger().notifyPlayerDied(playerName(), isOwnedByLocalPlayer(), killerType, killerName);
+			if (isOwnedByLocalPlayer()) {
+				Systems.network().send(new TankDeath(id(), killerType, killerName));
+			}
+		}
 	}
 
 	/**
@@ -904,7 +975,7 @@ public class Tank extends ActorEntity implements Damageable {
 			ammoCount = maxAmmo;
 		}
 
-		if (observer != null) { observer.onTankAmmoCountChanged(ammoCount); }
+		if (inventoryObserver != null) { inventoryObserver.onTankAmmoCountChanged(ammoCount); }
 	}
 
 	/**
@@ -919,7 +990,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mineCount = maxMines;
 		}
 
-		if (observer != null) { observer.onTankMineCountChanged(mineCount); }
+		if (inventoryObserver != null) { inventoryObserver.onTankMineCountChanged(mineCount); }
 	}
 
 	/**
@@ -942,7 +1013,7 @@ public class Tank extends ActorEntity implements Damageable {
 			mine.setOwner(this);
 
 			mineCount--;
-			if (observer != null) { observer.onTankMineCountChanged(mineCount); }
+			if (inventoryObserver != null) { inventoryObserver.onTankMineCountChanged(mineCount); }
 
 			Systems.network().send(new CreateActor(Mine.class, mine.id(), mine.x(), mine.y(), mine.rotation(), id()));
 
@@ -995,7 +1066,7 @@ public class Tank extends ActorEntity implements Damageable {
 		var originalDrowningState = this.drowned;
 		this.drowned = drowning;
 		if (!originalDrowningState && drowning) {
-			Systems.messenger().notifyPlayerDied(playerName, isOwnedByLocalPlayer(), DeepWater.class, null);
+			Systems.messenger().notifyPlayerDied(playerName(), isOwnedByLocalPlayer(), DeepWater.class, null);
 		}
 	}
 
@@ -1015,17 +1086,34 @@ public class Tank extends ActorEntity implements Damageable {
 	}
 
 	/**
-	 * Sets the tank observer. Only one observer can be associated with a tank.
+	 * Sets the tank inventory observer. Only one inventory observer can be associated with a tank.
 	 * <p>
 	 * When the observer is first added, each of the observation functions is called with the tank's current status.
 	 * </p>
 	 *
-	 * @param observer the tank observer.
+	 * @param observer the tank inventory observer.
 	 */
-	public void setObserver(TankObserver observer) {
-		this.observer = observer;
+	public void setInventoryObserver(TankInventoryObserver observer) {
+		assert inventoryObserver == null : "Only one inventory observer can be associated with a tank.";
+
+		this.inventoryObserver = observer;
 		observer.onTankAmmoCountChanged(ammoCount);
 		observer.onTankMineCountChanged(mineCount);
 		observer.onTankSpeedChanged(speed, speedKph());
+	}
+
+	/**
+	 * Sets the tank position observer. Only one position observer can be associated with a tank.
+	 * <p>
+	 * When the observer is first added, the {@code tankPositionChanged} method is called with the tank's current position.
+	 * </p>
+	 *
+	 * @param observer the tank position observer.
+	 */
+	public void setPositionObserver(TankPositionObserver observer) {
+		assert positionObserver == nullObserver || positionObserver == null : "Only one position observer can be associated with a tank.";
+
+		this.positionObserver = observer;
+		observer.onTankPositionChanged(x(), y());
 	}
 }

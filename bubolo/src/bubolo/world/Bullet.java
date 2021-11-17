@@ -121,7 +121,8 @@ public class Bullet extends ActorEntity {
 	 */
 	private boolean isBaseAlliedOrBroken(Entity e) {
 		if (e instanceof Base base) {
-			return base.owner() == owner() || base.hitPoints() <= 0;
+			return base.hitPoints() <= 0
+					|| (this.isAlliedWithLocalPlayer() && base.owner().isAlliedWithLocalPlayer());
 		}
 		return false;
 	}
