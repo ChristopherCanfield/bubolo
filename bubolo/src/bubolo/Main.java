@@ -24,7 +24,9 @@ public class Main {
 	private static Lwjgl3ApplicationConfiguration defaultLwjglAppConfig() {
 		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
 		cfg.setTitle(Config.AppTitle);
+
 		cfg.setWindowedMode(Config.TargetWindowWidth, Config.TargetWindowHeight);
+
 		cfg.setForegroundFPS(Config.FPS);
 		cfg.useVsync(false);
 		cfg.setWindowIcon(Config.AppIcon16x16.toString(), Config.AppIcon32x32.toString(), Config.AppIcon48x48.toString());

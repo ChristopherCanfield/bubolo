@@ -128,7 +128,11 @@ public class MainMenuScreen extends AbstractScreen {
 	@Override
 	protected void onInputActionReceived(Action action) {
 		if (action == Action.Cancel) {
-			Gdx.app.exit();
+			if (Gdx.graphics.isFullscreen()) {
+				Gdx.graphics.setWindowedMode(Config.TargetWindowWidth, Config.TargetWindowHeight);
+			} else {
+				Gdx.app.exit();
+			}
 		}
 	}
 
