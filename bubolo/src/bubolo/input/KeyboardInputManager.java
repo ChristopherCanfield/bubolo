@@ -23,33 +23,33 @@ class KeyboardInputManager implements InputProcessor {
 	}
 
 	private static void processMovementActions(boolean[] actions) {
-		if (input.isKeyPressed(Keys.W) || input.isKeyPressed(Keys.UP) || input.isKeyPressed(Keys.NUMPAD_8)) {
+		if (isAnyKeyPressed(Keys.W, Keys.UP, Keys.NUMPAD_8)) {
 			actions[Action.Accelerate.ordinal()] = true;
-		} else if (input.isKeyPressed(Keys.S) || input.isKeyPressed(Keys.DOWN) || input.isKeyPressed(Keys.NUMPAD_5) || input.isKeyPressed(Keys.NUMPAD_2)) {
+		} else if (isAnyKeyPressed(Keys.S, Keys.DOWN, Keys.NUMPAD_5, Keys.NUMPAD_2)) {
 			actions[Action.Decelerate.ordinal()] = true;
 		}
 
-		if (input.isKeyPressed(Keys.A) || input.isKeyPressed(Keys.LEFT) || input.isKeyPressed(Keys.NUMPAD_4)) {
+		if (isAnyKeyPressed(Keys.A, Keys.LEFT, Keys.NUMPAD_4)) {
 			actions[Action.RotateClockwise.ordinal()] = true;
-		} else if (input.isKeyPressed(Keys.D) || input.isKeyPressed(Keys.RIGHT) || input.isKeyPressed(Keys.NUMPAD_6)) {
+		} else if (isAnyKeyPressed(Keys.D, Keys.RIGHT, Keys.NUMPAD_6)) {
 			actions[Action.RotateCounterclockwise.ordinal()] = true;
 		}
 	}
 
 	private static void processCannonAction(boolean[] actions) {
-		if (input.isKeyPressed(Keys.SPACE)) {
+		if (isKeyPressed(Keys.SPACE)) {
 			actions[Action.FireCannon.ordinal()] = true;
 		}
 	}
 
 	private static void processMineLayingAction(boolean[] actions) {
-		if (input.isKeyPressed(Keys.CONTROL_LEFT)) {
+		if (isAnyKeyPressed(Keys.CONTROL_LEFT, Keys.CONTROL_RIGHT)) {
 			actions[Action.LayMine.ordinal()] = true;
 		}
 	}
 
 	private static void processBuildActions(boolean[] actions) {
-		if (input.isKeyPressed(Keys.E)) {
+		if (isKeyPressed(Keys.E)) {
 			actions[Action.Build.ordinal()] = true;
 		}
 	}
@@ -83,7 +83,7 @@ class KeyboardInputManager implements InputProcessor {
 
 	private static void processNextMenuGroupAction(boolean[] actions, int keycode) {
 		if (keycode == Keys.TAB) {
-			if (input.isKeyPressed(Keys.SHIFT_LEFT) || input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+			if (isAnyKeyPressed(Keys.SHIFT_LEFT, Keys.SHIFT_RIGHT)) {
 				actions[Action.MenuMoveToPreviousGroup.ordinal()] = true;
 			} else {
 				actions[Action.MenuMoveToNextGroup.ordinal()] = true;
@@ -110,10 +110,32 @@ class KeyboardInputManager implements InputProcessor {
 	}
 
 	private static void processFullscreenStatusChangeAction(boolean[] actions, int keycode) {
-		if (keycode == Keys.ENTER && (input.isKeyPressed(Keys.ALT_LEFT) || input.isKeyPressed(Keys.ALT_RIGHT))) {
+		if (keycode == Keys.ENTER && isAnyKeyPressed(Keys.ALT_LEFT, Keys.ALT_RIGHT)) {
 			actions[Action.FullscreenStatusChangeRequested.ordinal()] = true;
 		}
 	}
+
+	private static boolean isKeyPressed(int key) {
+		return input.isKeyPressed(key);
+	}
+
+	/**
+	 * Returns true if any of a set of keys is pressed.
+	 *
+	 * @param keys one or more keys to check.
+	 * @return true if any of the keys are pressed.
+	 */
+	private static boolean isAnyKeyPressed(int... keys) {
+		for (int key : keys) {
+			if (input.isKeyPressed(key)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	//// Unused callbacks ////
 
 	@Override
 	public boolean keyUp(int keycode) {
