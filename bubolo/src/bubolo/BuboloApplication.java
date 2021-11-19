@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics.DisplayMode;
 
 import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
@@ -103,6 +102,7 @@ public class BuboloApplication extends AbstractGameApplication {
 		initializeLogger();
 
 		graphics = new Graphics(windowWidth, windowHeight);
+		Systems.setGraphics(graphics);
 		frameInfo = new FrameInfo(graphics);
 		Gdx.input.setInputProcessor(Systems.input());
 
@@ -303,22 +303,12 @@ public class BuboloApplication extends AbstractGameApplication {
 		}
 	}
 
-	private boolean isFirstResize = true;
-
 	@Override
 	public void resize(int width, int height) {
-		graphics.resize(width, height);
 		if (screen != null) {
 			screen.viewportResized(width, height);
-			if (!isFirstResize) {
-				DisplayMode displayMode = Gdx.graphics.getDisplayMode();
-				if (displayMode.width == width) {
-					Gdx.graphics.setFullscreenMode(displayMode);
-				}
-			} else {
-				isFirstResize = false;
-			}
 		}
+		graphics.resize(width, height);
 	}
 
 	/**

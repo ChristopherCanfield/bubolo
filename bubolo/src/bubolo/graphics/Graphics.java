@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -260,6 +261,8 @@ public class Graphics implements EntityLifetimeObserver {
 		// Not used.
 	}
 
+	private boolean isFirstResize = true;
+
 	/**
 	 * Called when the window is resized.
 	 *
@@ -270,6 +273,47 @@ public class Graphics implements EntityLifetimeObserver {
 		uiCamera.setToOrtho(false, newWidth, newHeight);
 		nonScalingBatch.setProjectionMatrix(uiCamera.combined);
 		nonScalingShapeRenderer.setProjectionMatrix(uiCamera.combined);
+
+		if (isFullscreenRequested(newWidth)) {
+			setFullscreen(true);
+		}
+	}
+
+	private boolean isFullscreenRequested(int newWidth) {
+		if (!isFirstResize && !isFullscreen()) {
+			DisplayMode displayMode = Gdx.graphics.getDisplayMode();
+			if (displayMode.width == newWidth) {
+				return true;
+			}
+		} else {
+			isFirstResize = false;
+		}
+		return false;
+	}
+
+	/**
+	 * Makes the screen fullscreen (when makeFullscreen is true) or windowed (when makeFullscreen is false).
+	 *
+	 * @param makeFullscreen true if the window should be made fullscreen, or false if it should be set to windowed.
+	 * @precondition if makeFullscreen is true, the screen isn't already in fullscreen mode. If it is false, the screen
+	 * isn't already in windowed mode.
+	 */
+	public void setFullscreen(boolean makeFullscreen) {
+		if (makeFullscreen) {
+			assert !isFullscreen() : "setFullscreen(true) called when the screen was already in fullscreen mode.";
+			DisplayMode displayMode = Gdx.graphics.getDisplayMode();
+			Gdx.graphics.setFullscreenMode(displayMode);
+		} else {
+			assert isFullscreen() : "setFullscreen(false) called when the screen was already in windowed mode.";
+			Gdx.graphics.setWindowedMode(Config.TargetWindowWidth, Config.TargetWindowHeight);
+		}
+	}
+
+	/**
+	 * @return whether the window is fullscreen (true) or windowed (false).
+	 */
+	public boolean isFullscreen() {
+		return Gdx.graphics.isFullscreen();
 	}
 
 	/**
