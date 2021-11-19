@@ -29,6 +29,9 @@ public class InputManager implements InputProcessor {
 
 		ShowDiplomacyMenu,
 
+		/** A request to change either to fullscreen (if graphics.isFullscreen() is false) or windowed (if graphics.isFullscreen() is true). */
+		FullscreenStatusChangeRequested,
+
 		Activate,
 		Cancel,
 	}

@@ -43,6 +43,12 @@ public abstract class AbstractScreen implements Screen, InputProcessor {
 	@Override
 	public final void onInputAction(Action action) {
 		if (handleInputEvents) {
+			// If a fullscreen change request was processed, handle it.
+			if (action == Action.FullscreenStatusChangeRequested) {
+				var graphics = Systems.graphics();
+				graphics.setFullscreen(!graphics.isFullscreen());
+			}
+
 			root.onInputAction(action);
 			onInputActionReceived(action);
 		}
