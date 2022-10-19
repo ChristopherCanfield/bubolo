@@ -16,6 +16,8 @@ import com.badlogic.gdx.Gdx;
 import bubolo.Systems.NetworkType;
 import bubolo.graphics.Graphics;
 import bubolo.graphics.TeamColor;
+import bubolo.input.InputActionObserver;
+import bubolo.input.InputManager.Action;
 import bubolo.map.MapImporter;
 import bubolo.net.command.CreateTank;
 import bubolo.ui.GameScreen;
@@ -41,7 +43,7 @@ import bubolo.world.World;
  * @author BU CS673 - Clone Productions
  * @author Christopher D. Canfield
  */
-public class BuboloApplication extends AbstractGameApplication {
+public class BuboloApplication extends AbstractGameApplication implements InputActionObserver {
 	private static Logger logger = Logger.getLogger(Config.AppProgramaticTitle);
 
 	private final int windowWidth;
@@ -105,6 +107,7 @@ public class BuboloApplication extends AbstractGameApplication {
 		Systems.setGraphics(graphics);
 		frameInfo = new FrameInfo(graphics);
 		Gdx.input.setInputProcessor(Systems.input());
+		Systems.input().addActionObserver(this);
 
 		setState(State.MainMenu);
 	}
@@ -309,6 +312,13 @@ public class BuboloApplication extends AbstractGameApplication {
 			screen.viewportResized(width, height);
 		}
 		graphics.resize(width, height);
+	}
+
+	@Override
+	public void onInputAction(Action action) {
+		if (action == Action.Quit) {
+			Gdx.app.exit();
+		}
 	}
 
 	/**

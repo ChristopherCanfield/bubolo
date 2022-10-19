@@ -34,6 +34,8 @@ public class InputManager implements InputProcessor {
 
 		Activate,
 		Cancel,
+
+		Quit,
 	}
 
 	// Whether an action was pressed or not.

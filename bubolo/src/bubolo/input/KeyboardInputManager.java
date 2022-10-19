@@ -63,6 +63,7 @@ class KeyboardInputManager implements InputProcessor {
 		processFullscreenStatusChangeAction(actionsBackBuffer, keycode);
 		processActivateAction(actionsBackBuffer, keycode);
 		processCancelAction(actionsBackBuffer, keycode);
+		processQuitAction(actionsBackBuffer, keycode);
 
 		return false;
 	}
@@ -106,6 +107,12 @@ class KeyboardInputManager implements InputProcessor {
 	private static void processCancelAction(boolean[] actions, int keycode) {
 		if (keycode == Keys.ESCAPE) {
 			actions[Action.Cancel.ordinal()] = true;
+		}
+	}
+
+	private static void processQuitAction(boolean[] actions, int keycode) {
+		if (keycode == Keys.F4 && isAnyKeyPressed(Keys.ALT_LEFT, Keys.ALT_RIGHT)) {
+			actions[Action.Quit.ordinal()] = true;
 		}
 	}
 

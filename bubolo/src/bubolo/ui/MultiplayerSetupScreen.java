@@ -98,12 +98,11 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 		addIpAddressRow();
 		addAvailableGames();
 		addButtonRow();
-//		addStatusLabels();
 
 		if (isClient) {
 			serverAddressListener = new ServerAddressListener(this);
 			var networkInterfaces = Network.getNetworkInterfaces();
-			// @TODO (cdc 2021-07-04): This must be very rare, but handle it properly regardless.
+			// @TODO (cdc 2021-07-04): This must be very rare, but is should be handled properly regardless.
 			assert !networkInterfaces.isEmpty();
 			serverAddressListener.start(networkInterfaces.get(0));
 		}
@@ -236,7 +235,7 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	private boolean startingServer = false;
 
 	private void startServer() {
-		if (!startingServer && !playerNameTextBox.isEmpty()) {
+		if (!startingServer && !playerNameTextBox.isBlank()) {
 			startingServer = true;
 			setInputEventsEnabled(false);
 
@@ -249,11 +248,11 @@ public class MultiplayerSetupScreen extends AbstractScreen implements ServerAddr
 	}
 
 	private void connectToServer() {
-		if (!connectToServer && !playerNameTextBox.isEmpty()) {
+		if (!connectToServer && !playerNameTextBox.isBlank()) {
 			int selectedServerIndex = availableServersList.selectedButtonIndex();
 			if (selectedServerIndex != UiComponent.NoIndex) {
 				serverIpAddress = availableServers.get(selectedServerIndex).serverAddress();
-			} else if (!serverIpAddressTextBox.isEmpty()) {
+			} else if (!serverIpAddressTextBox.isBlank()) {
 				try {
 					serverIpAddress = InetAddress.getByName(serverIpAddressTextBox.text());
 				} catch (UnknownHostException e) {
