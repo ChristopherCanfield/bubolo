@@ -3,6 +3,7 @@ package bubolo;
 import bubolo.audio.Audio;
 import bubolo.audio.AudioSystem;
 import bubolo.audio.NullAudio;
+import bubolo.graphics.Graphics;
 import bubolo.input.InputManager;
 import bubolo.net.Network;
 import bubolo.net.NetworkSystem;
@@ -14,6 +15,7 @@ public class Systems {
 		Real
 	}
 
+	private static Graphics graphics = null;
 	private static Audio audio = new NullAudio();
 	private static Network network = new NullNetwork();
 	private static final Messenger messenger = new Messenger();
@@ -44,6 +46,20 @@ public class Systems {
 		} else {
 			network = new NullNetwork();
 		}
+	}
+
+	/**
+	 * Sets a reference to the graphics system.
+	 *
+	 * @param graphicsSystem reference to the graphics system.
+	 */
+	public static void setGraphics(Graphics graphicsSystem) {
+		graphics = graphicsSystem;
+	}
+
+	public static Graphics graphics() {
+		assert graphics != null : "Must set a reference to the graphics system using Systems.setGraphics(graphics) before calling Systems.graphics().";
+		return graphics;
 	}
 
 	public static Audio audio() {

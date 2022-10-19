@@ -58,15 +58,17 @@ class GamepadInputManager {
 	}
 
 	private void processMovementActions(boolean[] actions) {
-		if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_Y) < -0.15f) {
+		final float leftYDeadzone = 0.15f;
+		if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_Y) < -leftYDeadzone) {
 			actions[Action.Accelerate.ordinal()] = true;
-		} else if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_Y) > 0.15f) {
+		} else if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_Y) > leftYDeadzone) {
 			actions[Action.Decelerate.ordinal()] = true;
 		}
 
-		if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_X) < -0.5f) {
+		final float leftXDeadzone = 0.5f;
+		if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_X) < -leftXDeadzone) {
 			actions[Action.RotateClockwise.ordinal()] = true;
-		} else if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_X) > 0.5f) {
+		} else if (gamepadState.axes(GLFW_GAMEPAD_AXIS_LEFT_X) > leftXDeadzone) {
 			actions[Action.RotateCounterclockwise.ordinal()] = true;
 		}
 	}

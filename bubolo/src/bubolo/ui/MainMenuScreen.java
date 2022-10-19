@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import bubolo.BuboloApplication;
 import bubolo.Config;
 import bubolo.GameApplication.State;
+import bubolo.Systems;
 import bubolo.graphics.Fonts;
 import bubolo.graphics.Graphics;
 import bubolo.input.InputManager.Action;
@@ -128,7 +129,11 @@ public class MainMenuScreen extends AbstractScreen {
 	@Override
 	protected void onInputActionReceived(Action action) {
 		if (action == Action.Cancel) {
-			Gdx.app.exit();
+			if (Systems.graphics().isFullscreen()) {
+				Systems.graphics().setFullscreen(false);
+			} else {
+				Gdx.app.exit();
+			}
 		}
 	}
 

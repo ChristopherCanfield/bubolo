@@ -94,8 +94,18 @@ public class TextBox extends PositionableUiComponent implements Focusable {
 		return text;
 	}
 
+	/**
+	 * @return true if the text box contains no characters.
+	 */
 	public boolean isEmpty() {
 		return text.isEmpty();
+	}
+
+	/**
+	 * @return true if the text box contains no characters, or only whitespace characters.
+	 */
+	public boolean isBlank() {
+		return text.isBlank();
 	}
 
 	@Override

@@ -87,6 +87,7 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 
 	@Override
 	protected void preDraw(Graphics graphics) {
+		diplomacyMenuVisibleAtStartOfFrame = diplomacyScreen.isVisible();
 	}
 
 	@Override
@@ -162,10 +163,17 @@ public class GameScreen extends AbstractScreen implements TankInventoryObserver,
 	public void onViewportResized(int newWidth, int newHeight) {
 	}
 
+	// Used to determine whether the diplomacy menu was visible at the start of the frame, which is necessary to
+	// allow the escape key to be used for both closing the diplomacy menu and exiting fullscreen, without causing
+	// both to happen at the same time.
+	private boolean diplomacyMenuVisibleAtStartOfFrame;
+
 	@Override
 	protected void onInputActionReceived(Action action) {
 		if (action == Action.ShowDiplomacyMenu) {
 			diplomacyScreen.show();
+		} else if (action == Action.Cancel && !diplomacyMenuVisibleAtStartOfFrame && Systems.graphics().isFullscreen()) {
+			Systems.graphics().setFullscreen(false);
 		}
 	}
 
